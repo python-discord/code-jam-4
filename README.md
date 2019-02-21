@@ -7,7 +7,7 @@ You can use any GUI library that you wish to use, but you have to make _a deskto
 Here are a couple of examples of what we mean by an application that "serves a real purpose but also fits the theme":
 * A calculator app that calculates the right answers, but represents the answer in a way that's completely impractical.
 * An image resizer where you have to specify which part of the image to resize, specify how much force to apply to the resize operation in newtons, and then manually resize the image by turning a crank.
-* An alarm clock app that plays a very loud reminder sound effect every 5 minutes letting you know that your alarm will ring in 6 hours, but then fails to actually ring when the 6 hours are up.
+* An alarm clock app that plays a very loud sound effect every 5 minutes reminding you that your alarm will ring in 6 hours. The closer it gets to the 6 hour mark, the lower the volume of the sound effect. When the time is up, the sound effect is virtually inaudible.
 
 Remember that teamwork is not optional for our code jams - You must find a way to work together. For this jam, we've assigned a leader for each team based on their responses to the application form. Remember to listen to your leader, and communicate with the rest of your team! 
 
