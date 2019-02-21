@@ -17,7 +17,7 @@ Remember that teamwork is not optional for our code jams - You must find a way t
 
 * Please lint your code, and listen to the linter. We recommend **flake8**, and you can use `pipenv run lint` to run it. We will be evaluating your style, and unlinted code will lead to point deductions.
 * Remember to work closely with the rest of your team. We will deduct points for poor teamwork.
-* Don't overcomplicate this. It's better to write a relatively simple app that is 100% feature complete than failing to finish some ambitious project.
+* Don't overcomplicate this. It's better to write a relatively simple app that is 100% feature complete than failing to finish a more ambitious project.
 * For information on how the Code Jam will be judged, please see [this document](https://wiki.pythondiscord.com/wiki/jams/judging).
 
 # Setting Up
