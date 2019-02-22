@@ -42,4 +42,4 @@ Team: Durable Drills
 
 ## How do I use this thing?
 
-`# TODO`
+I'm figuring it out; slowly but surely
