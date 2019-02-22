@@ -9,8 +9,8 @@ class Coord(NamedTuple):
     """
     Helper class for managing coordinate values.
 
-    Coord overloads many of the numeric operators by applying
-    it to the x and y value.
+    Coord overloads many of the numeric operators by mapping
+    it to the x and y values individually.
 
     param:
         x: float -- X position.
