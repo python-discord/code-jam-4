@@ -29,6 +29,14 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 * Running the application (assuming you use our project layout): `pipenv run start`
 
 # Project Information
+##### Team
+Lingering loops
+##### Members
+[kosayoda#8868](https://github.com/kosayoda "kosa")
+
+[Milkological#4356](https://github.com/Milkological "Milkological")
+
+[remyx#0040](https://github.com/remytanx "remyx")
 
 `# TODO`
 
