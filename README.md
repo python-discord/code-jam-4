@@ -30,7 +30,7 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 
 # Project Information
 
-`# TODO`
+`# TODO` TEAM: Enthusiastic-Electricians
 
 ## Description
 
