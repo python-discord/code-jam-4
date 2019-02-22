@@ -25,7 +25,7 @@ class Minesweeper(QtWidgets.QWidget):
 
         self.setLayout(layout)
 
-    def button_clicked(self):
+    def button_clicked(self, row, column):
         print("Button Clicked")
 
 
