@@ -1,6 +1,6 @@
 import sys
 from PyQt5.uic import loadUiType
-from PyQt5.QtWidgets import QMainWindow, QApplication, QStyleFactory, QAction
+from PyQt5.QtWidgets import QMainWindow, QApplication, QAction
 from PyQt5.QtGui import QFont
 from PyQt5.Qsci import QsciLexerPython, QsciScintilla
 
@@ -89,7 +89,6 @@ class Editor(QMainWindow, Ui_MainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    #QApplication.setStyle(QStyleFactory.create('Fusion'))
     myGUI = Editor()
     myGUI.Setup()
 
