@@ -30,16 +30,20 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 
 # Project Information
 
-`# TODO`
+Flamboyant Flamingos jam project.
+
+* UK-based team
+* ~~We have no idea what we're doing~~
 
 ## Description
 
-`# TODO`
+TBD
 
 ## Setup & Installation
 
-`# TODO`
+`python3 -m pip install -r requirements.txt`
+`python3 main.py`
 
 ## How do I use this thing?
 
-`# TODO`
+* Carefully
