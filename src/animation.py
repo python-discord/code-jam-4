@@ -16,7 +16,7 @@ class Coord(NamedTuple):
         x: float -- X position.
         y: float -- Y position.
 
-    Example::
+    example::
 
     ```
     c1 = c2 = Coord(1, 1)
