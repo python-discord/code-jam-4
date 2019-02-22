@@ -42,6 +42,19 @@ Knowledgeable Kois
 
 `# TODO`
 
+Unit tests are written using the [pytest](https://docs.pytest.org/en/latest/) framework. 
+
+`pipenv run test` runs the available tests.
+
 ## How do I use this thing?
 
 `# TODO`
+
+## Documentation
+
+Documentation is generated using [Sphinx](http://www.sphinx-doc.org/en/master/). To build:
+```sh
+cd docs
+sphinx-apidoc -f -o source/ ../project/
+make html
+```

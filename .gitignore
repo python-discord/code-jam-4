@@ -105,3 +105,6 @@ venv.bak/
 
 # IDEA workspace
 .idea/
+
+# compiled sphinx HTML documentation
+docs/build

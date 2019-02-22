@@ -5,6 +5,8 @@ verify_ssl = true
 
 [dev-packages]
 flake8 = "*"
+pytest = "*"
+sphinx = "*"
 
 [packages]
 
@@ -13,3 +15,6 @@ python_version = "3.7"
 
 [scripts]
 lint = "python -m flake8"
+start = "python -m project"
+test = "pytest project/tests/"
+gendoc = "pydoc -g"
