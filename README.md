@@ -28,6 +28,9 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 * Setting up for development: `pipenv install --dev`
 * Running the application (assuming you use our project layout): `pipenv run start`
 
+# Team Name
+youthful-yeomen
+
 # Project Information
 
 `# TODO`
