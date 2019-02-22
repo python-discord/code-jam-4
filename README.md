@@ -30,7 +30,7 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 
 # Project Information
 
-`# TODO`
+This is the Code Jam 4 entry for team Cool Crocodiles.
 
 ## Description
 
