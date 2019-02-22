@@ -12,19 +12,17 @@ class Coord(NamedTuple):
     Coord overloads many of the numeric operators by applying
     it to the x and y value.
 
-    param
+    param:
         x: float -- X position.
-        y: float -- Y position
+        y: float -- Y position.
 
-    # Usage
-    The operators will behave like you applied the to each value.
-    ```py
+    Example::
+
+    ```
     c1 = c2 = Coord(1, 1)
     c1 + c2
     >>> Coord(2, 2)
-    ```
-    For convenience, integers are accepted as well
-    ```py
+    # For convenience, integers are accepted as well
     c1 = Coord(1, 1)
     c1 + 1  # 1 is cast to Coord(1, 1)
     >>> Coord(2, 2)
