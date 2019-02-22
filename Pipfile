@@ -5,6 +5,10 @@ verify_ssl = true
 
 [dev-packages]
 flake8 = "*"
+yapf = "*"
+vim-vint = "*"
+pycodestyle = "*"
+neovim = "*"
 
 [packages]
 
