@@ -8,7 +8,6 @@ flake8 = "*"
 
 [packages]
 pyqt5 = "*"
-qsciscintilla = "*"
 qscintilla = "*"
 
 [requires]

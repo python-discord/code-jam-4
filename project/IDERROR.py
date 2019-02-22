@@ -53,9 +53,13 @@ class Editor(QMainWindow, Ui_MainWindow):
         self.editor.setGeometry(25, 25, 750, 750)
         # adding text to the ditro
         self.editor.append("print('Hello World!') # this is just a test")
-        # this is i am not sure yet but i think its for the syntax
+        # syntax adding and autocomplete configuration
         self.python_syntax = QsciLexerPython()
         self.editor.setLexer(self.python_syntax)
+        self.editor.setAutoCompletionSource(QsciScintilla.AcsAll)
+        self.editor.setAutoCompletionCaseSensitivity(True)
+        self.editor.setAutoCompletionThreshold(2)
+        self.editor.setAutoCompletionReplaceWord(False)
         self.editor.setUtf8(True)  # Set encoding to UTF-8
         # setting editor position
 
