@@ -28,6 +28,7 @@ class Coord(NamedTuple):
     c1 = Coord(1, 1)
     c1 + 1  # 1 is cast to Coord(1, 1)
     >>> Coord(2, 2)
+    ```
     """
 
     x: int
