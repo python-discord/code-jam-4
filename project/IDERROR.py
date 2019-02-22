@@ -1,6 +1,6 @@
 import sys
 from PyQt5.uic import loadUiType
-from PyQt5.QtWidgets import QMainWindow, QApplication, QAction
+from PyQt5.QtWidgets import QMainWindow, QApplication, QAction, QFileDialog
 from PyQt5.QtGui import QFont
 from PyQt5.Qsci import QsciLexerPython, QsciScintilla
 
@@ -18,6 +18,7 @@ class Editor(QMainWindow, Ui_MainWindow):
     def Setup(self):
         # Setting the size to be fixed
         self.setFixedSize(800, 800)
+        self.setWindowTitle('[E.E] IDERROR')
 
         # MenuBar
         bar = self.menubar
@@ -60,6 +61,11 @@ class Editor(QMainWindow, Ui_MainWindow):
         self.editor.setAutoCompletionCaseSensitivity(True)
         self.editor.setAutoCompletionThreshold(2)
         self.editor.setAutoCompletionReplaceWord(False)
+        self.editor.setIndentationsUseTabs(True)
+        self.editor.setTabWidth(4)
+        self.editor.setIndentationGuides(True)
+        self.editor.setTabIndents(True)
+        self.editor.setAutoIndent(False)
         self.editor.setUtf8(True)  # Set encoding to UTF-8
         # setting editor position
 
@@ -77,15 +83,36 @@ class Editor(QMainWindow, Ui_MainWindow):
 
     def newFile(self):
         # TODO: Add New Files
+        self.editor.setText('')
         print('new file')
 
     def openFile(self):
-        # TODO: Open Files
-        print('Opening File')
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getOpenFileName(self, "Open File", "",
+                                                  "Python Files (*.py)",
+                                                  options=options)
+        if fileName:
+            self.editor.setText('')
+            with open(fileName) as file:
+                texts = file.readlines()
+                for text in texts:
+                    self.editor.append(text)
 
     def saveFile(self):
-        # TODO: Save Files
-        print('saving file')
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self, "Save File", "",
+                                                  "Text Files (*.py)",
+                                                  options=options)
+        if fileName:
+            with open(fileName + '.py', mode="w+") as file:
+                texts = self.editor.text()
+                print(texts)
+                # TODO: there is kinda of bug here where it adds extra
+                #  spaces or line returns, do fix it pls
+                file.write(texts)
+                file.close()
 
     def exit(self):
         raise SystemExit
