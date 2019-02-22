@@ -26,6 +26,9 @@
      <height>21</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">background-color:rgb(129, 129, 129)</string>
+   </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

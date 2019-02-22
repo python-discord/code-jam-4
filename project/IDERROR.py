@@ -1,6 +1,6 @@
 import sys
 from PyQt5.uic import loadUiType
-from PyQt5.QtWidgets import QMainWindow, QApplication, QStyleFactory
+from PyQt5.QtWidgets import QMainWindow, QApplication, QStyleFactory, QAction
 from PyQt5.QtGui import QFont
 from PyQt5.Qsci import QsciLexerPython, QsciScintilla
 
@@ -18,6 +18,36 @@ class Editor(QMainWindow, Ui_MainWindow):
     def Setup(self):
         # Setting the size to be fixed
         self.setFixedSize(800, 800)
+
+        # MenuBar
+        bar = self.menubar
+
+        File = bar.addMenu('File')
+
+        new_file_action = QAction('New File', self)
+        new_file_action.setShortcut('Ctrl+N')
+
+        open_file_action = QAction('Open File', self)
+        open_file_action.setShortcut('Ctrl+O')
+
+        save_file_action = QAction('Save File', self)
+        save_file_action.setShortcut('Ctrl+S')
+
+        exit_action = QAction('Exit', self)
+        exit_action.setShortcut('Alt+F4')
+
+        File.addAction(new_file_action)
+        File.addAction(open_file_action)
+        File.addAction(save_file_action)
+        File.addAction(exit_action)
+
+        new_file_action.triggered.connect(self.newFile)
+        open_file_action.triggered.connect(self.openFile)
+        save_file_action.triggered.connect(self.saveFile)
+        exit_action.triggered.connect(self.exit)
+
+        # Custom Editor Widget:
+
         # adding the the custom editor of QsciScintilla
         self.editor = QsciScintilla()
         self.editor.setGeometry(25, 25, 750, 750)
@@ -41,10 +71,25 @@ class Editor(QMainWindow, Ui_MainWindow):
         # showing ui
         self.show()
 
+    def newFile(self):
+        # TODO: Add New Files
+        print('new file')
+
+    def openFile(self):
+        # TODO: Open Files
+        print('Opening File')
+
+    def saveFile(self):
+        # TODO: Save Files
+        print('saving file')
+
+    def exit(self):
+        raise SystemExit
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    QApplication.setStyle(QStyleFactory.create('Fusion'))
+    #QApplication.setStyle(QStyleFactory.create('Fusion'))
     myGUI = Editor()
     myGUI.Setup()
 
