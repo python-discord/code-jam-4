@@ -31,7 +31,7 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 # Project Information
 **Team:** Overjoyed Otolaryngologists
 
-**Idea:** TBD
+**Idea:** Minesweeper But... (secret)
 
 ## Description
 
