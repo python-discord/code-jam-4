@@ -33,17 +33,22 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 Flamboyant Flamingos jam project.
 
 * UK-based team
-* ~~We have no idea what we're doing~~
+* This text editor is your worst enemy.
 
 ## Description
 
-TBD
+A terrifying text editor that:
+
+* Cyphers your text
+* Displays it in wingdings
+* Spams you with message boxes
 
 ## Setup & Installation
 
 `python3 -m pip install -r requirements.txt`
+
 `python3 main.py`
 
 ## How do I use this thing?
 
-* Carefully
+* Start it and begin typing
