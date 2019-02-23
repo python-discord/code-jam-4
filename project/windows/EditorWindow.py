@@ -148,20 +148,20 @@ class EditorEditMenu(EditorMenu):
         super().__init__(master)
 
         # Setting up individual commands in the menu.
-        self.add_command(label='Copy', command=self.on_copy)
         self.add_command(label='Cut', command=self.on_cut)
+        self.add_command(label='Copy', command=self.on_copy)
         self.add_command(label='Paste', command=self.on_paste)
-
-    def on_copy(self):
-        """
-        Called when the 'Copy' action is selected from the Edit menu.
-        """
-
-        pass
 
     def on_cut(self):
         """
         Called when the 'Cut' action is selected from the Edit menu.
+        """
+
+        pass
+
+    def on_copy(self):
+        """
+        Called when the 'Copy' action is selected from the Edit menu.
         """
 
         pass
