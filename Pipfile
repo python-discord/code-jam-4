@@ -11,6 +11,7 @@ flake8-quotes = "*"
 flake8-tidy-imports = "*"
 
 [packages]
+pyside2 = "*"
 
 [requires]
 python_version = "3.7"
