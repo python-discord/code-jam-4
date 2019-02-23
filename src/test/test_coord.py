@@ -30,8 +30,8 @@ def test_pow():
 
 
 def test_truediv():
-    assert coord1 / coord2 == Coord(1.0, 1.0)
-    assert coord1 / coord2 == Coord(1.0, 1.0)
+    assert coord1 / coord2 == Coord(1, 1)
+    assert Coord(2, 2) / 3 == Coord(1, 1)
 
 
 def test_floordiv():
