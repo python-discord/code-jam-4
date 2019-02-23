@@ -34,13 +34,33 @@ async def file_select():
 
                 async def cb(i=i):
                     manager.dir = dir / i
-                    populate_folder(manager.dir)
+                    change_dir(manager.dir)
 
                 tk.AsyncButton(
                     foldermap,
                     text=f"{i} [FOLDER]",
                     callback=cb
                 ).pack()
+        async def new():
+            dialogue = tk.AsyncToplevel(manager)
+            filename = tk.AsyncEntry(dialogue)
+            filename.pack()
+            async def cb():
+                if filename.get() != len(filename.get())*'.':
+                    for i in r'\/:*?"<>|':
+                        if i in filename.get():
+                            button.config(text='Save here\n[filename cannot contain any of:\\/:*?"<>|]')
+                            break
+                    else:
+                        manager.file = manager.dir / filename.get()
+                        await dialogue.destroy()
+                        await manager.destroy()
+                else:
+                    button.config(text='Save here\n[filename cannot be empty or a special path]')
+            button = tk.AsyncButton(dialogue, text='Save here', callback=cb)
+            button.pack()
+            await manager.wait_window(dialogue)
+        tk.AsyncButton(foldermap, text='New file',callback=new).pack()
 
     def boxcallback(*i):
         change_dir(dirbox.get())
@@ -57,7 +77,7 @@ async def file_select():
     dirbox.bind("<Return>", boxcallback)
     change_dir(".")
     await root.wait_window(manager)
-    return manager.dir
+    return manager.file
 
 
 async def save():
