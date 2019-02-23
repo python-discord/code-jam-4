@@ -12,6 +12,8 @@ from PyQt5 import QtCore, QtWidgets
 # print(add(2, 2))
 
 class MainWindow(QMainWindow):
+    num_of_objects = 0
+    items = []
     def __init__(self):
         super().__init__()
         self.title = CONSTANTS['NAME']
@@ -29,23 +31,28 @@ class MainWindow(QMainWindow):
 
     def setupUi(self):
         # MainWindow.setObjectName("MainWindow")
-        self.resize(640, 480)
+        self.setFixedSize(640, 480)
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.Add = QtWidgets.QPushButton(self.centralwidget)
         self.Add.setGeometry(QtCore.QRect(0, 3, 51, 20))
+        self.Add.clicked.connect(self.addObject)
         self.Add.setObjectName("Add")
+
         self.Remove = QtWidgets.QPushButton(self.centralwidget)
         self.Remove.setGeometry(QtCore.QRect(50, 3, 51, 20))
+        self.Remove.clicked.connect(self.removeObject)
         self.Remove.setObjectName("Remove")
+
         self.Edit = QtWidgets.QPushButton(self.centralwidget)
         self.Edit.setGeometry(QtCore.QRect(100, 3, 51, 20))
         self.Edit.setObjectName("Edit")
+
         self.treeWidget = QtWidgets.QTreeWidget(self.centralwidget)
         self.treeWidget.setGeometry(QtCore.QRect(0, 30, 631, 411))
         self.treeWidget.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.treeWidget.setObjectName("treeWidget")
-        item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
+
         self.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 640, 21))
@@ -93,9 +100,6 @@ class MainWindow(QMainWindow):
             .setText(0, _translate("MainWindow", "Items:"))
         __sortingEnabled = self.treeWidget.isSortingEnabled()
         self.treeWidget.setSortingEnabled(False)
-        self.treeWidget.topLevelItem(0)\
-            .setText(0, _translate("MainWindow", "Test copy"))
-        self.treeWidget.setSortingEnabled(__sortingEnabled)
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuPlugins.setTitle(_translate("MainWindow", "Plugins"))
         self.menuItem.setTitle(_translate("MainWindow", "Items"))
@@ -106,6 +110,23 @@ class MainWindow(QMainWindow):
         self.actionAdd_2.setText(_translate("MainWindow", "Add #todo"))
         self.actionRemove.setText(_translate("MainWindow", "Remove #todo"))
 
+    def addObject(self):
+        exec('item_' + str(self.num_of_objects) + ' = QtWidgets.QTreeWidgetItem(self.treeWidget)')
+        exec('item_' + str(self.num_of_objects) + '.setText(0, "Untitled")')
+        
+        self.num_of_objects + 1
+    
+    def removeObject(self):
+
+        #TODO make it remove instead of add
+
+        if self.items == []:
+            return
+        
+        exec('item_' + str(self.num_of_objects) + ' = QtWidgets.QTreeWidgetItem(self.treeWidget)')
+        exec('item_' + str(self.num_of_objects) + '.setText(0, "Untitled")')
+        
+        self.num_of_objects + 1
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
