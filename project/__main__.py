@@ -18,7 +18,7 @@ async def file_select():
     def populate_folder(folder):
         nonlocal dir
         dir = manager.dir
-        for i in os.listdir(folder):
+        for i in ['..'] + os.listdir(folder):
             if (dir / i).is_file():
 
                 async def cb():
