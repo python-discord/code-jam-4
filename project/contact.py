@@ -76,15 +76,18 @@ class Contact:
         """
         if orig_num in self.phone_numbers['Home']:
             self.phone_numbers['Home'].remove(orig_num)
-            self.phone_numbers['Home'].append(new_num)
+            if new_num != '':
+                self.phone_numbers['Home'].append(new_num)
 
         elif orig_num in self.phone_numbers['Work']:
             self.phone_numbers['Work'].remove(orig_num)
-            self.phone_numbers['Work'].append(new_num)
+            if new_num != '':
+                self.phone_numbers['Work'].append(new_num)
 
         elif orig_num in self.phone_numbers['Personal']:
             self.phone_numbers['Personal'].remove(orig_num)
-            self.phone_numbers['Personal'].append(new_num)
+            if new_num != '':
+                self.phone_numbers['Personal'].append(new_num)
 
     def add_address(self, address_type: str, address: str) -> None:
         """
@@ -109,7 +112,8 @@ class Contact:
         """
         if orig_add in self.email_addresses:
             self.email_addresses.remove(orig_add)
-            self.email_addresses.append(new_add)
+            if new_add != '':
+                self.email_addresses.append(new_add)
 
     def change_address(self, orig_add: str, new_add: str) -> None:
         """
@@ -120,7 +124,8 @@ class Contact:
         """
         if orig_add in self.addresses:
             self.addresses.remove(orig_add)
-            self.addresses.append(new_add)
+            if new_add != '':
+                self.addresses.append(new_add)
 
     def add_note(self, note: str) -> None:
         """
@@ -139,4 +144,5 @@ class Contact:
         """
         if orig_note in self.notes:
             self.notes.remove(orig_note)
-            self.notes.append(new_note)
+            if new_note != '':
+                self.notes.append(new_note)
