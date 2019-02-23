@@ -45,7 +45,7 @@ class MainWindow(QMainWindow):
         self.treeWidget.setGeometry(QtCore.QRect(0, 30, 631, 411))
         self.treeWidget.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.treeWidget.setObjectName("treeWidget")
-        # item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
+        item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
         self.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 640, 21))
