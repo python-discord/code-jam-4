@@ -5,39 +5,49 @@ import pathlib
 
 root = tk.AsyncTk()
 
+
 async def file_select():
+    """File select dialogue"""
     manager = tk.AsyncToplevel(root)
-    dir = pathlib.PurePath()
+    dir = pathlib.Path()
     dirbox = tk.AsyncEntry(manager)
     dirbox.grid(row=0, column=0)
     foldermap = tk.AsyncFrame(manager)
-    foldermap.grid(row=1,column=0)
+    foldermap.grid(row=1, column=0)
+
     def populate_folder(folder):
         nonlocal dir
         dir = manager.dir
         for i in os.listdir(folder):
             if (dir / i).is_file():
+
                 async def cb():
                     manager.file = dir / i
                     await manager.destroy()
-                tk.AsyncButton(foldermap, text=f'{i} [FILE]', callback=cb).pack()
-            if (dir / i).is_dir():
+
+                tk.AsyncButton(foldermap, text=f"{i} [FILE]", callback=cb).pack()
+            elif (dir / i).is_dir():
+
                 async def cb():
                     manager.dir = dir / i
                     populate_folder(manager.dir)
-                tk.AsyncButton(foldermap, text=f'{i} [FOLDER]',callback=cb).pack()
+
+                tk.AsyncButton(foldermap, text=f"{i} [FOLDER]", callback=cb).pack()
+
     def boxcallback(*i):
         change_dir(dirbox.get())
+
     def change_dir(path):
         nonlocal dir, foldermap
-        dir = pathlib.PurePath(path)
+        dir = pathlib.Path(path)
         manager.dir = dir
         asyncio.ensure_future(foldermap.destroy())
         foldermap = tk.AsyncFrame(manager)
-        foldermap.grid(row=1,column=0)
+        foldermap.grid(row=1, column=0)
         populate_folder(dir)
 
-    dirbox.bind('<Return>', boxcallback)
+    dirbox.bind("<Return>", boxcallback)
+    change_dir(".")
     await root.wait_window(manager)
     return manager.dir
 
