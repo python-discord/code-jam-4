@@ -44,10 +44,13 @@ class Minesweeper:
         '''This method walks through all the tiles which are adjacent to each other
         and also have a tile number of 0, turning them into discovered tiles'''
         self.grid[y][x] = self.DISCOVERED
-        surrounding = self.__surrounding_tiles(x, y)
-        for x1, y1 in surrounding:
-            if self.grid[y1][x1] != self.DISCOVERED and not self.get_tile_number(x1, y1):
-                self.walk_discovered_tiles(x1, y1)
+        if not self.get_tile_number(x, y):
+            surrounding = self.__surrounding_tiles(x, y)
+            for x1, y1 in surrounding:
+                if self.grid[y1][x1] != self.DISCOVERED and not self.get_tile_number(x1, y1):
+                    self.walk_discovered_tiles(x1, y1)
+                elif self.get_tile_number(x1, y1):
+                    self.grid[y1][x1] = self.DISCOVERED
 
     def get_tile_number(self, x, y) -> int:
         '''This returns the "tile number" (i.e. how many tiles surrounding said tile is a bomb)
@@ -57,10 +60,11 @@ class Minesweeper:
 
     def __surrounding_tiles(self, x, y) -> list:
         '''This returns the coordinates of the tiles surrounding (x,y)'''
-        square_9x9 = product((x - 1, x, x + 1), (y - 1, y, y + 1))  # This gets a 9x9 square at (x,y)
-        square_9x9 = list(filter(lambda c: 0 <= c[0] <= self.width-1 and 0 <= c[1] <= self.height-1, square_9x9))
-        square_9x9.remove((x,y))
-        return square_9x9
+        tiles = product((x - 1, x, x + 1), (y - 1, y, y + 1))  # This gets a 9x9 square at (x,y)
+        tiles = filter(lambda c: 0 <= c[0] < self.width and 0 <= c[1] < self.height, tiles)
+        tiles = list(tiles)
+        tiles.remove((x, y))
+        return tiles
 
     def __get_tile_safe(self, x, y):
         '''This returns the tile with the coordinates (x, y)
