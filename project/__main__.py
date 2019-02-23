@@ -94,7 +94,7 @@ class ContactsPage(Frame):
             text="Settings",
             command=lambda: self.controller.show_frame(SettingsPage)
         )
-        self.settings.grid(row=0, column=2)
+        self.settings.grid(row=0, column=2, columnspan=3)
 
         self.scroll_bar = Scrollbar(self)
         self.scroll_bar.grid(row=1, column=4)
