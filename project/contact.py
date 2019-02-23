@@ -132,11 +132,11 @@ class Contact:
 
     def change_note(self, orig_note: str, new_note: str) -> None:
         """
-        Method allows the user to change a phone number
-        :param orig_note: The original address to be changed
-        :param new_note: The address to be changed to
+        Method allows the user to change a note
+        :param orig_note: The original note to be changed
+        :param new_note: The note to be changed to
         :return: None
         """
         if orig_note in self.notes:
-            self.addresses.remove(orig_note)
-            self.addresses.append(new_note)
+            self.notes.remove(orig_note)
+            self.notes.append(new_note)
