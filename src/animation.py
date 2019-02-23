@@ -42,9 +42,8 @@ class Coord(NamedTuple):
         y = op(self.y, other.y)
         return Coord(x, y)
 
-    @property
-    def midpoint(self) -> Coord:
-        return self // Coord(2, 2)
+    def midpoint(self, other: Coord) -> Coord:
+        return (self + other) // 2
 
     __add__ = partialmethod(__apply, operator.add)
     __sub__ = partialmethod(__apply, operator.sub)
