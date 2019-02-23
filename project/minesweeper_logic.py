@@ -23,7 +23,8 @@ class Minesweeper:
 
     def click_tile(self, x, y) -> bool:
         '''This clicks a certain tile at point (x, y)
-        The grid should update and the tiles should change from UNDISCOVERED to DISCOVERED, depending on where they are.
+        The grid should update and the tiles should change from
+        UNDISCOVERED to DISCOVERED, depending on where they are.
         returns True if the tile is a mine, returns false otherwise'''
         if self.grid[y][x] == self.MINE:
             return True
@@ -42,21 +43,23 @@ class Minesweeper:
             print()
 
 
-
 if __name__ == '__main__':
     game = Minesweeper(16, 16)
     game.print_grid()
 
     # Test for the bombs in grid function
     game.put_bombs_in_grid(10)
-    assert [tile for tile_list in game.grid for tile in tile_list].count(game.MINE) == 10, 'There are not mines in the grid'
+    assert [tile for tile_list in game.grid for tile in tile_list].count(game.MINE) == 10, \
+        'There are not mines in the grid'
 
     # Test for the click_tile function to make tiles discoverable
     game_over = game.click_tile(5, 5)
-    assert game.DISCOVERED in [tile for tile_list in game.grid for tile in tile_list], 'None of the tiles have been discovered after clicking'
+    assert game.DISCOVERED in [tile for tile_list in game.grid for tile in tile_list], \
+        'None of the tiles have been discovered after clicking'
 
     # Test the get_tile_number function returns an integer
     tile_number = game.get_tile_number(5, 5)
-    assert isinstance(tile_number, int), 'The get_tile_number function didn\'t return an integer'
+    assert isinstance(tile_number, int), \
+        'The get_tile_number function didn\'t return an integer'
 
     game.print_grid()
