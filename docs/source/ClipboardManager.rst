@@ -12,6 +12,14 @@ ClipboardManager.ClipboardManager module
     :undoc-members:
     :show-inheritance:
 
+ClipboardManager.ClipboardObject module
+---------------------------------------
+
+.. automodule:: ClipboardManager.ClipboardObject
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ClipboardManager.HistoryManager module
 --------------------------------------
 

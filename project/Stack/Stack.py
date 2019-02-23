@@ -52,6 +52,8 @@ class Stack:
         self._stack.append(item)
 
     def peek(self):
+        if not self._stack:
+            return None
         return self._stack[-1]
 
     def pop(self):
