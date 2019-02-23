@@ -1,3 +1,4 @@
+from itertools import product
 import random
 
 
@@ -28,7 +29,6 @@ class Minesweeper:
             self.grid[y][x] = self.MINE
         return coordinates
 
-
     def click_tile(self, x, y) -> bool:
         '''This clicks a certain tile at point (x, y)
         The grid should update and the tiles should change from
@@ -40,7 +40,20 @@ class Minesweeper:
     def get_tile_number(self, x, y) -> int:
         '''This returns the "tile number" (i.e. how many tiles surrounding said tile is a bomb)
         returns an integer between 0 and 8'''
-        pass
+        square_9x9 = product((x-1, x, x+1), (y-1, y, y+1))  # This gets a 9x9 square at (x,y)
+        tiles = [self.__get_tile_safe(x1, y1) for x1, y1 in square_9x9 if (x1, y1) != (x, y)]
+        return tiles.count(self.MINE)
+
+    def __get_tile_safe(self, x, y):
+        '''This returns the tile with the coordinates (x, y)
+        Returns None if the tile doesnt exist
+        Returns None if x or y are negative'''
+        if x < 0 and y < 0:
+            return None
+        try:
+            return self.grid[y][x]
+        except IndexError:
+            return None
 
     def print_grid(self):
         '''This prints the grid, used for debugging purposes'''
