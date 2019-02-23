@@ -5,6 +5,10 @@ verify_ssl = true
 
 [dev-packages]
 flake8 = "*"
+flake8-bugbear = "*"
+flake8-import-order = "*"
+flake8-quotes = "*"
+flake8-tidy-imports = "*"
 
 [packages]
 
