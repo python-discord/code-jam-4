@@ -25,14 +25,22 @@ async def file_select():
                     manager.file = dir / i
                     await manager.destroy()
 
-                tk.AsyncButton(foldermap, text=f"{i} [FILE]", callback=cb).pack()
+                tk.AsyncButton(
+                    foldermap,
+                    text=f"{i} [FILE]",
+                    callback=cb
+                ).pack()
             elif (dir / i).is_dir():
 
                 async def cb():
                     manager.dir = dir / i
                     populate_folder(manager.dir)
 
-                tk.AsyncButton(foldermap, text=f"{i} [FOLDER]", callback=cb).pack()
+                tk.AsyncButton(
+                    foldermap,
+                    text=f"{i} [FOLDER]",
+                    callback=cb
+                ).pack()
 
     def boxcallback(*i):
         change_dir(dirbox.get())
@@ -67,7 +75,8 @@ root.dropdown = tk.AsyncMenu(root.menu)
 
 root.dropdown.add_command(label="Do nothing", command=lambda: None)
 root.dropdown.add_command(
-    label="Save processor time", command=lambda: asyncio.ensure_future(root.destroy())
+    label="Save processor time",
+    command=lambda: asyncio.ensure_future(root.destroy())
 )
 
 root.menu.add_cascade(label="Unhelpful menu", menu=root.dropdown)

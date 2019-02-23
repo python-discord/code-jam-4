@@ -8,6 +8,7 @@ flake8 = "*"
 
 [packages]
 asynctk = "==0.0.8a0"
+flake8 = "*"
 
 [requires]
 python_version = "3.7"
