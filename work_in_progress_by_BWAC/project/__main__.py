@@ -2,8 +2,10 @@ from PyQt5.QtWidgets import QMainWindow, QApplication
 
 import sys
 
-from project import ClipboardManager
-from .utils import CONSTANTS
+#from project import ClipboardManager
+#from .utils import CONSTANTS
+
+#also these errored
 
 from PyQt5 import QtCore, QtWidgets
 
@@ -14,7 +16,7 @@ from PyQt5 import QtCore, QtWidgets
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.title = CONSTANTS['NAME']
+        self.title = 'Enter name' #enter the name of the window (i dont know why the CONSTANTS['NAME'] is for)
         # self.left = 10
         # self.top = 10
         # self.width = 640
@@ -29,37 +31,56 @@ class MainWindow(QMainWindow):
 
     def setupUi(self):
         # MainWindow.setObjectName("MainWindow")
-        self.resize(640, 480)
+
+        self.setFixedSize(631, 462) 
+        '''makes it non resize able, change to self.resize(640, 480) for it not to be
+        it is 631, 761 because it looks nice
+        '''
+
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
+
         self.Add = QtWidgets.QPushButton(self.centralwidget)
         self.Add.setGeometry(QtCore.QRect(0, 3, 51, 20))
         self.Add.setObjectName("Add")
+
         self.Remove = QtWidgets.QPushButton(self.centralwidget)
         self.Remove.setGeometry(QtCore.QRect(50, 3, 51, 20))
         self.Remove.setObjectName("Remove")
+
         self.Edit = QtWidgets.QPushButton(self.centralwidget)
         self.Edit.setGeometry(QtCore.QRect(100, 3, 51, 20))
         self.Edit.setObjectName("Edit")
+
         self.treeWidget = QtWidgets.QTreeWidget(self.centralwidget)
         self.treeWidget.setGeometry(QtCore.QRect(0, 30, 631, 411))
         self.treeWidget.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.treeWidget.setObjectName("treeWidget")
         item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
+
         self.setCentralWidget(self.centralwidget)
+
         self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 640, 21))
         self.menubar.setObjectName("menubar")
+
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
+
         self.menuPlugins = QtWidgets.QMenu(self.menubar)
         self.menuPlugins.setObjectName("menuPlugins")
+
         self.menuItem = QtWidgets.QMenu(self.menubar)
         self.menuItem.setObjectName("menuItem")
+
         self.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(self)
-        self.statusbar.setObjectName("statusbar")
-        self.setStatusBar(self.statusbar)
+        
+        #self.statusbar = QtWidgets.QStatusBar(self)
+        #self.statusbar.setObjectName("statusbar")
+        #self.setStatusBar(self.statusbar)
+
+        #if you want the status bar back, set the size of the window to 640, 280
+
         self.actionAdd = QtWidgets.QAction(self)
         self.actionAdd.setObjectName("actionAdd")
         self.actionDelete = QtWidgets.QAction(self)
@@ -112,7 +133,7 @@ if __name__ == '__main__':
     # label = QLabel('Hello World!')
     # label.show()
 
-    clipboard_mgr = ClipboardManager.ClipboardManager()
+    #clipboard_mgr = ClipboardManager.ClipboardManager()
     main_window = MainWindow()
 
     sys.exit(app.exec_())
