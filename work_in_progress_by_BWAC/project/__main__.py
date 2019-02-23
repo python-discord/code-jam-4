@@ -2,8 +2,8 @@ from PyQt5.QtWidgets import QMainWindow, QApplication
 
 import sys
 
-#from project import ClipboardManager
-#from .utils import CONSTANTS
+from project import ClipboardManager
+from .utils import CONSTANTS
 
 #also these errored
 
@@ -42,6 +42,7 @@ class MainWindow(QMainWindow):
 
         self.Add = QtWidgets.QPushButton(self.centralwidget)
         self.Add.setGeometry(QtCore.QRect(0, 3, 51, 20))
+        self.Add.clicked.connect(self.addObject)
         self.Add.setObjectName("Add")
 
         self.Remove = QtWidgets.QPushButton(self.centralwidget)
@@ -74,7 +75,7 @@ class MainWindow(QMainWindow):
         self.menuItem.setObjectName("menuItem")
 
         self.setMenuBar(self.menubar)
-        
+
         #self.statusbar = QtWidgets.QStatusBar(self)
         #self.statusbar.setObjectName("statusbar")
         #self.setStatusBar(self.statusbar)
@@ -83,20 +84,28 @@ class MainWindow(QMainWindow):
 
         self.actionAdd = QtWidgets.QAction(self)
         self.actionAdd.setObjectName("actionAdd")
+
         self.actionDelete = QtWidgets.QAction(self)
         self.actionDelete.setObjectName("actionDelete")
+
         self.action_todo = QtWidgets.QAction(self)
         self.action_todo.setObjectName("action_todo")
+
         self.actionSettings = QtWidgets.QAction(self)
         self.actionSettings.setObjectName("actionSettings")
+
         self.actionAdd_2 = QtWidgets.QAction(self)
         self.actionAdd_2.setObjectName("actionAdd_2")
+
         self.actionRemove = QtWidgets.QAction(self)
         self.actionRemove.setObjectName("actionRemove")
+
         self.menuFile.addAction(self.actionSettings)
         self.menuPlugins.addAction(self.action_todo)
+
         self.menuItem.addAction(self.actionAdd_2)
         self.menuItem.addAction(self.actionRemove)
+
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuPlugins.menuAction())
         self.menubar.addAction(self.menuItem.menuAction())
@@ -126,6 +135,9 @@ class MainWindow(QMainWindow):
         self.actionSettings.setText(_translate("MainWindow", "Settings #todo"))
         self.actionAdd_2.setText(_translate("MainWindow", "Add #todo"))
         self.actionRemove.setText(_translate("MainWindow", "Remove #todo"))
+
+
+    def addObject(self):
 
 
 if __name__ == '__main__':
