@@ -42,6 +42,8 @@ A terrifying text editor that:
 * Cyphers your text
 * Displays it in wingdings
 * Spams you with message boxes
+* You have to click a button once per byte
+* Unintuitive shortcuts
 
 ## Setup & Installation
 
@@ -52,3 +54,4 @@ A terrifying text editor that:
 ## How do I use this thing?
 
 * Start it and begin typing
+* Press Alt + F4 to save your file (no, really)
