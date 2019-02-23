@@ -1,1 +1,0 @@
-# this file will only be used to test the editor window and will be removed during release.
