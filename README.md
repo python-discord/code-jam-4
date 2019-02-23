@@ -47,9 +47,7 @@ A terrifying text editor that:
 
 ## Setup & Installation
 
-`python3 -m pip install -r requirements.txt`
-
-`python3 main.py`
+Pipenv crap
 
 ## How do I use this thing?
 
