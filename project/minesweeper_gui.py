@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets
 from itertools import product
+from functools import partial
 import sys
-
 
 class Minesweeper(QtWidgets.QWidget):
     """Minesweeper Game Widget"""
@@ -19,14 +19,14 @@ class Minesweeper(QtWidgets.QWidget):
 
         for row, column in product(range(self.height), range(self.width)):
             button = QtWidgets.QPushButton()
-            button.clicked.connect(self.button_clicked)
+            button.clicked.connect(partial(self.button_clicked, row, column))
             button.setFixedSize(30, 30)
             layout.addWidget(button, row, column)
 
         self.setLayout(layout)
 
     def button_clicked(self, row, column):
-        print("Button Clicked")
+        print("Button Clicked", row, column)
 
 
 if __name__ == '__main__':
