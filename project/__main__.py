@@ -4,6 +4,9 @@ import os
 import pathlib
 
 
+import msplocale as kata
+
+
 class Framed(tk.AsyncTk):
 
     def __init__(self):
@@ -23,13 +26,13 @@ class Framed(tk.AsyncTk):
 
         self.dropdown = tk.AsyncMenu(self.menu)
 
-        self.dropdown.add_command(label="Do nothing", command=lambda: None)
+        self.dropdown.add_command(label=kata.menu.unhelpful.nothing, command=lambda: None)
         self.dropdown.add_command(
-            label="Save processor time",
+            label=kata.menu.unhelpful.save,
             command=lambda: asyncio.ensure_future(self.destroy())
         )
 
-        self.menu.add_cascade(label="Unhelpful menu", menu=self.dropdown)
+        self.menu.add_cascade(label=kata.menu.unhelpful.name, menu=self.dropdown)
 
     async def file_select(self):
         """File select dialogue"""
@@ -52,9 +55,9 @@ class Framed(tk.AsyncTk):
 
                     tk.AsyncButton(
                         foldermap,
-                        text=f"{i} [FILE]",
+                        text=f"{i} {kata.menu.fileselect.file}",
                         callback=cb
-                    ).pack()
+                    ).pack(fill=tk.X)
                 elif (dir / i).is_dir():
 
                     async def cb(i=i):
@@ -63,9 +66,9 @@ class Framed(tk.AsyncTk):
 
                     tk.AsyncButton(
                         foldermap,
-                        text=f"{i} [FOLDER]",
+                        text=f"{i} {kata.menu.fileselect.folder}",
                         callback=cb
-                    ).pack()
+                    ).pack(fill=tk.X)
 
             async def new():
                 dialogue = tk.AsyncToplevel(manager)
@@ -77,7 +80,7 @@ class Framed(tk.AsyncTk):
                         for i in r'\/:*?"<>|':
                             if i in filename.get():
                                 button.config(
-                                    text='Save here\n[filename cannot contain any of:\\/:*?"<>|]'
+                                    text=kata.menu.fileselect.button.invalid
                                 )
                                 break
                         else:
@@ -86,12 +89,16 @@ class Framed(tk.AsyncTk):
                             await manager.destroy()
                     else:
                         button.config(
-                            text='Save here\n[filename cannot be empty or a special path]'
+                            text=kata.menu.fileselect.button.special
                         )
-                button = tk.AsyncButton(dialogue, text='Save here', callback=cb)
-                button.pack()
+                button = tk.AsyncButton(
+                    dialogue,
+                    text=kata.menu.fileselect.button.default,
+                    callback=cb
+                )
+                button.pack(fill=tk.X)
                 await manager.wait_window(dialogue)
-            tk.AsyncButton(foldermap, text='New file', callback=new).pack()
+            tk.AsyncButton(foldermap, text=kata.menu.fileselect.new, callback=new).pack(fill=tk.X)
 
         def boxcallback(*i):
             change_dir(dirbox.get())
