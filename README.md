@@ -37,13 +37,12 @@ Flamboyant Flamingos jam project.
 
 ## Description
 
-A terrifying text editor that:
+An intense editor that:
 
-* Cyphers your text
-* Displays it in wingdings
-* Spams you with message boxes
-* You have to click a button once per byte
-* Unintuitive shortcuts
+* Is unintuitive
+* Has the entire UI in katakana
+* Makes you click a button once per byte during saving
+* Has unintuitive shortcuts
 
 ## Setup & Installation
 
@@ -51,5 +50,5 @@ Pipenv crap
 
 ## How do I use this thing?
 
-* Start it and begin typing
+* Start it and begin creating
 * Press Alt + F4 to save your file (no, really)
