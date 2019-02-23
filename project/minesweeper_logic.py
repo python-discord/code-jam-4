@@ -36,7 +36,7 @@ class Minesweeper:
         returns True if the tile is a mine, returns false otherwise'''
         if self.grid[y][x] == self.MINE:
             return True
-        elif self.grid[y][x] != self.DISCOVERED:
+        elif self.grid[y][x] == self.UNDISCOVERED:
             self.grid[y][x] = self.DISCOVERED
             self.get_tile_number(self, x, y)
             return False
