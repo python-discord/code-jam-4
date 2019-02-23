@@ -87,10 +87,10 @@ class MainWindow(QMainWindow):
         self._central_widget_layout.addWidget(self._main_list_widget)
         # self._central_widget_layout.addStretch(1)
 
-        # self.Add = QtWidgets.QPushButton(self._central_widget)
-        # self.Add.setGeometry(QtCore.QRect(0, 3, 51, 20))
-        # self.Add.clicked.connect(self.addObject)
-        # self.Add.setObjectName("Add")
+        self.Add = QtWidgets.QPushButton(self._central_widget)
+        self.Add.setGeometry(QtCore.QRect(0, 3, 51, 20))
+        self.Add.clicked.connect(self._add_Object)
+        self.Add.setObjectName("Add")
 
         # self.Remove = QtWidgets.QPushButton(self._central_widget)
         # self.Remove.setGeometry(QtCore.QRect(50, 3, 51, 20))
@@ -168,10 +168,10 @@ class MainWindow(QMainWindow):
         # self.actionAdd_2.setText(_translate("MainWindow", "Add #todo"))
         # self.actionRemove.setText(_translate("MainWindow", "Remove #todo"))
 
-    # def _add_object(self):
-    #     exec('item_' + str(self.num_of_objects) + ' = QtWidgets.QTreeWidgetItem(self.treeWidget)')
-    #     exec('item_' + str(self.num_of_objects) + '.setText(0, "Untitled")')
-    #
+    def _add_Object(self):
+        exec('item_' + str(self.num_of_objects) + ' = QtWidgets.QTreeWidgetItem(self.treeWidget)')
+        exec('item_' + str(self.num_of_objects) + '.setText(0, "Untitled")')
+    
     #     self.num_of_objects + 1
     #
     # def removeObject(self):
