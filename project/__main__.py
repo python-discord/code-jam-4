@@ -21,7 +21,7 @@ async def file_select():
         for i in ['..'] + os.listdir(folder):
             if (dir / i).is_file():
 
-                async def cb():
+                async def cb(i=i):
                     manager.file = dir / i
                     await manager.destroy()
 
@@ -32,7 +32,7 @@ async def file_select():
                 ).pack()
             elif (dir / i).is_dir():
 
-                async def cb():
+                async def cb(i=i):
                     manager.dir = dir / i
                     populate_folder(manager.dir)
 
