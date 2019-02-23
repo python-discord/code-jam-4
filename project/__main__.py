@@ -41,15 +41,19 @@ async def file_select():
                     text=f"{i} [FOLDER]",
                     callback=cb
                 ).pack()
+
         async def new():
             dialogue = tk.AsyncToplevel(manager)
             filename = tk.AsyncEntry(dialogue)
             filename.pack()
+
             async def cb():
                 if filename.get() != len(filename.get())*'.':
                     for i in r'\/:*?"<>|':
                         if i in filename.get():
-                            button.config(text='Save here\n[filename cannot contain any of:\\/:*?"<>|]')
+                            button.config(
+                                text='Save here\n[filename cannot contain any of:\\/:*?"<>|]'
+                            )
                             break
                     else:
                         manager.file = manager.dir / filename.get()
@@ -60,7 +64,7 @@ async def file_select():
             button = tk.AsyncButton(dialogue, text='Save here', callback=cb)
             button.pack()
             await manager.wait_window(dialogue)
-        tk.AsyncButton(foldermap, text='New file',callback=new).pack()
+        tk.AsyncButton(foldermap, text='New file', callback=new).pack()
 
     def boxcallback(*i):
         change_dir(dirbox.get())
