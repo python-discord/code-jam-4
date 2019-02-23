@@ -1,0 +1,4 @@
+[core]
+    autocrlf = input
+    eol = lf
+    whitespace=trailing-space,space-before-tab,-indent-with-non-tab,tab-in-indent,-cr-at-eol,tabwidth=4
