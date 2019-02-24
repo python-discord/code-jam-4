@@ -7,9 +7,9 @@ verify_ssl = true
 flake8 = "*"
 
 [packages]
-asynctk = "==2019.2.24.post1"
 flake8 = "*"
 pillow = "*"
+asynctk = "*"
 
 [requires]
 python_version = "3.7"

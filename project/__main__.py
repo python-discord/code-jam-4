@@ -109,11 +109,11 @@ class Framed(tk.AsyncTk):
                     callback=cb
                 )
                 button.pack(fill=tk.X)
-                # tk.AsyncButton(
-                #     dialogue,
-                #     text=kata.menu.fileselect.button.cancel,
-                #     callback=dialogue.destroy
-                # ).pack(fill=tk.X)
+                tk.AsyncButton(
+                    dialogue,
+                    text=kata.menu.fileselect.button.cancel,
+                    callback=dialogue.destroy
+                ).pack(fill=tk.X)
                 await manager.wait_window(dialogue)
             tk.AsyncButton(foldermap, text=kata.menu.fileselect.new, callback=new).pack(fill=tk.X)
 
