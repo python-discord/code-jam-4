@@ -11,6 +11,7 @@ from .canvas import Canvas, EntrySection
 def nothing(*i):
     pass
 
+
 class Framed(tk.AsyncTk):
 
     def __init__(self):
