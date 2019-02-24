@@ -60,50 +60,33 @@ class KeyboardSection(tk.Frame):
         tk.Frame.__init__(self, master, *args, **kwargs)
         self.master = master
 
+        self.keys_per_row = kwargs.pop('keys_per_row', 15)
+
         self.buttons = []
+
+        with open('key_descriptions.json', 'r') as descriptions_file:
+            self.key_descriptions = json.load(descriptions_file)
 
         self.make_keys()
 
+    def add_key(self, key_name: str):
+        row_index, col_index = divmod(len(self.buttons), self.keys_per_row)
+        key_dict = self.key_descriptions[key_name]
+        key_size = key_dict['size']
+        new_key = KeyboardKey.from_master_and_dict(self, key_dict)
+        self.buttons.append(new_key)
+        new_key.grid(row=row_index,
+                     column=col_index,
+                     columnspan=key_size,
+                     sticky='we'
+                     )
+
     def make_keys(self):
-        with open('keyboard_keys.json') as keyboard_keys_file:
-            keyboard = json.load(keyboard_keys_file)
+        with open('saved_keyboard.json') as saved_keys_file:
+            saved_keys = json.load(saved_keys_file)
 
-        double_keys = [
-            "shift",
-            "enter",
-            "tab",
-            "backspace",
-        ]
-
-        for idy, row in enumerate(keyboard):
-            for idx, letter in enumerate(row):
-                if letter == "":
-                    continue
-                if isinstance(letter, list):
-                    if len(letter) > 2:
-                        button = KeyboardKey(self, letter[0],
-                                             char=letter[1],
-                                             shift_char=letter[2]
-                                             )
-                    else:
-                        button = KeyboardKey(self, letter[0],
-                                             shift_char=letter[1]
-                                             )
-                    letter = letter[0]
-                else:
-                    button = KeyboardKey(self, letter)
-                self.buttons.append(button)
-                if letter in double_keys:
-                    colspan = 2
-                elif letter == "space":
-                    colspan = 14
-                else:
-                    colspan = 1
-
-                button.grid(row=idy, column=idx,
-                            columnspan=colspan,
-                            sticky="we"
-                            )
+        for key_to_add in saved_keys:
+            self.add_key(key_to_add)
 
     def send_key(self, char):
         self.master.receive_key(char)
@@ -132,8 +115,13 @@ class KeyboardKey(tk.Button):
     """
     KEY_SIZE = 32
 
+    @classmethod
+    def from_master_and_dict(self, master, key_dict):
+        return KeyboardKey(master, **key_dict)
+
     def __init__(self, master: KeyboardSection, name,
-                 char=None, shift_name=None, shift_char=None, *args, **kwargs
+                 char=None, shift_name=None, shift_char=None, size=None,
+                 *args, **kwargs
                  ):
         tk.Button.__init__(self, master, *args, **kwargs)
         self.master = master
@@ -168,14 +156,6 @@ class KeyboardKey(tk.Button):
 
         self.clicks = 0
         self.shift_on = False
-
-        # print("name: {}, char: {}, shift_name: {}, shift_char: {}".format(
-        #     self.text_name,
-        #     self.char,
-        #     self.shift_name,
-        #     self.shift_char,
-        #     )
-        # )
 
         if name == "shift":
             button_action = self.send_shift
