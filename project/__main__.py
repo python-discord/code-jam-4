@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter.ttk import *
 from project.contact import Contact
 
 
@@ -18,24 +19,16 @@ class Controller(Tk):
     """
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
-        container = Frame(self)
-        container.pack(side=TOP, fill=BOTH, expand=True)
-
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
-
-        self.frames = {}
+        self.geometry('250x300')
+        for i in range(5):
+            self.rowconfigure(i, weight=1)
+            self.columnconfigure(i, weight=1)
+        notebook = Notebook(self)
+        notebook.grid(row=0, column=0, columnspan=5, rowspan=5, sticky=N+S+E+W)
 
         for page in [ContactsPage, AddContactPage, SettingsPage]:
-            frame = page(container, self)
-            self.frames[page] = frame
-            frame.grid(row=0, column=0, sticky="nsew")
-
-        self.show_frame(ContactsPage)
-
-    def show_frame(self, page):
-        frame = self.frames[page]
-        frame.tkraise()
+            page = Frame(notebook)
+            notebook.add(page, text='Tab')
 
 
 class ContactsPage(Frame):
@@ -189,7 +182,7 @@ class AddContactPage(Frame):
                 the contacts Listbox on ContactsPage.
     clear_all: Loops over all text entries and clears them
     """
-    def __init__(self, master, controller):
+    def __init__(self, master, controller, **kw):
         Frame.__init__(self, master)
         self.master = master
         self.controller = controller
@@ -251,7 +244,7 @@ class AddContactPage(Frame):
         self.add_to_contacts = Button(self, text="Submit to Contacts", command=lambda: self.add_contact())
         self.add_to_contacts.grid(row=7, column=0, columnspan=2, sticky=N+S+E+W)
 
-        self.clear = Button(self,text="Clear All", command=lambda: self.clear_all())
+        self.clear = Button(self, text="Clear All", command=lambda: self.clear_all())
         self.clear.grid(row=7, column=2, sticky=N+S+E+W)
 
         self.enter_notes = Entry(self)
