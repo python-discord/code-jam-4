@@ -1,0 +1,37 @@
+TERMS AND CONDITIONS OF USE
+
+Please read the following terms and conditions carefully before accepting. Scroll to the bottom, then the top, then the bottom to unlock the AGREE feature.
+
+This agreement governs your use of crocpad++ (henceforth referred to as the SOFTWARE). This agreement is between you (subsequently referred to as the USER) and the Cool Crocodiles (hereafter referred to as the CROCODILES).
+
+By launching the SOFTWARE the USER has agreed to this license.
+
+ARBITRATION
+By agreeing to this license, the USER has forfeited the USER'S right to a jury trial, in the event that the USER may commit, or think about committing, any license violations against the CROCODILES. The USER'S fate will be decided by a neutral arbitrator hand picked by the CROCODILES in the jurisdiction of the choice of the CROCODILES. The USER agrees that the USER will abide by the arbitrator's decision.
+
+USE RESTRICTION
+The SOFTWARE may not be used for any for-profit, non-profit, revenue-generating, educational, informational, or entertainment purposes without the explicit written consent of the CROCODILES.
+
+CONTENT RIGHTS
+By agreeing to this license, the USER has transferred to the CROCODILES a non-exclusive, transferable, sub-licensable, royalty-free, worldwide license to view, read, use, sell, auction, transform, transmit, transmogrify, polymorph, true polymorph, eat, consume, feed to baby CROCODILES, or otherwise make use of any keystrokes, surreptitious webcam captures, files found lying around on the USER'S filesystem, or other data that may be created or incurred in the USER'S use of the SOFTWARE.
+
+DEVICE LIMIT
+The USER may not use or view the SOFTWARE on more than one physical device per user. If the USER requires the use of the SOFTWARE on more than one device, ever, in the USER'S life, the USER must purchase additional copies of the SOFTWARE.
+
+UNAUTHORIZED MODIFICATIONS
+The USER may not modify, disassemble, decompile, analyze, debug, configure, reconfigure, or otherwise change the SOFTWARE. Any unauthorized modification to the SOFTWARE will render it permanently unusable.
+
+DATA SHARING
+By agreeing to this license, the USER agrees that the CROCODILES may transfer any information incurred in the relationship between the USER and the CROCODILES (see CONTENT RIGHTS above) to law enforcement as required by law, as not required by law, if the information is critical of law enforcement, or if we think that law enforcement may like it.
+
+DATA INTEGRITY
+CROCODILES shall not be held responsible for data loss caused by the SOFTWARE. The USER is responsible for all data integrity and backups, including but not limited to backing up each keystroke at the time that it is entered into the SOFTWARE.
+
+CROCODILES may at any time, in their sole discretion, change these Terms and Conditions without the USER'S consent and without notifying the USER. The USER is responsible for precognitively agreeing with, acting upon and following any updates to these Terms and Conditions.
+
+BREACH
+Any breach by the USER of these Terms and Conditions will immediately revoke the USER'S permission to use the SOFTWARE. The USER agrees to purge all copies of the SOFTWARE from all devices in their possession upon said breach.
+
+EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT UNLIMITED TO, THE FALSELY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO THE USER FOR DAMAGES, INCLUDING ANY GENERAL, MUNDANE, INFERNAL, ASTRAL, INCIDENTAL OR INCONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM.
