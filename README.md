@@ -33,7 +33,7 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 Flamboyant Flamingos jam project.
 
 * UK-based team
-* This text editor is your worst enemy.
+* This paint tool is your worst enemy.
 
 ## Description
 
@@ -46,7 +46,7 @@ An intense editor that:
 
 ## Setup & Installation
 
-Pipenv crap
+* `pipenv run start`
 
 ## How do I use this thing?
 
