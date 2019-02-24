@@ -7,9 +7,11 @@ verify_ssl = true
 flake8 = "*"
 
 [packages]
+flake8 = "*"
 
 [requires]
 python_version = "3.7"
 
 [scripts]
+start = "python -m project"
 lint = "python -m flake8"
