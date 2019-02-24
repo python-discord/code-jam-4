@@ -13,3 +13,10 @@ class menu:
             special = 'サヴ ヒル\n【ファイルナム カッノタ ビー エムプーチ オル ア スペシアル パス】'
             invalid = 'サヴ ヒル\n【ファイルナム カッノタ コンタイヌ エニ オヴ: \\/:*?"<>|】'
         new = 'ニュウ ファイル'
+
+
+class entrysection:
+    x = "x"
+    y = "y"
+    colour = "colour"
+    confirm = "confirm"

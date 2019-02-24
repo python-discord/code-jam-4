@@ -5,6 +5,7 @@ import pathlib
 
 
 import msplocale as kata
+from canvas import Canvas, EntrySection
 
 
 class Framed(tk.AsyncTk):
@@ -13,12 +14,17 @@ class Framed(tk.AsyncTk):
         super().__init__()
 
         self.setupMenu()
+
+        self.canvas = Canvas(self, height=400, width=400)  # Temporary - will make them settable
+        self.entrysection = EntrySection(self)
+
         self.protocol("WM_DELETE_WINDOW", lambda: asyncio.ensure_future(self.save()))
         self.bind("<Control-s>", lambda i: asyncio.ensure_future(self.destroy()))
         self.bind("<Control-S>", lambda i: asyncio.ensure_future(self.destroy()))
 
     async def save(self):
-        print(await self.file_select())
+        file = await self.file_select()
+        await self.canvas.save(file)
 
     def setupMenu(self):
         self.menu = tk.AsyncMenu(self)
