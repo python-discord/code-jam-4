@@ -38,6 +38,7 @@ class Minesweeper(QtWidgets.QWidget):
         self.setObjectName('minesweeper')
         self.width = width
         self.height = height
+        self.tile_size = (25, 25)
         self.controller = logic.Minesweeper(self.width, self.height)
         self.controller.put_mines_in_grid(10)
         self.button_grid = []
@@ -52,7 +53,7 @@ class Minesweeper(QtWidgets.QWidget):
         '''Setup the GUI for the minesweeper widget'''
         self.load_css()
         self.grid_layout = QtWidgets.QGridLayout(self)
-        self.grid_layout.setSpacing(1)
+        self.grid_layout.setSpacing(0)
 
         for row in range(self.width):
             row_array = []
@@ -61,7 +62,7 @@ class Minesweeper(QtWidgets.QWidget):
                 button.clicked.connect(partial(self.button_clicked, row, column))
                 button.right_clicked.connect(partial(self.place_flag, row, column))
                 button.health_decreased.connect(partial(self.button_health_update, row, column))
-                button.setFixedSize(30, 30)
+                button.setFixedSize(*self.tile_size)
                 self.grid_layout.addWidget(button, row, column)
                 row_array.append(button)
             self.button_grid.append(row_array)
@@ -95,13 +96,14 @@ class Minesweeper(QtWidgets.QWidget):
                         font.setBold(True)
                         label = QtWidgets.QLabel(str(number))
                         label.setStyleSheet('color: ' + colours[str(number)].name())
-                        label.setStyleSheet('color: ' + colours[str(number)].name())
                         label.setFont(font)
                         label.setAlignment(QtCore.Qt.AlignCenter)
+                        label.setFixedSize(*self.tile_size)
                         self.grid_layout.addWidget(label, y, x)
                 elif tile == self.controller.MINE:
                     self.button_grid[y][x].hide()
                     label = QtWidgets.QLabel(self)
+                    label.setFixedSize(*self.tile_size)
                     size = label.size()
                     mine_icon = QtGui.QPixmap(':/images/mine.png')
                     scaled_mine_icon = mine_icon.scaled(
