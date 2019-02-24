@@ -1,15 +1,22 @@
 import pyowm
 import random
-import json
 
-from typing import Iterable, Dict, Union
+from typing import Iterable, Dict
 
 from pyowm.weatherapi25.weather import Weather
 from pyowm.exceptions.api_response_error import UnauthorizedError
 
 
 class ForecastFetcher:
+    """
+    This object makes it easy for the frontend to request the weather data and use it.
 
+    Example usage:
+
+    ff = ForecastFetcher(OWM_API_KEY_PATH)
+    ff.fetch_forecast_7_days('Berlin', unit='Celsius')
+
+    """
     def __init__(self, api_key_path: str):
         """Returns a ForecastFetcher object which fetched the weather for the
            next seven days.
@@ -27,7 +34,7 @@ class ForecastFetcher:
         except UnauthorizedError:
             raise AttributeError("The provided API key is not valid.")
 
-    def fetch_forecast_7_days(self, location: str, unit: str) -> Iterable[Dict[str, Union[int, Dict]]]:
+    def fetch_forecast_7_days(self, location: str, unit: str) -> Iterable[Dict[str, str]]:
         """Fetches the forecast for the next seven days from openweathermap.org
 
         :param location: The name of the location this
@@ -39,7 +46,7 @@ class ForecastFetcher:
             msg = f"There is no weather data for this location={location}"
             raise AttributeError(msg)
 
-        forecast_dicts = [json.loads(f.to_JSON()) for f in forecasts]
+        forecast_dicts = [format_forecast(f, unit) for f in forecasts]
         return forecast_dicts
 
 
