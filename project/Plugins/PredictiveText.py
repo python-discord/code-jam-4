@@ -3,7 +3,7 @@ import string
 
 
 def random_spelling_mistakes(text):
-    '''
+    """
     Usage: Will add random letters to words (only words above 2 letters)
     then return the new sentence.
 
@@ -12,7 +12,7 @@ def random_spelling_mistakes(text):
     print(random_spelling_mistakes('Hello, yes hi'))
 
     Heqllo, yeVs hi
-    '''
+    """
 
     # TODO: make it the same case as word changing, looks better
     text = text.split()
@@ -25,8 +25,8 @@ def random_spelling_mistakes(text):
         else:
             spot = randint(0, len(word) - 1)
             if spot == 0:
-                '''Give it two chances to not be 0, I think its better if its mostly the middle letters that get 
-                removed'''
+                '''Give it two chances to not be 0, I think its better
+                if its mostly the middle letters that get removed'''
                 spot = randint(0, len(word) - 1)
                 if spot == 0:
                     pass

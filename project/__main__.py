@@ -1,12 +1,12 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, \
-    QHBoxLayout, QVBoxLayout, QWidget
+    QHBoxLayout, QVBoxLayout, QWidget, QListWidgetItem
 
 import sys
 
 from project import ClipboardManager
 from project.ClipboardManager.ClipboardObject import TextClipboardObject
 from project.Stack import Stack
-from project.Widgets.MainListWidget import MainListWidget
+from project.Widgets.MainListWidget import MainListWidget, TextListWidgetItem
 from .utils import CONSTANTS
 
 from PyQt5 import QtCore, QtWidgets
@@ -69,11 +69,14 @@ class MainWindow(QMainWindow):
 
     def _render_clipboard_stack(self, clipboard_stack: Stack):
         self._main_list_widget.clear()
-        for clipboard_object in clipboard_stack.items():
+        for (idx, clipboard_object) in enumerate(clipboard_stack.items()):
             if isinstance(clipboard_object, TextClipboardObject):
-                self._main_list_widget.addItem(clipboard_object.text + " "
-                                               + clipboard_object
-                                               .date().strftime("%Y-%m-%d %H:%M:%S"))
+                _item = QListWidgetItem(self._main_list_widget)
+                _custom_item = TextListWidgetItem(idx, clipboard_object)
+                _item.setSizeHint(_custom_item.sizeHint())
+
+                self._main_list_widget.addItem(_item)
+                self._main_list_widget.setItemWidget(_item, _custom_item)
 
     def setupUi(self):
         # MainWindow.setObjectName("MainWindow")
