@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.font as tkFont
 import math
-# import json
+import json
 # from pathlib import Path
 
 
@@ -17,9 +17,6 @@ class UserInterface(tk.Frame):
         self.config(padx=12, pady=12)
 
     def receive_key(self, char):
-        # Debug, can remove
-        print("Recieved {}".format(char))
-
         self.text_entry_section.receive_key(char)
 
     def backspace(self):
@@ -68,81 +65,8 @@ class KeyboardSection(tk.Frame):
         self.make_keys()
 
     def make_keys(self):
-        """
-        Todo: these should be loaded from JSON instead
-        """
-        row0_keys = [
-            ["`", "~"],
-            ["1", "!"],
-            ["2", "@"],
-            ["3", "#"],
-            ["4", "$"],
-            ["5", "%"],
-            ["6", "^"],
-            ["7", "&"],
-            ["8", "*"],
-            ["9", "("],
-            ["0", ")"],
-            ["-", "_"],
-            ["=", "+"],
-            "backspace",
-        ]
-        row1_keys = [
-            ["tab", "\t", "\t"],
-            "",
-            "q",
-            "w",
-            "e",
-            "r",
-            "t",
-            "y",
-            "u",
-            "i",
-            "o",
-            "p",
-            ["[", "{"],
-            ["]", "}"],
-            ["\\", "|"],
-        ]
-        row2_keys = [
-            "a",
-            "s",
-            "d",
-            "f",
-            "g",
-            "h",
-            "j",
-            "k",
-            "l",
-            [";", ":"],
-            ["\'", "\""],
-            "enter",
-        ]
-        row3_keys = [
-            "shift",
-            "",
-            "z",
-            "x",
-            "c",
-            "v",
-            "b",
-            "n",
-            "m",
-            [",", "<"],
-            [".", ">"],
-            ["/", "?"],
-        ]
-        row4_keys = [
-            ["space", " ", " "]
-        ]
-
-        keyboard = [
-            row0_keys,
-            row1_keys,
-            row2_keys,
-            row3_keys,
-            row4_keys,
-        ]
+        with open('keyboard_keys.json') as keyboard_keys_file:
+            keyboard = json.load(keyboard_keys_file)
 
         double_keys = [
             "shift",
@@ -245,13 +169,13 @@ class KeyboardKey(tk.Button):
         self.clicks = 0
         self.shift_on = False
 
-        print("name: {}, char: {}, shift_name: {}, shift_char: {}".format(
-            self.text_name,
-            self.char,
-            self.shift_name,
-            self.shift_char,
-            )
-        )
+        # print("name: {}, char: {}, shift_name: {}, shift_char: {}".format(
+        #     self.text_name,
+        #     self.char,
+        #     self.shift_name,
+        #     self.shift_char,
+        #     )
+        # )
 
         if name == "shift":
             button_action = self.send_shift
@@ -261,10 +185,10 @@ class KeyboardKey(tk.Button):
             button_action = self.send_key
 
         self.config(
-                textvar=self.name,
-                command=button_action,
-                font=self.font,
-                )
+            textvar=self.name,
+            command=button_action,
+            font=self.font,
+            )
 
     def get_font_size(self):
         return math.floor(KeyboardKey.KEY_SIZE * self.scale)
