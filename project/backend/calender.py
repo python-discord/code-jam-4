@@ -34,6 +34,7 @@ class Application(tk.Tk):
         self.pages = {}
 
         self.pages[AddEventPage] = AddEventPage(self)
+
         self.pages[CalendarPage] = CalendarPage(self)
 
         self.change_page(CalendarPage)
@@ -51,7 +52,6 @@ class Application(tk.Tk):
                 page.grid_forget()
         # Place our new page onto the screen
         self.pages[new_page].grid(row=0, column=0)
-
 
 
 if __name__ == "__main__":

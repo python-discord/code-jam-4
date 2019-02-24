@@ -22,7 +22,9 @@ class DBHandler:
                 location TEXT,
                 date TEXT,
                 description TEXT)""")
+        
         # self.populate()
+
 
     def fetchEvents(self):
         """Fetch event from the database."""
@@ -53,5 +55,4 @@ class DBHandler:
                                                      "Office on 4th street",
                                                      """Talk about upcoming
                                                      work events""",
-                                                     "03/03/2020"))
         self.conn.commit()
