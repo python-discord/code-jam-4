@@ -1,7 +1,7 @@
 import asynctk as tk
 from PIL import Image, ImageDraw
 
-from . import msplocale as kata
+from . import locale as kata
 
 
 class Colour():

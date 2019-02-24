@@ -4,9 +4,12 @@ import os
 import pathlib
 
 
-from . import msplocale as kata
+from . import locale as kata
 from .canvas import Canvas, EntrySection
 
+
+def nothing(*i):
+    pass
 
 class Framed(tk.AsyncTk):
 
@@ -32,7 +35,7 @@ class Framed(tk.AsyncTk):
 
         self.dropdown = tk.AsyncMenu(self.menu)
 
-        self.dropdown.add_command(label=kata.menu.unhelpful.nothing, command=lambda: None)
+        self.dropdown.add_command(label=kata.menu.unhelpful.nothing, command=nothing)
         self.dropdown.add_command(
             label=kata.menu.unhelpful.save,
             command=lambda: asyncio.ensure_future(self.destroy())
@@ -43,6 +46,7 @@ class Framed(tk.AsyncTk):
     async def file_select(self):
         """File select dialogue"""
         manager = tk.AsyncToplevel(self)
+        manager.protocol("WM_DELETE_WINDOW", nothing)
         dir = pathlib.Path()
         dirbox = tk.AsyncEntry(manager)
         dirbox.grid(row=0, column=0)
@@ -78,6 +82,7 @@ class Framed(tk.AsyncTk):
 
             async def new():
                 dialogue = tk.AsyncToplevel(manager)
+                dialogue.protocol("WM_DELETE_WINDOW", nothing)
                 filename = tk.AsyncEntry(dialogue)
                 filename.pack()
 
@@ -103,6 +108,11 @@ class Framed(tk.AsyncTk):
                     callback=cb
                 )
                 button.pack(fill=tk.X)
+                # tk.AsyncButton(
+                #     dialogue,
+                #     text=kata.menu.fileselect.button.cancel,
+                #     callback=dialogue.destroy
+                # ).pack(fill=tk.X)
                 await manager.wait_window(dialogue)
             tk.AsyncButton(foldermap, text=kata.menu.fileselect.new, callback=new).pack(fill=tk.X)
 

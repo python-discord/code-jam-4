@@ -12,6 +12,7 @@ class menu:
             default = "サヴ ヒル"
             special = "サヴ ヒル\n【ファイルナム カッノタ ビー エムプーチ オル ア スペシアル パス】"
             invalid = 'サヴ ヒル\n【ファイルナム カッノタ コンタイヌ エニ オヴ: \\/:*?"<>|】'
+            cancel = "カンセル"
 
         new = "ニュウ ファイル"
 
@@ -20,5 +21,4 @@ class entrysection:
     x = "エクス"
     y = "ワイ"
     colour = "コラル"
-    confirm = "コンフィーム"
-    colour_error = "Colour must be between 0 and 16777215"
+    confirm = "コンファーム"
