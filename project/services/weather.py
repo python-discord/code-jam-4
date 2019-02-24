@@ -1,7 +1,7 @@
 import pyowm
 import random
 
-from typing import Iterable, Dict
+from typing import Dict
 
 from pyowm.weatherapi25.weather import Weather
 from pyowm.exceptions.api_response_error import UnauthorizedError
@@ -9,7 +9,8 @@ from pyowm.exceptions.api_response_error import UnauthorizedError
 
 class ForecastFetcher:
     """
-    This object makes it easy for the frontend to request the weather data and use it.
+    This object makes it easy for the frontend to request the weather data and
+    use it.
 
     Example usage:
 
@@ -34,10 +35,13 @@ class ForecastFetcher:
         except UnauthorizedError:
             raise AttributeError("The provided API key is not valid.")
 
-    def fetch_forecast_7_days(self, location: str, unit: str) -> Iterable[Dict[str, str]]:
+    def fetch_forecast_7_days(self, location: str,
+                              unit: str) -> [Dict[str, str]]:
         """Fetches the forecast for the next seven days from openweathermap.org
 
         :param location: The name of the location this
+        :param unit: The unit of the values. Can be 'Celsius', 'Fahrenheit'
+                     or 'Kelvin'
         """
 
         forecasts = self.owm.daily_forecast(location).get_forecast()
@@ -51,11 +55,13 @@ class ForecastFetcher:
 
 
 def format_forecast(weather: Weather, unit: str) -> Dict[str, str]:
-    """Formats an pyowm.weatherapi25.weather.Weather to an easy to use dictionary for the frontend.
+    """Formats an pyowm.weatherapi25.weather.Weather to an easy to use
+    dictionary for the frontend.
 
     :param weather: A pyowm.weatherapi25.weather.Weather object
-    :param unit: Defines the units for the temperature in the output dictionary. Only accepts 'celsius', 'fahrenheit',
-                 'kelvin' and 'random'.
+    :param unit: Defines the units for the temperature in the output
+                 dictionary. Only accepts 'celsius', 'fahrenheit', 'kelvin' and
+                 'random'.
 
     :raises AttributeError: If an invalid unit has been supplied
     """
@@ -63,7 +69,8 @@ def format_forecast(weather: Weather, unit: str) -> Dict[str, str]:
     unit_symbols = {'celsius': '°C', 'fahrenheit': '°F', 'kelvin': 'K'}
 
     if unit not in units and unit == 'random':
-        msg = "This is not a valid input unit, please enter one of the following: {}"
+        msg = "This is not a valid input unit, Please enter one of the' +" \
+              "following values: {}"
         raise AttributeError(msg.format(' '.join(units)))
 
     if unit == 'random':
@@ -91,5 +98,3 @@ def load_owm_api_key(path: str) -> str:
     """
     with open(path, 'r') as infile:
         return infile.read().strip()
-
-
