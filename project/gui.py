@@ -10,10 +10,18 @@ class Tile(QtWidgets.QPushButton):
     '''Represents a Tile on a minesweeper grid'''
 
     right_clicked = QtCore.pyqtSignal()
+    health_decreased = QtCore.pyqtSignal()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.health = 1  # this refers to the amount of clicks it takes to destroy
 
     def mousePressEvent(self, event):
         if event.buttons() == QtCore.Qt.RightButton:
             self.right_clicked.emit()
+        elif event.buttons() == QtCore.Qt.LeftButton and self.health > 1:
+            self.health -= 1
+            self.health_decreased.emit()
         else:
             super().mousePressEvent(event)
 
