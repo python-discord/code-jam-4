@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from functools import partial
 import logic
 import sys
@@ -59,10 +59,11 @@ class Minesweeper(QtWidgets.QWidget):
 
     def place_flag(self, row, column):
         button = self.button_grid[row][column]
+        icon = QtGui.QIcon('flag.png')
         if button.text() == 'F':
             button.setText('')
         else:
-            button.setText('F')
+            button.setIcon(icon)
 
     def button_clicked(self, row, column):
         self.controller.click_tile(x=column, y=row)
