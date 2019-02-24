@@ -22,9 +22,8 @@ class DBHandler:
                 location TEXT,
                 date TEXT,
                 description TEXT)""")
-        
-        # self.populate()
 
+        # self.populate()
 
     def fetchEvents(self):
         """Fetch event from the database."""
@@ -35,16 +34,13 @@ class DBHandler:
 
     def addEvent(self, name, location, date, description):
         """Create a new event and add it to the database."""
-
-        self.cursor.execute('''INSERT INTO users(name,location,
+        self.cursor.execute('''INSERT INTO events(name,location,
                                                  date,description)
-                                                 VALUES(?,?,?)''', (name,
-                                                                    location,
-                                                                    date,
-                                                                    description
-                                                                    )
-                            )
-        self.db.commit()
+                                                 VALUES(?,?,?,?)''', (name,
+                                                                      location,
+                                                                      date,
+                                                                      description))
+        self.conn.commit()
 
     # TESTING - ONLY USED IN DEVELOPMENT. REMOVE UPON RELEASE!!!
     def populate(self):
