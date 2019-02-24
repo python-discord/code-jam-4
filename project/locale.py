@@ -22,3 +22,4 @@ class entrysection:
     y = "ワイ"
     colour = "コラル"
     confirm = "コンファーム"
+    colour_error = "Colour must be between 0 and 16777215"
