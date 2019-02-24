@@ -61,12 +61,11 @@ class Minesweeper(QtWidgets.QWidget):
 
     def place_flag(self, row, column):
         button = self.button_grid[row][column]
-        icon = QtGui.QIcon(':/images/flag.png')
+        flag_icon = QtGui.QIcon(':/images/flag.png')
         if not button.icon().isNull():
-           button.setIcon(QtGui.QIcon())
+            button.setIcon(QtGui.QIcon())
         else:
-            button.setIcon(icon)
-            
+            button.setIcon(flag_icon)
 
     def button_clicked(self, row, column):
         self.controller.click_tile(x=column, y=row)
