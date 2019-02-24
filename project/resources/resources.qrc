@@ -3,4 +3,16 @@
     <file>flag.png</file>
     <file>mine.png</file>
   </qresource>
+  <qresource prefix="tiles">
+    <file>crack0.png</file>
+    <file>crack1.png</file>
+    <file>crack2.png</file>
+    <file>crack3.png</file>
+    <file>crack4.png</file>
+    <file>crack5.png</file>
+    <file>crack6.png</file>
+    <file>crack7.png</file>
+    <file>crack8.png</file>
+    <file>crack9.png</file>
+  </qresource>
 </RCC>

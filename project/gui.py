@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from functools import partial
 from . import logic
+import os
 import sys
 
 
@@ -10,9 +11,14 @@ class Tile(QtWidgets.QPushButton):
     right_clicked = QtCore.pyqtSignal()
     health_decreased = QtCore.pyqtSignal()
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, health, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.health = 1  # this refers to the amount of clicks it takes to destroy
+        self.setObjectName('tile')
+        self.max_health = health  # this refers to the amount of clicks it takes to destroy
+        self.health = health
+
+    def health_percent(self):
+        return int((self.health / self.max_health)*100)
 
     def mousePressEvent(self, event):
         if event.buttons() == QtCore.Qt.RightButton:
@@ -29,30 +35,45 @@ class Minesweeper(QtWidgets.QWidget):
 
     def __init__(self, width=16, height=16, parent=None):
         super().__init__(parent)
+        self.setObjectName('minesweeper')
         self.width = width
         self.height = height
         self.controller = logic.Minesweeper(self.width, self.height)
-        self.controller.put_mines_in_grid(20)
+        self.controller.put_mines_in_grid(10)
         self.button_grid = []
         self.setup_gui()
 
+    def load_css(self):
+        css_file = os.path.join(os.path.dirname(__file__), 'theme.css')
+        with open(css_file) as file:
+            self.setStyleSheet(file.read())
+
     def setup_gui(self):
         '''Setup the GUI for the minesweeper widget'''
+        self.load_css()
         self.grid_layout = QtWidgets.QGridLayout(self)
-        self.grid_layout.setSpacing(0)
+        self.grid_layout.setSpacing(1)
 
         for row in range(self.width):
             row_array = []
             for column in range(self.height):
-                button = Tile()
+                button = Tile(10)
                 button.clicked.connect(partial(self.button_clicked, row, column))
                 button.right_clicked.connect(partial(self.place_flag, row, column))
+                button.health_decreased.connect(partial(self.button_health_update, row, column))
                 button.setFixedSize(30, 30)
                 self.grid_layout.addWidget(button, row, column)
                 row_array.append(button)
             self.button_grid.append(row_array)
 
         self.setLayout(self.grid_layout)
+
+    def button_health_update(self, row, column):
+        '''Updates the button whenever the health has changed'''
+        button = self.button_grid[row][column]
+        current_index = 9 - (button.health_percent() // 10)
+        button.setStyleSheet(f'background-image: url(:/tiles/crack{current_index}.png);'
+                             f'background-position: center;')
 
     def refresh_gui(self):
         '''Refresh the GUI to match the same grid on the minesweeper controller'''
@@ -62,7 +83,21 @@ class Minesweeper(QtWidgets.QWidget):
                     self.button_grid[y][x].hide()
                     number = self.controller.get_tile_number(x, y)
                     if number:
+                        colours = {'1': QtGui.QColor(0x0000FF),
+                                   '2': QtGui.QColor(0x00FF00),
+                                   '3': QtGui.QColor(0xFF0000),
+                                   '4': QtGui.QColor(0x0000FF).darker(100),
+                                   '5': QtGui.QColor(0x00FF00).darker(100),
+                                   '6': QtGui.QColor(0xFF0000).darker(100),
+                                   '7': QtGui.QColor(0x0000FF).darker(200),
+                                   '8': QtGui.QColor(0x00FF00).darker(200)}
+                        font = QtGui.QFont('Consolas')
+                        font.setBold(True)
                         label = QtWidgets.QLabel(str(number))
+                        label.setStyleSheet('color: ' + colours[str(number)].name())
+                        label.setStyleSheet('color: ' + colours[str(number)].name())
+                        label.setFont(font)
+                        label.setAlignment(QtCore.Qt.AlignCenter)
                         self.grid_layout.addWidget(label, y, x)
                 elif tile == self.controller.MINE:
                     self.button_grid[y][x].hide()

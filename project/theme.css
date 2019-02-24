@@ -1,0 +1,12 @@
+QWidget#minesweeper{
+    background: darkgray;
+}
+
+QPushButton#tile{
+    background: lightgray;
+    border: none;
+}
+
+QPushButton#tile:hover{
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
