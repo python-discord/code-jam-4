@@ -33,7 +33,7 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 This project is our solution to the 4th code jam, created by the Python Discord. 
 Our team name is **Wild Whispers** and consists of the following users:
 *  Supalien#8434
-*  TheRealZelikjo#2692
+*  TheRealZeljko#2692
 *  Hotfix#6638 (team leader)
 
 
