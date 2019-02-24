@@ -13,13 +13,15 @@ def nothing(*i):
 
 
 class Framed(tk.AsyncTk):
-
     def __init__(self):
         super().__init__()
+        self.wm_title(kata.general.title)
 
         self.setupMenu()
 
-        self.canvas = Canvas(self, height=400, width=400)  # Temporary - will make them settable
+        self.canvas = Canvas(
+            self, height=400, width=400
+        )  # Temporary - will make them settable
         self.entrysection = EntrySection(self)
 
         self.protocol("WM_DELETE_WINDOW", lambda: asyncio.ensure_future(self.save()))
@@ -39,7 +41,7 @@ class Framed(tk.AsyncTk):
         self.dropdown.add_command(label=kata.menu.unhelpful.nothing, command=nothing)
         self.dropdown.add_command(
             label=kata.menu.unhelpful.save,
-            command=lambda: asyncio.ensure_future(self.destroy())
+            command=lambda: asyncio.ensure_future(self.destroy()),
         )
 
         self.menu.add_cascade(label=kata.menu.unhelpful.name, menu=self.dropdown)
@@ -57,7 +59,7 @@ class Framed(tk.AsyncTk):
         def populate_folder(folder):
             nonlocal dir
             dir = manager.dir
-            for i in ['..'] + os.listdir(folder):
+            for i in [".."] + os.listdir(folder):
                 if (dir / i).is_file():
 
                     async def cb(i=i):
@@ -65,9 +67,7 @@ class Framed(tk.AsyncTk):
                         await manager.destroy()
 
                     tk.AsyncButton(
-                        foldermap,
-                        text=f"{i} {kata.menu.fileselect.file}",
-                        callback=cb
+                        foldermap, text=f"{i} {kata.menu.fileselect.file}", callback=cb
                     ).pack(fill=tk.X)
                 elif (dir / i).is_dir():
 
@@ -78,7 +78,7 @@ class Framed(tk.AsyncTk):
                     tk.AsyncButton(
                         foldermap,
                         text=f"{i} {kata.menu.fileselect.folder}",
-                        callback=cb
+                        callback=cb,
                     ).pack(fill=tk.X)
 
             async def new():
@@ -88,34 +88,32 @@ class Framed(tk.AsyncTk):
                 filename.pack()
 
                 async def cb():
-                    if filename.get() != len(filename.get())*'.':
+                    if filename.get() != len(filename.get()) * ".":
                         for i in r'\/:*?"<>|':
                             if i in filename.get():
-                                button.config(
-                                    text=kata.menu.fileselect.button.invalid
-                                )
+                                button.config(text=kata.menu.fileselect.button.invalid)
                                 break
                         else:
                             manager.file = manager.dir / filename.get()
                             await dialogue.destroy()
                             await manager.destroy()
                     else:
-                        button.config(
-                            text=kata.menu.fileselect.button.special
-                        )
+                        button.config(text=kata.menu.fileselect.button.special)
+
                 button = tk.AsyncButton(
-                    dialogue,
-                    text=kata.menu.fileselect.button.default,
-                    callback=cb
+                    dialogue, text=kata.menu.fileselect.button.default, callback=cb
                 )
                 button.pack(fill=tk.X)
                 tk.AsyncButton(
                     dialogue,
                     text=kata.menu.fileselect.button.cancel,
-                    callback=dialogue.destroy
+                    callback=dialogue.destroy,
                 ).pack(fill=tk.X)
                 await manager.wait_window(dialogue)
-            tk.AsyncButton(foldermap, text=kata.menu.fileselect.new, callback=new).pack(fill=tk.X)
+
+            tk.AsyncButton(foldermap, text=kata.menu.fileselect.new, callback=new).pack(
+                fill=tk.X
+            )
 
         def boxcallback(*i):
             change_dir(dirbox.get())

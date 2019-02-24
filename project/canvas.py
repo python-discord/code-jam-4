@@ -38,7 +38,7 @@ class Canvas(tk.AsyncCanvas):
         self.pil_draw = ImageDraw.Draw(self.pil_image)
 
     async def add_pixel(self, x, y, colour):
-        await self.create_line(x, y, x+1, y, fill=colour.hash_colour)
+        await self.create_line(x, y, x + 1, y, fill=colour.hash_colour)
         self.pil_draw.point([(x, y)], fill=colour.rgb)
 
     async def save(self, file):

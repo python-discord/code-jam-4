@@ -23,3 +23,7 @@ class entrysection:
     colour = "コラル"
     confirm = "コンファーム"
     colour_error = "コラル ムスト ビー ベトイーン 0 アンヅ 16777215"
+
+
+class general:
+    title = "フレイムヅ"
