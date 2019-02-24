@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="images">
     <file>flag.png</file>
+    <file>mine.png</file>
   </qresource>
 </RCC>

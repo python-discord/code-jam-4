@@ -64,6 +64,17 @@ class Minesweeper(QtWidgets.QWidget):
                     if number:
                         label = QtWidgets.QLabel(str(number))
                         self.grid_layout.addWidget(label, y, x)
+                elif tile == self.controller.MINE:
+                    self.button_grid[y][x].hide()
+                    label = QtWidgets.QLabel(self)
+                    size = label.size()
+                    mine_icon = QtGui.QPixmap(':/images/mine.png')
+                    scaled_mine_icon = mine_icon.scaled(
+                        size,
+                        QtCore.Qt.KeepAspectRatio,
+                        transformMode=QtCore.Qt.SmoothTransformation)
+                    label.setPixmap(scaled_mine_icon)
+                    self.grid_layout.addWidget(label, y, x)
 
     def place_flag(self, row, column):
         button = self.button_grid[row][column]
