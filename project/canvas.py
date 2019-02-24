@@ -63,7 +63,7 @@ class EntrySection(tk.AsyncFrame):
         self.colour = tk.AsyncEntry(self)
         self.colour.pack()
 
-        self.confirm_button = tk.AsyncButton(self, callback=self.setupPixel)
+        self.confirm_button = tk.AsyncButton(self, callback=self.setupPixel, text=kata.entrysection.confirm)
         self.confirm_button.pack()
 
     async def setupPixel(self):
