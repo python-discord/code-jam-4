@@ -33,7 +33,7 @@ class DBHandler:
 
     def addEvent(self, name, location, date, description):
         """Create a new event and add it to the database."""
-        self.cursor.execute('''INSERT INTO users(name,location,
+        self.cursor.execute('''INSERT INTO events(name,location,
                                                  date,description)
                                                  VALUES(?,?,?)''', (name,
                                                                     location,
