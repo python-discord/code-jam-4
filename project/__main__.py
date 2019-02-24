@@ -186,9 +186,10 @@ class AddContactPage(Frame):
         self.enter_notes_button = None
 
         self.clear = None
+        self.add_to_contacts = None
+
         self.preview_scroll = None
         self.preview = None
-        self.add_to_contacts = None
 
         self.contacts = None
         self.new_contact = None
