@@ -21,8 +21,10 @@ class Minesweeper:
         self.grid = [[self.UNDISCOVERED for _ in range(self.width)] for _ in range(self.height)]
 
     def put_mines_in_grid(self, amount) -> set:
-        '''This puts X amount of mines onto the grid in random places'''
+        '''This puts X amount of mines onto the grid in random places
+        returns the list of coordinates'''
         coordinates = set()
+        # generate random unique coordinates until we have reached the quota (amount)
         while len(coordinates) < amount:
             x, y = random.randrange(self.width), random.randrange(self.height)
             coordinates.add((x, y))
@@ -79,7 +81,7 @@ class Minesweeper:
 
     def print_grid(self):
         '''This prints the grid, used for debugging purposes'''
-        print_characters = {self.UNDISCOVERED: 'X', self.DISCOVERED: ' ', self.MINE: 'B'}
+        print_characters = {self.UNDISCOVERED: 'X', self.DISCOVERED: ' ', self.MINE: 'M'}
         for row in self.grid:
             for tile in row:
                 print(print_characters[tile], end=' ')

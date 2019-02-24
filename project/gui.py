@@ -1,8 +1,10 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from functools import partial
-import logic
+from . import logic
 import sys
+import os
 
+BASE_DIR = os.path.dirname(__file__)
 
 class Tile(QtWidgets.QPushButton):
     '''Represents a Tile on a minesweeper grid'''
@@ -59,11 +61,12 @@ class Minesweeper(QtWidgets.QWidget):
 
     def place_flag(self, row, column):
         button = self.button_grid[row][column]
-        icon = QtGui.QIcon('flag.png')
-        if button.text() == 'F':
-            button.setText('')
+        icon = QtGui.QIcon(':/images/flag.png')
+        if not button.icon().isNull():
+           button.setIcon(QtGui.QIcon())
         else:
             button.setIcon(icon)
+            
 
     def button_clicked(self, row, column):
         self.controller.click_tile(x=column, y=row)
