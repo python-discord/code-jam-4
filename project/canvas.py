@@ -7,7 +7,7 @@ from . import locale as kata
 
 class Colour:
     def __init__(self, colour):
-        if int(colour) not in range(16777215):
+        if int(colour) not in range(16777216):
             raise ValueError
         self.fake_colour = hex(int(colour))[2:]
         self.fake_colour = "0" * (6 - len(self.fake_colour)) + self.fake_colour
@@ -38,7 +38,7 @@ class Canvas(tk.AsyncCanvas):
         self.pil_draw = ImageDraw.Draw(self.pil_image)
 
     async def add_pixel(self, x, y, colour):
-        await self.create_rectangle(x, y, x, y, outline=colour.hash_colour)
+        await self.create_line(x, y, x+1, y, fill=colour.hash_colour)
         self.pil_draw.point([(x, y)], fill=colour.rgb)
 
     async def save(self, file):
