@@ -16,7 +16,7 @@ class menu:
 
 
 class entrysection:
-    x = "x"
-    y = "y"
-    colour = "colour"
-    confirm = "confirm"
+    x = "エクス"
+    y = "ワイ"
+    colour = "コラル"
+    confirm = "コンフィーム"
