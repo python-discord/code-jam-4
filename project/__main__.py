@@ -47,10 +47,19 @@ class ContactsPage(Frame):
     master: The frame containing all information on this page
     controller: Reference to the Controller Class
 
+    contacts_list: Dictionary of contacts, each contact is a Contact class instance,
+                    each key is the name of the contact
+
     scroll_bar: Scroll bar that controls what is viewable in the contacts list;
                 won't scroll if nothing is in the list, or everything is already
                 shown.
     contacts_field: Area where contacts are shown; 10 at a time
+
+    show_info: Button that updates the info_field with the information of the
+                currently selected contact
+    info_field: Listbox that contains the information of the currently selected contact
+    info_scroll: Scrollbar that controls what is viewable in the info_field; won't
+                    scroll if nothing is in the list, or everything is already shown
 
     contacts: Button that takes the user to the 'Contacts' page
     new_contact: Button that takes the user to the 'Add New Contact' page
@@ -58,7 +67,8 @@ class ContactsPage(Frame):
 
     === Methods ===
     create: Initializes objects & places them on the page
-    insert_contact: UNFINISHED; adds a contact to the end of the contacts field
+    insert_contact: Adds a contact's name to the end of the contacts field
+    show_contact_info: Shows the information of the selected contact in the info listbox
     """
     def __init__(self, master, controller):
         Frame.__init__(self, master)
@@ -136,14 +146,37 @@ class AddContactPage(Frame):
     master: The frame containing all information on this page
     controller: Reference to the Controller Class
 
-    * Not finished
-    enter_name:*
-    enter_phone_num:*
-    enter_email:*
-    enter_address:*
-    enter_notes:*
-    clear:*
-    add_character:*
+    contact_new: Contact class instance that holds the data that the
+                user inputs; when the user submits, the information is
+                stored on the contacts_list in ContactsPage.
+
+    Each contact has 5 attributes:
+    - Name
+    - Phone Number
+    - Email
+    - Address
+    - Notes
+    Each attribute has the corresponding objects on the page:
+    - A Label
+    - A Text Entry Box
+    - A Button to add the information to the preview, & update the contact
+    The only exception being the Phone Number, which requires the user to
+        choose whether the phone number is for Home, Work, or Personal.
+        This is done using a Radiobutton, which can only have one value
+        chosen at a time. The value of the Radiobutton is tied to a
+        StringVar called phone_type_var. When the user clicks 'Add' next
+        to the phone number, the StringVar is passed into the
+        add_phone_number method.
+
+    clear: Button that clears all text entries
+    add_to_contacts: Button that adds the current contact to the contact_list
+                    on ContactsPage
+    text_entries: List of all text entries; can be looped over to perform a
+                    repetitive task on each entry. e.g Clearing all entries
+
+    preview_scroll: Scrollbar that control what is viewable in the preview
+                    Listbox
+    preview: Listbox that shows the info of the contact being created currently
 
     contacts: Button that takes the user to the 'Contacts' page
     new_contact: Button that takes the user to the 'Add New Contact' page
@@ -151,6 +184,10 @@ class AddContactPage(Frame):
 
     === Methods ===
     create: Initializes objects & places them on the page
+    add_contact: Adds contact to the contact_list in ContactsPage;
+                If the contact is new, the name of the contact is added to
+                the contacts Listbox on ContactsPage.
+    clear_all: Loops over all text entries and clears them
     """
     def __init__(self, master, controller):
         Frame.__init__(self, master)
@@ -260,7 +297,7 @@ class AddContactPage(Frame):
         self.enter_phone_num_button = Button(
             self,
             text="Add",
-            command=lambda: self.contact_new.add_phone_number(self.get_phone_type(), self.enter_phone_num.get())
+            command=lambda: self.contact_new.add_phone_number(self.phone_type_var, self.enter_phone_num.get())
         )
         self.enter_phone_num_label.grid(row=2, column=0, sticky=N+S+E+W)
         self.enter_phone_num.grid(row=2, column=1, columnspan=3, sticky=N+S+E+W)
@@ -294,10 +331,6 @@ class AddContactPage(Frame):
 
         for i in range(5):
             self.grid_columnconfigure(i, weight=1)
-
-    def get_phone_type(self):
-        print("DEBUG: Phone Type:", self.phone_type_var)
-        return self.phone_type_var
 
     def add_contact(self):
         name = self.contact_new.name
