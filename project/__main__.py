@@ -381,13 +381,13 @@ class SettingsPage(Frame):
 
     def create(self):
         self.contacts = Button(self, text="Contacts", command=lambda: self.controller.show_frame(ContactsPage))
-        self.contacts.grid(row=0, column=0, sticky=W)
+        self.contacts.grid(row=0, column=0, sticky=N+S+E+W)
 
         self.new_contact = Button(self, text="New Contact", command=lambda: self.controller.show_frame(AddContactPage))
-        self.new_contact.grid(row=0, column=1, sticky=W)
+        self.new_contact.grid(row=0, column=1, sticky=N+S+E+W)
 
         self.settings = Button(self, text="Settings", command=lambda: self.controller.show_frame(SettingsPage))
-        self.settings.grid(row=0, column=2, sticky=W)
+        self.settings.grid(row=0, column=2, sticky=N+S+E+W)
 
 
 if __name__ == "__main__":
