@@ -4,7 +4,7 @@ import os
 import pathlib
 
 
-from . import msplocale as kata
+from . import locale as kata
 from .canvas import Canvas, EntrySection
 
 
