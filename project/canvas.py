@@ -21,7 +21,7 @@ class Colour():
 
     @property
     def rgb(self):
-             return (int(self.r, 16), int(self.g, 16), int(self.b, 16))
+        return (int(self.r, 16), int(self.g, 16), int(self.b, 16))
 
 
 class Canvas(tk.AsyncCanvas):
