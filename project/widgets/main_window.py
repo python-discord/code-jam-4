@@ -2,6 +2,7 @@ from PySide2.QtCore import QUrl
 from PySide2.QtMultimedia import QMediaContent, QMediaPlayer, QMediaPlaylist
 from PySide2.QtWidgets import QFileDialog, QMainWindow
 
+from project.models.playlist import PlaylistModel
 from project.ui.main_window import Ui_MainWindow
 
 
@@ -12,6 +13,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.player = QMediaPlayer()
         self.playlist = QMediaPlaylist()
+
+        self.playlist_model = PlaylistModel(self.playlist)
+        self.playlist_view.setModel(self.playlist_model)
 
         self.play_button.pressed.connect(self.player.play)
         self.previous_button.pressed.connect(self.playlist.previous)
@@ -28,4 +32,4 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             media = QMediaContent(QUrl.fromLocalFile(path))
             self.playlist.addMedia(media)
 
-        # TODO: Update model
+        self.playlist_model.layoutChanged.emit()
