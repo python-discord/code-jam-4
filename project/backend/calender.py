@@ -30,8 +30,9 @@ class Application(tk.Tk):
             None
         """
         self.pages = {}
-
+        
         self.pages[AddEventPage] = AddEventPage(self)
+
         self.pages[CalendarPage] = CalendarPage(self)
 
         self.change_page(CalendarPage)
@@ -84,6 +85,7 @@ class CalendarPage(tk.Frame):
         Returns:
             None
         """
+
         # Create an add event button
         self.addEventBtn = tk.Button(self,
                                      text="[+] Add event",
@@ -93,6 +95,7 @@ class CalendarPage(tk.Frame):
         self.addEventBtn.grid()
         # Fetch all events
         events = self.parent.dbh.fetchEvents()
+
         # Event format:
         # (ID, name, location, description)--
         for event in events:
@@ -103,6 +106,7 @@ class CalendarPage(tk.Frame):
             eventPanel = tk.PanedWindow(self, bd=5, relief="sunken", width=600)
             eventPanel.grid()
             eventPanel.add(tk.Label(self, text=string))
+
 
 
 class AddEventPage(tk.Frame):
@@ -168,7 +172,6 @@ class AddEventPage(tk.Frame):
                                             self.descriptionEntry.get("1.0")
                                                             ))
         self.submitBtn.grid()
-
 
 if __name__ == "__main__":
     app = Application()
