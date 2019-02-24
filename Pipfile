@@ -11,10 +11,6 @@ sphinx = "*"
 [packages]
 pyqt5 = "*"
 flake8 = "*"
-numpy = "*"
-matplotlib = "*"
-appdirs = "*"
-random = "*"
 
 [requires]
 python_version = "3.7"
