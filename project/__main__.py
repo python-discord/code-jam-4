@@ -81,16 +81,16 @@ class ContactsPage(Frame):
 
     def create(self):
         self.show_info = Button(self, text="Show Info", command=lambda: self.show_contact_info())
-        self.show_info.grid(row=2, column=0)
+        self.show_info.grid(row=2, column=0, columnspan=2)
 
         self.contacts = Button(self, text="Contacts", command=lambda: self.controller.show_frame(ContactsPage))
-        self.contacts.grid(row=0, column=0)
+        self.contacts.grid(row=0, column=0, sticky=W)
 
         self.new_contact = Button(self, text="New Contact", command=lambda: self.controller.show_frame(AddContactPage))
-        self.new_contact.grid(row=0, column=1)
+        self.new_contact.grid(row=0, column=1, sticky=W)
 
         self.settings = Button(self, text="Settings", command=lambda: self.controller.show_frame(SettingsPage))
-        self.settings.grid(row=0, column=2)
+        self.settings.grid(row=0, column=2, sticky=W)
 
         self.scroll_bar = Scrollbar(self)
         self.scroll_bar.grid(row=1, column=4, sticky=N+S+W)
@@ -147,10 +147,14 @@ class AddContactPage(Frame):
         self.enter_name_label = None
         self.enter_name_button = None
 
+        # PLACEHOLDER FOR ACTUAL PHONE NUMBER ENTRY
         self.enter_phone_num = None
-        self.enter_phone_type = None
+        self.phone_type_home = None
+        self.phone_type_work = None
+        self.phone_type_personal = None
         self.enter_phone_num_label = None
         self.enter_phone_num_button = None
+        self.phone_type_var = None
 
         self.enter_email = None
         self.enter_email_label = None
@@ -172,35 +176,51 @@ class AddContactPage(Frame):
         self.new_contact = None
         self.settings = None
 
+        self.text_entries = [self.enter_name, self.enter_phone_num, self.enter_email, self.enter_address,
+                             self.enter_notes]
+
         # Create objects
         self.create()
 
     def create(self):
-        self.add_to_contacts = Button(
-            self,
-            text="Add to Contacts",
-            command=lambda: self.add_contact()
-        )
+        self.add_to_contacts = Button(self, text="Submit to Contacts", command=lambda: self.add_contact())
+        self.add_to_contacts.grid(row=7, column=0, columnspan=2, sticky=W)
+
+        self.clear = Button(self,text="Clear All", command=lambda: self.clear_all())
+        self.clear.grid(row=7, column=2, sticky=W)
 
         self.enter_notes = Entry(self)
         self.enter_notes_label = Label(self, text="Notes:")
-        self.enter_notes_label.grid(row=5, column=0)
-        self.enter_notes.grid(row=5, column=1, columnspan=3)
+        self.enter_notes_label.grid(row=6, column=0)
+        self.enter_notes.grid(row=6, column=1, columnspan=3)
 
         self.enter_address = Entry(self)
         self.enter_address_label = Label(self, text="Address")
-        self.enter_address_label.grid(row=4, column=0)
-        self.enter_address.grid(row=4, column=1, columnspan=3)
+        self.enter_address_label.grid(row=5, column=0)
+        self.enter_address.grid(row=5, column=1, columnspan=3)
 
         self.enter_email = Entry(self)
         self.enter_email_label = Label(self, text="Email:")
-        self.enter_email_label.grid(row=3, column=0)
-        self.enter_email.grid(row=3, column=1, columnspan=3)
+        self.enter_email_label.grid(row=4, column=0)
+        self.enter_email.grid(row=4, column=1, columnspan=3)
 
+        # PLACEHOLDER FOR ACTUAL PHONE NUMBER ENTRY
         self.enter_phone_num = Entry(self)
         self.enter_phone_num_label = Label(self, text="Phone:")
+        phone_type_var = StringVar()
+        self.phone_type_home = Radiobutton(self, text="Home", variable=phone_type_var, value="Home")
+        self.phone_type_work = Radiobutton(self, text="Work", variable=phone_type_var, value="Work")
+        self.phone_type_personal = Radiobutton(self, text="Personal", variable=phone_type_var, value="Personal")
+        self.enter_phone_num_button = Button(
+            self,
+            text="Add",
+            command=lambda: self.contact_new.add_phone_number(self.get_phone_type(), self.enter_phone_num.get())
+        )
         self.enter_phone_num_label.grid(row=2, column=0)
         self.enter_phone_num.grid(row=2, column=1, columnspan=3)
+        self.phone_type_home.grid(row=3, column=0)
+        self.phone_type_work.grid(row=3, column=1)
+        self.phone_type_personal.grid(row=3, column=2)
 
         self.enter_name = Entry(self)
         self.enter_name_label = Label(self, text="Name:")
@@ -214,19 +234,35 @@ class AddContactPage(Frame):
         self.enter_name.grid(row=1, column=1, columnspan=3)
 
         self.contacts = Button(self, text="Contacts", command=lambda: self.controller.show_frame(ContactsPage))
-        self.contacts.grid(row=0, column=0)
+        self.contacts.grid(row=0, column=0, sticky=W)
 
         self.new_contact = Button(self, text="New Contact", command=lambda: self.controller.show_frame(AddContactPage))
-        self.new_contact.grid(row=0, column=1)
+        self.new_contact.grid(row=0, column=1, sticky=W)
 
         self.settings = Button(self, text="Settings", command=lambda: self.controller.show_frame(SettingsPage))
-        self.settings.grid(row=0, column=2)
+        self.settings.grid(row=0, column=2, sticky=W)
+
+    def get_phone_type(self):
+        print("DEBUG: Phone Type:", self.phone_type_var)
+        return self.phone_type_var
 
     def add_contact(self):
-        name = self.new_contact.name
-        if name not in self.controller.frames[ContactsPage].contacts_list:
-            self.controller.frames[ContactsPage].contacts_list[name] = self.new_contact
-            self.controller.frames[ContactsPage].insert_contact(name)
+        name = self.contact_new.name
+        if name == '':
+            if name not in self.controller.frames[ContactsPage].contacts_list:
+                print("DEBUG: Creating new contact")
+                self.controller.frames[ContactsPage].contacts_list[name] = self.new_contact
+                self.controller.frames[ContactsPage].insert_contact(name)
+            elif name in self.controller.frames[ContactsPage].contacts_list:
+                print("DEBUG: Updating already existing contact")
+                self.controller.frames[ContactsPage].contacts_list[name] = self.new_contact
+        else:
+            print("DEBUG: Entered empty name")
+
+    def clear_all(self):
+        for entry in self.text_entries:
+            print("DEBUG: Deleting", entry)
+            entry.delete(0, END)
 
 
 class SettingsPage(Frame):
@@ -259,13 +295,13 @@ class SettingsPage(Frame):
 
     def create(self):
         self.contacts = Button(self, text="Contacts", command=lambda: self.controller.show_frame(ContactsPage))
-        self.contacts.grid(row=0, column=0)
+        self.contacts.grid(row=0, column=0, sticky=W)
 
         self.new_contact = Button(self, text="New Contact", command=lambda: self.controller.show_frame(AddContactPage))
-        self.new_contact.grid(row=0, column=1)
+        self.new_contact.grid(row=0, column=1, sticky=W)
 
         self.settings = Button(self, text="Settings", command=lambda: self.controller.show_frame(SettingsPage))
-        self.settings.grid(row=0, column=2)
+        self.settings.grid(row=0, column=2, sticky=W)
 
 
 if __name__ == "__main__":

@@ -54,6 +54,7 @@ class Contact:
         :param new_name: Name to be changed to
         :return: None
         """
+        print("DEBUG: Set Name To:", new_name)
         self.name = new_name
 
     def add_phone_number(self, num_type: str, number: str) -> None:
