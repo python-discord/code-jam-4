@@ -2,9 +2,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 from functools import partial
 from . import logic
 import sys
-import os
 
-BASE_DIR = os.path.dirname(__file__)
 
 class Tile(QtWidgets.QPushButton):
     '''Represents a Tile on a minesweeper grid'''
