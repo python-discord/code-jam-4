@@ -2,7 +2,7 @@ class menu:
     class unhelpful:
         name = 'ウンヘルプフル メニュー'
         nothing = 'ヅー ノシング'
-        save = 'サーヴ'
+        save = 'サーヴ プロセソル タイム'
 
     class fileselect:
         file = ' 【ファイル】'
