@@ -4,8 +4,8 @@ import os
 import pathlib
 
 
-import msplocale as kata
-from canvas import Canvas, EntrySection
+from . import msplocale as kata
+from .canvas import Canvas, EntrySection
 
 
 class Framed(tk.AsyncTk):
