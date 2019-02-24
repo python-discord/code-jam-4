@@ -15,6 +15,8 @@ class Controller(Tk):
     """
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
+        self.title("Contact Manager")
+        self.iconbitmap("src/Phone.ico")
         for i in range(5):
             self.rowconfigure(i, weight=1)
             self.columnconfigure(i, weight=1)
@@ -58,8 +60,8 @@ class ContactsPage(Frame):
     insert_contact: Adds a contact's name to the end of the contacts field
     show_contact_info: Shows the information of the selected contact in the info listbox
     """
-    def __init__(self, master, controller):
-        Frame.__init__(self, master)
+    def __init__(self, master, controller, **kw):
+        super().__init__(master, **kw)
         self.master = master
         self.controller = controller
 
@@ -85,13 +87,13 @@ class ContactsPage(Frame):
         )
         self.info_scroll.config(command=self.info_field.yview)
         self.info_field.grid(row=3, column=0, columnspan=3, sticky=N+S+E+W)
-        self.info_scroll.grid(row=3, column=3, sticky=N+S+E+W)
+        self.info_scroll.grid(row=3, column=3, sticky=N+S+W)
 
         self.show_info = Button(self, text="Show Info", command=lambda: self.show_contact_info())
         self.show_info.grid(row=2, column=0, columnspan=3, sticky=N+S+E+W)
 
         self.scroll_bar = Scrollbar(self)
-        self.scroll_bar.grid(row=1, column=3, sticky=N+S+E+W)
+        self.scroll_bar.grid(row=1, column=3, sticky=N+S+W)
 
         self.contacts_field = Listbox(
             self,
@@ -167,7 +169,7 @@ class AddContactPage(Frame):
     clear_all: Loops over all text entries and clears them
     """
     def __init__(self, master, controller, **kw):
-        Frame.__init__(self, master)
+        super().__init__(master, **kw)
         self.master = master
         self.controller = controller
 
@@ -207,8 +209,7 @@ class AddContactPage(Frame):
         self.preview_scroll = None
         self.preview = None
 
-        self.text_entries = [self.enter_name, self.enter_phone_num, self.enter_email, self.enter_address,
-                             self.enter_notes]
+        self.text_entries = None
 
         # Create objects
         self.create()
@@ -221,7 +222,7 @@ class AddContactPage(Frame):
         )
         self.preview_scroll.config(command=self.preview.yview)
         self.preview.grid(row=8, column=0, columnspan=3, sticky=N+S+E+W)
-        self.preview_scroll.grid(row=8, column=4, sticky=N+S+E+W)
+        self.preview_scroll.grid(row=8, column=4, sticky=N+S+W)
 
         self.add_to_contacts = Button(self, text="Submit to Contacts", command=lambda: self.add_contact())
         self.add_to_contacts.grid(row=7, column=0, columnspan=2, sticky=N+S+E+W)
@@ -292,6 +293,9 @@ class AddContactPage(Frame):
         self.enter_name_label.grid(row=1, column=0, sticky=N+S+E+W)
         self.enter_name.grid(row=1, column=1, columnspan=3, sticky=N+S+E+W)
 
+        self.text_entries = [self.enter_name, self.enter_phone_num, self.enter_email, self.enter_address,
+                             self.enter_notes]
+
         for i in range(8):
             self.grid_rowconfigure(i, weight=1)
 
@@ -313,7 +317,6 @@ class AddContactPage(Frame):
 
     def clear_all(self):
         for entry in self.text_entries:
-            print("DEBUG: Deleting", entry)
             entry.delete(0, END)
 
 
@@ -332,8 +335,8 @@ class SettingsPage(Frame):
         === Methods ===
         create: Initializes objects & places them on the page
         """
-    def __init__(self, master, controller):
-        Frame.__init__(self, master)
+    def __init__(self, master, controller, **kw):
+        super().__init__(master, **kw)
         self.master = master
         self.controller = controller
 
