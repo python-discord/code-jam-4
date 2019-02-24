@@ -1,7 +1,7 @@
 import asynctk as tk
 from PIL import Image, ImageDraw
 
-import msplocale as kata
+from . import msplocale as kata
 
 
 class Colour():

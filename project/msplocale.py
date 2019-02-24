@@ -20,4 +20,4 @@ class entrysection:
     x = "エクス"
     y = "ワイ"
     colour = "コラル"
-    confirm = "コンフィーム"
+    confirm = "コンファーム"
