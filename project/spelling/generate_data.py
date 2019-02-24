@@ -1,4 +1,7 @@
-import base64, nltk, re, zlib
+import base64
+import nltk
+import re
+import zlib
 
 
 def corpus_downloaded(name: str) -> bool:
@@ -33,7 +36,7 @@ def frequency_list():
     # Write the contents in
     with open("./data/frequency_list.txt", "wb") as file:
         freq_list = map(lambda tup: f"{tup[0]}:{tup[1]}", freq_list)
-        contents = ",".join(freq_list)
+        contents = ";".join(freq_list)
         compressed = base64.b64encode(zlib.compress(contents.encode("utf-8"), 9))
 
         file.write(compressed)
