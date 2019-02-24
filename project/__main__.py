@@ -11,24 +11,19 @@ class Controller(Tk):
     frames: Dictionary of all available pages
 
     === Methods ===
-    show_frame: Allows the switching from one page to another.
-                Each page is like a layer in a photo editor,
-                calling 'frame.tkraise()' essentially brings
-                the specified frame to the top layer, where
-                it can be interacted with.
+    None
     """
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
-        self.geometry('250x300')
         for i in range(5):
             self.rowconfigure(i, weight=1)
             self.columnconfigure(i, weight=1)
-        notebook = Notebook(self)
-        notebook.grid(row=0, column=0, columnspan=5, rowspan=5, sticky=N+S+E+W)
+        self.notebook = Notebook(self)
+        self.notebook.grid(row=0, column=0, columnspan=5, rowspan=5, sticky=N+S+E+W)
 
         for page in [ContactsPage, AddContactPage, SettingsPage]:
-            page = Frame(notebook)
-            notebook.add(page, text='Tab')
+            frame = page(self.notebook, self)
+            self.notebook.add(frame, text=frame.page_name)
 
 
 class ContactsPage(Frame):
@@ -68,6 +63,8 @@ class ContactsPage(Frame):
         self.master = master
         self.controller = controller
 
+        self.page_name = "View Contacts"
+
         # Initialize object names
         self.contacts_list = {}
 
@@ -76,10 +73,6 @@ class ContactsPage(Frame):
         self.show_info = None
         self.info_field = None
         self.info_scroll = None
-
-        self.contacts = None
-        self.new_contact = None
-        self.settings = None
 
         # Create objects
         self.create()
@@ -96,15 +89,6 @@ class ContactsPage(Frame):
 
         self.show_info = Button(self, text="Show Info", command=lambda: self.show_contact_info())
         self.show_info.grid(row=2, column=0, columnspan=3, sticky=N+S+E+W)
-
-        self.contacts = Button(self, text="Contacts", command=lambda: self.controller.show_frame(ContactsPage))
-        self.contacts.grid(row=0, column=0, sticky=N+S+E+W)
-
-        self.new_contact = Button(self, text="New Contact", command=lambda: self.controller.show_frame(AddContactPage))
-        self.new_contact.grid(row=0, column=1, sticky=N+S+E+W)
-
-        self.settings = Button(self, text="Settings", command=lambda: self.controller.show_frame(SettingsPage))
-        self.settings.grid(row=0, column=2, sticky=N+S+E+W)
 
         self.scroll_bar = Scrollbar(self)
         self.scroll_bar.grid(row=1, column=3, sticky=N+S+E+W)
@@ -187,6 +171,8 @@ class AddContactPage(Frame):
         self.master = master
         self.controller = controller
 
+        self.page_name = "New Contact"
+
         # Initialize object names
         self.contact_new = Contact('')
 
@@ -220,10 +206,6 @@ class AddContactPage(Frame):
 
         self.preview_scroll = None
         self.preview = None
-
-        self.contacts = None
-        self.new_contact = None
-        self.settings = None
 
         self.text_entries = [self.enter_name, self.enter_phone_num, self.enter_email, self.enter_address,
                              self.enter_notes]
@@ -310,15 +292,6 @@ class AddContactPage(Frame):
         self.enter_name_label.grid(row=1, column=0, sticky=N+S+E+W)
         self.enter_name.grid(row=1, column=1, columnspan=3, sticky=N+S+E+W)
 
-        self.contacts = Button(self, text="Contacts", command=lambda: self.controller.show_frame(ContactsPage))
-        self.contacts.grid(row=0, column=0, sticky=N+S+E+W)
-
-        self.new_contact = Button(self, text="New Contact", command=lambda: self.controller.show_frame(AddContactPage))
-        self.new_contact.grid(row=0, column=1, sticky=N+S+E+W)
-
-        self.settings = Button(self, text="Settings", command=lambda: self.controller.show_frame(SettingsPage))
-        self.settings.grid(row=0, column=2, sticky=N+S+E+W)
-
         for i in range(8):
             self.grid_rowconfigure(i, weight=1)
 
@@ -330,11 +303,11 @@ class AddContactPage(Frame):
         if name == '':
             if name not in self.controller.frames[ContactsPage].contacts_list:
                 print("DEBUG: Creating new contact")
-                self.controller.frames[ContactsPage].contacts_list[name] = self.new_contact
+                self.controller.frames[ContactsPage].contacts_list[name] = self.contact_new
                 self.controller.frames[ContactsPage].insert_contact(name)
             elif name in self.controller.frames[ContactsPage].contacts_list:
                 print("DEBUG: Updating already existing contact")
-                self.controller.frames[ContactsPage].contacts_list[name] = self.new_contact
+                self.controller.frames[ContactsPage].contacts_list[name] = self.contact_new
         else:
             print("DEBUG: Entered empty name")
 
@@ -364,23 +337,15 @@ class SettingsPage(Frame):
         self.master = master
         self.controller = controller
 
+        self.page_name = "Settings"
+
         # Initialize object names
-        self.contacts = None
-        self.new_contact = None
-        self.settings = None
 
         # Create objects
         self.create()
 
     def create(self):
-        self.contacts = Button(self, text="Contacts", command=lambda: self.controller.show_frame(ContactsPage))
-        self.contacts.grid(row=0, column=0, sticky=N+S+E+W)
-
-        self.new_contact = Button(self, text="New Contact", command=lambda: self.controller.show_frame(AddContactPage))
-        self.new_contact.grid(row=0, column=1, sticky=N+S+E+W)
-
-        self.settings = Button(self, text="Settings", command=lambda: self.controller.show_frame(SettingsPage))
-        self.settings.grid(row=0, column=2, sticky=N+S+E+W)
+        pass
 
 
 if __name__ == "__main__":
