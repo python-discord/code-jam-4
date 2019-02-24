@@ -1,4 +1,5 @@
 from tkinter import *
+from project.contact import Contact
 
 
 class Controller(Tk):
@@ -65,8 +66,12 @@ class ContactsPage(Frame):
         self.controller = controller
 
         # Initialize object names
+        self.contacts_list = {}
+
         self.scroll_bar = None
         self.contacts_field = None
+        self.show_info = None
+
         self.contacts = None
         self.new_contact = None
         self.settings = None
@@ -75,40 +80,35 @@ class ContactsPage(Frame):
         self.create()
 
     def create(self):
-        self.contacts = Button(
-            self,
-            text="Contacts",
-            command=lambda: self.controller.show_frame(ContactsPage)
-        )
+        self.show_info = Button(self, text="Show Info", command=lambda: self.show_contact_info())
+        self.show_info.grid(row=2, column=0)
+
+        self.contacts = Button(self, text="Contacts", command=lambda: self.controller.show_frame(ContactsPage))
         self.contacts.grid(row=0, column=0)
 
-        self.new_contact = Button(
-            self,
-            text="New Contact",
-            command=lambda: self.controller.show_frame(AddContactPage)
-        )
+        self.new_contact = Button(self, text="New Contact", command=lambda: self.controller.show_frame(AddContactPage))
         self.new_contact.grid(row=0, column=1)
 
-        self.settings = Button(
-            self,
-            text="Settings",
-            command=lambda: self.controller.show_frame(SettingsPage)
-        )
-        self.settings.grid(row=0, column=2, columnspan=3)
+        self.settings = Button(self, text="Settings", command=lambda: self.controller.show_frame(SettingsPage))
+        self.settings.grid(row=0, column=2)
 
         self.scroll_bar = Scrollbar(self)
-        self.scroll_bar.grid(row=1, column=4)
+        self.scroll_bar.grid(row=1, column=4, sticky=N+S+W)
 
         self.contacts_field = Listbox(
             self,
             yscrollcommand=self.scroll_bar.set
         )
-        self.contacts_field.grid(row=1, column=0, columnspan=3)
+        self.contacts_field.grid(row=1, column=0, columnspan=3, sticky=N+S+E+W)
 
         self.scroll_bar.config(command=self.contacts_field.yview)
 
     def insert_contact(self, contact):
-        self.contacts_field.insert(END, )
+        self.contacts_field.insert(END, contact)
+
+    def show_contact_info(self):
+        name = self.contacts_field.curselection()
+        print('DEBUG', name)
 
 
 class AddContactPage(Frame):
@@ -141,13 +141,32 @@ class AddContactPage(Frame):
         self.controller = controller
 
         # Initialize object names
+        self.contact_new = Contact('')
+
         self.enter_name = None
+        self.enter_name_label = None
+        self.enter_name_button = None
+
         self.enter_phone_num = None
+        self.enter_phone_type = None
+        self.enter_phone_num_label = None
+        self.enter_phone_num_button = None
+
         self.enter_email = None
+        self.enter_email_label = None
+        self.enter_email_button = None
+
         self.enter_address = None
+        self.enter_address_label = None
+        self.enter_address_button = None
+
         self.enter_notes = None
+        self.enter_notes_label = None
+        self.enter_notes_button = None
+
         self.clear = None
-        self.add_character = None
+        self.preview = None
+        self.add_to_contacts = None
 
         self.contacts = None
         self.new_contact = None
@@ -157,26 +176,57 @@ class AddContactPage(Frame):
         self.create()
 
     def create(self):
-        self.contacts = Button(
+        self.add_to_contacts = Button(
             self,
-            text="Contacts",
-            command=lambda: self.controller.show_frame(ContactsPage)
+            text="Add to Contacts",
+            command=lambda: self.add_contact()
         )
+
+        self.enter_notes = Entry(self)
+        self.enter_notes_label = Label(self, text="Notes:")
+        self.enter_notes_label.grid(row=5, column=0)
+        self.enter_notes.grid(row=5, column=1, columnspan=3)
+
+        self.enter_address = Entry(self)
+        self.enter_address_label = Label(self, text="Address")
+        self.enter_address_label.grid(row=4, column=0)
+        self.enter_address.grid(row=4, column=1, columnspan=3)
+
+        self.enter_email = Entry(self)
+        self.enter_email_label = Label(self, text="Email:")
+        self.enter_email_label.grid(row=3, column=0)
+        self.enter_email.grid(row=3, column=1, columnspan=3)
+
+        self.enter_phone_num = Entry(self)
+        self.enter_phone_num_label = Label(self, text="Phone:")
+        self.enter_phone_num_label.grid(row=2, column=0)
+        self.enter_phone_num.grid(row=2, column=1, columnspan=3)
+
+        self.enter_name = Entry(self)
+        self.enter_name_label = Label(self, text="Name:")
+        self.enter_name_button = Button(
+            self,
+            text="Add",
+            command=lambda: self.contact_new.change_name(self.enter_name.get())
+        )
+        self.enter_name_button.grid(row=1, column=4)
+        self.enter_name_label.grid(row=1, column=0)
+        self.enter_name.grid(row=1, column=1, columnspan=3)
+
+        self.contacts = Button(self, text="Contacts", command=lambda: self.controller.show_frame(ContactsPage))
         self.contacts.grid(row=0, column=0)
 
-        self.new_contact = Button(
-            self,
-            text="New Contact",
-            command=lambda: self.controller.show_frame(AddContactPage)
-        )
+        self.new_contact = Button(self, text="New Contact", command=lambda: self.controller.show_frame(AddContactPage))
         self.new_contact.grid(row=0, column=1)
 
-        self.settings = Button(
-            self,
-            text="Settings",
-            command=lambda: self.controller.show_frame(SettingsPage)
-        )
+        self.settings = Button(self, text="Settings", command=lambda: self.controller.show_frame(SettingsPage))
         self.settings.grid(row=0, column=2)
+
+    def add_contact(self):
+        name = self.new_contact.name
+        if name not in self.controller.frames[ContactsPage].contacts_list:
+            self.controller.frames[ContactsPage].contacts_list[name] = self.new_contact
+            self.controller.frames[ContactsPage].insert_contact(name)
 
 
 class SettingsPage(Frame):
@@ -208,25 +258,13 @@ class SettingsPage(Frame):
         self.create()
 
     def create(self):
-        self.contacts = Button(
-            self,
-            text="Contacts",
-            command=lambda: self.controller.show_frame(ContactsPage)
-        )
+        self.contacts = Button(self, text="Contacts", command=lambda: self.controller.show_frame(ContactsPage))
         self.contacts.grid(row=0, column=0)
 
-        self.new_contact = Button(
-            self,
-            text="New Contact",
-            command=lambda: self.controller.show_frame(AddContactPage)
-        )
+        self.new_contact = Button(self, text="New Contact", command=lambda: self.controller.show_frame(AddContactPage))
         self.new_contact.grid(row=0, column=1)
 
-        self.settings = Button(
-            self,
-            text="Settings",
-            command=lambda: self.controller.show_frame(SettingsPage)
-        )
+        self.settings = Button(self, text="Settings", command=lambda: self.controller.show_frame(SettingsPage))
         self.settings.grid(row=0, column=2)
 
 
