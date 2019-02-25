@@ -19,6 +19,7 @@ class EventViewer(tk.Frame):
 
         self.canvas = tk.Canvas(self)
         self.display_frame = tk.Frame(self.canvas)
+<<<<<<< HEAD
         self.scrollbar = tk.Scrollbar(self, orient="vertical",
                                       command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
@@ -28,11 +29,26 @@ class EventViewer(tk.Frame):
         self.canvas.create_window((0, 0), window=self.display_frame, anchor="nw")
 
         self.display_frame.bind("<Configure>", self.scrollMove)
+=======
+        self.scrollbar = tk.Scrollbar(self, orient="vertical", width=20,
+                                      command=self.canvas.yview)
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+
+        self.grid_rowconfigure(0, weight=100)
+        self.scrollbar.grid(row=0, column=1, sticky="ns")
+        self.canvas.grid(row=0, column=0)
+        self.canvas.create_window((240, 0), window=self.display_frame, anchor="n")
+
+        self.display_frame.bind("<Configure>", self.scrollMove)
+        self.display_frame.grid_columnconfigure(0, weight=1000)
+
+>>>>>>> Felix
         self.events = {}
 
     def scrollMove(self, event):
         """Update canvas information from scrollbar movement."""
         self.canvas.configure(scrollregion=self.canvas.bbox("all"),
+<<<<<<< HEAD
                               width=300, height=500)
 
     def add_event(self, event):
@@ -42,6 +58,15 @@ class EventViewer(tk.Frame):
         event_frame = tk.Frame(self.display_frame, height=200, width=300,
                                relief=tk.GROOVE, borderwidth=3)
         event_frame.pack(fill="both", expand=True)
+=======
+                              width=480, height=450)
+
+    def add_event(self, event):
+        """Add a new event to the viewer."""
+        event_frame = tk.Frame(self.display_frame,
+                               relief=tk.GROOVE, borderwidth=3)
+        event_frame.grid(column=0, pady=5, padx=5)
+>>>>>>> Felix
 
         self.events.update({event: event_frame})
 

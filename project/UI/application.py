@@ -13,6 +13,9 @@ class Application(tk.Tk):
         """Initialise Application class."""
         super().__init__()
 
+        self.resizable(False, False)
+        self.geometry("500x500")
+
         self.dbh = DBHandler()
 
         self.pages = {}
