@@ -62,7 +62,9 @@ def parse_media(path: str):
     except (json.JSONDecodeError, KeyError):
         log.exception("Failed to parse metadata for {path}")
 
-    tags = {k: v for k, v in tags.items() if k.lower() in TAG_WHITELIST}  # Filter out tags
+    # Filter out unsupported tags and make them all lowercase.
+    tags = {k.lower(): v for k, v in tags.items() if k.lower() in TAG_WHITELIST}
+
     tags["path"] = path
     tags["crc32"] = compute_crc32(path)
 
