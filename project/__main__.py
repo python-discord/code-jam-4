@@ -9,6 +9,7 @@ class Controller(Tk):
 
     === Public Attributes ===
     notebook: Widget containing tabs; each page is assigned a tab, and can be navigated to easily
+    frames: Dictionary of all pages; allows for access of information across pages via the controller
 
     === Methods ===
     None
@@ -176,6 +177,7 @@ class AddContactPage(Frame):
                 If the contact is new, the name of the contact is added to
                 the contacts Listbox on ContactsPage.
     clear_all: Loops over all text entries and clears them
+    add_phone_num: TEMPORARY METHOD; Used for debugging
     """
     def __init__(self, master, controller, **kw):
         super().__init__(master, **kw)
@@ -311,6 +313,7 @@ class AddContactPage(Frame):
         for i in range(5):
             self.grid_columnconfigure(i, weight=1)
 
+    # Temporary method; currently only here for debugging
     def add_phone_num(self, numtype, num):
         print("DEBUG: Type", numtype)
         print("Debug Num", num)
