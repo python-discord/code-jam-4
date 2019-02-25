@@ -1,7 +1,14 @@
-import asynctk as tk
-import asyncio
 import os
 import pathlib
+
+import asyncio
+import asynctk as tk
+
+"""
+AsyncTK is an asychronous wrapper for Tkinter using AsyncIO.
+This allows many methods to run as coroutines, allowing them to interact asynchronously
+with the Tk window
+"""
 
 
 from . import locale as kata
@@ -9,15 +16,36 @@ from .canvas import Canvas, EntrySection
 
 
 def nothing(*i):
+    """Used for buttons and binded keys in order to overwrite or remove their function"""
     pass
 
 
 class Framed(tk.AsyncTk):
 
+    """
+    The main tkinter window, subclassed from asynctk.AsyncTk
+
+    Attributes
+    ----------
+    canvas: .canvas.Canvas
+        The canvas containing the current painting (subclass of asynctk.AsyncCanvas)
+    entrysection: .canvas.EntrySection
+        The frame containing the buttons to add a pixel (subclass of asynctk.AsyncFrame)
+
+    Methods
+    -------
+    file_select: coroutine
+        Opens up the file select window and allows the choosing of a file.
+        Returns the path to the file
+    save: coroutine
+        Runs file_select and saves the current image to that file
+
+    """
+
     def __init__(self):
         super().__init__()
 
-        self.setupMenu()
+        self._setupMenu()
 
         self.canvas = Canvas(self, height=400, width=400)  # Temporary - will make them settable
         self.entrysection = EntrySection(self)
@@ -30,19 +58,19 @@ class Framed(tk.AsyncTk):
         file = await self.file_select()
         await self.canvas.save(file)
 
-    def setupMenu(self):
-        self.menu = tk.AsyncMenu(self)
-        self.config(menu=self.menu)
+    def _setupMenu(self):
+        menu = tk.AsyncMenu(self)
+        self.config(menu=menu)
 
-        self.dropdown = tk.AsyncMenu(self.menu)
+        dropdown = tk.AsyncMenu(menu)
 
-        self.dropdown.add_command(label=kata.menu.unhelpful.nothing, command=nothing)
-        self.dropdown.add_command(
+        dropdown.add_command(label=kata.menu.unhelpful.nothing, command=nothing)
+        dropdown.add_command(
             label=kata.menu.unhelpful.save,
             command=lambda: asyncio.ensure_future(self.destroy())
         )
 
-        self.menu.add_cascade(label=kata.menu.unhelpful.name, menu=self.dropdown)
+        menu.add_cascade(label=kata.menu.unhelpful.name, menu=dropdown)
 
     async def file_select(self):
         """File select dialogue"""
@@ -97,7 +125,6 @@ class Framed(tk.AsyncTk):
                                 break
                         else:
                             manager.file = manager.dir / filename.get()
-                            await dialogue.destroy()
                             await manager.destroy()
                     else:
                         button.config(
