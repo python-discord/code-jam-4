@@ -3,6 +3,7 @@ from PyQt5.Qt import QApplication, QClipboard  # noqa: F401
 
 from project.ClipboardManager.ClipboardObject import TextClipboardObject
 from project.Stack import Stack
+from project.Plugins import PredictiveText
 
 
 class ClipboardManager:
@@ -13,7 +14,11 @@ class ClipboardManager:
         self._clipboard_stack = Stack()
 
     def _clipboard_changed(self):
-        current_text = QApplication.clipboard().text()
+
+        # testing by BWACpro
+
+        # current_text = QApplication.clipboard().text()
+        current_text = PredictiveText.random_spelling_mistakes(QApplication.clipboard().text())
         print("Current Text", QApplication.clipboard().text())
         print("Current Image Info", QApplication.clipboard().pixmap())
 
