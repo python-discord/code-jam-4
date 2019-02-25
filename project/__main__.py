@@ -1,5 +1,6 @@
 import os
 import pathlib
+import typing
 
 import asyncio
 import asynctk as tk
@@ -29,7 +30,7 @@ class Framed(tk.AsyncTk):
     ----------
     canvas: .canvas.Canvas
         The canvas containing the current painting (subclass of asynctk.AsyncCanvas)
-    entrysection: .canvas.EntrySection
+    entry: .canvas.EntrySection
         The frame containing the buttons to add a pixel (subclass of asynctk.AsyncFrame)
 
     Methods
@@ -51,7 +52,7 @@ class Framed(tk.AsyncTk):
         self.canvas = Canvas(
             self, height=400, width=400
         )  # Temporary - will make them settable
-        self.entrysection = EntrySection(self)
+        self.entry = EntrySection(self)
 
         self.protocol("WM_DELETE_WINDOW", lambda: asyncio.ensure_future(self.save()))
         self.bind("<Control-s>", lambda i: asyncio.ensure_future(self.destroy()))
@@ -78,6 +79,7 @@ class Framed(tk.AsyncTk):
     async def file_select(self):
         """File select dialogue"""
         manager = tk.AsyncToplevel(self)
+        manager.title(kata.menu.fileselect.saveas)
         manager.protocol("WM_DELETE_WINDOW", nothing)
         dir = pathlib.Path()
         dirbox = tk.AsyncEntry(manager)
@@ -85,13 +87,16 @@ class Framed(tk.AsyncTk):
         foldermap = tk.AsyncFrame(manager)
         foldermap.grid(row=1, column=0)
 
-        def populate_folder(folder):
+        def populate_folder(folder: pathlib.Path):
+            """Internally manages the save dialogue."""
             nonlocal dir
             dir = manager.dir
             for i in [".."] + os.listdir(folder):
                 if (dir / i).is_file():
 
-                    async def cb(i=i):
+                    async def cb(i=i):  # i=i prevents late binding
+                        # Late binding causes an undetectable error that
+                        # causes all buttons to utilise the same callback
                         manager.file = dir / i
                         await manager.destroy()
 
@@ -100,7 +105,9 @@ class Framed(tk.AsyncTk):
                     ).pack(fill=tk.X)
                 elif (dir / i).is_dir():
 
-                    async def cb(i=i):
+                    async def cb(i=i):  # i=i prevents late binding
+                        # Late binding causes an undetectable error that
+                        # causes all buttons to utilise the same callback
                         manager.dir = dir / i
                         change_dir(manager.dir)
 
@@ -111,7 +118,9 @@ class Framed(tk.AsyncTk):
                     ).pack(fill=tk.X)
 
             async def new():
+                """Internal coroutine used to create the new file dialogue."""
                 dialogue = tk.AsyncToplevel(manager)
+                dialogue.title(kata.menu.fileselect.new)
                 dialogue.protocol("WM_DELETE_WINDOW", nothing)
                 filename = tk.AsyncEntry(dialogue)
                 filename.pack()
@@ -128,10 +137,13 @@ class Framed(tk.AsyncTk):
                     else:
                         button.config(text=kata.menu.fileselect.button.special)
 
+                # Confirm button
                 button = tk.AsyncButton(
                     dialogue, text=kata.menu.fileselect.button.default, callback=cb
                 )
                 button.pack(fill=tk.X)
+
+                # Cancel button
                 tk.AsyncButton(
                     dialogue,
                     text=kata.menu.fileselect.button.cancel,
@@ -139,14 +151,17 @@ class Framed(tk.AsyncTk):
                 ).pack(fill=tk.X)
                 await manager.wait_window(dialogue)
 
+            # New File button
             tk.AsyncButton(foldermap, text=kata.menu.fileselect.new, callback=new).pack(
                 fill=tk.X
             )
 
         def boxcallback(*i):
+            """Internal function called to change the directory to what is typed in dirbox."""
             change_dir(dirbox.get())
 
-        def change_dir(path):
+        def change_dir(path: typing.Union[str, pathlib.Path]):
+            """Internal function to load a path into the file select menu."""
             nonlocal dir, foldermap
             dir = pathlib.Path(path)
             manager.dir = dir

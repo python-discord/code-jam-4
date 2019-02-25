@@ -6,11 +6,13 @@ the normal tk window (located in __main__.py)
 import asynctk as tk
 from PIL import Image, ImageDraw
 import asyncio
+import typing
+import pathlib
 
 from . import locale as kata
 
 
-class Colour():
+class Colour:
 
     """
     The colour class - used to unify all representations of colour as needed
@@ -43,22 +45,26 @@ class Colour():
     colour: str
         The colour in hex after the format is switched.
         e.g. "abcdef"
-    hash_colour: str
+    as_hex: str
         The colour prefixed with #
         This is the most common way to represent a colour, and the main one
         used by TK/TCL.
         e.g. "#abcdef"
-    int_colour: int
+    as_int: int
         The colour in an integer with the hex converted into denary.
         e.g. 11259375
-    rgb: tuple[int]
+    as_rgb: tuple[int]
         The colour in an (r, g, b) tuple.
         e.g. (171, 205, 239)
 
     """
 
-    def __init__(self, colour):
-        if int(colour) not in range(16777216):
+    def __init__(self, colour: typing.Union[str, int]):
+        try:
+            int(colour)
+        except:
+            raise TypeError
+        if int(colour) not in range(16_777_216):
             raise ValueError
         self.fake_colour = hex(int(colour))[2:]
         self.fake_colour = "0" * (6 - len(self.fake_colour)) + self.fake_colour
@@ -66,11 +72,11 @@ class Colour():
         self.g = self.fake_colour[2:4]
         self.r = self.fake_colour[4:6]
         self.colour = self.r + self.g + self.b
-        self.hash_colour = "#" + self.colour
-        self.int_colour = int(self.colour, 16)
+        self.as_hex = "#" + self.colour
+        self.as_int = int(self.colour, 16)
 
     @property
-    def rgb(self):
+    def as_rgb(self):
         return (int(self.r, 16), int(self.g, 16), int(self.b, 16))
 
 
@@ -112,20 +118,28 @@ class Canvas(tk.AsyncCanvas):
 
     """
 
-    def __init__(self, master, *, height, width, photoimage=None, pil_image=None):
+    def __init__(
+        self,
+        master: typing.Union[tk.AsyncTk, tk.AsyncFrame],
+        *,
+        height: int,
+        width: int,
+        photoimage: tk.PhotoImage = None,
+        pil_image: Image = None,
+    ):
         super().__init__(master, height=height, width=width, bg="white")
 
         self.width, self.height = width, height
 
         self.pack(side=tk.LEFT)
         if photoimage and pil_image:
-            self.create_image(0, 0, image=image, anchor=tkinter.NW)
+            self.create_image(0, 0, image=photoimage, anchor=tk.NW)
             self.pil_image = pil_image
         else:
             self.pil_image = Image.new("RGB", (width, height), (255, 255, 255))
         self.pil_draw = ImageDraw.Draw(self.pil_image)
 
-    async def add_pixel(self, x, y, colour):
+    async def add_pixel(self, x: int, y: int, colour: Colour):
         """
         Adds pixel to both the displayed canvas and the backend PIL image
 
@@ -139,10 +153,10 @@ class Canvas(tk.AsyncCanvas):
             The fill colour of the pixel
         """
 
-        await self.create_line(x, y, x + 1, y, fill=colour.hash_colour)
-        self.pil_draw.point([(x, y)], fill=colour.rgb)
+        await self.create_line(x, y, x + 1, y, fill=colour.as_hex)
+        self.pil_draw.point([(x, y)], fill=colour.as_rgb)
 
-    async def save(self, file):
+    async def save(self, file: str):
         """Shortcut to save the PIL file"""
         self.pil_image.save(file)
 
@@ -151,7 +165,7 @@ class Canvas(tk.AsyncCanvas):
         self.pack_forget()
 
     @classmethod
-    def from_image(cls, master, file):
+    def from_image(cls, master: tk.AsyncTk, file: pathlib.Path):
         """
         Classmethod to open the image from a file
 
@@ -165,7 +179,7 @@ class Canvas(tk.AsyncCanvas):
 
         Returns
         -------
-        Canvas object
+        Canvas
         """
 
         photoimage = tk.PhotoImage(file=file)
@@ -181,7 +195,7 @@ class Canvas(tk.AsyncCanvas):
 
 
 class EntrySection(tk.AsyncFrame):
-    def __init__(self, master):
+    def __init__(self, master: typing.Union[tk.AsyncTk, tk.AsyncFrame]):
         super().__init__(master)
 
         self.canvas = self.master.canvas
@@ -190,20 +204,20 @@ class EntrySection(tk.AsyncFrame):
         self.setupFields()
 
     def setupFields(self):
-        tk.AsyncLabel(self, text=kata.entrysection.x).pack()
+        tk.AsyncLabel(self, text=kata.menu.entry.x).pack()
         self.x = tk.AsyncSpinbox(self, from_=0, to=self.canvas.width)
         self.x.pack()
 
-        tk.AsyncLabel(self, text=kata.entrysection.y).pack()
+        tk.AsyncLabel(self, text=kata.menu.entry.y).pack()
         self.y = tk.AsyncSpinbox(self, from_=0, to=self.canvas.width)
         self.y.pack()
 
-        tk.AsyncLabel(self, text=kata.entrysection.colour).pack()
+        tk.AsyncLabel(self, text=kata.menu.entry.colour).pack()
         self.colour = tk.AsyncEntry(self)
         self.colour.pack()
 
         self.confirm_button = tk.AsyncButton(
-            self, callback=self.setupPixel, text=kata.entrysection.confirm
+            self, callback=self.setupPixel, text=kata.menu.entry.confirm
         )
         self.confirm_button.pack()
 
@@ -217,7 +231,7 @@ class EntrySection(tk.AsyncFrame):
         try:
             colour = Colour(colour)
         except (ValueError, TypeError):
-            self.error_label["text"] = kata.entrysection.colour_error
+            self.error_label["text"] = kata.menu.entry.colour_error
             await asyncio.sleep(5)
             self.error_label["text"] = ""
             return
