@@ -19,29 +19,30 @@ class EventViewer(tk.Frame):
 
         self.canvas = tk.Canvas(self)
         self.display_frame = tk.Frame(self.canvas)
-        self.scrollbar = tk.Scrollbar(self, orient="vertical",
+        self.scrollbar = tk.Scrollbar(self, orient="vertical", width=20,
                                       command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
 
-        self.scrollbar.pack(side="right", fill="y")
-        self.canvas.pack(side="left", padx=10)
-        self.canvas.create_window((0, 0), window=self.display_frame, anchor="nw")
+        self.grid_rowconfigure(0, weight=100)
+        self.scrollbar.grid(row=0, column=1, sticky="ns")
+        self.canvas.grid(row=0, column=0)
+        self.canvas.create_window((240, 0), window=self.display_frame, anchor="n")
 
         self.display_frame.bind("<Configure>", self.scrollMove)
+        self.display_frame.grid_columnconfigure(0, weight=1000)
+
         self.events = {}
 
     def scrollMove(self, event):
         """Update canvas information from scrollbar movement."""
         self.canvas.configure(scrollregion=self.canvas.bbox("all"),
-                              width=300, height=500)
+                              width=480, height=450)
 
     def add_event(self, event):
         """Add a new event to the viewer."""
-        self.widgets = {}
-
-        event_frame = tk.Frame(self.display_frame, height=200, width=300,
+        event_frame = tk.Frame(self.display_frame,
                                relief=tk.GROOVE, borderwidth=3)
-        event_frame.pack(fill="both", expand=True)
+        event_frame.grid(column=0, pady=5, padx=5)
 
         self.events.update({event: event_frame})
 
