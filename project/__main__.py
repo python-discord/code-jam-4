@@ -170,16 +170,20 @@ class Framed(tk.AsyncTk):
             foldermap = tk.AsyncFrame(manager)
             foldermap.grid(row=1, column=0)
             populate_folder(dir)
+            # Cancel button
+            tk.AsyncButton(
+                foldermap,
+                text=kata.menu.fileselect.button.cancel,
+                callback=manager.destroy,
+            ).pack(fill=tk.X)
 
         dirbox.bind("<Return>", boxcallback)
         change_dir(".")
-        # Cancel button
-        tk.AsyncButton(
-            manager, text=kata.menu.fileselect.button.cancel, callback=manager.destroy
-        ).pack(fill=tk.X)
         await self.wait_window(manager)
-        if getattr(manager, "file"):
+        try:
             return manager.file
+        except:
+            pass
 
 
 if __name__ == "__main__":
