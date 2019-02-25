@@ -66,6 +66,8 @@ class Contact:
         :return: None
         """
         if num_type in ['Home', 'Work', 'Personal']:
+            print("DEBUG: Phone Number:", number)
+            print("DEBUG: Num_type:", num_type)
             self.phone_numbers[num_type].append(number)
 
     def change_phone_number(self, orig_num: str, new_num: str) -> None:

@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter.ttk import *
 from project.contact import Contact
 
 
@@ -7,35 +8,31 @@ class Controller(Tk):
     Controller Class:
 
     === Public Attributes ===
-    frames: Dictionary of all available pages
+    notebook: Widget containing tabs; each page is assigned a tab, and can be navigated to easily
+    frames: Dictionary of all pages; allows for access of information across pages via the controller
 
     === Methods ===
-    show_frame: Allows the switching from one page to another.
-                Each page is like a layer in a photo editor,
-                calling 'frame.tkraise()' essentially brings
-                the specified frame to the top layer, where
-                it can be interacted with.
+    None
     """
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
-        container = Frame(self)
-        container.pack(side=TOP, fill=BOTH, expand=True)
-
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
+        self.title("Contact Manager")
+        self.iconbitmap("src/Phone.ico")
+        for i in range(5):
+            self.rowconfigure(i, weight=1)
+            self.columnconfigure(i, weight=1)
 
         self.frames = {}
 
+        self.notebook = Notebook(self)
+        self.notebook.grid(row=0, column=0, columnspan=5, rowspan=5, sticky=N+S+E+W)
+
         for page in [ContactsPage, AddContactPage, SettingsPage]:
-            frame = page(container, self)
-            self.frames[page] = frame
-            frame.grid(row=0, column=0, sticky="nsew")
+            frame = page(self.notebook, self)
+            self.notebook.add(frame, text=frame.page_name)
+            self.frames[frame.page_name] = frame
 
-        self.show_frame(ContactsPage)
-
-    def show_frame(self, page):
-        frame = self.frames[page]
-        frame.tkraise()
+        print("DEBUG:", self.frames)
 
 
 class ContactsPage(Frame):
@@ -46,6 +43,9 @@ class ContactsPage(Frame):
     === Public Attributes ===
     master: The frame containing all information on this page
     controller: Reference to the Controller Class
+
+    page_name: String containing a name for this page; used for setting the tabs
+                in the containing notebook
 
     contacts_list: Dictionary of contacts, each contact is a Contact class instance,
                     each key is the name of the contact
@@ -61,19 +61,17 @@ class ContactsPage(Frame):
     info_scroll: Scrollbar that controls what is viewable in the info_field; won't
                     scroll if nothing is in the list, or everything is already shown
 
-    contacts: Button that takes the user to the 'Contacts' page
-    new_contact: Button that takes the user to the 'Add New Contact' page
-    settings: Button that takes the user to the 'Settings' page
-
     === Methods ===
     create: Initializes objects & places them on the page
     insert_contact: Adds a contact's name to the end of the contacts field
     show_contact_info: Shows the information of the selected contact in the info listbox
     """
-    def __init__(self, master, controller):
-        Frame.__init__(self, master)
+    def __init__(self, master, controller, **kw):
+        super().__init__(master, **kw)
         self.master = master
         self.controller = controller
+
+        self.page_name = "View Contacts"
 
         # Initialize object names
         self.contacts_list = {}
@@ -83,10 +81,6 @@ class ContactsPage(Frame):
         self.show_info = None
         self.info_field = None
         self.info_scroll = None
-
-        self.contacts = None
-        self.new_contact = None
-        self.settings = None
 
         # Create objects
         self.create()
@@ -99,26 +93,18 @@ class ContactsPage(Frame):
         )
         self.info_scroll.config(command=self.info_field.yview)
         self.info_field.grid(row=3, column=0, columnspan=3, sticky=N+S+E+W)
-        self.info_scroll.grid(row=3, column=3, sticky=N+S+E+W)
+        self.info_scroll.grid(row=3, column=3, sticky=N+S+W)
 
         self.show_info = Button(self, text="Show Info", command=lambda: self.show_contact_info())
         self.show_info.grid(row=2, column=0, columnspan=3, sticky=N+S+E+W)
 
-        self.contacts = Button(self, text="Contacts", command=lambda: self.controller.show_frame(ContactsPage))
-        self.contacts.grid(row=0, column=0, sticky=N+S+E+W)
-
-        self.new_contact = Button(self, text="New Contact", command=lambda: self.controller.show_frame(AddContactPage))
-        self.new_contact.grid(row=0, column=1, sticky=N+S+E+W)
-
-        self.settings = Button(self, text="Settings", command=lambda: self.controller.show_frame(SettingsPage))
-        self.settings.grid(row=0, column=2, sticky=N+S+E+W)
-
         self.scroll_bar = Scrollbar(self)
-        self.scroll_bar.grid(row=1, column=3, sticky=N+S+E+W)
+        self.scroll_bar.grid(row=1, column=3, sticky=N+S+W)
 
         self.contacts_field = Listbox(
             self,
-            yscrollcommand=self.scroll_bar.set
+            yscrollcommand=self.scroll_bar.set,
+            selectmode=SINGLE
         )
         self.contacts_field.grid(row=1, column=0, columnspan=3, sticky=N+S+E+W)
 
@@ -134,8 +120,15 @@ class ContactsPage(Frame):
         self.contacts_field.insert(END, contact)
 
     def show_contact_info(self):
-        name = self.contacts_field.curselection()
-        print('DEBUG', name)
+        name = self.contacts_field.get(self.contacts_field.curselection()[0])
+        contact = self.contacts_list[name]
+        phone_nums = contact.phone_numbers
+        emails = contact.email_addresses
+        addresses = contact.addresses
+        notes = contact.notes
+        self.info_field.delete(0, END)
+        for elem in [name, phone_nums, emails, addresses, notes]:
+            self.info_field.insert(END, elem)
 
 
 class AddContactPage(Frame):
@@ -178,21 +171,20 @@ class AddContactPage(Frame):
                     Listbox
     preview: Listbox that shows the info of the contact being created currently
 
-    contacts: Button that takes the user to the 'Contacts' page
-    new_contact: Button that takes the user to the 'Add New Contact' page
-    settings: Button that takes the user to the 'Settings' page
-
     === Methods ===
     create: Initializes objects & places them on the page
     add_contact: Adds contact to the contact_list in ContactsPage;
                 If the contact is new, the name of the contact is added to
                 the contacts Listbox on ContactsPage.
     clear_all: Loops over all text entries and clears them
+    add_phone_num: TEMPORARY METHOD; Used for debugging
     """
-    def __init__(self, master, controller):
-        Frame.__init__(self, master)
+    def __init__(self, master, controller, **kw):
+        super().__init__(master, **kw)
         self.master = master
         self.controller = controller
+
+        self.page_name = "New Contact"
 
         # Initialize object names
         self.contact_new = Contact('')
@@ -228,12 +220,7 @@ class AddContactPage(Frame):
         self.preview_scroll = None
         self.preview = None
 
-        self.contacts = None
-        self.new_contact = None
-        self.settings = None
-
-        self.text_entries = [self.enter_name, self.enter_phone_num, self.enter_email, self.enter_address,
-                             self.enter_notes]
+        self.text_entries = None
 
         # Create objects
         self.create()
@@ -246,12 +233,12 @@ class AddContactPage(Frame):
         )
         self.preview_scroll.config(command=self.preview.yview)
         self.preview.grid(row=8, column=0, columnspan=3, sticky=N+S+E+W)
-        self.preview_scroll.grid(row=8, column=4, sticky=N+S+E+W)
+        self.preview_scroll.grid(row=8, column=4, sticky=N+S+W)
 
         self.add_to_contacts = Button(self, text="Submit to Contacts", command=lambda: self.add_contact())
         self.add_to_contacts.grid(row=7, column=0, columnspan=2, sticky=N+S+E+W)
 
-        self.clear = Button(self,text="Clear All", command=lambda: self.clear_all())
+        self.clear = Button(self, text="Clear All", command=lambda: self.clear_all())
         self.clear.grid(row=7, column=2, sticky=N+S+E+W)
 
         self.enter_notes = Entry(self)
@@ -297,7 +284,7 @@ class AddContactPage(Frame):
         self.enter_phone_num_button = Button(
             self,
             text="Add",
-            command=lambda: self.contact_new.add_phone_number(self.phone_type_var, self.enter_phone_num.get())
+            command=lambda: self.add_phone_num(phone_type_var.get(), self.enter_phone_num.get())
         )
         self.enter_phone_num_label.grid(row=2, column=0, sticky=N+S+E+W)
         self.enter_phone_num.grid(row=2, column=1, columnspan=3, sticky=N+S+E+W)
@@ -317,14 +304,8 @@ class AddContactPage(Frame):
         self.enter_name_label.grid(row=1, column=0, sticky=N+S+E+W)
         self.enter_name.grid(row=1, column=1, columnspan=3, sticky=N+S+E+W)
 
-        self.contacts = Button(self, text="Contacts", command=lambda: self.controller.show_frame(ContactsPage))
-        self.contacts.grid(row=0, column=0, sticky=N+S+E+W)
-
-        self.new_contact = Button(self, text="New Contact", command=lambda: self.controller.show_frame(AddContactPage))
-        self.new_contact.grid(row=0, column=1, sticky=N+S+E+W)
-
-        self.settings = Button(self, text="Settings", command=lambda: self.controller.show_frame(SettingsPage))
-        self.settings.grid(row=0, column=2, sticky=N+S+E+W)
+        self.text_entries = [self.enter_name, self.enter_phone_num, self.enter_email, self.enter_address,
+                             self.enter_notes]
 
         for i in range(8):
             self.grid_rowconfigure(i, weight=1)
@@ -332,22 +313,27 @@ class AddContactPage(Frame):
         for i in range(5):
             self.grid_columnconfigure(i, weight=1)
 
+    # Temporary method; currently only here for debugging
+    def add_phone_num(self, numtype, num):
+        print("DEBUG: Type", numtype)
+        print("Debug Num", num)
+        self.contact_new.add_phone_number(numtype, num)
+
     def add_contact(self):
         name = self.contact_new.name
-        if name == '':
-            if name not in self.controller.frames[ContactsPage].contacts_list:
+        if name != '':
+            if name not in self.controller.frames['View Contacts'].contacts_list:
                 print("DEBUG: Creating new contact")
-                self.controller.frames[ContactsPage].contacts_list[name] = self.new_contact
-                self.controller.frames[ContactsPage].insert_contact(name)
-            elif name in self.controller.frames[ContactsPage].contacts_list:
+                self.controller.frames['View Contacts'].contacts_list[name] = self.contact_new
+                self.controller.frames['View Contacts'].insert_contact(name)
+            elif name in self.controller.frames[self.page_name].contacts_list:
                 print("DEBUG: Updating already existing contact")
-                self.controller.frames[ContactsPage].contacts_list[name] = self.new_contact
+                self.controller.frames['View Contacts'].contacts_list[name] = self.contact_new
         else:
             print("DEBUG: Entered empty name")
 
     def clear_all(self):
         for entry in self.text_entries:
-            print("DEBUG: Deleting", entry)
             entry.delete(0, END)
 
 
@@ -359,35 +345,23 @@ class SettingsPage(Frame):
         master: The frame containing all information on this page
         controller: Reference to the Controller Class
 
-        contacts: Button that takes the user to the 'Contacts' page
-        new_contact: Button that takes the user to the 'Add New Contact' page
-        settings: Button that takes the user to the 'Settings' page
-
         === Methods ===
         create: Initializes objects & places them on the page
         """
-    def __init__(self, master, controller):
-        Frame.__init__(self, master)
+    def __init__(self, master, controller, **kw):
+        super().__init__(master, **kw)
         self.master = master
         self.controller = controller
 
+        self.page_name = "Settings"
+
         # Initialize object names
-        self.contacts = None
-        self.new_contact = None
-        self.settings = None
 
         # Create objects
         self.create()
 
     def create(self):
-        self.contacts = Button(self, text="Contacts", command=lambda: self.controller.show_frame(ContactsPage))
-        self.contacts.grid(row=0, column=0, sticky=N+S+E+W)
-
-        self.new_contact = Button(self, text="New Contact", command=lambda: self.controller.show_frame(AddContactPage))
-        self.new_contact.grid(row=0, column=1, sticky=N+S+E+W)
-
-        self.settings = Button(self, text="Settings", command=lambda: self.controller.show_frame(SettingsPage))
-        self.settings.grid(row=0, column=2, sticky=N+S+E+W)
+        pass
 
 
 if __name__ == "__main__":
