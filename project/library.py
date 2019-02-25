@@ -18,13 +18,13 @@ def create_db():
         cursor.execute("""
             create table if not exists library (
                 id     integer primary key,
-                path   text    not null,
-                crc32  integer not null,
                 title  text,
                 artist text,
                 album  text,
+                genre  text,
                 date   text,
-                genre  text
+                crc32  integer not null,
+                path   text    not null
             );
         """)
         conn.commit()
