@@ -1,5 +1,11 @@
 """Green Greenhouses Calendar Application."""
 import tkinter as tk
+from tkinter import messagebox
+import re
+from ..backend.DBHandler import DBHandler
+
+from .eventViewer import EventViewer
+
 
 from ..backend.DBHandler import DBHandler
 
@@ -13,9 +19,12 @@ class Application(tk.Tk):
         """Initialise Application class."""
         super().__init__()
 
+<<<<<<< HEAD
         self.resizable(False, False)
         self.geometry("500x500")
 
+=======
+>>>>>>> Zomatree
         self.dbh = DBHandler()
 
         self.pages = {}
@@ -76,7 +85,12 @@ class HomePage(tk.Frame):
         self.title.grid(row=0, column=0)
 
         self.button = tk.Button(self, text="Go to add event",
+<<<<<<< HEAD
                                 command=lambda: self.parent.change_page(CalendarPage))
+=======
+                                command=lambda:
+                                    self.parent.change_page(CalendarPage))
+>>>>>>> Zomatree
         self.button.grid(row=1, column=0)
 
 
@@ -122,6 +136,7 @@ class AddEventPage(tk.Frame):
         # Date
         self.date = tk.Label(self, text="Date", font=(24))
         self.date.grid(row=3, sticky="E")
+<<<<<<< HEAD
         self.dateEntry = tk.Entry(self)
         self.dateEntry.grid(row=3, column=1)
         # Description
@@ -147,6 +162,64 @@ class AddEventPage(tk.Frame):
                 self.descriptionEntry.get("1.0")))
 
         self.submitBtn.grid()
+=======
+        self.dateSpinBoxs = tk.Frame(self)
+        self.timeEntryD = tk.Spinbox(self.dateSpinBoxs, width=4, to=31)
+        self.timeEntryM = tk.Spinbox(self.dateSpinBoxs, width=4, to=12)
+        self.timeEntryY = tk.Spinbox(
+            self.dateSpinBoxs,
+            width=4,
+            from_=2019,
+            to=3000)
+        self.timeEntryD.grid(row=3, column=1)
+        self.timeEntryM.grid(row=3, column=2)
+        self.timeEntryY.grid(row=3, column=3)
+        self.dateSpinBoxs.grid(row=3, column=1)
+        # Description
+        self.description = tk.Label(self, text="Description", font=(24))
+        self.description.grid(row=4, sticky="E")
+        self.descriptionEntry = tk.Entry(self)
+        self.descriptionEntry.grid(row=4, column=1)
+        # Submit Button
+
+        self.submitBtn = tk.Button(
+            self,
+            text="Submit ✔",
+            command=lambda: self.inputCheck())
+        self.submitBtn.grid()
+
+    def inputCheck(self):
+        """
+        the Function that checks to see if all date boxs
+        have been filled out correctly.
+
+        Argumnets:
+            None
+        Returns:
+            None
+        """
+        pattern = re.compile(
+            r"^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$")
+        dateString = f"{self.timeEntryD.get()}.{self.timeEntryM.get().zfill(2)}.{self.timeEntryY.get()}"
+        date = pattern.match(dateString)
+        print(self.nameEntry.get())
+        print(self.locationEntry.get())
+        print(date)
+        print(self.descriptionEntry.get())
+        if (self.nameEntry.get() and
+                self.locationEntry.get() and
+                date and self.descriptionEntry.get()):
+            self.parent.dbh.addEvent(
+                self.nameEntry.get(),
+                self.locationEntry.get(),
+                dateString,
+                self.descriptionEntry.get())
+        else:
+            messagebox.showinfo(
+                "Missing arguments",
+                "It seems you didnt fill out all the info boxs \n" +
+                "please fill them all and try again.")
+>>>>>>> Zomatree
 
 
 class CalendarPage(tk.Frame):
