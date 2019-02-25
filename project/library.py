@@ -32,3 +32,9 @@ def create_db():
     db.setDatabaseName(DB_NAME)
 
     # TODO: Handle possible errors if db fails to open
+
+def add_entry(tags):
+     with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute( ''' INSERT INTO  LIBRARY VALUES (?,?,?,?,?,?,?,?)''', (6,tags['path'],tags['crc32'],tags.get('title',None),tags.get('ARTIST',None),tags.get('album',None),tags.get('DATE',None),tags.get('genre',None)))
+        return cursor.lastrowid

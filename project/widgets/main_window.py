@@ -4,8 +4,8 @@ from PySide2.QtWidgets import QFileDialog, QMainWindow
 
 from project.models.playlist import PlaylistModel
 from project.ui.main_window import Ui_MainWindow
-
-
+from project import media as ffp
+from project import library
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -30,6 +30,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for path in paths:
             print(path)
             media = QMediaContent(QUrl.fromLocalFile(path))
+            library.add_entry(ffp.parse_media(path))
             self.playlist.addMedia(media)
 
         self.playlist_model.layoutChanged.emit()

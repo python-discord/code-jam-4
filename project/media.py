@@ -49,13 +49,14 @@ def parse_media(path: str):
 
     process = subprocess.run(args, capture_output=True, encoding="utf-8")
 
-    process.check_returncode()  # TODO: Handle exception better
-    output = process.stdout.strip().split("\n")
-
+    if process.check_returncode():  # TODO: Handle exception better
+       raise("ffprobe may not be installed.")
+    output = process.stdout
+    print(output)
     try:
         metadata = json.loads(output, encoding="utf-8")
     except json.JSONDecodeError:
-        raise  # TODO: Handle exception better
+        raise("The file may not be formatted correctly.")  # TODO: Handle exception better
 
     try:
         tags = metadata["format"]["tags"]
@@ -65,5 +66,5 @@ def parse_media(path: str):
     tags = {k: v for k, v in tags.items() if k.lower() in TAG_WHITELIST}  # Filter out tags
     tags["path"] = path
     tags["crc32"] = compute_crc32(path)
-
+    print(tags)
     return tags
