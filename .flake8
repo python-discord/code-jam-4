@@ -2,6 +2,6 @@
 max-line-length=100
 application_import_names=project
 ignore=W503
-exclude=__pycache__, venv, .venv, tests
+exclude=__pycache__, venv, .venv, tests, project/ui
 import-order-style=pycharm
 inline-quotes = "

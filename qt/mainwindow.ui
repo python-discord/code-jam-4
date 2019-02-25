@@ -13,8 +13,8 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralWidget">
-   <widget class="QTableWidget" name="tableWidget">
+  <widget class="QWidget" name="central_widget">
+   <widget class="QTableView" name="playlist_view">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -46,7 +46,7 @@
       <height>41</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="media_controls_layout">
      <item>
       <widget class="QPushButton" name="previous_button">
        <property name="text">
@@ -81,7 +81,7 @@
     </property>
    </widget>
   </widget>
-  <widget class="QMenuBar" name="menuBar">
+  <widget class="QMenuBar" name="menu_bar">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -90,16 +90,20 @@
      <height>20</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu_file">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="add_files_action"/>
+   </widget>
+   <addaction name="menu_file"/>
   </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="status_bar"/>
+  <action name="add_files_action">
+   <property name="text">
+    <string>Add files</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
