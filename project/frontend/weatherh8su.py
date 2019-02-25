@@ -1,6 +1,5 @@
 from tkinter import *
 from PIL import Image, ImageTk
-import sys
 
 class weatherh8su:
     def __init__(self, master):
@@ -35,7 +34,6 @@ class weatherh8su:
             self.settings.grid(row=0)
 
 root = Tk()
-print(sys.version)
 root.geometry("600x600")
 app = weatherh8su(root)
 root.mainloop()
