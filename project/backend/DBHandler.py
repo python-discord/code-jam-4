@@ -34,7 +34,8 @@ class DBHandler:
 
     def addEvent(self, name, location, date, description):
         """Create a new event and add it to the database."""
-        self.cursor.execute('''INSERT INTO events(name,location,
+
+        self.cursor.execute('''INSERT INTO users(name,location,
                                                  date,description)
                                                  VALUES(?,?,?)''', (name,
                                                                     location,
@@ -53,7 +54,5 @@ class DBHandler:
                                 VALUES(?,?,?,?)""", ("Meeting",
                                                      "Office on 4th street",
                                                      """Talk about upcoming
-                                                     work events""",
-                                                     )
-                            )
+                                                     work events""",))
         self.conn.commit()
