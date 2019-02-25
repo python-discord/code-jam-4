@@ -1,17 +1,16 @@
-Project ideas:
-Accessibility app that's ironically detrimental to the user's disability
-Text editor that encrypts everything saved in it without giving the user the password
-Cyclical encryption keys; you need one to decrypt the other
-Text editor that scrambles the letters while you type so you can't see what you're writing, but it actually saves the file correctly to ODT so then in order to see what you wrote you have to open it in libreoffice / ms word / etc. and get the password that's hidden behind like 10 layers of weird hoops and ladders
-Text editor that displays text in its encrypted form
-Keyboards! Last used letter pushed to top-left, most commonly used letters larger than the others, UNLOCK LETTERS (maybe even have duplicates next to each other on the keyboard)
-Image editor where you have to manually specify what to do for each pixel
-App that asks you to do things as a "tutorial" but doesn't tell you what they do and they're super sketchy
-Password manager where it's a list of "folders" or whatever but the folders are named the password and you have to open it to see what the app is that uses that password!
-Machine learning app where you tell it for a day or so when you're using the bathroom and from then on it sends you a text whenever "it's time to use the bathroom!"
----
-Addon ideas:
-Gives WAY too much information and brags about its completeness
-Be way too user friendly
-Tutorial is super passive agressive
-"Language agnostic" app where everything is explained with symbols, no text
+To do:
+```
+*Tutorial sprite (Phyro)
+*Tutorial popups (Maku)
+*Fancier text window (Yui)
+*Lootbox open/close sprites (Phyro)
+*Allow the keyboard to send keys to other windows like a true onscreen keyboard (Unclaimed, preferably Maku)
+*If a key gets too large and can't grow anymore, it should get pushed to the topleftmost key (and shrunken)
+```
+Addon ideas that we can do whenever:
+```
+*Accessibility option that's ironically detrimental to the user's disability
+*Super sketchy tutorial maybe
+*Be annoyingly user friendly
+*Maybe explain everything (tutorials) with symbols, no text?
+```
