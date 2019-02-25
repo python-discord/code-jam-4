@@ -37,6 +37,7 @@ def create_db():
 
     # TODO: Handle possible errors if db fails to open
 
+
 def add_media(metadata: Dict[str, Any]) -> Optional[int]:
     """Add media to the library database.
 

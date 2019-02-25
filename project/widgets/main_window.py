@@ -1,11 +1,16 @@
+import logging
+
 from PySide2.QtCore import QUrl
 from PySide2.QtMultimedia import QMediaContent, QMediaPlayer, QMediaPlaylist
 from PySide2.QtWidgets import QFileDialog, QMainWindow
 
+from project import library, media as media_utils
 from project.models.playlist import PlaylistModel
 from project.ui.main_window import Ui_MainWindow
-from project import media as ffp
-from project import library
+
+log = logging.getLogger(__name__)
+
+
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -28,9 +33,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         paths, _ = QFileDialog.getOpenFileNames(self, "Add files", "", "")
 
         for path in paths:
-            print(path)
+            log.debug(path)
             media = QMediaContent(QUrl.fromLocalFile(path))
-            library.add_entry(ffp.parse_media(path))
+            library.add_media(media_utils.parse_media(path))
             self.playlist.addMedia(media)
 
         self.playlist_model.layoutChanged.emit()
