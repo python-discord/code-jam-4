@@ -1,6 +1,9 @@
 import binascii
 import json
+import logging
 import subprocess
+
+log = logging.getLogger(__name__)
 
 TAG_WHITELIST = ("title", "artist", "album", "date", "genre")
 
@@ -48,23 +51,19 @@ def parse_media(path: str):
     ]
 
     process = subprocess.run(args, capture_output=True, encoding="utf-8")
+    tags = dict()
 
-    if process.check_returncode():  # TODO: Handle exception better
-       raise("ffprobe may not be installed.")
-    output = process.stdout
-    print(output)
-    try:
-        metadata = json.loads(output, encoding="utf-8")
-    except json.JSONDecodeError:
-        raise("The file may not be formatted correctly.")  # TODO: Handle exception better
+    if process.returncode != 0:
+        log.error(f"Failed to fetch metadata for {path}: return code {process.returncode}")
 
     try:
+        metadata = json.loads(process.stdout, encoding="utf-8")
         tags = metadata["format"]["tags"]
-    except KeyError:
-        raise  # TODO: Handle exception better
+    except (json.JSONDecodeError, KeyError):
+        log.exception("Failed to parse metadata for {path}")
 
     tags = {k: v for k, v in tags.items() if k.lower() in TAG_WHITELIST}  # Filter out tags
     tags["path"] = path
     tags["crc32"] = compute_crc32(path)
-    print(tags)
+
     return tags
