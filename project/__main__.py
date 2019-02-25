@@ -60,7 +60,8 @@ class Framed(tk.AsyncTk):
 
     async def save(self):
         file = await self.file_select()
-        await self.canvas.save(file)
+        if file:
+            await self.canvas.save(file)
 
     def _setupMenu(self):
         menu = tk.AsyncMenu(self)
@@ -172,8 +173,13 @@ class Framed(tk.AsyncTk):
 
         dirbox.bind("<Return>", boxcallback)
         change_dir(".")
+        # Cancel button
+        tk.AsyncButton(
+            dialogue, text=kata.menu.fileselect.button.cancel, callback=manager.destroy
+        ).pack(fill=tk.X)
         await self.wait_window(manager)
-        return manager.file
+        if getattr(manager, file):
+            return manager.file
 
 
 if __name__ == "__main__":
