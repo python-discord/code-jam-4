@@ -2,28 +2,38 @@ import tkinter as tk
 import tkinter.font as tkFont
 import math
 import json
-import enchant #TODO add as requirement to project
+import enchant  # TODO add as requirement to project
 # from pathlib import Path
+
 
 ENGLISH_DICTIONARY = enchant.Dict('en_US')
 
+
 def get_last_word(text):
-    for i in range(1,len(text)):
+    assert text.lower() == text
+    assert text.strip() == text
+    for i in range(1, len(text)):
         if not text[-i].isalpha():
             return text[1-i:]
     return text
 
+
 class UserInterface(tk.Frame):
     def __init__(self, master, *args, **kwargs):
         tk.Frame.__init__(self, master, *args, **kwargs)
+
+        with open('save_data.json') as save_data_file:
+            save_data = json.load(save_data_file)
+        saved_keys = save_data['saved_keys']
+        self.used_words = set(save_data['used_words'])
+
         self.text_entry_section = TextEntrySection(self)
-        self.keyboard_section = KeyboardSection(self)
+        self.keyboard_section = KeyboardSection(self, saved_keys=saved_keys)
         self.text_entry_section.grid(row=0, column=0)
         self.keyboard_section.grid(row=1, column=0, ipadx=5,
                                    ipady=5, sticky="nwse"
                                    )
         self.config(padx=12, pady=12)
-        self.used_words = set()
 
     def receive_key(self, char):
         self.text_entry_section.receive_key(char)
@@ -31,14 +41,16 @@ class UserInterface(tk.Frame):
     def backspace(self):
         print("Backspace")
         self.text_entry_section.backspace()
-        
+
     def unlock_lootbox(self):
         print("Lootbox added!")
-        
-        
+
     def on_word_complete(self, last_word: str):
+        assert last_word.lower() == last_word
+        assert last_word.strip() == last_word
+        assert last_word.isalpha()
         print("Last word: {}".format(last_word))
-        if(ENGLISH_DICTIONARY.check(last_word) 
+        if(ENGLISH_DICTIONARY.check(last_word)
            and last_word not in self.used_words):
             self.used_words.add(last_word)
             self.unlock_lootbox()
@@ -64,9 +76,9 @@ class TextEntrySection(tk.Frame):
         self.textbox.insert('end', char)
         self.textbox.configure(state="disabled")
         if len(char) != 1 or not char.isalpha():
-            text_in_box = self.textbox.get('1.0','end')
-            #TODO make it constant time complexity by getting from the end ^
-            last_word = get_last_word(text_in_box.strip().lower())
+            recent_text_in_box = self.textbox.get('end - 50 chars', 'end')
+            # -50 chars for constant time complexity (for really long files)
+            last_word = get_last_word(recent_text_in_box.strip().lower())
             self.master.on_word_complete(last_word)
 
     def backspace(self):
@@ -81,7 +93,8 @@ class KeyboardSection(tk.Frame):
         which should allow each key to send a receive_key command to
         its master.
     '''
-    def __init__(self, master: UserInterface, *args, **kwargs):
+    def __init__(self, master: UserInterface, saved_keys=set(),
+                 *args, **kwargs):
         tk.Frame.__init__(self, master, *args, **kwargs)
         self.master = master
 
@@ -92,8 +105,6 @@ class KeyboardSection(tk.Frame):
         with open('key_descriptions.json', 'r') as descriptions_file:
             self.key_descriptions = json.load(descriptions_file)
 
-        with open('saved_keyboard.json') as saved_keys_file:
-            saved_keys = json.load(saved_keys_file)
         self.make_keys(saved_keys=saved_keys)
 
     def add_key(self, key_name: str):
