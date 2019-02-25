@@ -21,12 +21,17 @@ class Controller(Tk):
             self.rowconfigure(i, weight=1)
             self.columnconfigure(i, weight=1)
 
+        self.frames = {}
+
         self.notebook = Notebook(self)
         self.notebook.grid(row=0, column=0, columnspan=5, rowspan=5, sticky=N+S+E+W)
 
         for page in [ContactsPage, AddContactPage, SettingsPage]:
             frame = page(self.notebook, self)
             self.notebook.add(frame, text=frame.page_name)
+            self.frames[frame.page_name] = frame
+
+        print("DEBUG:", self.frames)
 
 
 class ContactsPage(Frame):
@@ -97,7 +102,8 @@ class ContactsPage(Frame):
 
         self.contacts_field = Listbox(
             self,
-            yscrollcommand=self.scroll_bar.set
+            yscrollcommand=self.scroll_bar.set,
+            selectmode=SINGLE
         )
         self.contacts_field.grid(row=1, column=0, columnspan=3, sticky=N+S+E+W)
 
@@ -113,8 +119,15 @@ class ContactsPage(Frame):
         self.contacts_field.insert(END, contact)
 
     def show_contact_info(self):
-        name = self.contacts_field.curselection()
-        print('DEBUG', name)
+        name = self.contacts_field.get(self.contacts_field.curselection()[0])
+        contact = self.contacts_list[name]
+        phone_nums = contact.phone_numbers
+        emails = contact.email_addresses
+        addresses = contact.addresses
+        notes = contact.notes
+        self.info_field.delete(0, END)
+        for elem in [name, phone_nums, emails, addresses, notes]:
+            self.info_field.insert(END, elem)
 
 
 class AddContactPage(Frame):
@@ -269,7 +282,7 @@ class AddContactPage(Frame):
         self.enter_phone_num_button = Button(
             self,
             text="Add",
-            command=lambda: self.contact_new.add_phone_number(self.phone_type_var, self.enter_phone_num.get())
+            command=lambda: self.add_phone_num(phone_type_var.get(), self.enter_phone_num.get())
         )
         self.enter_phone_num_label.grid(row=2, column=0, sticky=N+S+E+W)
         self.enter_phone_num.grid(row=2, column=1, columnspan=3, sticky=N+S+E+W)
@@ -298,16 +311,21 @@ class AddContactPage(Frame):
         for i in range(5):
             self.grid_columnconfigure(i, weight=1)
 
+    def add_phone_num(self, numtype, num):
+        print("DEBUG: Type", numtype)
+        print("Debug Num", num)
+        self.contact_new.add_phone_number(numtype, num)
+
     def add_contact(self):
         name = self.contact_new.name
         if name != '':
-            if name not in self.controller.frames[ContactsPage].contacts_list:
+            if name not in self.controller.frames['View Contacts'].contacts_list:
                 print("DEBUG: Creating new contact")
-                self.controller.frames[ContactsPage].contacts_list[name] = self.contact_new
-                self.controller.frames[ContactsPage].insert_contact(name)
-            elif name in self.controller.frames[ContactsPage].contacts_list:
+                self.controller.frames['View Contacts'].contacts_list[name] = self.contact_new
+                self.controller.frames['View Contacts'].insert_contact(name)
+            elif name in self.controller.frames[self.page_name].contacts_list:
                 print("DEBUG: Updating already existing contact")
-                self.controller.frames[ContactsPage].contacts_list[name] = self.contact_new
+                self.controller.frames['View Contacts'].contacts_list[name] = self.contact_new
         else:
             print("DEBUG: Entered empty name")
 
