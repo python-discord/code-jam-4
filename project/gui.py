@@ -100,7 +100,19 @@ class Minesweeper(QtWidgets.QWidget):
                         label.setAlignment(QtCore.Qt.AlignCenter)
                         label.setFixedSize(*self.tile_size)
                         self.grid_layout.addWidget(label, y, x)
-                elif tile == self.controller.MINE:
+
+    def place_flag(self, row, column):
+        button = self.button_grid[row][column]
+        flag_icon = QtGui.QIcon(':/images/flag.png')
+        if not button.icon().isNull():
+            button.setIcon(QtGui.QIcon())
+        else:
+            button.setIcon(flag_icon)
+
+    def game_over(self):
+        for y, row in enumerate(self.controller.grid):
+            for x, tile in enumerate(row):
+                if tile == self.controller.MINE:
                     self.button_grid[y][x].hide()
                     label = QtWidgets.QLabel(self)
                     label.setFixedSize(*self.tile_size)
@@ -113,16 +125,10 @@ class Minesweeper(QtWidgets.QWidget):
                     label.setPixmap(scaled_mine_icon)
                     self.grid_layout.addWidget(label, y, x)
 
-    def place_flag(self, row, column):
-        button = self.button_grid[row][column]
-        flag_icon = QtGui.QIcon(':/images/flag.png')
-        if not button.icon().isNull():
-            button.setIcon(QtGui.QIcon())
-        else:
-            button.setIcon(flag_icon)
-
     def button_clicked(self, row, column):
-        self.controller.click_tile(x=column, y=row)
+        is_mine = self.controller.click_tile(x=column, y=row)
+        if is_mine:
+            self.game_over()
         self.refresh_gui()
 
 
