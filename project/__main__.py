@@ -46,13 +46,13 @@ class Calculator(tk.Frame):
         
         self.proc_label = tk.Label(
             self,
-            text ="",
+            text ="PROCESSED MATHS",
         )
         self.proc_label.pack(side = "top")
                 
         self.ans_label = tk.Label(
             self,
-            text = "",
+            text = "0",
         )
         self.ans_label.pack(side = "top")      
 
