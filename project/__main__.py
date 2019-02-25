@@ -180,10 +180,8 @@ class Framed(tk.AsyncTk):
         dirbox.bind("<Return>", boxcallback)
         change_dir(".")
         await self.wait_window(manager)
-        try:
+        if hasattr(manager, "file"):
             return manager.file
-        except:
-            pass
 
 
 if __name__ == "__main__":

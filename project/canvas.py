@@ -62,7 +62,7 @@ class Colour:
     def __init__(self, colour: typing.Union[str, int]):
         try:
             int(colour)
-        except:
+        except ValueError:
             raise TypeError
         if int(colour) not in range(16_777_216):
             raise ValueError
@@ -195,15 +195,42 @@ class Canvas(tk.AsyncCanvas):
 
 
 class EntrySection(tk.AsyncFrame):
+
+    """
+    The frame located on the main window, containing the buttons,
+    which is subclassed from asynctk.AsyncFrame
+
+    Parameters
+    ----------
+    master: asynctk.AsyncTk
+
+    Attributes
+    ----------
+    canvas: Cavnas
+        a shortcut for referencing the canvas within the master's attributes
+    x: asynctk.Spinbox
+        a Spinbox Entry Widget to enter the x coordinate
+    y: asynctk.Spinbox
+        a Spinbox Entry Widget to enter the y coordinate
+    colour: asynctk.AsyncEntry
+        an Entry Widget to enter the colour value
+    error_label: asynck.AsyncLabel
+        a Label Widget to display an error if necessary
+
+    Methods
+    -------
+    setupPixel: coroutine
+    """
+
     def __init__(self, master: typing.Union[tk.AsyncTk, tk.AsyncFrame]):
         super().__init__(master)
 
         self.canvas = self.master.canvas
 
         self.pack(side=tk.RIGHT)
-        self.setupFields()
+        self._setupFields()
 
-    def setupFields(self):
+    def _setupFields(self):
         tk.AsyncLabel(self, text=kata.menu.entry.x).pack()
         self.x = tk.AsyncSpinbox(self, from_=0, to=self.canvas.width)
         self.x.pack()
@@ -216,15 +243,16 @@ class EntrySection(tk.AsyncFrame):
         self.colour = tk.AsyncEntry(self)
         self.colour.pack()
 
-        self.confirm_button = tk.AsyncButton(
+        tk.AsyncButton(
             self, callback=self.setupPixel, text=kata.menu.entry.confirm
-        )
-        self.confirm_button.pack()
+        ).pack()
 
         self.error_label = tk.AsyncLabel(self, text="", fg="red")
         self.error_label.pack()
 
     async def setupPixel(self):
+        """The method that grabs the entries from the fields and calls the canvas function"""
+
         x = self.x.get()
         y = self.y.get()
         colour = self.colour.get()

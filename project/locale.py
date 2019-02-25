@@ -19,10 +19,12 @@ class menu:
         class button:
             default = "セイヴ ヒル"  # se i vu   hi ru | Save Here
             special = "セイヴ ヒル\n【ファイルナム カッノト ビー エムプテイー オル ア スペシアル パス】"
-            # se i vu   hi ru \n [fa i ru na mu   ka nno to   bi-   e mu pu te i-   o ru   a   su pe shi a ru   pa su]
+            # se i vu   hi ru \n [fa i ru na mu   ka nno to   bi-   e mu pu te i-   o ru   a
+            # su pe shi a ru   pa su]
             # Save Here [Filename cannot be empty or a special path]
             invalid = 'セイヴ ヒル\n【ファイルナム カッノト コンテイヌ エニー オヴ: \\/:*?"<>|】'
-            # se i vu   hi ru \n [fa i ru na mu   ka nno to   ko n te i nu   e ni-   o vu: \/:*?"<>|]
+            # se i vu   hi ru \n [fa i ru na mu   ka nno to   ko n te i nu   e ni-   o vu:
+            # \/:*?"<>|]
             # Save Here [Filename cannot contain any of: \/:*?"<>|]
             cancel = "カンセル"  # ka n se ru | Cancel
 
@@ -32,7 +34,8 @@ class menu:
         colour = "コロー"  # ko ro- | Colour
         confirm = "コンファーム"  # ko n fa- mu | Confirm
         colour_error = "コロー ムスト ビー ベトイーン 0 アンヅ 16777215"
-        # ko ro-   mu su to   bi-   be to i- n   0   a n du   16777215 | Colour must be between 0 and 16777215
+        # ko ro-   mu su to   bi-   be to i- n   0   a n du   16777215
+        # Colour must be between 0 and 16777215
 
 
 class general:
