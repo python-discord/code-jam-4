@@ -2,6 +2,15 @@ from tkinter import *
 from tkinter.ttk import *
 from project.contact import Contact
 
+"""
+TODO:
+Make Functional Load/Save buttons in ContactsPage
+Make preview_field in AddContactsPage update when an contact attribute is added
+Settings Page:
+- Change color schemes; all options are terrible color palettes
+- Change fonts; all options are terrible fonts
+"""
+
 
 class Controller(Tk):
     """
@@ -16,6 +25,8 @@ class Controller(Tk):
     """
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
+        self.resizable(False, False)
+        self.geometry("300x380")
         self.title("Contact Manager")
         self.iconbitmap("src/Phone.ico")
         for i in range(5):
@@ -31,8 +42,6 @@ class Controller(Tk):
             frame = page(self.notebook, self)
             self.notebook.add(frame, text=frame.page_name)
             self.frames[frame.page_name] = frame
-
-        print("DEBUG:", self.frames)
 
 
 class ContactsPage(Frame):
@@ -82,6 +91,9 @@ class ContactsPage(Frame):
         self.info_field = None
         self.info_scroll = None
 
+        self.load = None
+        self.save = None
+
         # Create objects
         self.create()
 
@@ -92,22 +104,20 @@ class ContactsPage(Frame):
             yscrollcommand=self.info_scroll.set
         )
         self.info_scroll.config(command=self.info_field.yview)
-        self.info_field.grid(row=3, column=0, columnspan=3, sticky=N+S+E+W)
-        self.info_scroll.grid(row=3, column=3, sticky=N+S+W)
+        self.info_field.grid(row=3, column=0, columnspan=4, sticky=N+S+E+W)
+        self.info_scroll.grid(row=3, column=4, sticky=N+S+E+W)
 
         self.show_info = Button(self, text="Show Info", command=lambda: self.show_contact_info())
-        self.show_info.grid(row=2, column=0, columnspan=3, sticky=N+S+E+W)
+        self.show_info.grid(row=2, column=0, columnspan=4, sticky=N+S+E+W)
 
         self.scroll_bar = Scrollbar(self)
-        self.scroll_bar.grid(row=1, column=3, sticky=N+S+W)
-
         self.contacts_field = Listbox(
             self,
             yscrollcommand=self.scroll_bar.set,
             selectmode=SINGLE
         )
-        self.contacts_field.grid(row=1, column=0, columnspan=3, sticky=N+S+E+W)
-
+        self.contacts_field.grid(row=1, column=0, columnspan=4, sticky=N+S+E+W)
+        self.scroll_bar.grid(row=1, column=4, sticky=N+S+E+W)
         self.scroll_bar.config(command=self.contacts_field.yview)
 
         for i in range(3):
@@ -115,6 +125,12 @@ class ContactsPage(Frame):
 
         for i in range(4):
             self.grid_columnconfigure(i, weight=1)
+
+    def load_contacts(self):
+        pass
+
+    def save_contacts(self):
+        pass
 
     def insert_contact(self, contact):
         self.contacts_field.insert(END, contact)
@@ -232,8 +248,8 @@ class AddContactPage(Frame):
             yscrollcommand=self.preview_scroll.set
         )
         self.preview_scroll.config(command=self.preview.yview)
-        self.preview.grid(row=8, column=0, columnspan=3, sticky=N+S+E+W)
-        self.preview_scroll.grid(row=8, column=4, sticky=N+S+W)
+        self.preview.grid(row=8, column=0, columnspan=5, sticky=N+S+E+W)
+        self.preview_scroll.grid(row=8, column=5, sticky=N+S+E+W)
 
         self.add_to_contacts = Button(self, text="Submit to Contacts", command=lambda: self.add_contact())
         self.add_to_contacts.grid(row=7, column=0, columnspan=2, sticky=N+S+E+W)
@@ -246,9 +262,10 @@ class AddContactPage(Frame):
         self.enter_notes_button = Button(
             self,
             text="Add",
-            command=lambda: self.contact_new.add_note(self.enter_notes.get())
+            command=lambda: self.contact_new.add_note(self.enter_notes.get()),
+            width=5
         )
-        self.enter_notes_button.grid(row=6, column=4, sticky=N+S+E+W)
+        self.enter_notes_button.grid(row=6, column=4, columnspan=2, sticky=N+S+E+W)
         self.enter_notes_label.grid(row=6, column=0, sticky=N+S+E+W)
         self.enter_notes.grid(row=6, column=1, columnspan=3, sticky=N+S+E+W)
 
@@ -257,22 +274,24 @@ class AddContactPage(Frame):
         self.enter_address_button = Button(
             self,
             text="Add",
-            command=lambda: self.contact_new.add_address("Physical", self.enter_address.get())
+            command=lambda: self.contact_new.add_address("Physical", self.enter_address.get()),
+            width=5
         )
         self.enter_address_label.grid(row=5, column=0, sticky=N+S+E+W)
         self.enter_address.grid(row=5, column=1, columnspan=3, sticky=N+S+E+W)
-        self.enter_address_button.grid(row=5, column=4, sticky=N+S+E+W)
+        self.enter_address_button.grid(row=5, column=4, columnspan=2, sticky=N+S+E+W)
 
         self.enter_email = Entry(self)
         self.enter_email_label = Label(self, text="Email:")
         self.enter_email_button = Button(
             self,
             text="Add",
-            command=lambda: self.contact_new.add_address("Email", self.enter_email.get())
+            command=lambda: self.contact_new.add_address("Email", self.enter_email.get()),
+            width=5
         )
         self.enter_email_label.grid(row=4, column=0, sticky=N+S+E+W)
         self.enter_email.grid(row=4, column=1, columnspan=3, sticky=N+S+E+W)
-        self.enter_email_button.grid(row=4, column=4, sticky=N+S+E+W)
+        self.enter_email_button.grid(row=4, column=4, columnspan=2, sticky=N+S+E+W)
 
         # PLACEHOLDER FOR ACTUAL PHONE NUMBER ENTRY
         self.enter_phone_num = Entry(self)
@@ -284,23 +303,25 @@ class AddContactPage(Frame):
         self.enter_phone_num_button = Button(
             self,
             text="Add",
-            command=lambda: self.add_phone_num(phone_type_var.get(), self.enter_phone_num.get())
+            command=lambda: self.add_phone_num(phone_type_var.get(), self.enter_phone_num.get()),
+            width=5
         )
         self.enter_phone_num_label.grid(row=2, column=0, sticky=N+S+E+W)
         self.enter_phone_num.grid(row=2, column=1, columnspan=3, sticky=N+S+E+W)
         self.phone_type_home.grid(row=3, column=0, sticky=N+S+E+W)
         self.phone_type_work.grid(row=3, column=1, sticky=N+S+E+W)
         self.phone_type_personal.grid(row=3, column=2, sticky=N+S+E+W)
-        self.enter_phone_num_button.grid(row=2, column=4, sticky=N+S+E+W)
+        self.enter_phone_num_button.grid(row=2, column=4, columnspan=2, sticky=N+S+E+W)
 
         self.enter_name = Entry(self)
         self.enter_name_label = Label(self, text="Name:")
         self.enter_name_button = Button(
             self,
             text="Add",
-            command=lambda: self.contact_new.change_name(self.enter_name.get())
+            command=lambda: self.contact_new.change_name(self.enter_name.get()),
+            width=5
         )
-        self.enter_name_button.grid(row=1, column=4, sticky=N+S+E+W)
+        self.enter_name_button.grid(row=1, column=4, columnspan=2, sticky=N+S+E+W)
         self.enter_name_label.grid(row=1, column=0, sticky=N+S+E+W)
         self.enter_name.grid(row=1, column=1, columnspan=3, sticky=N+S+E+W)
 
@@ -315,9 +336,10 @@ class AddContactPage(Frame):
 
     # Temporary method; currently only here for debugging
     def add_phone_num(self, numtype, num):
-        print("DEBUG: Type", numtype)
-        print("Debug Num", num)
-        self.contact_new.add_phone_number(numtype, num)
+        if numtype != '':
+            self.contact_new.add_phone_number(numtype, num)
+        else:
+            print("DEBUG: No type chosen, try again")
 
     def add_contact(self):
         name = self.contact_new.name
@@ -331,6 +353,8 @@ class AddContactPage(Frame):
                 self.controller.frames['View Contacts'].contacts_list[name] = self.contact_new
         else:
             print("DEBUG: Entered empty name")
+        print("DEBUG: Contacts_Dict:", self.controller.frames['View Contacts'].contacts_list)
+        self.contact_new = Contact('')
 
     def clear_all(self):
         for entry in self.text_entries:
