@@ -39,9 +39,6 @@ class DBHandler:
         return rows
 
     def addEvent(self, name, location, date, description):
-<<<<<<< HEAD
-        """Create a new event and add it to the database."""
-=======
         """Create a new event and add it to the database.
 
         Arguments:
@@ -52,7 +49,6 @@ class DBHandler:
         Returns:
             None
         """
->>>>>>> Throupy
         self.cursor.execute('''INSERT INTO events(name,location,
                                                  date,description)
                                                  VALUES(?,?,?,?)''', (name,
@@ -83,10 +79,6 @@ class DBHandler:
                                 VALUES(?,?,?,?)""", ("Meeting",
                                                      "Office on 4th street",
                                                      """Talk about upcoming
-<<<<<<< HEAD
-                                                     work events""",))
-=======
                                                      work events""",
                                                      "12/02"))
->>>>>>> Throupy
         self.conn.commit()

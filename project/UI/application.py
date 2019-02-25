@@ -7,11 +7,6 @@ from ..backend.DBHandler import DBHandler
 from .eventViewer import EventViewer
 
 
-from ..backend.DBHandler import DBHandler
-
-from .eventViewer import EventViewer
-
-
 class Application(tk.Tk):
     """Main Application class inheriting from tkinter.Tk."""
 
@@ -19,12 +14,9 @@ class Application(tk.Tk):
         """Initialise Application class."""
         super().__init__()
 
-<<<<<<< HEAD
         self.resizable(False, False)
         self.geometry("500x500")
 
-=======
->>>>>>> Zomatree
         self.dbh = DBHandler()
 
         self.pages = {}
@@ -85,12 +77,8 @@ class HomePage(tk.Frame):
         self.title.grid(row=0, column=0)
 
         self.button = tk.Button(self, text="Go to add event",
-<<<<<<< HEAD
-                                command=lambda: self.parent.change_page(CalendarPage))
-=======
                                 command=lambda:
                                     self.parent.change_page(CalendarPage))
->>>>>>> Zomatree
         self.button.grid(row=1, column=0)
 
 
@@ -136,33 +124,6 @@ class AddEventPage(tk.Frame):
         # Date
         self.date = tk.Label(self, text="Date", font=(24))
         self.date.grid(row=3, sticky="E")
-<<<<<<< HEAD
-        self.dateEntry = tk.Entry(self)
-        self.dateEntry.grid(row=3, column=1)
-        # Description
-        self.description = tk.Label(self, text="Description", font=(24))
-        self.description.grid(row=4, sticky="E")
-        self.descriptionEntry = tk.Text(self, height=5, width=15)
-        self.descriptionEntry.grid(row=4, column=1)
-        # Submit Button
-        if len(self.nameEntry.get()) == 0 or \
-           len(self.locationEntry.get()) == 0 or \
-           len(self.dateEntry.get()) == 0 or \
-           len(self.descriptionEntry.get("1.0")) == 0:
-            # Need some sort of UI goodness here!
-            print("[AddEventPage] Not all boxes filled")
-            # Break out
-        self.submitBtn = tk.Button(
-            self,
-            text="Submit ✔",
-            command=lambda: self.parent.dbh.addEvent(
-                self.nameEntry.get(),
-                self.locationEntry.get(),
-                self.dateEntry.get(),
-                self.descriptionEntry.get("1.0")))
-
-        self.submitBtn.grid()
-=======
         self.dateSpinBoxs = tk.Frame(self)
         self.timeEntryD = tk.Spinbox(self.dateSpinBoxs, width=4, to=31)
         self.timeEntryM = tk.Spinbox(self.dateSpinBoxs, width=4, to=12)
@@ -219,7 +180,6 @@ class AddEventPage(tk.Frame):
                 "Missing arguments",
                 "It seems you didnt fill out all the info boxs \n" +
                 "please fill them all and try again.")
->>>>>>> Zomatree
 
 
 class CalendarPage(tk.Frame):
