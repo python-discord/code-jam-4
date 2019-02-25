@@ -20,6 +20,10 @@ class menu:
 class entrysection:
     x = "エクス"
     y = "ワイ"
-    colour = "コラル"
+    colour = "コロー"
     confirm = "コンファーム"
-    colour_error = "Colour must be between 0 and 16777215"
+    colour_error = "コロー ムスト ビー ベトイーン 0 アンヅ 16777215"
+
+
+class general:
+    title = "フレイムヅ"

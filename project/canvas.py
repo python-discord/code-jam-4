@@ -5,6 +5,7 @@ the normal tk window (located in __main__.py)
 
 import asynctk as tk
 from PIL import Image, ImageDraw
+import asyncio
 
 from . import locale as kata
 
@@ -57,10 +58,10 @@ class Colour():
     """
 
     def __init__(self, colour):
-        if int(colour) not in range(16777215):
+        if int(colour) not in range(16777216):
             raise ValueError
         self.fake_colour = hex(int(colour))[2:]
-        self.fake_colour = "0" * (6-len(self.fake_colour)) + self.fake_colour
+        self.fake_colour = "0" * (6 - len(self.fake_colour)) + self.fake_colour
         self.b = self.fake_colour[0:2]
         self.g = self.fake_colour[2:4]
         self.r = self.fake_colour[4:6]
@@ -138,7 +139,7 @@ class Canvas(tk.AsyncCanvas):
             The fill colour of the pixel
         """
 
-        await self.create_rectangle(x, y, x, y, outline=colour.hash_colour)
+        await self.create_line(x, y, x + 1, y, fill=colour.hash_colour)
         self.pil_draw.point([(x, y)], fill=colour.rgb)
 
     async def save(self, file):
@@ -170,11 +171,16 @@ class Canvas(tk.AsyncCanvas):
         photoimage = tk.PhotoImage(file=file)
         pil_image = Image.open(file)
         width, height = pil_image.width, pil_image.height
-        return cls(master, height=height, width=width, photoimage=photoimage, pil_image=pil_image)
+        return cls(
+            master,
+            height=height,
+            width=width,
+            photoimage=photoimage,
+            pil_image=pil_image,
+        )
 
 
 class EntrySection(tk.AsyncFrame):
-
     def __init__(self, master):
         super().__init__(master)
 
@@ -197,13 +203,11 @@ class EntrySection(tk.AsyncFrame):
         self.colour.pack()
 
         self.confirm_button = tk.AsyncButton(
-            self,
-            callback=self.setupPixel,
-            text=kata.entrysection.confirm
+            self, callback=self.setupPixel, text=kata.entrysection.confirm
         )
         self.confirm_button.pack()
 
-        self.error_label = tk.AsyncLabel(self, text="")
+        self.error_label = tk.AsyncLabel(self, text="", fg="red")
         self.error_label.pack()
 
     async def setupPixel(self):
@@ -214,6 +218,8 @@ class EntrySection(tk.AsyncFrame):
             colour = Colour(colour)
         except (ValueError, TypeError):
             self.error_label["text"] = kata.entrysection.colour_error
+            await asyncio.sleep(5)
+            self.error_label["text"] = ""
             return
 
         await self.canvas.add_pixel(int(x), int(y), colour)
