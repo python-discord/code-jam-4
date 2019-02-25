@@ -2,8 +2,16 @@ import tkinter as tk
 import tkinter.font as tkFont
 import math
 import json
+import enchant #TODO add as requirement to project
 # from pathlib import Path
 
+ENGLISH_DICTIONARY = enchant.Dict('en_US')
+
+def get_last_word(text):
+    for i in range(1,len(text)):
+        if not text[-i].isalpha():
+            return text[1-i:]
+    return text
 
 class UserInterface(tk.Frame):
     def __init__(self, master, *args, **kwargs):
@@ -15,6 +23,7 @@ class UserInterface(tk.Frame):
                                    ipady=5, sticky="nwse"
                                    )
         self.config(padx=12, pady=12)
+        self.used_words = set()
 
     def receive_key(self, char):
         self.text_entry_section.receive_key(char)
@@ -22,6 +31,17 @@ class UserInterface(tk.Frame):
     def backspace(self):
         print("Backspace")
         self.text_entry_section.backspace()
+        
+    def unlock_lootbox(self):
+        print("Lootbox added!")
+        
+        
+    def on_word_complete(self, last_word: str):
+        print("Last word: {}".format(last_word))
+        if(ENGLISH_DICTIONARY.check(last_word) 
+           and last_word not in self.used_words):
+            self.used_words.add(last_word)
+            self.unlock_lootbox()
 
 
 class TextEntrySection(tk.Frame):
@@ -43,6 +63,11 @@ class TextEntrySection(tk.Frame):
         self.textbox.configure(state="normal")
         self.textbox.insert('end', char)
         self.textbox.configure(state="disabled")
+        if len(char) != 1 or not char.isalpha():
+            text_in_box = self.textbox.get('1.0','end')
+            #TODO make it constant time complexity by getting from the end ^
+            last_word = get_last_word(text_in_box.strip().lower())
+            self.master.on_word_complete(last_word)
 
     def backspace(self):
         self.textbox.configure(state="normal")
