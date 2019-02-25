@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtGui import QFontDatabase, QIcon
+from PyQt5.QtGui import QFontDatabase, QIcon, QFont
 from PyQt5.QtWidgets import (QApplication, QDesktopWidget, QMainWindow,
                              QMessageBox, QPlainTextEdit, QStatusBar,
                              QVBoxLayout, QWidget)
@@ -18,7 +18,7 @@ class MainWindow(QMainWindow):
         # Setup the QTextEdit editor configuration
         fixedfont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         fixedfont.setPointSize(24)
-        self.main_window.setFont(fixedfont)
+        self.main_window.setFont(QFont('ComicSans', 30))
 
         layout.addWidget(self.main_window)
 
@@ -37,6 +37,20 @@ class MainWindow(QMainWindow):
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
         self.setWindowIcon(QIcon('crocpad.ico'))
+
+        # Add Menus
+        mainMenu = self.menuBar()
+        helpMenu = mainMenu.addMenu('Help')
+        viewMenu = mainMenu.addMenu('View')
+        fileMenu = mainMenu.addMenu('Recent Files')
+        editMenu = mainMenu.addMenu('Edit')
+        searchMenu = mainMenu.addMenu('Search')
+        toolsMenu = mainMenu.addMenu('Tools')
+
+        # SubMenu Test
+        testmenu = []
+        for i in range(0, 200):
+            testmenu.append(fileMenu.addMenu(f'{i}'))
 
         self.show()
 
