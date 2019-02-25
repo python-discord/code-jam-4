@@ -1,7 +1,10 @@
+import logging
 import sqlite3
 from typing import Any, Dict, Optional
 
 from PySide2.QtSql import QSqlDatabase, QSqlQuery
+
+log = logging.getLogger(__name__)
 
 DB_NAME = "library.sqlite"
 
@@ -63,5 +66,10 @@ def add_media(metadata: Dict[str, Any]) -> Optional[int]:
     query.addBindValue(metadata.get("genre"))
 
     query.exec_()
+
+    error = query.lastError()
+    if error.isValid():
+        # TODO: Improve log message formatting
+        log.error(f"Error inserting {metadata['path']}:\n    {error}{query.lastQuery().rstrip()}")
 
     return query.lastInsertId()
