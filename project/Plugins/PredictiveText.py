@@ -1,6 +1,8 @@
 from random import randint, choice
 import string
 
+quotes = ['O-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA']
+
 
 def random_spelling_mistakes(text):
     """
@@ -11,7 +13,7 @@ def random_spelling_mistakes(text):
 
     print(random_spelling_mistakes('Hello, yes hi'))
 
-    Heqllo, yeVs hi
+    Heqllo, yess hi
 
     I is very fast. A string of 7712 characters only took 0.006994724273681641 seconds to process.
     """
@@ -36,3 +38,12 @@ def random_spelling_mistakes(text):
                 final = final[0:spot] + choice(string.ascii_letters.upper()) + final[spot:]
             new_words = new_words + ' ' + final
     return new_words
+
+
+def twitch_quote(text):
+    b = randint(0, 27)
+    text = quotes[b]
+
+    return text
+
+print(twitch_quote('Hello'))

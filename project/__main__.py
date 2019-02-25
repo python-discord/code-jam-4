@@ -12,8 +12,7 @@ from .utils import CONSTANTS
 from PyQt5 import QtCore, QtWidgets
 
 
-# print("hello %s" % sys.argv[1])
-# print(add(2, 2))
+'''I (BWACpro) removed a lot a of comments, if i was important, uh go find a earlier commit'''
 
 class ActionBar(QWidget):
     def __init__(self):
@@ -21,19 +20,13 @@ class ActionBar(QWidget):
         _horizontal_layout = QHBoxLayout(self)
 
         self._add_btn = QtWidgets.QPushButton("Add")
-        # self._add_btn.setGeometry(QtCore.QRect(0, 3, 51, 20))
-        # self._add_btn.clicked.connect(self._add_object)
         self._add_btn.setObjectName(MainWindow.ADD_BUTTON_NAME)
 
-        # self._add_btn.setStyleSheet("QPushButton {background-color: yellow, margin: 0}")
 
         self._remove_btn = QtWidgets.QPushButton("Remove")
-        # self._remove_btn.setGeometry(QtCore.QRect(50, 3, 51, 20))
-        # self._remove_btn.clicked.connect()
         self._remove_btn.setObjectName(MainWindow.REMOVE_BUTTON_NAME)
 
         self._edit_btn = QtWidgets.QPushButton("Edit")
-        # self._edit_btn.setGeometry(QtCore.QRect(100, 3, 51, 20))
         self._edit_btn.setObjectName(MainWindow.EDIT_BUTTON_NAME)
 
         _horizontal_layout.addWidget(self._add_btn)
@@ -63,7 +56,6 @@ class MainWindow(QMainWindow):
 
     def _init_ui(self):
         self.setWindowTitle(CONSTANTS['NAME'])
-        # self.setGeometry(self.left, self.top, self.width, self.height)
         self.setupUi()
         self.show()
 
@@ -79,8 +71,6 @@ class MainWindow(QMainWindow):
                 self._main_list_widget.setItemWidget(_item, _custom_item)
 
     def setupUi(self):
-        # MainWindow.setObjectName("MainWindow")
-        # self.setFixedSize(640, 480)
         self._central_widget.setObjectName(MainWindow.CENTRAL_WIDGET_NAME)
 
         self._action_bar = ActionBar()
@@ -88,46 +78,11 @@ class MainWindow(QMainWindow):
 
         self._main_list_widget = MainListWidget()
         self._central_widget_layout.addWidget(self._main_list_widget)
-        # self._central_widget_layout.addStretch(1)
-
-        # self.Add = QtWidgets.QPushButton(self._central_widget)
-        # self.Add.setGeometry(QtCore.QRect(0, 3, 51, 20))
-        # self.Add.clicked.connect(self.addObject)
-        # self.Add.setObjectName("Add")
-
-        # self.Remove = QtWidgets.QPushButton(self._central_widget)
-        # self.Remove.setGeometry(QtCore.QRect(50, 3, 51, 20))
-        # self.Remove.clicked.connect(self.removeObject)
-        # self.Remove.setObjectName("Remove")
-        #
-        # self.Edit = QtWidgets.QPushButton(self._central_widget)
-        # self.Edit.setGeometry(QtCore.QRect(100, 3, 51, 20))
-        # self.Edit.setObjectName("Edit")
-
-        # self.treeWidget = QtWidgets.QTreeWidget(self._central_widget)
-        # self.treeWidget.setGeometry(QtCore.QRect(0, 30, 631, 411))
-        # self.treeWidget.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        # self.treeWidget.setObjectName("treeWidget")
 
         self.menubar = self.menuBar()
-        # self.menubar.setGeometry(QtCore.QRect(0, 0, 640, 21))
-        # self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
-        # self.menuPlugins = QtWidgets.QMenu(self.menubar)
-        # self.menuPlugins.setObjectName("menuPlugins")
-        # self.menuItem = QtWidgets.QMenu(self.menubar)
-        # self.menuItem.setObjectName("menuItem")
-        # self.setMenuBar(self.menubar)
-        # self.statusbar = QtWidgets.QStatusBar(self)
-        # self.statusbar.setObjectName("statusbar")
-        # self.setStatusBar(self.statusbar)
-        # self.actionAdd = QtWidgets.QAction(self)
-        # self.actionAdd.setObjectName("actionAdd")
-        # self.actionDelete = QtWidgets.QAction(self)
-        # self.actionDelete.setObjectName("actionDelete")
-        # self.action_todo = QtWidgets.QAction(self)
-        # self.action_todo.setObjectName("action_todo")
+
         self.actionSettings = QtWidgets.QAction(self)
         self.actionSettings.setObjectName("actionSettings")
         # self.actionAdd_2 = QtWidgets.QAction(self)
@@ -139,8 +94,7 @@ class MainWindow(QMainWindow):
         # self.menuItem.addAction(self.actionAdd_2)
         # self.menuItem.addAction(self.actionRemove)
         self.menubar.addAction(self.menuFile.menuAction())
-        # self.menubar.addAction(self.menuPlugins.menuAction())
-        # self.menubar.addAction(self.menuItem.menuAction())
+
 
         self._central_widget.setLayout(self._central_widget_layout)
         self.setCentralWidget(self._central_widget)
@@ -170,21 +124,6 @@ class MainWindow(QMainWindow):
         # self.actionSettings.setText(_translate("MainWindow", "Settings #todo"))
         # self.actionAdd_2.setText(_translate("MainWindow", "Add #todo"))
         # self.actionRemove.setText(_translate("MainWindow", "Remove #todo"))
-
-    # def _add_object(self):
-    #     exec('item_' + str(self.num_of_objects) + ' = QtWidgets.QTreeWidgetItem(self.treeWidget)')
-    #     exec('item_' + str(self.num_of_objects) + '.setText(0, "Untitled")')
-    #     self.num_of_objects + 1
-    # def removeObject(self):
-    #     # TODO make it remove instead of add
-    #
-    #     if self.items == []:
-    #         return
-    #
-    #     exec('item_' + str(self.num_of_objects) + ' = QtWidgets.QTreeWidgetItem(self.treeWidget)')
-    #     exec('item_' + str(self.num_of_objects) + '.setText(0, "Untitled")')
-    #
-    #     self.num_of_objects + 1
 
 
 if __name__ == '__main__':
