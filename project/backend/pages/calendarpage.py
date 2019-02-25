@@ -39,15 +39,22 @@ class CalendarPage(tk.Frame):
         # Create an add event button
         self.addEventBtn = tk.Button(self,
                                      text="[+] Add event",
-                                     command=lambda: self.parent.change_page(
-                                                                AddEventPage
-                                                                    ))
+                                     command=lambda:
+                                     self.parent.change_page(AddEventPage))
         self.addEventBtn.grid()
+        # Populate button needs to be removed on release. Preferablly.
+        self.populateBtn = tk.Button(self,
+                                     text="[Pop]",
+                                     command=self.parent.dbh.populate
+                                     )
+        self.populateBtn.grid()
         # Fetch all events
         events = self.parent.dbh.fetchEvents()
         # Event format:
         # (ID, name, location, description)--
         for event in events:
+            print(event)
+            eventID = event[0]
             string = ""
             for value in event:
                 string += self.eventLabels[event.index(value)] + " - "
@@ -55,3 +62,9 @@ class CalendarPage(tk.Frame):
             eventPanel = tk.PanedWindow(self, bd=5, relief="sunken", width=600)
             eventPanel.grid()
             eventPanel.add(tk.Label(self, text=string))
+            # Events [0] is ALWAYS the ID, which is what is needed in dbh.removeEvent
+            deleteButton = tk.Button(self,
+                                     text="[X] Delete above event",
+                                     command=lambda eventID=eventID:
+                                     self.parent.dbh.removeEvent(eventID))
+            deleteButton.grid()

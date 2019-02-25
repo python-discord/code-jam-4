@@ -59,10 +59,11 @@ class AddEventPage(tk.Frame):
             # Break out
         self.submitBtn = tk.Button(self,
                                    text="Submit ✔",
-                                   command=lambda: self.parent.dbh.addEvent(
-                                            self.nameEntry.get(),
-                                            self.locationEntry.get(),
-                                            self.dateEntry.get(),
-                                            self.descriptionEntry.get("1.0")
-                                                            ))
+                                   command=lambda:
+                                   self.parent.dbh.addEvent(
+                                       self.nameEntry.get(),
+                                       self.locationEntry.get(),
+                                       self.dateEntry.get(),
+                                       self.descriptionEntry.get("1.0"))
+                                   )
         self.submitBtn.grid()

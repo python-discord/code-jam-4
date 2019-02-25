@@ -49,7 +49,7 @@ class DBHandler:
         Returns:
             None
         """
-        self.cursor.execute('''INSERT INTO users(name,location,
+        self.cursor.execute('''INSERT INTO events(name,location,
                                                  date,description)
                                                  VALUES(?,?,?)''', (name,
                                                                     location,
@@ -69,6 +69,7 @@ class DBHandler:
         """
         # Remove the event with the specified ID
         self.cursor.execute("DELETE FROM events WHERE id = ?", (id,))
+        print(f"Deleted event with ID: {id}")
         self.conn.commit()
 
     # TESTING - ONLY USED IN DEVELOPMENT. REMOVE UPON RELEASE!!!
@@ -80,5 +81,6 @@ class DBHandler:
                                 VALUES(?,?,?,?)""", ("Meeting",
                                                      "Office on 4th street",
                                                      """Talk about upcoming
-                                                     work events""",))
+                                                     work events""",
+                                                     "12/02"))
         self.conn.commit()
