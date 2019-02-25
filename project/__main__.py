@@ -92,7 +92,9 @@ class KeyboardSection(tk.Frame):
         with open('key_descriptions.json', 'r') as descriptions_file:
             self.key_descriptions = json.load(descriptions_file)
 
-        self.make_keys()
+        with open('saved_keyboard.json') as saved_keys_file:
+            saved_keys = json.load(saved_keys_file)
+        self.make_keys(saved_keys=saved_keys)
 
     def add_key(self, key_name: str):
         row_index, col_index = divmod(len(self.buttons), self.keys_per_row)
@@ -106,9 +108,7 @@ class KeyboardSection(tk.Frame):
                      sticky='we'
                      )
 
-    def make_keys(self):
-        with open('saved_keyboard.json') as saved_keys_file:
-            saved_keys = json.load(saved_keys_file)
+    def make_keys(self, saved_keys=None):
 
         for key_to_add in saved_keys:
             self.add_key(key_to_add)
