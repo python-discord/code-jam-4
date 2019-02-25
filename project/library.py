@@ -29,7 +29,7 @@ def create_db():
         """)
         conn.commit()
 
-    db = QSqlDatabase.addDatabase("SQLITE")
+    db = QSqlDatabase.addDatabase("QSQLITE")
     db.setDatabaseName(DB_NAME)
 
     # TODO: Handle possible errors if db fails to open
