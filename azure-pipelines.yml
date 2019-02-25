@@ -36,3 +36,6 @@ jobs:
 
   - script: pipenv run lint
     displayName: 'Lint the project'
+
+  - script: start = "python -m project"
+    displayName: 'start the project'  
