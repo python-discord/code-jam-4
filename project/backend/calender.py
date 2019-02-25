@@ -32,7 +32,7 @@ class Application(tk.Tk):
             None
         """
         self.pages = {}
-        
+
         self.pages[AddEventPage] = AddEventPage(self)
 
         self.pages[AddEventPage] = AddEventPage(self)
