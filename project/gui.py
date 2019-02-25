@@ -1,6 +1,8 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtCore, QtGui, QtMultimedia
 from functools import partial
 from . import logic
+import time
+import random
 import os
 import sys
 
@@ -33,14 +35,17 @@ class Tile(QtWidgets.QPushButton):
 class Minesweeper(QtWidgets.QWidget):
     '''Minesweeper Game Widget'''
 
+    game_over = QtCore.pyqtSignal()
+
     def __init__(self, width=16, height=16, parent=None):
         super().__init__(parent)
         self.setObjectName('minesweeper')
         self.width = width
         self.height = height
+        self.explosion_sound = QtMultimedia.QSound(':/sound/explode.wav')
         self.tile_size = (25, 25)
         self.controller = logic.Minesweeper(self.width, self.height)
-        self.controller.put_mines_in_grid(10)
+        self.mine_positions = self.controller.put_mines_in_grid(10)
         self.button_grid = []
         self.setup_gui()
 
@@ -83,6 +88,8 @@ class Minesweeper(QtWidgets.QWidget):
                 if tile == self.controller.DISCOVERED:
                     self.button_grid[y][x].hide()
                     number = self.controller.get_tile_number(x, y)
+                    label = QtWidgets.QLabel()
+                    label.setFixedSize(*self.tile_size)
                     if number:
                         colours = {'1': QtGui.QColor(0x0000FF),
                                    '2': QtGui.QColor(0x00FF00),
@@ -94,26 +101,14 @@ class Minesweeper(QtWidgets.QWidget):
                                    '8': QtGui.QColor(0x00FF00).darker(200)}
                         font = QtGui.QFont('Consolas')
                         font.setBold(True)
-                        label = QtWidgets.QLabel(str(number))
+                        label.setText(str(number))
                         label.setStyleSheet('color: ' + colours[str(number)].name())
                         label.setFont(font)
                         label.setAlignment(QtCore.Qt.AlignCenter)
-                        label.setFixedSize(*self.tile_size)
-                        self.grid_layout.addWidget(label, y, x)
-                elif tile == self.controller.MINE:
-                    self.button_grid[y][x].hide()
-                    label = QtWidgets.QLabel(self)
-                    label.setFixedSize(*self.tile_size)
-                    size = label.size()
-                    mine_icon = QtGui.QPixmap(':/images/mine.png')
-                    scaled_mine_icon = mine_icon.scaled(
-                        size,
-                        QtCore.Qt.KeepAspectRatio,
-                        transformMode=QtCore.Qt.SmoothTransformation)
-                    label.setPixmap(scaled_mine_icon)
                     self.grid_layout.addWidget(label, y, x)
 
     def place_flag(self, row, column):
+        '''Toggles the flag showing feature on a tile'''
         button = self.button_grid[row][column]
         flag_icon = QtGui.QIcon(':/images/flag.png')
         if not button.icon().isNull():
@@ -121,9 +116,65 @@ class Minesweeper(QtWidgets.QWidget):
         else:
             button.setIcon(flag_icon)
 
+    def explode(self, row, column):
+        '''Explodes the specified tile, with a sound effect and a GIF'''
+        self.button_grid[row][column].hide()
+        explode_label = QtWidgets.QLabel()
+        explosion = QtGui.QMovie(':/images/explosion.gif')
+        explosion.setScaledSize(QtCore.QSize(*self.tile_size))
+        explosion.start()
+        explosion.frameChanged.connect(partial(self.explode_frame_count, explode_label,
+                                               explosion.frameCount()))
+        explode_label.setMovie(explosion)
+        explode_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.grid_layout.addWidget(explode_label, row, column)
+        self.explosion_sound.play()
+
+    def explode_frame_count(self, label, max_frames, current_frame):
+        '''This event is called when the frame on the explosion GIF updates, it is to make sure that
+        the GIF stops and is replaced with a mine PNG after it has reached its max frame'''
+        if current_frame == max_frames-1:
+            mine_icon = QtGui.QPixmap(':/images/mine.png')
+            scaled_mine_icon = mine_icon.scaled(*self.tile_size)
+            label.setPixmap(scaled_mine_icon)
+
+    def explode_all_mines(self, row, column):
+        '''Call this function to explode all mines'''
+        self.explode_all_mines_thread = DelayMineExplosionThread(self, first=(column, row))
+        self.explode_all_mines_thread.finished.connect(self.game_over.emit)
+        self.explode_all_mines_thread.explode.connect(self.explode)
+        self.explode_all_mines_thread.start()
+
     def button_clicked(self, row, column):
-        self.controller.click_tile(x=column, y=row)
-        self.refresh_gui()
+        '''This is called when a button is clicked at the position (row, column)'''
+        mine = self.controller.click_tile(x=column, y=row)
+        if not mine:
+            self.refresh_gui()
+        else:
+            self.explode_all_mines(row, column)
+
+
+class DelayMineExplosionThread(QtCore.QThread):
+    '''Creates a shuffled, random and delayed 'emission' of signals
+    Used for creating random explosions of all mines at game over'''
+
+    finished = QtCore.pyqtSignal()
+    explode = QtCore.pyqtSignal(int, int)
+
+    def __init__(self, minesweeper, first):
+        self.positions = list(minesweeper.mine_positions)
+        self.first = first
+        super().__init__()
+
+    def run(self):
+        '''Shuffles and emits the signals for exploding'''
+        random.shuffle(self.positions)
+        self.positions.remove(self.first)
+        self.positions.insert(0, self.first)
+        for column, row in self.positions:
+            self.explode.emit(row, column)
+            time.sleep(random.randint(10, 30)/100)
+        self.finished.emit()
 
 
 if __name__ == '__main__':
@@ -132,5 +183,6 @@ if __name__ == '__main__':
 
     window = Minesweeper(width=16, height=16)
     window.show()
+    window.setFixedSize(window.minimumSize())
 
     sys.exit(app.exec_())

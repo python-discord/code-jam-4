@@ -2,6 +2,7 @@
   <qresource prefix="images">
     <file>flag.png</file>
     <file>mine.png</file>
+    <file>explosion.gif</file>
   </qresource>
   <qresource prefix="tiles">
     <file>crack0.png</file>
@@ -14,5 +15,8 @@
     <file>crack7.png</file>
     <file>crack8.png</file>
     <file>crack9.png</file>
+  </qresource>
+  <qresource prefix="sound">
+    <file>explode.wav</file>
   </qresource>
 </RCC>
