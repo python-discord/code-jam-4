@@ -47,7 +47,7 @@ def parse_media(path: str):
         path
     ]
 
-    process = subprocess.run(args, capture_output=True)
+    process = subprocess.run(args, capture_output=True, encoding="utf-8")
 
     process.check_returncode()  # TODO: Handle exception better
     output = process.stdout.strip().split("\n")
