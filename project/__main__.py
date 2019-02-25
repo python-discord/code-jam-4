@@ -10,7 +10,7 @@ Requirements:
     Python 3
     tkinter
 """
-from tkinter import *
+from tkinter import Button, Tk, StringVar
 
 
 class Num(Button):
@@ -18,19 +18,21 @@ class Num(Button):
         Button.__init__(self, *args, **kwargs)
         self['bg'] = "pink"
         self['fg'] = "purple"
-        
+
+
 class Op(Button):
     def __init__(self, *args, **kwargs):
         Button.__init__(self, *args, **kwargs)
         self['bg'] = "purple"
         self['fg'] = "pink"
-        
+
+
 cal = Tk()
 cal.title("Calculator")
-operator=""
-text_Input =StringVar()
+operator = ""
+text_Input = StringVar()
 
-#Number Buttons
+# Number Buttons
 btn1 = Num(cal, text=("1")).grid(row=1, column=0)
 btn2 = Num(cal, text=("2")).grid(row=1, column=1)
 btn3 = Num(cal, text=("3")).grid(row=1, column=2)
@@ -42,6 +44,8 @@ btn8 = Num(cal, text=("8")).grid(row=3, column=1)
 btn9 = Num(cal, text=("9")).grid(row=3, column=2)
 btn0 = Num(cal, text=("0")).grid(row=4, column=1)
 
+
+# Operator buttons
 op1 = Op(cal, text=("+")).grid(row=1, column=3)
 op2 = Op(cal, text=("-")).grid(row=2, column=3)
 op3 = Op(cal, text=("*")).grid(row=3, column=3)
