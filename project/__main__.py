@@ -8,7 +8,7 @@ class Controller(Tk):
     Controller Class:
 
     === Public Attributes ===
-    frames: Dictionary of all available pages
+    notebook: Widget containing tabs; each page is assigned a tab, and can be navigated to easily
 
     === Methods ===
     None
@@ -20,6 +20,7 @@ class Controller(Tk):
         for i in range(5):
             self.rowconfigure(i, weight=1)
             self.columnconfigure(i, weight=1)
+
         self.notebook = Notebook(self)
         self.notebook.grid(row=0, column=0, columnspan=5, rowspan=5, sticky=N+S+E+W)
 
@@ -37,6 +38,9 @@ class ContactsPage(Frame):
     master: The frame containing all information on this page
     controller: Reference to the Controller Class
 
+    page_name: String containing a name for this page; used for setting the tabs
+                in the containing notebook
+
     contacts_list: Dictionary of contacts, each contact is a Contact class instance,
                     each key is the name of the contact
 
@@ -50,10 +54,6 @@ class ContactsPage(Frame):
     info_field: Listbox that contains the information of the currently selected contact
     info_scroll: Scrollbar that controls what is viewable in the info_field; won't
                     scroll if nothing is in the list, or everything is already shown
-
-    contacts: Button that takes the user to the 'Contacts' page
-    new_contact: Button that takes the user to the 'Add New Contact' page
-    settings: Button that takes the user to the 'Settings' page
 
     === Methods ===
     create: Initializes objects & places them on the page
@@ -156,10 +156,6 @@ class AddContactPage(Frame):
     preview_scroll: Scrollbar that control what is viewable in the preview
                     Listbox
     preview: Listbox that shows the info of the contact being created currently
-
-    contacts: Button that takes the user to the 'Contacts' page
-    new_contact: Button that takes the user to the 'Add New Contact' page
-    settings: Button that takes the user to the 'Settings' page
 
     === Methods ===
     create: Initializes objects & places them on the page
@@ -304,7 +300,7 @@ class AddContactPage(Frame):
 
     def add_contact(self):
         name = self.contact_new.name
-        if name == '':
+        if name != '':
             if name not in self.controller.frames[ContactsPage].contacts_list:
                 print("DEBUG: Creating new contact")
                 self.controller.frames[ContactsPage].contacts_list[name] = self.contact_new
@@ -327,10 +323,6 @@ class SettingsPage(Frame):
         === Public Attributes ===
         master: The frame containing all information on this page
         controller: Reference to the Controller Class
-
-        contacts: Button that takes the user to the 'Contacts' page
-        new_contact: Button that takes the user to the 'Add New Contact' page
-        settings: Button that takes the user to the 'Settings' page
 
         === Methods ===
         create: Initializes objects & places them on the page
