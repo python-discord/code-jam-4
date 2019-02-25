@@ -10,54 +10,43 @@ Requirements:
     Python 3
     tkinter
 """
-import tkinter as tk
+from tkinter import *
 
-class Calculator(tk.Frame):
-    def __init__(self, master=None):
-        super().__init__(master)
-        self.master = master
-        self.pack()
+
+class Num(Button):
+    def __init__(self, *args, **kwargs):
+        Button.__init__(self, *args, **kwargs)
+        self['bg'] = "pink"
+        self['fg'] = "purple"
         
-        self.entry = None       #Where the entered operations go
-   
-        self.proc_label = None  #Where the processed operations are displayed
+class Op(Button):
+    def __init__(self, *args, **kwargs):
+        Button.__init__(self, *args, **kwargs)
+        self['bg'] = "purple"
+        self['fg'] = "pink"
         
-        self.answer_label = None
-        
-        self.a = tk.StringVar() #String representation of self.entry
-        self.b = tk.StringVar() #String representation of self.proc
-        self.c = tk.StringVar() #String representation of self.answer
-        self.c.set("0")
+cal = Tk()
+cal.title("Calculator")
+operator=""
+text_Input =StringVar()
 
-        self.create_form()     
+#Number Buttons
+btn1 = Num(cal, text=("1")).grid(row=1, column=0)
+btn2 = Num(cal, text=("2")).grid(row=1, column=1)
+btn3 = Num(cal, text=("3")).grid(row=1, column=2)
+btn4 = Num(cal, text=("4")).grid(row=2, column=0)
+btn5 = Num(cal, text=("5")).grid(row=2, column=1)
+btn6 = Num(cal, text=("6")).grid(row=2, column=2)
+btn7 = Num(cal, text=("7")).grid(row=3, column=0)
+btn8 = Num(cal, text=("8")).grid(row=3, column=1)
+btn9 = Num(cal, text=("9")).grid(row=3, column=2)
+btn0 = Num(cal, text=("0")).grid(row=4, column=1)
 
-    def create_form(self):
-        """
-        Create the gui,
-        and buttons when called.
-        """
-
-        self.entry = tk.Entry(
-            self,
-            width=30,
-            textvariable = self.a,
-        )
-        self.entry.pack(side=tk.TOP)
-        
-        self.proc_label = tk.Label(
-            self,
-            text ="PROCESSED MATHS",
-        )
-        self.proc_label.pack(side = "top")
-                
-        self.ans_label = tk.Label(
-            self,
-            text = "0",
-        )
-        self.ans_label.pack(side = "top")      
+op1 = Op(cal, text=("+")).grid(row=1, column=3)
+op2 = Op(cal, text=("-")).grid(row=2, column=3)
+op3 = Op(cal, text=("*")).grid(row=3, column=3)
+op4 = Op(cal, text=("/")).grid(row=4, column=3)
+op5 = Op(cal, text=("=")).grid(row=4, column=2)
 
 
-root = tk.Tk()
-app = Calculator(master=root)
-app.mainloop()
- 
+cal.mainloop()
