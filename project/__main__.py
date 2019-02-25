@@ -175,10 +175,10 @@ class Framed(tk.AsyncTk):
         change_dir(".")
         # Cancel button
         tk.AsyncButton(
-            dialogue, text=kata.menu.fileselect.button.cancel, callback=manager.destroy
+            manager, text=kata.menu.fileselect.button.cancel, callback=manager.destroy
         ).pack(fill=tk.X)
         await self.wait_window(manager)
-        if getattr(manager, file):
+        if getattr(manager, "file"):
             return manager.file
 
 
