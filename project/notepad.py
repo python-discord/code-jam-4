@@ -1,6 +1,8 @@
 import sys
 
-from PyQt5.QtGui import QFontDatabase, QIcon, QFont
+from PyQt5.QtCore import Qt, QEvent, pyqtSignal
+from PyQt5.QtMultimedia import QSound
+from PyQt5.QtGui import QFontDatabase, QIcon, QFont, QKeyEvent
 from PyQt5.QtWidgets import (QApplication, QDesktopWidget, QMainWindow,
                              QMessageBox, QPlainTextEdit, QStatusBar,
                              QVBoxLayout, QWidget)
@@ -21,6 +23,9 @@ class MainWindow(QMainWindow):
         fixedfont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         fixedfont.setPointSize(24)
         self.main_window.setFont(QFont('Comic Sans MS', 30))
+        self.main_window.installEventFilter(self)
+        self.sound = QSound("click.wav")
+        self.enter_sound = QSound("scream.wav")
 
         layout.addWidget(self.main_window)
 
@@ -64,6 +69,15 @@ class MainWindow(QMainWindow):
             if self.eula_dialog.clicked_button == self.eula_dialog.eula_agree_button:
                 # We click the agree button
                 pass
+
+    def eventFilter(self, source, event):
+        if event.type() == QEvent.KeyPress:
+            if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+                self.sound.stop()
+                self.enter_sound.play()
+            else:
+                self.sound.play()
+        return False
 
     def dialog_critical(self, alert_text):
         dlg = QMessageBox(self)

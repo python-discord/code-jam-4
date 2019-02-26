@@ -6,8 +6,8 @@ class Ui_EulaDialog(object):
         EulaDialog.setObjectName("EulaDialog")
         EulaDialog.resize(218, 701)
         self.clicked_button = None
-        self.scrolled_to_bottom = None
-        self.scrolled_to_top = None
+        self.scrolled_to_bottom = 0
+        self.scrolled_to_top = 0
         self.eula_TextEdit = QtWidgets.QPlainTextEdit(EulaDialog)
         self.eula_TextEdit.setGeometry(QtCore.QRect(10, 10, 201, 651))
         self.eula_TextEdit.setPlainText("")
@@ -23,10 +23,17 @@ class Ui_EulaDialog(object):
         self.eula_agree_button.setObjectName("eula_agree_button")
         self.eula_agree_button.clicked.connect(self.clickedButton)
         self.eula_disagree_button.clicked.connect(self.clickedDisagree)
+        self.eula_TextEdit.verticalScrollBar().sliderMoved.connect(self.slider_moved)
 
 
         self.retranslateUi(EulaDialog)
         QtCore.QMetaObject.connectSlotsByName(EulaDialog)
+
+    def slider_moved(self):
+        if self.eula_TextEdit.verticalScrollBar().value() == self.eula_TextEdit.verticalScrollBar().maximum():
+            self.scrolled_to_bottom += 1
+        if self.eula_TextEdit.verticalScrollBar().value() == self.eula_TextEdit.verticalScrollBar().minimum():
+            self.scrolled_to_top += 1
 
     def clickedDisagree(self):
         dlg = QtWidgets.QMessageBox(self)
@@ -36,7 +43,7 @@ class Ui_EulaDialog(object):
 
     def clickedButton(self):
         self.clicked_button = self.eula_agree_button
-        if self.eula_TextEdit.verticalScrollBar().value() == self.eula_TextEdit.verticalScrollBar().maximum():
+        if self.scrolled_to_bottom >= 1 and self.scrolled_to_top >= 2:
             self.close()
 
     def retranslateUi(self, EulaDialog):
