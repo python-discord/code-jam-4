@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>deadline_form</class>
+ <widget class="QWidget" name="deadline_form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>374</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Task Deadline</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="7">
+    <widget class="QComboBox" name="comboBox_8"/>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="comboBox_2"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QComboBox" name="comboBox"/>
+   </item>
+   <item row="0" column="8">
+    <widget class="QComboBox" name="comboBox_9"/>
+   </item>
+   <item row="0" column="4">
+    <widget class="QComboBox" name="comboBox_5"/>
+   </item>
+   <item row="0" column="3">
+    <widget class="QComboBox" name="comboBox_4"/>
+   </item>
+   <item row="0" column="6">
+    <widget class="QComboBox" name="comboBox_7"/>
+   </item>
+   <item row="0" column="5">
+    <widget class="QComboBox" name="comboBox_6"/>
+   </item>
+   <item row="0" column="2">
+    <widget class="QComboBox" name="comboBox_3"/>
+   </item>
+   <item row="0" column="9">
+    <widget class="QComboBox" name="comboBox_10"/>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
