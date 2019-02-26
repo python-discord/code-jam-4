@@ -1,11 +1,11 @@
 import logging
 
-from PySide2.QtCore import QUrl
+from PySide2.QtCore import QUrl, Qt
 from PySide2.QtMultimedia import QMediaContent, QMediaPlayer, QMediaPlaylist
-from PySide2.QtWidgets import QFileDialog, QMainWindow
+from PySide2.QtSql import QSqlTableModel
+from PySide2.QtWidgets import QAbstractItemView, QFileDialog, QMainWindow
 
 from project import library, media as media_utils
-from project.models.playlist import PlaylistModel
 from project.ui.main_window import Ui_MainWindow
 
 log = logging.getLogger(__name__)
@@ -19,8 +19,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.player = QMediaPlayer()
         self.playlist = QMediaPlaylist()
 
-        self.playlist_model = PlaylistModel(self.playlist)
-        self.playlist_view.setModel(self.playlist_model)
+        self.library_model = QSqlTableModel()
+        self.library_model.setTable("library")
+        self.library_model.removeColumn(0)  # Remove id
+        self.library_model.removeColumn(5)  # Remove crc32
+        self.library_model.removeColumn(5)  # Remove path
+        self.library_model.setHeaderData(0, Qt.Horizontal, "Title", Qt.DisplayRole)
+        self.library_model.setHeaderData(1, Qt.Horizontal, "Artist", Qt.DisplayRole)
+        self.library_model.setHeaderData(2, Qt.Horizontal, "Album", Qt.DisplayRole)
+        self.library_model.setHeaderData(3, Qt.Horizontal, "Genre", Qt.DisplayRole)
+        self.library_model.setHeaderData(4, Qt.Horizontal, "Date", Qt.DisplayRole)
+
+        self.playlist_view.setModel(self.library_model)
+        self.playlist_view.setEditTriggers(QAbstractItemView.NoEditTriggers)  # Disable editing
+        self.library_model.select()  # Force-update the view
 
         self.play_button.pressed.connect(self.player.play)
         self.previous_button.pressed.connect(self.playlist.previous)
@@ -38,4 +50,4 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             library.add_media(media_utils.parse_media(path))
             self.playlist.addMedia(media)
 
-        self.playlist_model.layoutChanged.emit()
+        self.library_model.layoutChanged.emit()
