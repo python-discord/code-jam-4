@@ -178,33 +178,62 @@ class EditorWindow(tk.Toplevel):
 
         # Find position of first space before index.
         while start > 0:
-            current_character: str = self.text_box.get(
+            current_character = self.text_box.get(
                 f'{line}.{start - 1}'
             )
 
-            if not current_character.isalpha():
+            if not (current_character.isalpha() or current_character == "'"):
                 break
             else:
                 start -= 1
 
         # Find position of first space after index.
         while True:
-            current_character: str = self.text_box.get(
+            current_character = self.text_box.get(
                 f'{line}.{end}'
             )
 
-            if not current_character.isalpha():
+            if not (current_character.isalpha() or current_character == "'"):
                 break
 
             end += 1
 
+        word = self.text_box.get(f'{line}.{start}', f'{line}.{end}')
+
+        # Correct indexes with regards to leading and trailing apostrophes.
+        start_offset = 0
+        for character in word:
+            if character == "'":
+                start_offset += 1
+            else:
+                break
+
+        word = word[start_offset:]
+        start += start_offset
+
+        end_offset = 0
+        for index in range(-1, -len(word)-1, -1):
+            character = word[index]
+            if character == "'":
+                try:
+                    next_character = word[index-1]
+                    if next_character.lower() != 's':
+                        end_offset -= 1
+                except IndexError:
+                    end_offset -= 1
+                    break
+
+            else:
+                break
+
+        if end_offset:
+            word = word[:end_offset]
+            end += end_offset
+
         start = f'{line}.{start}'
         end = f'{line}.{end}'
 
-        return (
-            start, end,
-            self.text_box.get(start, end)
-        )
+        return start, end, word
 
     def get_word_at_text_box_pixel_position(self, x, y):
         """
@@ -250,16 +279,17 @@ class EditorWindow(tk.Toplevel):
         #       and index change are always properly synchronized.
 
         if (
-                event.char and
-                not event.char.isalpha() and
-                event.char != '\x08'
+            event.char and
+            not event.char.isalpha() and
+            event.char != "'" and
+            event.char != '\x08'
         ):
             for flag in Constants.forbidden_flags:
                 if event.state & flag:
                     break
             else:
                 previous_character: str = self.text_box.get(f'{tk.INSERT}-1c')
-                if previous_character.isalpha():
+                if previous_character.isalpha() or previous_character == "'":
                     start, end, word = self.get_word_at_text_box_index(
                         self.text_box.index(f'{tk.INSERT}-1c')
                     )
