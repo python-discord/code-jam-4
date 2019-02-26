@@ -1,7 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 import io
-from random import randint
+from random import randint, choice
 import asyncio
 import time
 import aiohttp
@@ -28,19 +28,23 @@ class Tinder:
         self.loop.run_until_complete(self.get_cache())
         self.new_image()
 
+
     async def get_cache(self):
         print("refreshing image cache")
         t = time.time()
         if not self.session:
-            headers = {'x-api-key': 'd12e9702-f791-4d13-9ffd-0edeed9cecaf'}
-            self.session = aiohttp.ClientSession(headers=headers)
+            self.session = aiohttp.ClientSession()
         for _ in range(10):
-            if randint(0,10) == 9:
+            if randint(0,9) == 9:
                 image_number = randint(1,10)
                 im = Image.open(os.path.join(self.dir, os.path.join("res", os.path.join("images", f"{image_number}.jpg"))))
                 im = im.resize((400, 400), Image.NEAREST)
                 image = ImageTk.PhotoImage(im)
-                self.images.append([image, True])
+                async with self.session.get("https://www.pawclub.com.au/assets/js/namesTemp.json") as res:
+                    data = await res.json()
+                    names = choice(data["a"])
+                    name = names["name"]
+                self.images.append([image, True, name])
             else:
                 async with self.session.get('https://api.thecatapi.com/v1/images/search') as res:
                     data = await res.json()
@@ -50,8 +54,23 @@ class Tinder:
                     im = Image.open(io.BytesIO(image_bytes))
                     im = im.resize((400, 400), Image.NEAREST)
                     image = ImageTk.PhotoImage(im)
-                    self.images.append([image, False])
+                async with self.session.get("https://www.pawclub.com.au/assets/js/namesTemp.json") as res:
+                    data = await res.json()
+                    letter = choice(list('acdefghijklmnopqrstuvwxyz'))
+                    names = choice(data[letter])
+                    name = names["name"]
+                self.images.append([image, False, name])
         print(time.time()-t)
+
+
+    async def get_bio(self):
+        #code to get bio goes here
+        #probably want to return a dict of some sort
+        pass
+
+
+    def bio(self):
+        self.loop.run_until_complete(self.get_bio())
 
 
     def all_children(self):
@@ -68,16 +87,27 @@ class Tinder:
             item.pack_forget()
         self.frame = tk.Frame(self.root, bg = "black")
         try:
-            image, jumpscare = self.images.pop(0)
+            image, jumpscare, cat_name = self.images.pop(0)
         except IndexError:
             self.loop.run_until_complete(self.get_cache())
-            image, jumpscare = self.images.pop(0)
-        label = tk.Label(self.frame, image=image)
-        label.pack(side = tk.TOP, fill = "both", expand = "yes")
-        like = tk.Button(self.frame, text="Like", background="green", command = self.new_image)
-        like.pack(side = tk.RIGHT)
-        dislike = tk.Button(self.frame, text="Dislike", background="red", command = self.new_image)
-        dislike.pack(side = tk.LEFT)
+            image, jumpscare, cat_name = self.images.pop(0)
+        name = tk.Text(self.frame, width = 40, height = 1)
+        name.tag_configure("center", justify=tk.CENTER)
+        name.insert("1.0", cat_name)
+        name.tag_add("center", "1.0", tk.END)
+        name.configure(state="disabled")
+        name.pack(side = tk.TOP)
+        tk.Label(self.frame, image=image).pack(side = tk.TOP)
+        tk.Button(self.frame, text="Like", background="green", command = self.new_image).pack(side = tk.RIGHT)
+        tk.Button(self.frame, text="Dislike", background="red", command = self.new_image).pack(side = tk.LEFT)
+        def get_bio():
+            widget_list = self.all_children()
+            for item in widget_list:
+                item.pack_forget()
+            self.frame = tk.Frame(self.root, bg = "black")
+            full_bio = self.loop.run_until_complete(self.get_bio())
+            bio = tk.Text(self.frame)
+        tk.Button(self.frame, text="Bio", background="blue", command = get_bio).pack(side = tk.BOTTOM)
         if jumpscare:
             mixer.music.load(os.path.join(self.dir, os.path.join("res", os.path.join("sounds", "jumpscare.mp3"))))
             mixer.music.play()
@@ -98,6 +128,7 @@ class Tinder:
             move_x = (400 - x) + frame_x
             move_y = (15 - y) - frame_y
             self.root.geometry(f"400x500+{move_x}+{move_y}")
+
 
 if __name__ == "__main__":
     Tinder().start()
