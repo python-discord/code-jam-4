@@ -43,3 +43,10 @@ This is the Code Jam 4 entry for team Cool Crocodiles.
 ## How do I use this thing?
 
 `# TODO`
+
+## Project Structure
+`project/`  
+Contains the Crocpad++ application.
+
+`project/ui`  
+Contains `.ui` files created for Qt and the Python modules generated from those UI files.
