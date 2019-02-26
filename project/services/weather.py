@@ -40,8 +40,8 @@ class ForecastFetcher:
         """Fetches the forecast for the next seven days from openweathermap.org
 
         :param location: The name of the location this
-        :param unit: The unit of the values. Can be 'Celsius', 'Fahrenheit'
-                     or 'Kelvin'
+        :param unit: Defines the units for the temperature. Only accepts
+                    'celsius', 'fahrenheit', 'kelvin' and 'random'.
         """
 
         forecasts = self.owm.daily_forecast(location).get_forecast()
@@ -69,8 +69,8 @@ def format_forecast(weather: Weather, unit: str) -> Dict[str, str]:
     unit_symbols = {'celsius': '°C', 'fahrenheit': '°F', 'kelvin': 'K'}
 
     if unit not in units and unit == 'random':
-        msg = "This is not a valid input unit, Please enter one of the' +" \
-              "following values: {}"
+        msg = "This is not a valid input unit, please enter one of the " \
+              "following: {}"
         raise AttributeError(msg.format(' '.join(units)))
 
     if unit == 'random':

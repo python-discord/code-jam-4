@@ -5,7 +5,11 @@ from project.services.weather import format_forecast
 def test_format_forecast():
     """
     Testing the correctness of the values and the output format of the function
+<<<<<<< HEAD
     `format_forecast`.
+=======
+    format_forecast`.
+>>>>>>> 35ad8bd3ab7fa917b9c6d3c4b15cc99047c392eb
 
     In this test only the 'kelvin' will be tested because the conversion is
     unnessesary of the elements
@@ -20,9 +24,8 @@ def test_format_forecast():
                     "humidity": 93,
                     "pressure": {"press": 999.95, "sea_level": None},
                     "temperature": {"day": 282.86, "min": 275.18,
-                                    "max": 282.86,
-                                    "night": 275.18, "eve": 281.87,
-                                    "morn": 279.83},
+                                    "max": 282.86, "night": 275.18,
+                                    "eve": 281.87, "morn": 279.83},
                     "status": "Rain",
                     "detailed_status": "moderate rain",
                     "weather_code": 501,
