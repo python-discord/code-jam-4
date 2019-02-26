@@ -70,18 +70,18 @@ class Minesweeper(QtWidgets.QWidget):
 
     game_over = QtCore.pyqtSignal()
 
-    def __init__(self, width=16, height=16, parent=None):
+    def __init__(self, width=16, height=16, mines=48, parent=None):
         super().__init__(parent)
         self.setObjectName('minesweeper')
         self.last_click = 0
-        self.width = width
-        self.height = height
+        self.grid_width = width
+        self.grid_height = height
         self.explosion_sound = QtMultimedia.QSound(':/sound/explode.wav')
         self.beep_sound = QtMultimedia.QSound(':/sound/beep.wav')
         self.break_sound = QtMultimedia.QSound(':/sound/break.wav')
         self.tile_size = (20, 20)
-        self.controller = logic.Minesweeper(self.width, self.height)
-        self.controller.mines_number = 99
+        self.controller = logic.Minesweeper(self.grid_width, self.grid_height)
+        self.controller.mines_number = mines
         self.button_grid = []
         self.setup_gui()
 
@@ -112,10 +112,10 @@ class Minesweeper(QtWidgets.QWidget):
         self.grid_layout = QtWidgets.QGridLayout(self.game_frame)
         self.grid_layout.setSpacing(1)
 
-        for row in range(self.height):
+        for row in range(self.grid_height):
             row_array = []
-            for column in range(self.width):
-                button = Tile(random.randint(20, 40))
+            for column in range(self.grid_width):
+                button = Tile(random.randint(30, 100))
                 button.clicked.connect(partial(self.button_clicked, row, column))
                 button.right_clicked.connect(partial(self.place_flag, row, column))
                 button.health_decreased.connect(partial(self.button_health_update, row, column))
@@ -128,10 +128,12 @@ class Minesweeper(QtWidgets.QWidget):
         self.window_layout.addWidget(self.game_frame)
         self.setLayout(self.window_layout)
 
+        self.show()
+
         # Floating Modal
         self.too_fast_modal = MinesweeperModal('You are clicking too fast!', self)
         self.too_fast_modal.close_button.clicked.connect(self.modal_closed)
-        self.too_fast_modal.move(self.rect().center() - self.too_fast_modal.rect().center())
+        self.too_fast_modal.move(self.rect().center()-self.too_fast_modal.rect().center())
 
     def refresh_gui(self):
         '''Refresh the GUI to match the same grid on the minesweeper controller'''
