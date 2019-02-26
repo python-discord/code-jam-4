@@ -57,9 +57,13 @@ class UserInterface(tk.Frame):
     def __init__(self, master, *args, **kwargs):
         tk.Frame.__init__(self, master, *args, **kwargs)
 
-        with open(SAVE_DATA_PATH) as save_data_file:
-            save_data = json.load(save_data_file)
-        saved_keys = save_data['saved_keys']
+        try:
+            with open(SAVE_DATA_PATH) as save_data_file:
+                save_data = json.load(save_data_file)
+        except FileNotFoundError:
+            with open(DEFAULT_KEYS_PATH) as save_data_file:
+                save_data = json.load(save_data_file)
+        saved_keys = save_data['keys']
         saved_scales = save_data['scales']
         self.used_words = set(save_data['used_words'])
 
