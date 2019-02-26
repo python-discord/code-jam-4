@@ -4,6 +4,8 @@ from PyQt5.QtGui import QFontDatabase, QIcon, QFont
 from PyQt5.QtWidgets import (QApplication, QDesktopWidget, QMainWindow,
                              QMessageBox, QPlainTextEdit, QStatusBar,
                              QVBoxLayout, QWidget)
+from configuration import app_config
+from eula_dialog import EulaDialog
 
 
 class MainWindow(QMainWindow):
@@ -53,6 +55,12 @@ class MainWindow(QMainWindow):
             testmenu.append(fileMenu.addMenu(f'{i}'))
 
         self.show()
+
+        if app_config['License']['eulaaccepted'] != 'yes':
+            with open('EULA.txt', 'r', encoding="utf8") as f:
+                eula = f.read()
+            self.eula_dialog = EulaDialog(eula)
+            self.eula_dialog.show()
 
     def dialog_critical(self, alert_text):
         dlg = QMessageBox(self)

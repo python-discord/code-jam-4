@@ -10,10 +10,9 @@ def create_default_config(config):
     config['License']['eulaaccepted'] = 'no'
 
 
-try:
-    with open(config_file) as f:
-        app_config.read(f)
-except FileNotFoundError:
+if os.path.exists(config_file):
+    app_config.read(config_file)
+else:
     create_default_config(app_config)
     with open(config_file, 'w') as f:
         app_config.write(f)
