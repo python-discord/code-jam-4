@@ -2,7 +2,7 @@ import tkinter as tk
 import tkinter.font as tkFont
 import math
 import json
-import enchant  # TODO add as requirement to project
+import enchant
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).parent
