@@ -8,7 +8,7 @@ flake8 = "*"
 
 [packages]
 flake8 = "*"
-pyenchant = "*"
+nltk = "*"
 pillow = "*"
 
 [requires]
