@@ -2,13 +2,12 @@ from tkinter import *
 from tkinter.ttk import *
 from project.contact import Contact
 import pickle
+import sys
 
 """
 TODO:
-Fill letters_field with letters in alphabetical order, such that they correspond
-    to the first contact with that letter in their name
+Fix scrolling with mousewheel in ContactsPage
 Make preview_field in AddContactsPage update when an contact attribute is added
-Fix parsing of show_info
 Settings Page:
 - Change color schemes; all options are terrible color palettes
 - Change fonts; all options are terrible fonts
@@ -18,10 +17,14 @@ Settings Page:
 class Controller(Tk):
     """
     Controller Class:
+    - Serves as a hub for every page contained in the UI, allows for the flow of information between pages
+    - Acts as the container for ContactsPage, AddContactsPage, and SettingsPage by making use of ttk.Notebook
 
     === Public Attributes ===
     notebook: Widget containing tabs; each page is assigned a tab, and can be navigated to easily
-    frames: Dictionary of all pages; allows for access of information across pages via the controller
+    frames: Dictionary of all pages; allows for access of information across pages
+            e.g. If I wanted to call a method from a separate class:
+                self.controller.frames[<name of page>].<method I want to call>()
 
     === Methods ===
     None
@@ -86,6 +89,7 @@ class ContactsPage(Frame):
     clear_fields: Clears both fields on the contacts page
     load_contacts: Loads contacts in from a file
     save_contacts: Saves contacts as a file
+    yview: Adjusts the view of contacts_field & letters_field at the same time
     """
     def __init__(self, master, controller, **kw):
         super().__init__(master, **kw)
@@ -111,7 +115,7 @@ class ContactsPage(Frame):
         # Create objects
         self.create()
 
-    def create(self):
+    def create(self) -> None:
         self.info_scroll = Scrollbar(self, orient=VERTICAL)
         self.info_field = Listbox(
             self,
@@ -164,22 +168,22 @@ class ContactsPage(Frame):
         for i in range(4):
             self.grid_columnconfigure(i, weight=1)
 
-    def yview(self, *args):
+    def yview(self, *args) -> None:
         self.contacts_field.yview(*args)
         self.letters_field.yview(*args)
 
-    def delete_contact(self):
+    def delete_contact(self) -> None:
         name = self.contacts_field.get(self.contacts_field.curselection()[0])
         del self.contacts_list[name]
         self.clear_fields()
         for contact in sorted(self.contacts_list):
             self.insert_contact(contact)
 
-    def clear_fields(self):
+    def clear_fields(self) -> None:
         for field in [self.contacts_field, self.info_field, self.letters_field]:
             field.delete(0, END)
 
-    def refresh_fields(self):
+    def refresh_fields(self) -> None:
         self.clear_fields()
         letter = ''
         for contact in sorted(self.contacts_list):
@@ -190,28 +194,50 @@ class ContactsPage(Frame):
                 self.letters_field.insert(END, '')
             self.contacts_field.insert(END, contact)
 
-    def load_contacts(self):
+    def load_contacts(self) -> None:
         with open("contacts_pickle", 'rb') as infile:
             self.contacts_list = pickle.load(infile)
             self.refresh_fields()
 
-    def save_contacts(self):
+    def save_contacts(self) -> None:
         with open("contacts_pickle", 'wb') as outfile:
             pickle.dump(self.contacts_list, outfile)
 
-    def insert_contact(self, contact):
+    def insert_contact(self, contact) -> None:
         self.contacts_field.insert(END, contact)
 
-    def show_contact_info(self):
+    def show_contact_info(self) -> None:
         name = self.contacts_field.get(self.contacts_field.curselection()[0])
         contact = self.contacts_list[name]
-        phone_nums = contact.phone_numbers
+        home_phone_nums = contact.phone_numbers["Home"]
+        work_phone_nums = contact.phone_numbers["Work"]
+        personal_phone_nums = contact.phone_numbers["Personal"]
         emails = contact.email_addresses
         addresses = contact.addresses
         notes = contact.notes
         self.info_field.delete(0, END)
-        for elem in [name, phone_nums, emails, addresses, notes]:
-            self.info_field.insert(END, elem)
+        self.info_field.insert(END, name)
+        self.info_field.insert(END, "")
+        if len(home_phone_nums) or len(work_phone_nums) or len(personal_phone_nums) > 0:
+            self.info_field.insert(END, "Phone:")
+            for elem in home_phone_nums:
+                self.info_field.insert(END, "   Home: " + elem)
+            for elem in work_phone_nums:
+                self.info_field.insert(END, "   Work: " + elem)
+            for elem in personal_phone_nums:
+                self.info_field.insert(END, "   Personal: " + elem)
+        if len(emails) > 0:
+            self.info_field.insert(END, "Emails:")
+            for elem in emails:
+                self.info_field.insert(END, "   " + elem)
+        if len(addresses) > 0:
+            self.info_field.insert(END, "Addresses:")
+            for elem in addresses:
+                self.info_field.insert(END, "   " + elem)
+        if len(notes) > 0:
+            self.info_field.insert(END, "Notes:")
+            for elem in notes:
+                self.info_field.insert(END, "   " + elem)
 
 
 class AddContactPage(Frame):
@@ -258,7 +284,7 @@ class AddContactPage(Frame):
     create: Initializes objects & places them on the page
     add_contact: Adds contact to the contact_list in ContactsPage;
                 If the contact is new, the name of the contact is added to
-                the contacts Listbox on ContactsPage.
+                the contacts Listbox on ContactsPage
     clear_all: Loops over all text entries and clears them
     add_phone_num: TEMPORARY METHOD; Used for debugging
     """
@@ -308,7 +334,7 @@ class AddContactPage(Frame):
         # Create objects
         self.create()
 
-    def create(self):
+    def create(self) -> None:
         self.preview_scroll = Scrollbar(self, orient=VERTICAL)
         self.preview = Listbox(
             self,
@@ -401,12 +427,11 @@ class AddContactPage(Frame):
         for i in range(5):
             self.grid_columnconfigure(i, weight=1)
 
-    # Temporary method; currently only here for debugging
-    def add_phone_num(self, num_type, num):
+    def add_phone_num(self, num_type, num) -> None:
         if num_type != '':
             self.contact_new.add_phone_number(num_type, num)
 
-    def add_contact(self):
+    def add_contact(self) -> None:
         name = self.contact_new.name
         contacts_list = self.controller.frames["View Contacts"].contacts_list
         if name != '':
@@ -424,7 +449,7 @@ class AddContactPage(Frame):
             self.controller.frames["View Contacts"].insert_contact(contact)
         self.contact_new = Contact('')
 
-    def clear_all(self):
+    def clear_all(self) -> None:
         for entry in self.text_entries:
             entry.delete(0, END)
 
@@ -452,7 +477,7 @@ class SettingsPage(Frame):
         # Create objects
         self.create()
 
-    def create(self):
+    def create(self) -> None:
         pass
 
 

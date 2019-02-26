@@ -1,10 +1,10 @@
 import tkinter as tk
-import os
+# import os
 import math
-from PIL import Image, ImageTk
+# from PIL import Image, ImageTk
 from project.MouseController import MouseController
 from project.PhoneNumber.PhoneButton import PhoneButton
-import project.PhoneNumber.add_canvas_method
+# import project.PhoneNumber.add_canvas_method
 
 
 class PhoneCanvas(tk.Canvas):
@@ -69,6 +69,15 @@ class PhoneCanvas(tk.Canvas):
         self.bind("<ButtonRelease-1>", self.mouse_release)
         
         self.pack()
+
+    def create_circle_arc(self, x, y, r, **kwargs):
+        if "start" in kwargs and "end" in kwargs:
+            kwargs["extent"] = kwargs["end"] - kwargs["start"]
+            del kwargs["end"]
+        return self.create_arc(x - r, y - r, x + r, y + r, **kwargs)
+
+    def create_circle(self, x, y, r, **kwargs):
+        return self.create_oval(x - r, y - r, x + r, y + r, **kwargs)
 
     def send_output_number(self):
         # TODO -> Figure out exactly how the output will be managed.
@@ -142,12 +151,12 @@ class PhoneCanvas(tk.Canvas):
         current_button = None
         nearest_angle = math.inf
         for button in self.circle_buttons:
-            if button.find_current_angle() < nearest_angle and button.find_current_angle() >= min_angle:
+            if min_angle <= button.find_current_angle() < nearest_angle:
                 nearest_angle = button.find_current_angle()
                 current_button = button
         if current_button is not None and self.current_phone_number is None:
             self.current_phone_number = current_button
-        elif current_button is not None and int(current_button.text)<int(self.current_phone_number.text):
+        elif current_button is not None and int(current_button.text) < int(self.current_phone_number.text):
             self.current_phone_number = current_button
 
     def find_angle_from_center(self, pos_x, pos_y):
@@ -158,7 +167,7 @@ class PhoneCanvas(tk.Canvas):
                 angle = 90/180*math.pi
             # print("#1 Current angle = " + str(angle))
             return angle
-        elif pos_x >= self.canvas_size/2 and pos_y <= self.canvas_size/2:
+        elif pos_y <= self.canvas_size/2 <= pos_x:
             try:
                 angle = math.atan((pos_x - self.canvas_size/2)/(self.canvas_size/2 - pos_y))
             except ZeroDivisionError:
@@ -181,9 +190,9 @@ class PhoneCanvas(tk.Canvas):
             return angle + 270/180*math.pi
 
 
-
 if __name__ == '__main__':
     root = tk.Tk()
+    root.resizable(False, False)
     PhoneCanvas(root)
     root.mainloop()
 
