@@ -21,18 +21,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.library_model = QSqlTableModel()
         self.library_model.setTable("library")
-        self.library_model.removeColumn(0)  # Remove id
-        self.library_model.removeColumn(5)  # Remove crc32
-        self.library_model.removeColumn(5)  # Remove path
-        self.library_model.setHeaderData(0, Qt.Horizontal, "Title", Qt.DisplayRole)
-        self.library_model.setHeaderData(1, Qt.Horizontal, "Artist", Qt.DisplayRole)
-        self.library_model.setHeaderData(2, Qt.Horizontal, "Album", Qt.DisplayRole)
-        self.library_model.setHeaderData(3, Qt.Horizontal, "Genre", Qt.DisplayRole)
-        self.library_model.setHeaderData(4, Qt.Horizontal, "Date", Qt.DisplayRole)
+        self.library_model.setHeaderData(1, Qt.Horizontal, "Title", Qt.DisplayRole)
+        self.library_model.setHeaderData(2, Qt.Horizontal, "Artist", Qt.DisplayRole)
+        self.library_model.setHeaderData(3, Qt.Horizontal, "Album", Qt.DisplayRole)
+        self.library_model.setHeaderData(4, Qt.Horizontal, "Genre", Qt.DisplayRole)
+        self.library_model.setHeaderData(5, Qt.Horizontal, "Date", Qt.DisplayRole)
 
         self.playlist_view.setModel(self.library_model)
         self.playlist_view.setEditTriggers(QAbstractItemView.NoEditTriggers)  # Disable editing
         self.playlist_view.setSortingEnabled(True)
+        self.playlist_view.hideColumn(0)  # id
+        self.playlist_view.hideColumn(6)  # crc32
+        self.playlist_view.hideColumn(7)  # path
+
         self.library_model.select()  # Force-update the view
 
         self.play_button.pressed.connect(self.player.play)
