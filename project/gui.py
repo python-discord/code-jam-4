@@ -18,6 +18,7 @@ class Tile(QtWidgets.QPushButton):
         self.setObjectName('tile')
         self.max_health = health  # this refers to the amount of clicks it takes to destroy
         self.health = health
+        self.setFlat(False)
 
     def health_percent(self):
         return int((self.health / self.max_health)*100)
@@ -43,9 +44,9 @@ class Minesweeper(QtWidgets.QWidget):
         self.width = width
         self.height = height
         self.explosion_sound = QtMultimedia.QSound(':/sound/explode.wav')
-        self.tile_size = (25, 25)
+        self.tile_size = (20, 20)
         self.controller = logic.Minesweeper(self.width, self.height)
-        self.mine_positions = self.controller.put_mines_in_grid(10)
+        self.controller.mines_number = 99
         self.button_grid = []
         self.setup_gui()
 
@@ -58,12 +59,12 @@ class Minesweeper(QtWidgets.QWidget):
         '''Setup the GUI for the minesweeper widget'''
         self.load_css()
         self.grid_layout = QtWidgets.QGridLayout(self)
-        self.grid_layout.setSpacing(0)
+        self.grid_layout.setSpacing(1)
 
-        for row in range(self.width):
+        for row in range(self.height):
             row_array = []
-            for column in range(self.height):
-                button = Tile(10)
+            for column in range(self.width):
+                button = Tile(random.randint(1, 5))
                 button.clicked.connect(partial(self.button_clicked, row, column))
                 button.right_clicked.connect(partial(self.place_flag, row, column))
                 button.health_decreased.connect(partial(self.button_health_update, row, column))
@@ -91,16 +92,15 @@ class Minesweeper(QtWidgets.QWidget):
                     label = QtWidgets.QLabel()
                     label.setFixedSize(*self.tile_size)
                     if number:
-                        colours = {'1': QtGui.QColor(0x0000FF),
-                                   '2': QtGui.QColor(0x00FF00),
-                                   '3': QtGui.QColor(0xFF0000),
-                                   '4': QtGui.QColor(0x0000FF).darker(100),
-                                   '5': QtGui.QColor(0x00FF00).darker(100),
-                                   '6': QtGui.QColor(0xFF0000).darker(100),
-                                   '7': QtGui.QColor(0x0000FF).darker(200),
-                                   '8': QtGui.QColor(0x00FF00).darker(200)}
+                        colours = {'1': QtGui.QColor(0x76a4ed),
+                                   '2': QtGui.QColor(0x77ed76),
+                                   '3': QtGui.QColor(0xed7676),
+                                   '4': QtGui.QColor(0xedab76),
+                                   '5': QtGui.QColor(0x76edd9),
+                                   '6': QtGui.QColor(0xb576ed),
+                                   '7': QtGui.QColor(0x767bed),
+                                   '8': QtGui.QColor(0xed76d5)}
                         font = QtGui.QFont('Consolas')
-                        font.setBold(True)
                         label.setText(str(number))
                         label.setStyleSheet('color: ' + colours[str(number)].name())
                         label.setFont(font)
@@ -162,7 +162,7 @@ class DelayMineExplosionThread(QtCore.QThread):
     explode = QtCore.pyqtSignal(int, int)
 
     def __init__(self, minesweeper, first):
-        self.positions = list(minesweeper.mine_positions)
+        self.positions = list(minesweeper.controller.mine_positions)
         self.first = first
         super().__init__()
 
@@ -171,9 +171,10 @@ class DelayMineExplosionThread(QtCore.QThread):
         random.shuffle(self.positions)
         self.positions.remove(self.first)
         self.positions.insert(0, self.first)
+        bomb_number = len(self.positions)
         for column, row in self.positions:
             self.explode.emit(row, column)
-            time.sleep(random.randint(10, 30)/100)
+            time.sleep(abs((1/bomb_number)+(random.random()-0.5)/10))
         self.finished.emit()
 
 

@@ -11,6 +11,9 @@ class Minesweeper:
     def __init__(self, width, height):
         self.width = width
         self.height = height
+        self.mines_number = 10
+        self.mines_initialised = False
+        self.mine_positions = None
         self.grid = []
 
         # Initialise the game
@@ -20,15 +23,18 @@ class Minesweeper:
         '''This refreshes self.grid variable into an array with all tiles being of value EMPTY'''
         self.grid = [[self.UNDISCOVERED for _ in range(self.width)] for _ in range(self.height)]
 
-    def put_mines_in_grid(self, amount) -> set:
+    def put_mines_in_grid(self, amount, excludes=()) -> set:
         '''This puts X amount of mines onto the grid in random places
         returns the list of coordinates'''
         coordinates = set()
         # generate random unique coordinates until we have reached the quota (amount)
         while len(coordinates) < amount:
             x, y = random.randrange(self.width), random.randrange(self.height)
-            coordinates.add((x, y))
-            self.grid[y][x] = self.MINE
+            if not (x, y) in excludes:
+                coordinates.add((x, y))
+                self.grid[y][x] = self.MINE
+
+        self.mines_initialised = True
         return coordinates
 
     def click_tile(self, x, y) -> bool:
@@ -36,6 +42,9 @@ class Minesweeper:
         The grid should update and the tiles should change from
         UNDISCOVERED to DISCOVERED, depending on where they are.
         returns True if the tile is a mine, returns false otherwise'''
+        if not self.mines_initialised:
+            excludes = self.__surrounding_tiles(x, y) + [x, y]
+            self.mine_positions = self.put_mines_in_grid(self.mines_number, excludes)
         if self.grid[y][x] == self.MINE:
             return True
         elif self.grid[y][x] == self.UNDISCOVERED:

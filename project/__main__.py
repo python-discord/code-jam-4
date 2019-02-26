@@ -6,7 +6,7 @@ import sys
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    window = Minesweeper(width=16, height=16)
+    window = Minesweeper(width=30, height=16)
     window.show()
 
     sys.exit(app.exec_())
