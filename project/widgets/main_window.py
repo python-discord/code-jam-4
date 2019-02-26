@@ -1,11 +1,12 @@
 import logging
+from typing import Any, Dict
 
 from PySide2.QtCore import QUrl, Qt
 from PySide2.QtMultimedia import QMediaContent, QMediaPlayer, QMediaPlaylist
-from PySide2.QtSql import QSqlTableModel
+from PySide2.QtSql import QSqlRecord, QSqlTableModel
 from PySide2.QtWidgets import QAbstractItemView, QFileDialog, QMainWindow
 
-from project import library, media as media_utils
+from project import media as media_utils
 from project.ui.main_window import Ui_MainWindow
 
 log = logging.getLogger(__name__)
@@ -42,14 +43,43 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.add_files_action.triggered.connect(self.add_media)
 
+    def create_record(self, metadata: Dict[str, Any]) -> QSqlRecord:
+        """Create and return a library record from media metadata.
+
+        Parameters
+        ----------
+        metadata: Dict[str, Any]
+            The media's metadata
+
+        Returns
+        -------
+        QSqlRecord
+            The created record.
+
+        """
+        record = self.library_model.record()
+        record.remove(record.indexOf("id"))  # id field is auto-incremented so it can be removed.
+
+        for k, v in metadata.items():
+            record.setValue(k, v)
+
+        return record
+
     def add_media(self):
         """Add media files selected from a file dialogue to the playlist."""
         paths, _ = QFileDialog.getOpenFileNames(self, "Add files", "", "")
 
         for path in paths:
             log.debug(path)
+
+            metadata = media_utils.parse_media(path)
+            record = self.create_record(metadata)
+
+            if not self.library_model.insertRecord(-1, record):  # -1 will append
+                log.error(f"Failed to insert record for {path}: {self.library_model.lastError()}")
+                # TODO: Does a rollback need to happen in case of failure?
+
             media = QMediaContent(QUrl.fromLocalFile(path))
-            library.add_media(media_utils.parse_media(path))
             self.playlist.addMedia(media)
 
-        self.library_model.layoutChanged.emit()
+        self.library_model.submitAll()
