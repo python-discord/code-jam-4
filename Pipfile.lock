@@ -42,16 +42,6 @@
                 "sha256:bb81cfc4d35ca59f1c419b6abeb6ca6a726a63b712cf979f2b5ab24b81c36f49"
             ],
             "version": "==4.19.14"
-        },
-        "qscintilla": {
-            "hashes": [
-                "sha256:051fd2aee2ff2d5b6e9c8e8d668da69f9803ab722ce86c692666dfcd7d8648e0",
-                "sha256:122af03474a82cb6c110a28598eca6200cf966becff77b760d466fab2199aa98",
-                "sha256:5066cab9b27c398ca320edad347c6624293ffaba3501a7da3ae783cab77ae4aa",
-                "sha256:b054ffc16df07fdeb7efb9e0cabe61098b2dd604ea9dbecc38ef27014a65f632"
-            ],
-            "index": "pypi",
-            "version": "==2.11.1"
         }
     },
     "develop": {

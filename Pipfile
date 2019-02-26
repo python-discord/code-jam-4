@@ -8,7 +8,6 @@ flake8 = "*"
 
 [packages]
 pyqt5 = "*"
-qscintilla = "*"
 
 [requires]
 python_version = "3.7"
