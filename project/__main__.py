@@ -2,7 +2,8 @@ import tkinter as tk
 import tkinter.font as tkFont
 import math
 import json
-import enchant  # TODO add as requirement to project
+import nltk
+from nltk.corpus import words
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).parent
@@ -11,25 +12,19 @@ KEY_DESCRIPTION_PATH = SCRIPT_DIR / Path("key_descriptions.json")
 SAVE_DATA_PATH = SCRIPT_DIR / Path("save_data.json")
 DEFAULT_KEYS_PATH = SCRIPT_DIR / Path("default_keyboard.json")
 
-
-ENGLISH_DICTIONARY = enchant.Dict('en_US')
-
+def is_word(text):
+    assert text.isalpha()
+    return text in words.words()
 
 def get_last_word(text):
-    # This method is ugly, clean it up later
-    assert text.lower() == text
-    assert text.strip() == text
-    last_known_letter_countback = 1
-    try:
-        while not text[-last_known_letter_countback].isalpha():
-            last_known_letter_countback += 1
-    except IndexError:
-        return None
-    text = text[:1-last_known_letter_countback]
-    for i in range(1, len(text)+1):
-        if not text[-i].isalpha():
-            return text[1-i:]
-    return text
+    text = text.lower().strip()
+    for end_index in range(len(text)-1,-1,-1):
+        if text[end_index].isalpha():
+            for start_index in range(end_index,-1,-1):
+                if not text[start_index].isalpha():
+                    return text[start_index+1:end_index+1]
+            return text[:end_index+1]
+    return None
 
 
 class UserInterface(tk.Frame):
@@ -68,7 +63,7 @@ class UserInterface(tk.Frame):
         assert last_word.lower() == last_word
         assert last_word.strip() == last_word
         assert last_word.isalpha()
-        if(ENGLISH_DICTIONARY.check(last_word)
+        if(is_word(last_word)
            and last_word not in self.used_words):
             self.used_words.add(last_word)
             self.unlock_lootbox()
@@ -283,7 +278,6 @@ class KeyboardKey(tk.Button):
 
         if self.scale < self.scale_max:
             self.master.recalc_key_sizes(self)
-
 
 def exit_program():
     """
