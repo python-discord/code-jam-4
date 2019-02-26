@@ -1,11 +1,28 @@
 from PyQt5 import QtWidgets, QtCore, QtGui, QtMultimedia
 from functools import partial
+from itertools import count
 from . import logic
 import time
 import random
 import os
-import sys
 
+
+class MinesweeperApp(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('Minesweeper')
+        self.setup_ui()
+
+    def setup_ui(self):
+        self.stack_widget = QtWidgets.QStackedWidget()
+        # Minesweeper Widget
+        self.minesweeper = Minesweeper()
+        self.stack_widget.addWidget(self.minesweeper)
+
+        self.setCentralWidget(self.stack_widget)
+
+
+# Minesweeper Widgets
 
 class Tile(QtWidgets.QPushButton):
     '''Represents a Tile on a minesweeper grid'''
@@ -82,12 +99,84 @@ class Minesweeper(QtWidgets.QWidget):
         self.tile_size = (20, 20)
         self.controller = logic.Minesweeper(self.grid_width, self.grid_height)
         self.controller.mines_number = mines
+        self.flag_count = mines
+        self.too_fast_modal = None
         self.button_grid = []
         self.setup_gui()
+
+    def setup_gui(self):
+        '''Setup the GUI for the minesweeper widget'''
+        self.window_layout = QtWidgets.QVBoxLayout(self)
+        self.window_layout.setSpacing(0)
+        self.window_layout.setContentsMargins(0, 0, 0, 0)
+
+        # -- SCORE PANEL
+        self.score_frame = QtWidgets.QFrame(self)
+        self.score_frame.setObjectName('score')
+        h_layout = QtWidgets.QHBoxLayout(self.score_frame)
+        h_layout.setSpacing(10)
+        flag_count_label = QtWidgets.QLabel('Flags')
+        flag_count_label.setFont(QtGui.QFont('Consolas'))
+        self.flag_count_lcd = QtWidgets.QLCDNumber(self.score_frame)
+        self.flag_count_lcd.setSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                          QtWidgets.QSizePolicy.Fixed)
+        self.flag_count_lcd.display(self.flag_count)
+        self.flag_count_lcd.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
+        spacer = QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Expanding,
+                                       QtWidgets.QSizePolicy.Preferred)
+        timer_label = QtWidgets.QLabel('Time')
+        timer_label.setFont(QtGui.QFont('Consolas'))
+        self.timer_lcd = QtWidgets.QLCDNumber(self.score_frame)
+        self.timer_lcd.setSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                     QtWidgets.QSizePolicy.Fixed)
+        self.timer_lcd.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
+        self.counter_thread = TimerThread()
+        self.counter_thread.update.connect(self.timer_lcd.display)
+        self.counter_thread.start()
+
+        self.score_frame.setLayout(h_layout)
+
+        h_layout.addWidget(flag_count_label)
+        h_layout.addWidget(self.flag_count_lcd)
+        h_layout.addSpacerItem(spacer)
+        h_layout.addWidget(timer_label)
+        h_layout.addWidget(self.timer_lcd)
+
+        # -- GAME PANEL
+        self.game_frame = QtWidgets.QFrame(self)
+        self.game_frame.setObjectName('game')
+        self.grid_layout = QtWidgets.QGridLayout(self.game_frame)
+        self.grid_layout.setContentsMargins(16, 16, 16, 16)
+        self.grid_layout.setSpacing(1)
+
+        # generating the grid of tiles
+        for row in range(self.grid_height):
+            row_array = []
+            for column in range(self.grid_width):
+                button = Tile(random.randint(50, 100))
+                button.clicked.connect(partial(self.button_clicked, row, column))
+                button.right_clicked.connect(partial(self.place_flag, row, column))
+                button.health_decreased.connect(partial(self.button_health_update, row, column))
+                button.setFixedSize(*self.tile_size)
+                self.grid_layout.addWidget(button, row, column)
+                row_array.append(button)
+            self.button_grid.append(row_array)
+
+        self.game_frame.setLayout(self.grid_layout)
+        self.window_layout.addWidget(self.game_frame)
+        self.window_layout.addWidget(self.score_frame)
+        self.setLayout(self.window_layout)
+        self.load_css()
 
     def show_click_modal(self):
         '''Shows a floating modal widget in the center of the screen which tells you
         to stop clicking so fast'''
+
+        if self.too_fast_modal is None:
+            self.too_fast_modal = MinesweeperModal('You are clicking too fast!', self)
+            self.too_fast_modal.close_button.clicked.connect(self.modal_closed)
+            self.too_fast_modal.move(self.rect().center() - self.too_fast_modal.rect().center())
+
         self.beep_sound.play()
         self.too_fast_modal.setHidden(False)
         self.too_fast_modal.raise_()
@@ -103,37 +192,6 @@ class Minesweeper(QtWidgets.QWidget):
         css_file = os.path.join(os.path.dirname(__file__), 'theme.css')
         with open(css_file) as file:
             self.setStyleSheet(file.read())
-
-    def setup_gui(self):
-        '''Setup the GUI for the minesweeper widget'''
-        self.load_css()
-        self.window_layout = QtWidgets.QVBoxLayout(self)
-        self.game_frame = QtWidgets.QFrame(self)
-        self.grid_layout = QtWidgets.QGridLayout(self.game_frame)
-        self.grid_layout.setSpacing(1)
-
-        for row in range(self.grid_height):
-            row_array = []
-            for column in range(self.grid_width):
-                button = Tile(random.randint(30, 100))
-                button.clicked.connect(partial(self.button_clicked, row, column))
-                button.right_clicked.connect(partial(self.place_flag, row, column))
-                button.health_decreased.connect(partial(self.button_health_update, row, column))
-                button.setFixedSize(*self.tile_size)
-                self.grid_layout.addWidget(button, row, column)
-                row_array.append(button)
-            self.button_grid.append(row_array)
-
-        self.game_frame.setLayout(self.grid_layout)
-        self.window_layout.addWidget(self.game_frame)
-        self.setLayout(self.window_layout)
-
-        self.show()
-
-        # Floating Modal
-        self.too_fast_modal = MinesweeperModal('You are clicking too fast!', self)
-        self.too_fast_modal.close_button.clicked.connect(self.modal_closed)
-        self.too_fast_modal.move(self.rect().center()-self.too_fast_modal.rect().center())
 
     def refresh_gui(self):
         '''Refresh the GUI to match the same grid on the minesweeper controller'''
@@ -165,9 +223,14 @@ class Minesweeper(QtWidgets.QWidget):
         button = self.button_grid[row][column]
         flag_icon = QtGui.QIcon(':/images/flag.png')
         if not button.icon().isNull():
+            self.flag_count += 1
             button.setIcon(QtGui.QIcon())
-        else:
+        elif self.flag_count > 0:
+            self.flag_count -= 1
             button.setIcon(flag_icon)
+            button.health = button.max_health
+            button.setStyleSheet("")
+        self.flag_count_lcd.display(self.flag_count)
 
     def explode(self, row, column):
         '''Explodes the specified tile, with a sound effect and a GIF'''
@@ -203,11 +266,13 @@ class Minesweeper(QtWidgets.QWidget):
 
         # Stops you from clicking too fast
         click_time = time.time()
-        if click_time - self.last_click <= 0.2:
+        if click_time - self.last_click <= 0.3:
             self.show_click_modal()
         self.last_click = time.time()
 
         button = self.button_grid[row][column]
+        if not button.icon().isNull():
+            self.place_flag(row, column)
         current_index = 9 - (button.health_percent() // 10)
         button.setStyleSheet(f'background-image: url(:/tiles/crack{current_index}.png);'
                              f'background-position: center;')
@@ -221,6 +286,17 @@ class Minesweeper(QtWidgets.QWidget):
         else:
             self.break_sound.play()
             self.explode_all_mines(row, column)
+
+
+class TimerThread(QtCore.QThread):
+    '''Simply counts upwards to infinity with a second delay'''
+
+    update = QtCore.pyqtSignal(int)
+
+    def run(self):
+        for number in count(0):
+            self.update.emit(number)
+            time.sleep(1)
 
 
 class DelayMineExplosionThread(QtCore.QThread):
@@ -243,16 +319,5 @@ class DelayMineExplosionThread(QtCore.QThread):
         bomb_number = len(self.positions)
         for column, row in self.positions:
             self.explode.emit(row, column)
-            time.sleep(abs((1/bomb_number)+(random.random()-0.5)/10))
+            time.sleep(abs((1/bomb_number)+(random.random()-0.5)/5))
         self.finished.emit()
-
-
-if __name__ == '__main__':
-    # create the PyQt5 app
-    app = QtWidgets.QApplication(sys.argv)
-
-    window = Minesweeper(width=16, height=16)
-    window.show()
-    window.setFixedSize(window.minimumSize())
-
-    sys.exit(app.exec_())

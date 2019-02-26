@@ -43,7 +43,7 @@ class Minesweeper:
         UNDISCOVERED to DISCOVERED, depending on where they are.
         returns True if the tile is a mine, returns false otherwise'''
         if not self.mines_initialised:
-            excludes = self.__surrounding_tiles(x, y) + [x, y]
+            excludes = self.__surrounding_tiles(x, y) + [(x, y)]
             self.mine_positions = self.put_mines_in_grid(self.mines_number, excludes)
         if self.grid[y][x] == self.MINE:
             return True
