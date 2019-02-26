@@ -7,11 +7,13 @@ verify_ssl = true
 flake8 = "*"
 
 [packages]
-geopy = "*"
 pyowm = "*"
 flake8 = "*"
 ipython = "*"
 pytest = "*"
+geonames = "*"
+python-levenshtein = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.7"
