@@ -6,9 +6,9 @@ class menu:
     class unhelpful:
         name = "ウンヘルプフル メニュー"  # u n he ru pu fu ru   me nyu- | Unhelpful Menu
         nothing = "ヅー ノシング"  # do-   no shi n gu | Do nothing
-        save = (
-            "セイヴ プロセソル タイム"
-        )  # se i vu   pu ro se so ru   ta i mu | Save Processor Time
+        save = "セイヴ プロセソル タイム"
+        # se i vu   pu ro se so ru   ta i mu | Save Processor Time
+        close = "Close"
 
     class fileselect:
         file = " 【ファイル】"  # [fa i ru] | [FILE]

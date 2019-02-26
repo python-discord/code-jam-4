@@ -4,7 +4,7 @@ the normal tk window (located in __main__.py)
 """
 
 import asynctk as tk
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageTk
 import asyncio
 import typing
 import pathlib
@@ -103,18 +103,13 @@ class Canvas(tk.AsyncCanvas):
         The height of the canvas (in pixels)
     width: int
         The width of the canvas (in pixels)
-    pil_image: PIL.Image
-        The duplicate version of the Canvas image as a Pillow Image,
-        used for saving the current painting
-    pil_draw: PIL.ImageDraw
-        The drawing object, allowing each pixel to be drawn onto the pil_image
 
     Methods
     -------
     add_pixel: coroutine
     save: coroutine
     forget: method
-    from_image: classmethod
+    from_image: classmethod coroutine
 
     """
 
@@ -124,19 +119,13 @@ class Canvas(tk.AsyncCanvas):
         *,
         height: int,
         width: int,
-        photoimage: tk.PhotoImage = None,
-        pil_image: Image = None,
     ):
         super().__init__(master, height=height, width=width, bg="white")
 
         self.width, self.height = width, height
 
         self.pack(side=tk.LEFT)
-        if photoimage and pil_image:
-            self.create_image(0, 0, image=photoimage, anchor=tk.NW)
-            self.pil_image = pil_image
-        else:
-            self.pil_image = Image.new("RGB", (width, height), (255, 255, 255))
+        self.pil_image = Image.new("RGB", (width, height), (255, 255, 255))
         self.pil_draw = ImageDraw.Draw(self.pil_image)
 
     async def add_pixel(self, x: int, y: int, colour: Colour):
@@ -156,16 +145,16 @@ class Canvas(tk.AsyncCanvas):
         await self.create_line(x, y, x + 1, y, fill=colour.as_hex)
         self.pil_draw.point([(x, y)], fill=colour.as_rgb)
 
-    async def save(self, file: str):
+    async def save(self, file: typing.Union[str, pathlib.Path]):
         """Shortcut to save the PIL file"""
         self.pil_image.save(file)
 
-    async def forget(self):
+    def forget(self):
         """Shortcut to remove the canvas from the main window"""
         self.pack_forget()
 
     @classmethod
-    def from_image(cls, master: tk.AsyncTk, file: pathlib.Path):
+    async def from_image(cls, master: tk.AsyncTk, file: typing.Union[str, pathlib.Path]):
         """
         Classmethod to open the image from a file
 
@@ -182,16 +171,21 @@ class Canvas(tk.AsyncCanvas):
         Canvas
         """
 
-        photoimage = tk.PhotoImage(file=file)
         pil_image = Image.open(file)
+        photoimage = ImageTk.PhotoImage(pil_image, master=master)
         width, height = pil_image.width, pil_image.height
-        return cls(
+        print(f"{height}x{width}")
+        new_cls = cls(
             master,
             height=height,
             width=width,
-            photoimage=photoimage,
-            pil_image=pil_image,
         )
+
+        await new_cls.create_image(0, 0, image=photoimage, anchor=tk.NW)
+        new_cls.image = photoimage
+        new_cls.pil_image = pil_image
+        new_cls.pil_draw = ImageDraw.Draw(new_cls.pil_image)
+        return new_cls
 
 
 class EntrySection(tk.AsyncFrame):
@@ -230,13 +224,19 @@ class EntrySection(tk.AsyncFrame):
         self.pack(side=tk.RIGHT)
         self._setupFields()
 
+    def reset(self):
+        for item in self.pack_slaves():
+            item.pack_forget()
+        self.canvas = self.master.canvas
+        self._setupFields()
+
     def _setupFields(self):
         tk.AsyncLabel(self, text=kata.menu.entry.x).pack()
         self.x = tk.AsyncSpinbox(self, from_=0, to=self.canvas.width)
         self.x.pack()
 
         tk.AsyncLabel(self, text=kata.menu.entry.y).pack()
-        self.y = tk.AsyncSpinbox(self, from_=0, to=self.canvas.width)
+        self.y = tk.AsyncSpinbox(self, from_=0, to=self.canvas.height)
         self.y.pack()
 
         tk.AsyncLabel(self, text=kata.menu.entry.colour).pack()
