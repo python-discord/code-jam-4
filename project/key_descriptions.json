@@ -4,363 +4,415 @@
     "char": "`",
     "shift_name": "~",
     "shift_char": "~",
-    "size": 1
+    "size": 1,
+    "rarity": 4
   },
   "1": {
     "name": "1",
     "char": "1",
     "shift_name": "!",
     "shift_char": "!",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "2": {
     "name": "2",
     "char": "2",
     "shift_name": "@",
     "shift_char": "@",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "3": {
     "name": "3",
     "char": "3",
     "shift_name": "#",
     "shift_char": "#",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "4": {
     "name": "4",
     "char": "4",
     "shift_name": "$",
     "shift_char": "$",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "5": {
     "name": "5",
     "char": "5",
     "shift_name": "%",
     "shift_char": "%",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "6": {
     "name": "6",
     "char": "6",
     "shift_name": "^",
     "shift_char": "^",
-    "size": 1
+    "size": 1,
+    "rarity": 1
   },
   "7": {
     "name": "7",
     "char": "7",
     "shift_name": "&",
     "shift_char": "&",
-    "size": 1
+    "size": 1,
+    "rarity": 1
   },
   "8": {
     "name": "8",
     "char": "8",
     "shift_name": "*",
     "shift_char": "*",
-    "size": 1
+    "size": 1,
+    "rarity": 1
   },
   "9": {
     "name": "9",
     "char": "9",
     "shift_name": "(",
     "shift_char": "(",
-    "size": 1
+    "size": 1,
+    "rarity": 1
   },
   "0": {
     "name": "0",
     "char": "0",
     "shift_name": ")",
     "shift_char": ")",
-    "size": 1
+    "size": 1,
+    "rarity": 1
   },
   "-": {
     "name": "-",
     "char": "-",
     "shift_name": "_",
     "shift_char": "_",
-    "size": 1
+    "size": 1,
+    "rarity": 4
   },
   "=": {
     "name": "=",
     "char": "=",
     "shift_name": "+",
     "shift_char": "+",
-    "size": 1
+    "size": 1,
+    "rarity": 4
   },
   "backspace": {
     "name": "backspace",
-    "char": "backspace",
+    "char": "",
     "shift_name": "BACKSPACE",
-    "shift_char": "BACKSPACE",
-    "size": 2
+    "shift_char": "",
+    "size": 2,
+    "rarity": 5
   },
   "tab": {
     "name": "tab",
     "char": "\t",
     "shift_name": "TAB",
     "shift_char": "\t",
-    "size": 2
+    "size": 2,
+    "rarity": 5
   },
   "q": {
     "name": "q",
     "char": "q",
     "shift_name": "Q",
     "shift_char": "Q",
-    "size": 1
+    "size": 1,
+    "rarity": 4
   },
   "w": {
     "name": "w",
     "char": "w",
     "shift_name": "W",
     "shift_char": "W",
-    "size": 1
+    "size": 1,
+    "rarity": 3
   },
   "e": {
     "name": "e",
     "char": "e",
     "shift_name": "E",
     "shift_char": "E",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "r": {
     "name": "r",
     "char": "r",
     "shift_name": "R",
     "shift_char": "R",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "t": {
     "name": "t",
     "char": "t",
     "shift_name": "T",
     "shift_char": "T",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "y": {
     "name": "y",
     "char": "y",
     "shift_name": "Y",
     "shift_char": "Y",
-    "size": 1
+    "size": 1,
+    "rarity": 3
   },
   "u": {
     "name": "u",
     "char": "u",
     "shift_name": "U",
     "shift_char": "U",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "i": {
     "name": "i",
     "char": "i",
     "shift_name": "I",
     "shift_char": "I",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "o": {
     "name": "o",
     "char": "o",
     "shift_name": "O",
     "shift_char": "O",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "p": {
     "name": "p",
     "char": "p",
     "shift_name": "P",
     "shift_char": "P",
-    "size": 1
+    "size": 1,
+    "rarity": 2
   },
   "[": {
     "name": "[",
     "char": "[",
     "shift_name": "{",
     "shift_char": "{",
-    "size": 1
+    "size": 1,
+    "rarity": 3
   },
   "]": {
     "name": "]",
     "char": "]",
     "shift_name": "}",
     "shift_char": "}",
-    "size": 1
+    "size": 1,
+    "rarity": 3
   },
   "\\": {
     "name": "\\",
     "char": "\\",
     "shift_name": "|",
     "shift_char": "|",
-    "size": 1
+    "size": 1,
+    "rarity": 2
   },
   "a": {
     "name": "a",
     "char": "a",
     "shift_name": "A",
     "shift_char": "A",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "s": {
     "name": "s",
     "char": "s",
     "shift_name": "S",
     "shift_char": "S",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "d": {
     "name": "d",
     "char": "d",
     "shift_name": "D",
     "shift_char": "D",
-    "size": 1
+    "size": 1,
+    "rarity": 1
   },
   "f": {
     "name": "f",
     "char": "f",
     "shift_name": "F",
     "shift_char": "F",
-    "size": 1
+    "size": 1,
+    "rarity": 3
   },
   "g": {
     "name": "g",
     "char": "g",
     "shift_name": "G",
     "shift_char": "G",
-    "size": 1
+    "size": 1,
+    "rarity": 1
   },
   "h": {
     "name": "h",
     "char": "h",
     "shift_name": "H",
     "shift_char": "H",
-    "size": 1
+    "size": 1,
+    "rarity": 3
   },
   "j": {
     "name": "j",
     "char": "j",
     "shift_name": "J",
     "shift_char": "J",
-    "size": 1
+    "size": 1,
+    "rarity": 4
   },
   "k": {
     "name": "k",
     "char": "k",
     "shift_name": "K",
     "shift_char": "K",
-    "size": 1
+    "size": 1,
+    "rarity": 4
   },
   "l": {
     "name": "l",
     "char": "l",
     "shift_name": "L",
     "shift_char": "L",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   ";": {
     "name": ";",
     "char": ";",
     "shift_name": ":",
     "shift_char": ":",
-    "size": 1
+    "size": 1,
+    "rarity": 2
   },
   "'": {
     "name": "'",
     "char": "'",
     "shift_name": "\"",
     "shift_char": "\"",
-    "size": 1
+    "size": 1,
+    "rarity": 2
   },
   "enter": {
     "name": "enter",
-    "char": "enter",
+    "char": "\n",
     "shift_name": "ENTER",
-    "shift_char": "ENTER",
-    "size": 2
+    "shift_char": "\n",
+    "size": 2,
+    "rarity": 5
   },
   "shift": {
     "name": "shift",
-    "char": "shift",
+    "char": "",
     "shift_name": "SHIFT",
-    "shift_char": "SHIFT",
-    "size": 2
+    "shift_char": "",
+    "size": 2,
+    "rarity": 5
   },
   "z": {
     "name": "z",
     "char": "z",
     "shift_name": "Z",
     "shift_char": "Z",
-    "size": 1
+    "size": 1,
+    "rarity": 4
   },
   "x": {
     "name": "x",
     "char": "x",
     "shift_name": "X",
     "shift_char": "X",
-    "size": 1
+    "size": 1,
+    "rarity": 4
   },
   "c": {
     "name": "c",
     "char": "c",
     "shift_name": "C",
     "shift_char": "C",
-    "size": 1
+    "size": 1,
+    "rarity": 2
   },
   "v": {
     "name": "v",
     "char": "v",
     "shift_name": "V",
     "shift_char": "V",
-    "size": 1
+    "size": 1,
+    "rarity": 3
   },
   "b": {
     "name": "b",
     "char": "b",
     "shift_name": "B",
     "shift_char": "B",
-    "size": 1
+    "size": 1,
+    "rarity": 2
   },
   "n": {
     "name": "n",
     "char": "n",
     "shift_name": "N",
     "shift_char": "N",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "m": {
     "name": "m",
     "char": "m",
     "shift_name": "M",
     "shift_char": "M",
-    "size": 1
+    "size": 1,
+    "rarity": 2
   },
   ",": {
     "name": ",",
     "char": ",",
     "shift_name": "<",
     "shift_char": "<",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   ".": {
     "name": ".",
     "char": ".",
     "shift_name": ">",
     "shift_char": ">",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "/": {
     "name": "/",
     "char": "/",
     "shift_name": "?",
     "shift_char": "?",
-    "size": 1
+    "size": 1,
+    "rarity": 0
   },
   "space": {
     "name": "space",
     "char": " ",
     "shift_name": "SPACE",
     "shift_char": " ",
-    "size": 14
+    "size": 14,
+    "rarity": 5
   }
 }

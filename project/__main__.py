@@ -1,9 +1,13 @@
 import tkinter as tk
 import tkinter.font as tkFont
+from tkinter import messagebox
 import math
 import json
-import enchant  # TODO add as requirement to project
+import enchant
+import random
 from pathlib import Path
+# This will be used for images
+# from PIL import Image, ImageTk
 
 SCRIPT_DIR = Path(__file__).parent
 
@@ -11,8 +15,27 @@ KEY_DESCRIPTION_PATH = SCRIPT_DIR / Path("key_descriptions.json")
 SAVE_DATA_PATH = SCRIPT_DIR / Path("save_data.json")
 DEFAULT_KEYS_PATH = SCRIPT_DIR / Path("default_keyboard.json")
 
-
 ENGLISH_DICTIONARY = enchant.Dict('en_US')
+
+LOOTBOX_RARITIES = {
+    0: "common",
+    1: "uncommon",
+    2: "rare",
+    3: "super rare",
+    4: "ultra rare",
+    5: "legendary"
+}
+
+LOOTBOX_RATES = [
+    0,
+    50,
+    70,
+    85,
+    90,
+    95,
+]
+
+LOOTBOX_PULLS_PER_BOX = 5
 
 
 def get_last_word(text):
@@ -50,6 +73,41 @@ class UserInterface(tk.Frame):
         self.keyboard_section.grid(row=1, column=0, ipadx=5,
                                    ipady=5, sticky="nwse"
                                    )
+
+        key_descriptions = self.keyboard_section.key_descriptions
+        self.unlockable_keys = [
+                               # common
+                               [key_descriptions[key]["name"] for key
+                                in key_descriptions
+                                if key_descriptions[key]["rarity"] == 0
+                                ],
+                               # uncommon
+                               [key_descriptions[key]["name"] for key
+                                in key_descriptions
+                                if key_descriptions[key]["rarity"] == 1
+                                ],
+                               # rare
+                               [key_descriptions[key]["name"] for key
+                                in key_descriptions
+                                if key_descriptions[key]["rarity"] == 2
+                                ],
+                               # super rare
+                               [key_descriptions[key]["name"] for key
+                                in key_descriptions
+                                if key_descriptions[key]["rarity"] == 3
+                                ],
+                               # ultra rare
+                               [key_descriptions[key]["name"] for key
+                                in key_descriptions
+                                if key_descriptions[key]["rarity"] == 4
+                                ],
+                               # legendary
+                               [key_descriptions[key]["name"] for key
+                                in key_descriptions
+                                if key_descriptions[key]["rarity"] == 5
+                                ],
+                               ]
+
         self.config(padx=40, pady=32)
 
     def receive_key(self, char):
@@ -61,6 +119,29 @@ class UserInterface(tk.Frame):
 
     def unlock_lootbox(self):
         print("Lootbox added!")
+
+        for i in range(LOOTBOX_PULLS_PER_BOX):
+            rand_int = random.randint(0, 100)
+            lootbox_rank = -1
+            for threshold in LOOTBOX_RATES:
+                if rand_int >= threshold:
+                    lootbox_rank += 1
+
+            unlocked_key = random.choice(self.unlockable_keys[lootbox_rank])
+
+            self.keyboard_section.add_key(unlocked_key)
+
+            lootbox_rarity = LOOTBOX_RARITIES[lootbox_rank]
+
+            mbox_title = "{} item unlocked!".format(lootbox_rarity.title())
+            mbox_text = "You got a \"{}\"!".format(unlocked_key)
+
+            messagebox.showinfo(
+                                mbox_title,
+                                mbox_text
+                                )
+
+            print("rolled {}".format(rand_int), lootbox_rarity, unlocked_key)
 
     def on_word_complete(self, last_word: str):
         if last_word is None:
@@ -119,6 +200,7 @@ class KeyboardSection(tk.Frame):
         self.keys_per_row = kwargs.pop('keys_per_row', 15)
 
         self.buttons = []
+        self.accumulated_blank_space = 0
 
         try:
             with open(KEY_DESCRIPTION_PATH, 'r') as descriptions_file:
@@ -129,7 +211,11 @@ class KeyboardSection(tk.Frame):
         self.make_keys(saved_keys=saved_keys, saved_scales=saved_scales)
 
     def add_key(self, key_name: str, scale=1.0):
-        row_index, col_index = divmod(len(self.buttons), self.keys_per_row)
+        row_index, col_index = divmod(
+                                      len(self.buttons)
+                                      + self.accumulated_blank_space,
+                                      self.keys_per_row
+                                      )
         key_dict = self.key_descriptions[key_name]
         key_size = key_dict['size']
         new_key = KeyboardKey.from_master_and_dict(self, key_dict)
@@ -140,6 +226,8 @@ class KeyboardSection(tk.Frame):
                      columnspan=key_size,
                      sticky='we'
                      )
+        if key_size > 1:
+            self.accumulated_blank_space += key_size - 1
 
     def make_keys(self, saved_keys=None, saved_scales=None):
         for idx, key_to_add in enumerate(saved_keys):
@@ -192,6 +280,7 @@ class KeyboardKey(tk.Button):
 
     def __init__(self, master: KeyboardSection, name,
                  char=None, shift_name=None, shift_char=None, size=None,
+                 rarity=None,
                  *args, **kwargs
                  ):
         tk.Button.__init__(self, master, *args, **kwargs)

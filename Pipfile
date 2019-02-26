@@ -8,6 +8,8 @@ flake8 = "*"
 
 [packages]
 flake8 = "*"
+pyenchant = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.7"
