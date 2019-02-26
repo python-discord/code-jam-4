@@ -16,8 +16,18 @@ from tkinter import Button, Tk, StringVar
 class Num(Button):
     def __init__(self, *args, **kwargs):
         Button.__init__(self, *args, **kwargs)
+        self.val = int(self['text'])
         self['bg'] = "pink"
         self['fg'] = "purple"
+        
+    
+    def add_num(self):
+        """
+        Adds number to the expression awaiting to be evaluated. Since the app
+        does not like users, it will randomly assume the user pressed a 
+        neighbouring button.
+        """
+        print(self.val)
 
 
 class Op(Button):
