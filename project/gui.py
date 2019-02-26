@@ -33,6 +33,38 @@ class Tile(QtWidgets.QPushButton):
             super().mousePressEvent(event)
 
 
+class MinesweeperModal(QtWidgets.QFrame):
+    '''Minesweeper Modal Widget'''
+
+    def __init__(self, message, parent):
+        super().__init__(parent)
+        self.setObjectName('modal')
+        self.setFixedSize(300, 100)
+        self.message = message
+        self.setHidden(True)
+        self.setup_gui()
+
+    def setup_gui(self):
+        self.v_layout = QtWidgets.QVBoxLayout(self)
+        self.v_layout.setContentsMargins(15, 20, 15, 20)
+        self.v_layout.setSpacing(5)
+        self.v_layout.setAlignment(QtCore.Qt.AlignHCenter)
+
+        font = QtGui.QFont('Consolas')
+        font.setPointSize(12)
+        self.title_label = QtWidgets.QLabel(self.message)
+        self.title_label.setFont(font)
+
+        self.close_button = QtWidgets.QPushButton("OK")
+        self.close_button.setSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                        QtWidgets.QSizePolicy.Preferred)
+        self.close_button.setFont(font)
+
+        self.v_layout.addWidget(self.title_label)
+        self.v_layout.addWidget(self.close_button)
+        self.setLayout(self.v_layout)
+
+
 class Minesweeper(QtWidgets.QWidget):
     '''Minesweeper Game Widget'''
 
@@ -41,16 +73,33 @@ class Minesweeper(QtWidgets.QWidget):
     def __init__(self, width=16, height=16, parent=None):
         super().__init__(parent)
         self.setObjectName('minesweeper')
+        self.last_click = 0
         self.width = width
         self.height = height
         self.explosion_sound = QtMultimedia.QSound(':/sound/explode.wav')
+        self.beep_sound = QtMultimedia.QSound(':/sound/beep.wav')
+        self.break_sound = QtMultimedia.QSound(':/sound/break.wav')
         self.tile_size = (20, 20)
         self.controller = logic.Minesweeper(self.width, self.height)
         self.controller.mines_number = 99
         self.button_grid = []
         self.setup_gui()
 
+    def show_click_modal(self):
+        '''Shows a floating modal widget in the center of the screen which tells you
+        to stop clicking so fast'''
+        self.beep_sound.play()
+        self.too_fast_modal.setHidden(False)
+        self.too_fast_modal.raise_()
+        self.game_frame.setDisabled(True)
+
+    def modal_closed(self):
+        '''This action is called when a modal is closed'''
+        self.too_fast_modal.setHidden(True)
+        self.game_frame.setDisabled(False)
+
     def load_css(self):
+        '''Loads a CSS file and loads it into the Minesweeper widget'''
         css_file = os.path.join(os.path.dirname(__file__), 'theme.css')
         with open(css_file) as file:
             self.setStyleSheet(file.read())
@@ -58,13 +107,15 @@ class Minesweeper(QtWidgets.QWidget):
     def setup_gui(self):
         '''Setup the GUI for the minesweeper widget'''
         self.load_css()
-        self.grid_layout = QtWidgets.QGridLayout(self)
+        self.window_layout = QtWidgets.QVBoxLayout(self)
+        self.game_frame = QtWidgets.QFrame(self)
+        self.grid_layout = QtWidgets.QGridLayout(self.game_frame)
         self.grid_layout.setSpacing(1)
 
         for row in range(self.height):
             row_array = []
             for column in range(self.width):
-                button = Tile(random.randint(1, 5))
+                button = Tile(random.randint(20, 40))
                 button.clicked.connect(partial(self.button_clicked, row, column))
                 button.right_clicked.connect(partial(self.place_flag, row, column))
                 button.health_decreased.connect(partial(self.button_health_update, row, column))
@@ -73,14 +124,14 @@ class Minesweeper(QtWidgets.QWidget):
                 row_array.append(button)
             self.button_grid.append(row_array)
 
-        self.setLayout(self.grid_layout)
+        self.game_frame.setLayout(self.grid_layout)
+        self.window_layout.addWidget(self.game_frame)
+        self.setLayout(self.window_layout)
 
-    def button_health_update(self, row, column):
-        '''Updates the button whenever the health has changed'''
-        button = self.button_grid[row][column]
-        current_index = 9 - (button.health_percent() // 10)
-        button.setStyleSheet(f'background-image: url(:/tiles/crack{current_index}.png);'
-                             f'background-position: center;')
+        # Floating Modal
+        self.too_fast_modal = MinesweeperModal('You are clicking too fast!', self)
+        self.too_fast_modal.close_button.clicked.connect(self.modal_closed)
+        self.too_fast_modal.move(self.rect().center() - self.too_fast_modal.rect().center())
 
     def refresh_gui(self):
         '''Refresh the GUI to match the same grid on the minesweeper controller'''
@@ -145,12 +196,28 @@ class Minesweeper(QtWidgets.QWidget):
         self.explode_all_mines_thread.explode.connect(self.explode)
         self.explode_all_mines_thread.start()
 
+    def button_health_update(self, row, column):
+        '''Updates the button whenever the health has changed'''
+
+        # Stops you from clicking too fast
+        click_time = time.time()
+        if click_time - self.last_click <= 0.2:
+            self.show_click_modal()
+        self.last_click = time.time()
+
+        button = self.button_grid[row][column]
+        current_index = 9 - (button.health_percent() // 10)
+        button.setStyleSheet(f'background-image: url(:/tiles/crack{current_index}.png);'
+                             f'background-position: center;')
+
     def button_clicked(self, row, column):
         '''This is called when a button is clicked at the position (row, column)'''
         mine = self.controller.click_tile(x=column, y=row)
         if not mine:
             self.refresh_gui()
+            self.break_sound.play()
         else:
+            self.break_sound.play()
             self.explode_all_mines(row, column)
 
 

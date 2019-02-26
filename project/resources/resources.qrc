@@ -18,5 +18,7 @@
   </qresource>
   <qresource prefix="sound">
     <file>explode.wav</file>
+    <file>beep.wav</file>
+    <file>break.wav</file>
   </qresource>
 </RCC>
