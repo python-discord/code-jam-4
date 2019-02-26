@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, \
-    QHBoxLayout, QVBoxLayout, QWidget, QListWidgetItem
+from PyQt5.QtWidgets import QMainWindow, QApplication, QHBoxLayout, QVBoxLayout, QWidget, QListWidgetItem
+from PyQt5 import QtCore, QtWidgets
 
 import sys
 
@@ -9,19 +9,17 @@ from project.Stack import Stack
 from project.Widgets.MainListWidget import MainListWidget, TextListWidgetItem
 from .utils import CONSTANTS
 
-from PyQt5 import QtCore, QtWidgets
-
-
+# Put this in the commit message not the code @BWACpro
 '''I (BWACpro) removed a lot a of comments, if i was important, uh go find a earlier commit'''
 
 class ActionBar(QWidget):
+    """ A bar which contains the controls for adding to this list of clipboard items"""
     def __init__(self):
         super().__init__()
         _horizontal_layout = QHBoxLayout(self)
 
         self._add_btn = QtWidgets.QPushButton("Add")
-        self._add_btn.setObjectName(MainWindow.ADD_BUTTON_NAME)
-
+        self._add_btn.setObjectName(MainWindow.ADD_BUTTON_NAME) # can we not do this in the constructor?
 
         self._remove_btn = QtWidgets.QPushButton("Remove")
         self._remove_btn.setObjectName(MainWindow.REMOVE_BUTTON_NAME)
@@ -36,15 +34,19 @@ class ActionBar(QWidget):
 
 
 class MainWindow(QMainWindow):
+    """ MainWindow """
+    # strange constants:
     CENTRAL_WIDGET_NAME = 'central_widget'
     ADD_BUTTON_NAME = 'add_btn'
     REMOVE_BUTTON_NAME = 'remove_btn'
     EDIT_BUTTON_NAME = 'edit_btn'
 
+    # please label what these are / relate to:
     num_of_objects = 0
     items = []
 
     def __init__(self, clipboard_manager: ClipboardManager):
+        """ Initialises new MainWindow class """
         super().__init__()
 
         self._central_widget_layout = QVBoxLayout()
@@ -55,22 +57,11 @@ class MainWindow(QMainWindow):
         self._init_ui()
 
     def _init_ui(self):
-        self.setWindowTitle(CONSTANTS['NAME'])
-        self.setupUi()
-        self.show()
+        """ Creates UI """
 
-    def _render_clipboard_stack(self, clipboard_stack: Stack):
-        self._main_list_widget.clear()
-        for (idx, clipboard_object) in enumerate(clipboard_stack.items()):
-            if isinstance(clipboard_object, TextClipboardObject):
-                _item = QListWidgetItem(self._main_list_widget)
-                _custom_item = TextListWidgetItem(idx, clipboard_object)
-                _item.setSizeHint(_custom_item.sizeHint())
+        self.setWindowTitle(CONSTANTS['NAME']) # can we not pass this as a argument in the super of the constructor?
 
-                self._main_list_widget.addItem(_item)
-                self._main_list_widget.setItemWidget(_item, _custom_item)
-
-    def setupUi(self):
+        # No idea what all these widgets are. Please clarify and comment around BWAC?
         self._central_widget.setObjectName(MainWindow.CENTRAL_WIDGET_NAME)
 
         self._action_bar = ActionBar()
@@ -79,6 +70,7 @@ class MainWindow(QMainWindow):
         self._main_list_widget = MainListWidget()
         self._central_widget_layout.addWidget(self._main_list_widget)
 
+        # menu bar has no members?
         self.menubar = self.menuBar()
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -95,7 +87,6 @@ class MainWindow(QMainWindow):
         # self.menuItem.addAction(self.actionRemove)
         self.menubar.addAction(self.menuFile.menuAction())
 
-
         self._central_widget.setLayout(self._central_widget_layout)
         self.setCentralWidget(self._central_widget)
 
@@ -105,7 +96,12 @@ class MainWindow(QMainWindow):
         # Better to use new-style decorator @QtCore.pyqtSlot()
         # QtCore.QMetaObject.connectSlotsByName(self)
 
+        self.show()
+
+    # temp?
     def retranslateUi(self):
+        """ @transfusion What does this do?"""
+
         _translate = QtCore.QCoreApplication.translate
         # MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         # self._add_btn.setText(_translate("MainWindow", "Add"))
@@ -125,11 +121,20 @@ class MainWindow(QMainWindow):
         # self.actionAdd_2.setText(_translate("MainWindow", "Add #todo"))
         # self.actionRemove.setText(_translate("MainWindow", "Remove #todo"))
 
+    def _render_clipboard_stack(self, clipboard_stack: Stack):
+        """ Renders the clipboard stack. no idea??"""
+        self._main_list_widget.clear()
+        for (idx, clipboard_object) in enumerate(clipboard_stack.items()):
+            if isinstance(clipboard_object, TextClipboardObject):
+                _item = QListWidgetItem(self._main_list_widget)
+                _custom_item = TextListWidgetItem(idx, clipboard_object)
+                _item.setSizeHint(_custom_item.sizeHint())
+
+                self._main_list_widget.addItem(_item)
+                self._main_list_widget.setItemWidget(_item, _custom_item)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    # label = QLabel('Hello World!')
-    # label.show()
 
     clipboard_mgr = ClipboardManager.ClipboardManager()
     main_window = MainWindow(clipboard_mgr)
