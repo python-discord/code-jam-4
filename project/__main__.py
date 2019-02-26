@@ -2,7 +2,6 @@ import tkinter as tk
 import tkinter.font as tkFont
 import math
 import json
-import nltk
 from nltk.corpus import words
 from pathlib import Path
 
@@ -12,17 +11,19 @@ KEY_DESCRIPTION_PATH = SCRIPT_DIR / Path("key_descriptions.json")
 SAVE_DATA_PATH = SCRIPT_DIR / Path("save_data.json")
 DEFAULT_KEYS_PATH = SCRIPT_DIR / Path("default_keyboard.json")
 
+
 def is_word(text):
     assert text.isalpha()
     return text in words.words()
 
+
 def get_last_word(text):
     text = text.lower().strip()
-    for end_index in range(len(text)-1,-1,-1):
+    for end_index in range(len(text)-1, -1, -1):
         if text[end_index].isalpha():
-            for start_index in range(end_index,-1,-1):
+            for start_index in range(end_index, -1, -1):
                 if not text[start_index].isalpha():
-                    return text[start_index+1:end_index+1]
+                    return text[start_index+1: end_index+1]
             return text[:end_index+1]
     return None
 
@@ -278,6 +279,7 @@ class KeyboardKey(tk.Button):
 
         if self.scale < self.scale_max:
             self.master.recalc_key_sizes(self)
+
 
 def exit_program():
     """
