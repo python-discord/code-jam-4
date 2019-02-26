@@ -5,6 +5,8 @@ import pickle
 
 """
 TODO:
+Fill letters_field with letters in alphabetical order, such that they correspond
+    to the first contact with that letter in their name
 Make preview_field in AddContactsPage update when an contact attribute is added
 Fix parsing of show_info
 Settings Page:
@@ -64,7 +66,8 @@ class ContactsPage(Frame):
                 won't scroll if nothing is in the list, or everything is already
                 shown.
     contacts_field: Area where contacts are shown; 10 at a time
-
+    letters_field: Listbox that shows each letter of the alphabet to help the user find
+                    contact they're looking for
     show_info: Button that updates the info_field with the information of the
                 currently selected contact
     delete: Button that deletes the selected contact
@@ -96,6 +99,7 @@ class ContactsPage(Frame):
 
         self.scroll_bar = None
         self.contacts_field = None
+        self.letters_field = None
         self.show_info = None
         self.delete = None
         self.info_field = None
@@ -114,14 +118,14 @@ class ContactsPage(Frame):
             yscrollcommand=self.info_scroll.set
         )
         self.info_scroll.config(command=self.info_field.yview)
-        self.info_field.grid(row=3, column=0, columnspan=4, sticky=N+S+E+W)
-        self.info_scroll.grid(row=3, column=4, sticky=N+S+E+W)
+        self.info_field.grid(row=3, column=0, columnspan=5, sticky=N+S+E+W)
+        self.info_scroll.grid(row=3, column=5, sticky=N+S+E+W)
 
         self.delete = Button(self, text="Delete", command=lambda: self.delete_contact())
-        self.delete.grid(row=2, column=2, columnspan=2, sticky=N+S+E+W)
+        self.delete.grid(row=2, column=3, columnspan=3, sticky=N+S+E+W)
 
         self.show_info = Button(self, text="Show Info", command=lambda: self.show_contact_info())
-        self.show_info.grid(row=2, column=0, columnspan=2, sticky=N+S+E+W)
+        self.show_info.grid(row=2, column=0, columnspan=3, sticky=N+S+E+W)
 
         self.scroll_bar = Scrollbar(self)
         self.contacts_field = Listbox(
@@ -129,29 +133,40 @@ class ContactsPage(Frame):
             yscrollcommand=self.scroll_bar.set,
             selectmode=SINGLE
         )
-        self.contacts_field.grid(row=1, column=0, columnspan=4, sticky=N+S+E+W)
-        self.scroll_bar.grid(row=1, column=4, sticky=N+S+E+W)
-        self.scroll_bar.config(command=self.contacts_field.yview)
+        self.letters_field = Listbox(
+            self,
+            width=2,
+            yscrollcommand=self.scroll_bar.set,
+            selectmode=SINGLE
+        )
+        self.contacts_field.grid(row=1, column=0, columnspan=5, sticky=N+S+E+W)
+        self.letters_field.grid(row=1, column=4, sticky=N+S+E+W)
+        self.scroll_bar.grid(row=1, column=5, sticky=N+S+E+W)
+        self.scroll_bar.config(command=self.yview)
 
         self.save = Button(
             self,
             text="Save Contacts",
             command=lambda: self.save_contacts()
         )
-        self.save.grid(row=0, column=2, columnspan=2, sticky=N+S+E+W)
+        self.save.grid(row=0, column=3, columnspan=4, sticky=N+S+E+W)
 
         self.load = Button(
             self,
             text="Load Contacts",
             command=lambda: self.load_contacts()
         )
-        self.load.grid(row=0, column=0, columnspan=2, sticky=N+S+E+W)
+        self.load.grid(row=0, column=0, columnspan=3, sticky=N+S+E+W)
 
         for i in range(3):
             self.grid_rowconfigure(i, weight=1)
 
         for i in range(4):
             self.grid_columnconfigure(i, weight=1)
+
+    def yview(self, *args):
+        self.contacts_field.yview(*args)
+        self.letters_field.yview(*args)
 
     def delete_contact(self):
         name = self.contacts_field.get(self.contacts_field.curselection()[0])
@@ -161,14 +176,24 @@ class ContactsPage(Frame):
             self.insert_contact(contact)
 
     def clear_fields(self):
-        for field in [self.contacts_field, self.info_field]:
+        for field in [self.contacts_field, self.info_field, self.letters_field]:
             field.delete(0, END)
+
+    def refresh_fields(self):
+        self.clear_fields()
+        letter = ''
+        for contact in sorted(self.contacts_list):
+            if contact[0] != letter:
+                letter = contact[0]
+                self.letters_field.insert(END, letter)
+            else:
+                self.letters_field.insert(END, '')
+            self.contacts_field.insert(END, contact)
 
     def load_contacts(self):
         with open("contacts_pickle", 'rb') as infile:
             self.contacts_list = pickle.load(infile)
-            for contact in sorted(self.contacts_list):
-                self.insert_contact(contact)
+            self.refresh_fields()
 
     def save_contacts(self):
         with open("contacts_pickle", 'wb') as outfile:
