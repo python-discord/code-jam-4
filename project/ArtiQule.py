@@ -2,8 +2,7 @@ import sys
 from random import randint
 from PyQt5.QtCore import Qt, QSize, QPoint
 from PyQt5.QtWidgets import (QMainWindow, QApplication,
-                             QAction, QFileDialog, QPushButton,
-                             QToolBox, QSizePolicy)
+                             QAction, QFileDialog, QPushButton)
 from PyQt5.QtGui import QImage, QPainter, QPen, QPixmap, QIcon, QCursor
 
 """Hover on QPaint detection
@@ -18,11 +17,39 @@ def paintEvent(self, event):
 """
 
 
+class ToolBox(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.toolsX = 5
+        self.toolsY = 0
+        self.tools_holder = 1
+        self.Setup()
+
+    def Setup(self):
+        # self.setGeometry(990, 150, 150, 300)
+        self.setWindowTitle('ToolBox')
+        self.setFixedSize(150, 300)
+
+    def addTools(self, pallet):
+        pallet.setGeometry(self.toolsX, self.toolsY, 40, 40)
+        self.layout().addWidget(pallet)
+        self.toolsX += 50
+        self.tools_holder += 1
+        if self.tools_holder == 4:
+            self.toolsX = 5
+            self.toolsY += 50
+            self.tools_holder = 1
+
+    def ShowToolBox(self):
+        print('Showing ToolBox')
+        self.show()
+
+
 class PaintBoard(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.setFixedSize(1000, 500)
+        self.setFixedSize(1000, 800)
         self.setWindowTitle('ArtiQule')
         self.setWindowIcon(QIcon("Design/icons/app_logo.png"))
 
@@ -38,21 +65,21 @@ class PaintBoard(QMainWindow):
 
         self.draw = False
         self.brushSize = 1
-        self.brushColor = Qt.black
+        self.Color = Qt.black
         self.paintPattern = Qt.SolidLine
 
         self.lastPoint = QPoint()
 
         # patterns = []   # TODO: custom paintPatterns here
 
-        class PaletteButton:
-            def __init__(self):
-                self.color = Qt.Color(randint(0, 255),
-                                      randint(0, 255),
-                                      randint(0, 255))
+        # class PaletteButton:
+        #     def __init__(self):
+        #         self.color = Qt.Color(randint(0, 255),
+        #                               randint(0, 255),
+        #                               randint(0, 255))
 
-            def mix(self, tool):
-                print('mix')
+        # def mix(self, tool):
+        #     print('mix')
 
         class Tool:
             def __init__(self, toolName, brushSize,
@@ -110,6 +137,10 @@ class PaintBoard(QMainWindow):
         mainMenu = self.menuBar()
 
         fileMenu = mainMenu.addMenu('File')
+        toolsMenu = mainMenu.addMenu('Tools')
+
+        color_pallet_action = QAction('ToolBox', self)
+        color_pallet_action.setShortcut('Ctrl+H')
 
         new_canvas_action = QAction('New File', self)
         new_canvas_action.setShortcut('Ctrl+N')
@@ -123,21 +154,23 @@ class PaintBoard(QMainWindow):
         exit_action = QAction('Exit', self)
         exit_action.setShortcut('Alt+F4')
 
+        toolsMenu.addAction(color_pallet_action)
         fileMenu.addAction(new_canvas_action)
         fileMenu.addAction(open_file_action)
         fileMenu.addAction(save_file_action)
         fileMenu.addAction(exit_action)
 
+        color_pallet_action.triggered.connect(self.toolBox)
         new_canvas_action.triggered.connect(self.newCanvas)
         open_file_action.triggered.connect(self.openFile)
         save_file_action.triggered.connect(self.saveFile)
         exit_action.triggered.connect(self.exit)
 
         # toolbar picker
-        self.toolBox = QToolBox(self)
-        self.toolBox.setSizePolicy(QSizePolicy(
-            QSizePolicy.Maximum, QSizePolicy.Ignored))
-        self.toolBox.setGeometry(0, 20, 50, 100)
+        # self.toolBox = QToolBox(self)
+        # self.toolBox.setSizePolicy(QSizePolicy(
+        #     QSizePolicy.Maximum, QSizePolicy.Ignored))
+        # self.toolBox.setGeometry(0, 20, 80, 150)
 
         # self.toolBox.setMinimumWidth(self.sizeHint().width())
         pointy_pen_btn = QPushButton()
@@ -147,7 +180,7 @@ class PaintBoard(QMainWindow):
         pointy_pen_btn.clicked.connect(pointy_pen.use)
         pointy_pen_btn.setIcon(QIcon('Design/icons/pointy_pen.png'))
         pointy_pen_btn.setIconSize(QSize(20, 20))
-        self.toolBox.addItem(pointy_pen_btn, "Pointy Pen")
+        # self.toolBox.addItem(pointy_pen_btn, "Pointy Pen")
 
         fill_btn = QPushButton()
         fill_btn.setShortcut("CTRL+P")
@@ -156,7 +189,7 @@ class PaintBoard(QMainWindow):
         fill_btn.clicked.connect(fill.use)
         fill_btn.setIcon(QIcon('Design/icons/fill_empty.png'))
         fill_btn.setIconSize(QSize(20, 20))
-        self.toolBox.addItem(fill_btn, "Bucket")
+        # self.toolBox.addItem(fill_btn, "Bucket")
 
         straggly_paintbrush_btn = QPushButton()
         straggly_paintbrush_btn.setShortcut("CTRL+A")
@@ -166,7 +199,7 @@ class PaintBoard(QMainWindow):
         straggly_paintbrush_btn.setIcon(
             QIcon('Design/icons/straggly_paintbrush.png'))
         straggly_paintbrush_btn.setIconSize(QSize(20, 20))
-        self.toolBox.addItem(straggly_paintbrush_btn, "Straggly Paintbrush")
+        # self.toolBox.addItem(straggly_paintbrush_btn, "Straggly Paintbrush")
 
         solidified_brush_btn = QPushButton()
         solidified_brush_btn.setShortcut("CTRL+A")
@@ -176,17 +209,7 @@ class PaintBoard(QMainWindow):
         solidified_brush_btn.setIcon(
             QIcon('Design/icons/solidified_brush.png'))
         solidified_brush_btn.setIconSize(QSize(20, 20))
-        self.toolBox.addItem(solidified_brush_btn, "Solidified Brush")
-
-        color_palette_btn = QPushButton()
-        # p1
-        # p2
-        # p3
-        # p4
-        # p5
-        # p6
-
-        self.toolBox.addItem(color_palette_btn, "Colors")
+        # self.toolBox.addItem(solidified_brush_btn, "Solidified Brush")
 
         self.show()
 
@@ -194,8 +217,30 @@ class PaintBoard(QMainWindow):
     # else mix by taking current color RGB and adding/subtracting on palette
     # solidified_brush and spangly_brush will drip
     # if they are put in color palette
-    def color_palette(self, tool):
-        pass
+    def color_palette(self):
+        # TODO: add color pallet window
+        print('color pallet')
+
+    def toolBox(self):
+        toolBox = ToolBox(self)
+        geo = self.geometry()
+        geo.moveLeft(geo.left())
+        toolBox.setGeometry(geo)
+        # Testing purposes
+        fake_green = QPushButton('Green')
+        fake_green.setStyleSheet('background-color: green')
+        fake_red = QPushButton('Red')
+        fake_red.setStyleSheet('background-color: red')
+        fake_blue = QPushButton('Blue')
+        fake_blue.setStyleSheet('background-color: blue')
+        fake_yellow = QPushButton('Yellow')
+        fake_yellow.setStyleSheet('background-color: yellow')
+        toolBox.addTools(fake_red)
+        toolBox.addTools(fake_green)
+        toolBox.addTools(fake_blue)
+        toolBox.addTools(fake_yellow)
+        # showing toolBox
+        toolBox.ShowToolBox()
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -206,7 +251,7 @@ class PaintBoard(QMainWindow):
         if (event.buttons() and Qt.LeftButton) and self.draw:
             painter = QPainter(self.canvas)
             # might modify roundcap is necessary
-            painter.setPen(QPen(self.brushColor, self.brushSize,
+            painter.setPen(QPen(self.Color, self.brushSize,
                                 self.paintPattern, Qt.RoundCap, Qt.RoundJoin))
             painter.drawLine(self.lastPoint, event.pos())
             self.lastPoint = event.pos()
@@ -225,7 +270,6 @@ class PaintBoard(QMainWindow):
 
     def newCanvas(self):
         # TODO: Add New Canvas
-        self.canvasPainter.resetTransform()
         print('new canvas')
 
     def openFile(self):
