@@ -16,7 +16,7 @@ class weatherh8su:
         self.searchicon.grid(row=0, column=0)
         self.searchbar = tk.Entry(master, width=70)
         self.searchbar.grid(row=0, column=1)
-        self.f = tk.Frame(master, width=26, height=52)
+        self.f = tk.Frame(master, width=26, height=30)
         self.f.grid(column=2, row=1)
         self.gear = Image.open("pics/gear.png")
         self.gear = ImageTk.PhotoImage(self.gear)
