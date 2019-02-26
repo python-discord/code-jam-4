@@ -1,11 +1,12 @@
 from tkinter import *
 from tkinter.ttk import *
 from project.contact import Contact
+import pickle
 
 """
 TODO:
-Make Functional Load/Save buttons in ContactsPage
 Make preview_field in AddContactsPage update when an contact attribute is added
+Fix parsing of show_info
 Settings Page:
 - Change color schemes; all options are terrible color palettes
 - Change fonts; all options are terrible fonts
@@ -26,7 +27,7 @@ class Controller(Tk):
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
         self.resizable(False, False)
-        self.geometry("300x380")
+        self.geometry("300x400")
         self.title("Contact Manager")
         self.iconbitmap("src/Phone.ico")
         for i in range(5):
@@ -66,14 +67,22 @@ class ContactsPage(Frame):
 
     show_info: Button that updates the info_field with the information of the
                 currently selected contact
+    delete: Button that deletes the selected contact
     info_field: Listbox that contains the information of the currently selected contact
     info_scroll: Scrollbar that controls what is viewable in the info_field; won't
                     scroll if nothing is in the list, or everything is already shown
+
+    self.load: Button to load contacts
+    self.save: Button to save contacts
 
     === Methods ===
     create: Initializes objects & places them on the page
     insert_contact: Adds a contact's name to the end of the contacts field
     show_contact_info: Shows the information of the selected contact in the info listbox
+    delete_contact: Deletes the selected contact & reloads the contacts Listbox
+    clear_fields: Clears both fields on the contacts page
+    load_contacts: Loads contacts in from a file
+    save_contacts: Saves contacts as a file
     """
     def __init__(self, master, controller, **kw):
         super().__init__(master, **kw)
@@ -88,6 +97,7 @@ class ContactsPage(Frame):
         self.scroll_bar = None
         self.contacts_field = None
         self.show_info = None
+        self.delete = None
         self.info_field = None
         self.info_scroll = None
 
@@ -107,8 +117,11 @@ class ContactsPage(Frame):
         self.info_field.grid(row=3, column=0, columnspan=4, sticky=N+S+E+W)
         self.info_scroll.grid(row=3, column=4, sticky=N+S+E+W)
 
+        self.delete = Button(self, text="Delete", command=lambda: self.delete_contact())
+        self.delete.grid(row=2, column=2, columnspan=2, sticky=N+S+E+W)
+
         self.show_info = Button(self, text="Show Info", command=lambda: self.show_contact_info())
-        self.show_info.grid(row=2, column=0, columnspan=4, sticky=N+S+E+W)
+        self.show_info.grid(row=2, column=0, columnspan=2, sticky=N+S+E+W)
 
         self.scroll_bar = Scrollbar(self)
         self.contacts_field = Listbox(
@@ -120,17 +133,46 @@ class ContactsPage(Frame):
         self.scroll_bar.grid(row=1, column=4, sticky=N+S+E+W)
         self.scroll_bar.config(command=self.contacts_field.yview)
 
+        self.save = Button(
+            self,
+            text="Save Contacts",
+            command=lambda: self.save_contacts()
+        )
+        self.save.grid(row=0, column=2, columnspan=2, sticky=N+S+E+W)
+
+        self.load = Button(
+            self,
+            text="Load Contacts",
+            command=lambda: self.load_contacts()
+        )
+        self.load.grid(row=0, column=0, columnspan=2, sticky=N+S+E+W)
+
         for i in range(3):
             self.grid_rowconfigure(i, weight=1)
 
         for i in range(4):
             self.grid_columnconfigure(i, weight=1)
 
+    def delete_contact(self):
+        name = self.contacts_field.get(self.contacts_field.curselection()[0])
+        del self.contacts_list[name]
+        self.clear_fields()
+        for contact in sorted(self.contacts_list):
+            self.insert_contact(contact)
+
+    def clear_fields(self):
+        for field in [self.contacts_field, self.info_field]:
+            field.delete(0, END)
+
     def load_contacts(self):
-        pass
+        with open("contacts_pickle", 'rb') as infile:
+            self.contacts_list = pickle.load(infile)
+            for contact in sorted(self.contacts_list):
+                self.insert_contact(contact)
 
     def save_contacts(self):
-        pass
+        with open("contacts_pickle", 'wb') as outfile:
+            pickle.dump(self.contacts_list, outfile)
 
     def insert_contact(self, contact):
         self.contacts_field.insert(END, contact)
@@ -335,25 +377,26 @@ class AddContactPage(Frame):
             self.grid_columnconfigure(i, weight=1)
 
     # Temporary method; currently only here for debugging
-    def add_phone_num(self, numtype, num):
-        if numtype != '':
-            self.contact_new.add_phone_number(numtype, num)
-        else:
-            print("DEBUG: No type chosen, try again")
+    def add_phone_num(self, num_type, num):
+        if num_type != '':
+            self.contact_new.add_phone_number(num_type, num)
 
     def add_contact(self):
         name = self.contact_new.name
+        contacts_list = self.controller.frames["View Contacts"].contacts_list
         if name != '':
-            if name not in self.controller.frames['View Contacts'].contacts_list:
+            if name not in contacts_list:
                 print("DEBUG: Creating new contact")
-                self.controller.frames['View Contacts'].contacts_list[name] = self.contact_new
-                self.controller.frames['View Contacts'].insert_contact(name)
-            elif name in self.controller.frames[self.page_name].contacts_list:
+                contacts_list[name] = self.contact_new
+            elif name in contacts_list:
                 print("DEBUG: Updating already existing contact")
-                self.controller.frames['View Contacts'].contacts_list[name] = self.contact_new
+                contacts_list[name] = self.contact_new
         else:
             print("DEBUG: Entered empty name")
-        print("DEBUG: Contacts_Dict:", self.controller.frames['View Contacts'].contacts_list)
+        self.controller.frames["View Contacts"].contacts_list = contacts_list
+        self.controller.frames["View Contacts"].clear_fields()
+        for contact in sorted(contacts_list):
+            self.controller.frames["View Contacts"].insert_contact(contact)
         self.contact_new = Contact('')
 
     def clear_all(self):
