@@ -18,7 +18,7 @@ class MainWindow(QMainWindow):
         # Setup the QTextEdit editor configuration
         fixedfont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         fixedfont.setPointSize(24)
-        self.main_window.setFont(QFont('ComicSans', 30))
+        self.main_window.setFont(QFont('Comic Sans MS', 30))
 
         layout.addWidget(self.main_window)
 
