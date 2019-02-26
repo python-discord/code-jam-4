@@ -22,8 +22,7 @@ class ClipboardManager:
         print("Current Text", QApplication.clipboard().text())
         print("Current Image Info", QApplication.clipboard().pixmap())
 
-        if current_text and not (isinstance(self._clipboard_stack.peek(), TextClipboardObject)
-                                 and self._clipboard_stack.peek().text == current_text):
+        if current_text and not (isinstance(self._clipboard_stack.peek(), TextClipboardObject) and self._clipboard_stack.peek().text == current_text):
             self._clipboard_stack.push_item(TextClipboardObject(current_text))
 
         if self._clipboard_state_callback is not None:

@@ -43,7 +43,4 @@ def random_spelling_mistakes(text):
 def twitch_quote(text):
     b = randint(0, 27)
     text = quotes[b]
-
     return text
-
-print(twitch_quote('Hello'))
