@@ -32,6 +32,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.playlist_view.setModel(self.library_model)
         self.playlist_view.setEditTriggers(QAbstractItemView.NoEditTriggers)  # Disable editing
+        self.playlist_view.setSortingEnabled(True)
         self.library_model.select()  # Force-update the view
 
         self.play_button.pressed.connect(self.player.play)
