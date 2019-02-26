@@ -109,3 +109,6 @@ venv.bak/
 # compiled sphinx HTML documentation
 docs/build
 .vscode/settings.json
+
+# test icon
+project/tempicon.ico

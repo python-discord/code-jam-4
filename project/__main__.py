@@ -7,6 +7,7 @@ from project import ClipboardManager
 from project.ClipboardManager.ClipboardObject import TextClipboardObject
 from project.Stack import Stack
 from project.Widgets.MainListWidget import MainListWidget, TextListWidgetItem
+from project.SystrayManager import Systray
 from .utils import CONSTANTS
 
 # Put this in the commit message not the code @BWACpro
@@ -132,11 +133,21 @@ class MainWindow(QMainWindow):
 
                 self._main_list_widget.addItem(_item)
                 self._main_list_widget.setItemWidget(_item, _custom_item)
+    
+    def closeEvent(self, event):
+        """ Fires on window close"""
+        pass
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     clipboard_mgr = ClipboardManager.ClipboardManager()
     main_window = MainWindow(clipboard_mgr)
+
+    # Creates and starts systray icon
+    # systray = Systray.systray(app.quit)
+    # systray.start()
+    # app.aboutToQuit.connect(systray.close)
 
     sys.exit(app.exec_())
