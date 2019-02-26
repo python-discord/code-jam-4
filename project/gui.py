@@ -15,11 +15,47 @@ class MinesweeperApp(QtWidgets.QMainWindow):
 
     def setup_ui(self):
         self.stack_widget = QtWidgets.QStackedWidget()
+
+        # Main Menu Widget
+        self.home_screen = MenuWidget()
+        self.home_screen.start_button.clicked.connect(self.start_game)
+        self.stack_widget.addWidget(self.home_screen)
+
         # Minesweeper Widget
         self.minesweeper = Minesweeper()
         self.stack_widget.addWidget(self.minesweeper)
 
         self.setCentralWidget(self.stack_widget)
+
+    def start_game(self):
+        self.minesweeper.setup_gui()
+        self.stack_widget.setCurrentWidget(self.minesweeper)
+
+
+# Home Screen Widget
+
+
+class MenuWidget(QtWidgets.QWidget):
+    '''Main Menu Widget (Home Screen)'''
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setup_gui()
+
+    def setup_gui(self):
+        layout = QtWidgets.QVBoxLayout()
+        layout.setAlignment(QtCore.Qt.AlignCenter)
+
+        font = QtGui.QFont('Consolas')
+        font.setPointSize(14)
+        title_label = QtWidgets.QLabel('Minesweeper Game')
+        title_label.setFont(font)
+
+        self.start_button = QtWidgets.QPushButton('Start')
+
+        layout.addWidget(title_label)
+        layout.addWidget(self.start_button)
+        self.setLayout(layout)
 
 
 # Minesweeper Widgets
@@ -102,7 +138,6 @@ class Minesweeper(QtWidgets.QWidget):
         self.flag_count = mines
         self.too_fast_modal = None
         self.button_grid = []
-        self.setup_gui()
 
     def setup_gui(self):
         '''Setup the GUI for the minesweeper widget'''
