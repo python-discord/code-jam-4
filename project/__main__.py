@@ -237,7 +237,7 @@ class KeyboardSection(tk.Frame):
 
     def save_keys(self, filepath=SAVE_DATA_PATH):
         json_compatible_data = {
-            'saved_keys': [button.text_name for button in self.buttons],
+            'keys': [button.text_name for button in self.buttons],
             'scales': [button.scale for button in self.buttons],
             'used_words': list(self.master.used_words)
         }
