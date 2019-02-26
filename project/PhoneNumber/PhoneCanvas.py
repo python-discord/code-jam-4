@@ -9,7 +9,7 @@ import project.PhoneNumber.add_canvas_method
 
 class PhoneCanvas(tk.Canvas):
     """
-    TO-DO
+    TODO --> Document PhoneCanvas.
     Class for PhoneCanvas
 
     === Public Attributes ===
@@ -71,6 +71,7 @@ class PhoneCanvas(tk.Canvas):
         self.pack()
 
     def send_output_number(self):
+        # TODO -> Figure out exactly how the output will be managed.
         if self.current_phone_number is not None:
             print(self.current_phone_number)
 
