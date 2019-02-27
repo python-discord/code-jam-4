@@ -76,6 +76,7 @@ class UserInterface(tk.Frame):
         saved_keys = save_data['keys']
         saved_scales = save_data['scales']
         self.used_words = set(save_data['used_words'])
+
         self.xp_milestones = (index*10 for index in itertools.count())
         self.xp = save_data['xp']
         self.previous_xp_milestone = 0
@@ -418,6 +419,8 @@ class LootBoxUnlockWindow(tk.Toplevel):
     def __init__(self, new_keys=[], rarities=[], *args, **kwargs):
         tk.Toplevel.__init__(self)
         self.title("Lootbox unlocked!")
+
+        self.master.attributes("-topmost",True)
 
         self.new_keys = new_keys
         self.rarities = rarities
