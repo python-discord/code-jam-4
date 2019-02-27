@@ -1,8 +1,8 @@
 import logging
 from typing import Any, Dict
 
-from PySide2.QtCore import Qt
-from PySide2.QtMultimedia import QMediaPlayer
+from PySide2.QtCore import QUrl, Qt
+from PySide2.QtMultimedia import QMediaContent, QMediaPlayer
 from PySide2.QtSql import QSqlRecord, QSqlTableModel
 from PySide2.QtWidgets import QAbstractItemView, QFileDialog, QMainWindow, QWidget
 
@@ -46,9 +46,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.playlist_model.select()  # Force-update the view
 
         # Playlist
-        self.player = QMediaPlayer()
-        self.playlist = Playlist(self.playlist_view)
+        self.playlist = Playlist(self.playlist_model)
         self.playlist.setPlaybackMode(Playlist.Loop)
+        self.playlist.currentIndexChanged.connect(self.playlist_index_changed)
+
+        # Player
+        self.player = QMediaPlayer()
+        self.player.error.connect(self.player_error)
+        self.player.stateChanged.connect(self.player_state_changed)
+        self.player.setPlaylist(self.playlist)
 
         # Widget signals
         self.play_button.pressed.connect(self.player.play)
@@ -86,7 +92,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         paths, _ = QFileDialog.getOpenFileNames(self, "Add files", "", "")
 
         for path in paths:
-            log.debug(path)
+            log.debug(f"Adding record for {path}")
 
             metadata = media_utils.parse_media(path)
             record = self.create_record(metadata)
@@ -94,5 +100,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if not self.playlist_model.insertRecord(-1, record):  # -1 will append
                 log.error(f"Failed to insert record for {path}: {self.playlist_model.lastError()}")
                 # TODO: Does a rollback need to happen in case of failure?
+                continue
+
+            media = QMediaContent(QUrl.fromLocalFile(path))
+            self.playlist.addMedia(media, self.playlist_model.rowCount() - 1)
 
         self.playlist_model.submitAll()
+
+    @staticmethod
+    def player_state_changed(state):
+        log.debug(f"State changed: {state}")
+
+    def playlist_index_changed(self, index: int):
+        name = self.playlist.currentMedia().canonicalUrl().fileName()
+        log.debug(f"Index changed: [{index:03d}] {name}")
+
+    def player_error(self, error):
+        log.error(f"{error}: {self.player.errorString()}")
