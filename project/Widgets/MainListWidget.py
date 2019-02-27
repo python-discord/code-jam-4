@@ -13,7 +13,7 @@ from project.ClipboardManager.ClipboardObject import TextClipboardObject
 class MainListWidget(QListWidget):
     def __init__(self):
         super().__init__()
-        self.addItem("Sample Item")
+        # self.addItem("Sample Item")
 
 
 # https://www.pythoncentral.io/pyside-pyqt-tutorial-the-qlistwidget/

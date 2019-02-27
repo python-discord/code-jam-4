@@ -27,11 +27,17 @@ class Stack:
     def items(self):
         return self._stack
 
+    def items_count(self):
+        return len(self._stack)
+
     def set_current_item(self, idx):
         if not 0 <= idx < len(self._stack):
             raise Exception("Index is out of bounds")
 
         self._stack_pointer = idx
+
+    def current_item(self):
+        return self._stack_pointer
 
     def shift_current_item(self, idx, shift_direction: SHIFT_DIRECTION):
         _temp = self._stack[self._stack_pointer]
@@ -50,14 +56,18 @@ class Stack:
 
     def push_item(self, item):
         self._stack.append(item)
+        if self.items_count() == 1:
+            self.set_current_item(0)
 
     def peek(self):
         if not self._stack:
             return None
         return self._stack[-1]
 
-    def pop(self):
-        return self._stack.pop()
+    def pop(self, index=-1):
+        self._stack_pointer = max(0, self._stack_pointer-1)
+
+        return self._stack.pop(index)
 
     def clear(self):
         self._stack = []

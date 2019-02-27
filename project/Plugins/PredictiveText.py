@@ -1,7 +1,8 @@
 from random import randint, choice
 import string
 
-quotes = ['O-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA']
+quotes = ['O-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee ' +
+          'AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA']
 
 
 def random_spelling_mistakes(text):
@@ -46,4 +47,4 @@ def twitch_quote(text):
 
     return text
 
-print(twitch_quote('Hello'))
+# print(twitch_quote('Hello'))
