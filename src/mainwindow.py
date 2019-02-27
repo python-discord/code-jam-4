@@ -287,13 +287,16 @@ class Tinder:
 
                 # setting up like/dislike/Back to Photo buttons on the bio screen
                 tk.Button(
-                    self.frame, text=self.config['like.text'], background=self.config['like.background'],
+                    self.frame, text=self.config['like.text'],
+                    background=self.config['like.background'],
                     command=self.new_image).pack(side=tk.RIGHT)
                 tk.Button(
-                    self.frame, text=self.config['dislike.text'], background=self.config['dislike.background'],
+                    self.frame, text=self.config['dislike.text'],
+                    background=self.config['dislike.background'],
                     command=self.new_image).pack(side=tk.LEFT)
                 tk.Button(
-                    self.root, text=self.config['back.text'], background=self.config['back.background'],
+                    self.root, text=self.config['back.text'],
+                    background=self.config['back.background'],
                     command=back_to_photo).pack(side=tk.BOTTOM)
 
                 # packing the frame
