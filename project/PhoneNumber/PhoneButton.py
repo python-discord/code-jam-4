@@ -116,7 +116,7 @@ class PhoneButton:
         if self.find_current_angle() != self.initial_angle:
             if total_angle_to_rotate <= rotating_speed:
                 self.parent_canvas.rotate_all_circles(-total_angle_to_rotate)
-                self.parent_canvas.send_output_number()
+                self.parent_canvas.master.event_generate("<<Send_Phone_Number>>", when="tail")
             else:
                 self.parent_canvas.rotate_all_circles(-rotating_speed)
                 self.parent_canvas.after(50, self.__animate_rotating_buttons)
