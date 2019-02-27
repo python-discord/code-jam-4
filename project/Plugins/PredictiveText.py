@@ -5,8 +5,8 @@ from project.Plugins.Save import getQuotes
 # Quotes are now loadeded from 'app.json' instead of being hard coded
 quotes = getQuotes()
 
-class Vars:
 
+class Vars:
     times_appled = 0
 
 
@@ -54,8 +54,8 @@ def random_spelling_mistakes(text):
         else:
             spot = randint(0, len(word) - 1)
             if spot == 0:
-                '''Give it two chances to not be 0, I think its better if its mostly the middle letters that get 
-                removed'''
+                '''Give it two chances to not be 0, I think its better
+                if its mostly the middle letters that get removed'''
                 spot = randint(0, len(word) - 1)
                 if spot == 0:
                     pass

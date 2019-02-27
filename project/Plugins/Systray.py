@@ -1,4 +1,4 @@
-import sys
+import sys  # noqa: F401
 from PyQt5 import QtWidgets, QtGui
 
 
@@ -12,6 +12,6 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     def __init__(self, parent=None):
         QtWidgets.QSystemTrayIcon.__init__(self, QtGui.QIcon(self.icon), parent)
         menu = QtWidgets.QMenu(parent)
-        exitAction = menu.addAction("Temp Option One")
+        exitAction = menu.addAction("Temp Option One")  # noqa: F841
         self.setContextMenu(menu)
         self.setToolTip(self.name)
