@@ -228,17 +228,20 @@ class Tinder:
             # make a button to allow the user to pass through the image
             # Note: since everyone likes scary monsters, only make a Like button
             tk.Button(
-                self.frame, text="Like", background="green", command=self.new_image
+                        self.frame, text="Like", background="green",
+                        command=self.new_image
                     ).pack(side=tk.BOTTOM)
 
         # image was not a jumpscare, don't do jumpscare things
         else:
             # setting up like and dislike buttons on opposite sides of the screen
             tk.Button(
-                self.frame, text="Like", background="green", command=self.new_image
+                        self.frame, text="Like", background="green",
+                        command=self.new_image
                     ).pack(side=tk.RIGHT)
             tk.Button(
-                self.frame, text="Dislike", background="red", command=self.new_image
+                        self.frame, text="Dislike", background="red",
+                        command=self.new_image
                     ).pack(side=tk.LEFT)
 
             # defining button functions
