@@ -11,8 +11,6 @@ pycodestyle = "*"
 neovim = "*"
 
 [packages]
-kivy = "*"
-cython = "==0.28.2"
 pygame = "*"
 
 [requires]
