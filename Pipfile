@@ -8,6 +8,9 @@ flake8 = "*"
 pytest = "*"
 
 [packages]
+pillow = "*"
+pygame = "*"
+aiohttp = "*"
 
 [requires]
 python_version = "3.7"
