@@ -2,7 +2,7 @@
 # It will be removed during release.
 
 import tkinter as tk
-from project.windows.editor_window import EditorWindow, EditorContextMenu
+from project.windows.editor_window import EditorWindow
 from project.windows.editor_window_events import NewWordEventData
 
 
@@ -33,22 +33,6 @@ class TestEditorWindow(EditorWindow):
         self.new_word.add_callback(underline_new_word)
 
         self.bind('<Button-1>', self.on_left_click)
-        # self.test_button = tk.Button(
-        #     master=self,
-        #     text='test',
-        #     command=self.test
-        # )
-
-        # self.test_button.grid(row=1, column=0, sticky=tk.NSEW)
-
-        # self.text_box.bind('<Button-3>', self.test)
-
-    # def test(self, *args):
-    #     pass
-    #     # print(self.get_text())
-    #     # print(f'"{self.get_word_under_mouse()}"')
-    #     # context_menu = EditorContextMenu(self)
-    #     # context_menu.show()
 
     def on_left_click(self, event: tk.Event):
         start, end, word = self.get_word_under_mouse()
@@ -64,7 +48,6 @@ class TestEditorWindow(EditorWindow):
             )
 
             self.previous_word = NewWordEventData(start, end, word)
-
 
 
 if __name__ == '__main__':
