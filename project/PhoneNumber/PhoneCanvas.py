@@ -5,6 +5,7 @@ from project.PhoneNumber.PhoneButton import PhoneButton
 
 
 class PhoneCanvas(tk.Canvas):
+    # TODO disable button click while the phone rotation animation is running.
     """
     Class for PhoneCanvas, draws a working rotary phone. The user can click and drag the button in order to dial a
     phone number. It outputs
