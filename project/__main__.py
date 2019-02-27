@@ -1,13 +1,14 @@
 import tkinter as tk
 import tkinter.font as tkFont
-from tkinter import messagebox
+# from tkinter import messagebox
 import math
 import json
+import nltk
 from nltk.corpus import words
 import random
 from pathlib import Path
-# This will be used for images
-# from PIL import Image, ImageTk
+from PIL import Image, ImageTk
+from functools import reduce
 
 nltk.download('words')
 
@@ -16,6 +17,7 @@ SCRIPT_DIR = Path(__file__).parent
 KEY_DESCRIPTION_PATH = SCRIPT_DIR / Path("key_descriptions.json")
 SAVE_DATA_PATH = SCRIPT_DIR / Path("save_data.json")
 DEFAULT_KEYS_PATH = SCRIPT_DIR / Path("default_keyboard.json")
+IMAGE_PATH = SCRIPT_DIR.parent / Path("img/")
 
 
 def is_word(text):
@@ -23,14 +25,14 @@ def is_word(text):
     return text in words.words()
 
 
-LOOTBOX_RARITIES = {
-    0: "common",
-    1: "uncommon",
-    2: "rare",
-    3: "super rare",
-    4: "ultra rare",
-    5: "legendary"
-}
+LOOTBOX_RARITIES = [
+    "common",
+    "uncommon",
+    "rare",
+    "super rare",
+    "ultra rare",
+    "legendary",
+]
 
 LOOTBOX_RATES = [
     0,
@@ -80,39 +82,18 @@ class UserInterface(tk.Frame):
 
         key_descriptions = self.keyboard_section.key_descriptions
         self.unlockable_keys = [
-                               # common
-                               [key_descriptions[key]["name"] for key
-                                in key_descriptions
-                                if key_descriptions[key]["rarity"] == 0
-                                ],
-                               # uncommon
-                               [key_descriptions[key]["name"] for key
-                                in key_descriptions
-                                if key_descriptions[key]["rarity"] == 1
-                                ],
-                               # rare
-                               [key_descriptions[key]["name"] for key
-                                in key_descriptions
-                                if key_descriptions[key]["rarity"] == 2
-                                ],
-                               # super rare
-                               [key_descriptions[key]["name"] for key
-                                in key_descriptions
-                                if key_descriptions[key]["rarity"] == 3
-                                ],
-                               # ultra rare
-                               [key_descriptions[key]["name"] for key
-                                in key_descriptions
-                                if key_descriptions[key]["rarity"] == 4
-                                ],
-                               # legendary
-                               [key_descriptions[key]["name"] for key
-                                in key_descriptions
-                                if key_descriptions[key]["rarity"] == 5
-                                ],
+                                [key_descriptions[key]["name"] for key
+                                 in key_descriptions
+                                 if key_descriptions[key]["rarity"]
+                                 == rarity_level
+                                 ]
+                                for rarity_level
+                                in range(len(LOOTBOX_RARITIES))
                                ]
 
         self.config(padx=40, pady=32)
+
+        self.lootbox_window = None
 
     def receive_key(self, char):
         self.text_entry_section.receive_key(char)
@@ -124,6 +105,9 @@ class UserInterface(tk.Frame):
     def unlock_lootbox(self):
         print("Lootbox added!")
 
+        unlocked_keys = []
+        rarities = []
+
         for i in range(LOOTBOX_PULLS_PER_BOX):
             rand_int = random.randint(0, 100)
             lootbox_rank = -1
@@ -133,19 +117,28 @@ class UserInterface(tk.Frame):
 
             unlocked_key = random.choice(self.unlockable_keys[lootbox_rank])
 
+            unlocked_keys.append(unlocked_key)
+            rarities.append(lootbox_rank)
+
             self.keyboard_section.add_key(unlocked_key)
 
             lootbox_rarity = LOOTBOX_RARITIES[lootbox_rank]
 
-            mbox_title = "{} item unlocked!".format(lootbox_rarity.title())
-            mbox_text = "You got a \"{}\"!".format(unlocked_key)
+            # mbox_title = "{} item unlocked!".format(lootbox_rarity.title())
+            # mbox_text = "You got a \"{}\"!".format(unlocked_key)
 
+            """
             messagebox.showinfo(
                                 mbox_title,
                                 mbox_text
                                 )
+            """
 
             print("rolled {}".format(rand_int), lootbox_rarity, unlocked_key)
+
+        self.lootbox_window = LootBoxUnlockWindow(new_keys=unlocked_keys,
+                                                  rarities=rarities
+                                                  )
 
     def on_word_complete(self, last_word: str):
         if last_word is None:
@@ -338,13 +331,11 @@ class KeyboardKey(tk.Button):
         return math.floor(KeyboardKey.KEY_SIZE * self.scale)
 
     def increase_scale(self):
-        if self.scale < self.scale_max:
-            self.scale += self.scale_inc
+        self.scale = min(self.scale+self.scale_inc, self.scale_max)
         self.update_scale()
 
     def decrease_scale(self):
-        if self.scale > self.scale_min:
-            self.scale -= self.scale_dec
+        self.scale = max(self.scale-self.scale_dec, self.scale_min)
         self.update_scale()
 
     def update_scale(self):
@@ -376,6 +367,75 @@ class KeyboardKey(tk.Button):
 
         if self.scale < self.scale_max:
             self.master.recalc_key_sizes(self)
+
+
+class LootBoxUnlockWindow(tk.Toplevel):
+    def __init__(self, new_keys=[], rarities=[], *args, **kwargs):
+        tk.Toplevel.__init__(self)
+        self.title("Lootbox unlocked!")
+
+        self.new_keys = new_keys
+        self.rarities = rarities
+
+        self.lootbox_display = LootBoxUnlockFrame(self)
+
+        self.button = tk.Button(self, text="Close", command=self.close_window)
+        self.button.pack()
+
+        self.minsize(400, 700)
+
+    def close_window(self):
+        self.destroy()
+
+
+class LootBoxUnlockFrame(tk.Frame):
+    def __init__(self, master, *args, **kwargs):
+        tk.Frame.__init__(self, master)
+        self.master = master
+
+        self.font = tkFont.Font(size=64)
+
+        image_data1 = Image.open(IMAGE_PATH / Path("capsule1.png"))
+        image_data2 = Image.open(IMAGE_PATH / Path("capsule2.png"))
+        self.img_capsule = [
+            ImageTk.PhotoImage(image_data1),
+            ImageTk.PhotoImage(image_data2)
+        ]
+
+        self.lootbox_text = tk.StringVar()
+        self.lootbox_text.set("Lootbox get!")
+
+        self.text_label = tk.Label(self, textvar=self.lootbox_text,
+                                   font=self.font
+                                   )
+        self.text_label.pack()
+
+        self.image_label = tk.Label(self, image=self.img_capsule[0])
+        self.image_label.image = self.img_capsule[0]
+        self.image_label.pack()
+
+        self.message_label = tk.Label(self, text="", height=10, width=20,
+                                      justify=tk.LEFT)
+        self.message_label.pack()
+
+        self.pack()
+
+        self.after(1000, self.open_lootbox)
+
+    def open_lootbox(self):
+        new_keys = [
+            "{} ({})".format(key, LOOTBOX_RARITIES[self.master.rarities[idx]])
+            for idx, key in enumerate(self.master.new_keys)
+            ]
+
+        new_keys_str = reduce(
+            lambda x, y: "{}\n{}".format(x, y), new_keys
+            )
+        self.image_label.config(image=self.img_capsule[1])
+        self.image_label.image = self.img_capsule[1]
+        self.message_label.config(
+            text="You got:\n {}".format(new_keys_str)
+            )
 
 
 def exit_program():
