@@ -1,3 +1,4 @@
+from random import shuffle
 from PySide2.QtWidgets import QWidget
 from .ui_files.ui_add_title import Ui_title_form
 
@@ -25,9 +26,15 @@ class AddTitle(QWidget, Ui_title_form):
         self.label_text = []
 
         self.init_UI()
+        self.available_text = list((
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            " 0123456789"
+            "!@#$(),./?:\"'"
+        ))
 
         self.buttons = [i for i in vars(self) if i.endswith("button")]
         self.bind_buttons()
+        self.update()
 
     def init_UI(self):
         """
@@ -36,6 +43,12 @@ class AddTitle(QWidget, Ui_title_form):
         self.setupUi(self)
         self.setFixedSize(self.width, self.height)
         self.show()
+
+    def randomize_text(self):
+        """
+        Randomizes the guide text.
+        """
+        shuffle(self.available_text)
 
     def bind_buttons(self):
         """
@@ -57,11 +70,8 @@ class AddTitle(QWidget, Ui_title_form):
         Adds the character corresponding to the current slider position to the
         label text.
         """
-        available_text = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        available_text += " 0123456789"
-        available_text += "!@#$(),./?:\"'"
 
-        to_add = available_text[self.text_slider.sliderPosition()]
+        to_add = self.available_text[self.text_slider.sliderPosition()]
         self.label_text.append(to_add)
 
     def delete(self):
@@ -73,9 +83,11 @@ class AddTitle(QWidget, Ui_title_form):
 
     def update(self):
         """
-        Update the display label text.
+        Update the display label text and guide text.
         """
         self.label.setText("".join(self.label_text))
+        self.randomize_text()
+        self.reference_label.setText("".join(reversed(self.available_text)))
 
     def done(self):
         """
