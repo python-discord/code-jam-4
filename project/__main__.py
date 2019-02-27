@@ -1,3 +1,4 @@
+import itertools
 import tkinter as tk
 import tkinter.font as tkFont
 # from tkinter import messagebox
@@ -24,6 +25,9 @@ def is_word(text):
     assert text.isalpha()
     return text in words.words()
 
+def calculate_xp(word):
+    return len(word)
+
 
 LOOTBOX_RARITIES = [
     "common",
@@ -42,6 +46,8 @@ LOOTBOX_RATES = [
     90,
     95,
 ]
+
+
 
 LOOTBOX_PULLS_PER_BOX = 5
 
@@ -70,6 +76,13 @@ class UserInterface(tk.Frame):
         saved_keys = save_data['keys']
         saved_scales = save_data['scales']
         self.used_words = set(save_data['used_words'])
+        self.xp_milestones = (index*10 for index in itertools.count())
+        self.xp = save_data['xp']
+        self.previous_xp_milestone = 0
+        self.next_xp_milestone = 0
+        while self.xp >= self.next_xp_milestone:
+            self.previous_xp_milestone = self.next_xp_milestone
+            self.next_xp_milestone = next(self.xp_milestones)
 
         self.command_section = tk.Frame(self)
         self.text_entry_section = TextEntrySection(self)
@@ -101,6 +114,17 @@ class UserInterface(tk.Frame):
         self.config(padx=40, pady=32)
 
         self.lootbox_window = None
+
+    def add_xp(self, xp_increase):
+        print("Prev {}, next {}".format(self.previous_xp_milestone,self.next_xp_milestone))
+        print("Was {}, is now {}".format(self.xp,self.xp+xp_increase))
+        self.xp += xp_increase
+        while self.xp >= self.next_xp_milestone:
+            self.previous_xp_milestone = self.next_xp_milestone
+            self.next_xp_milestone = next(self.xp_milestones)
+            self.unlock_lootbox()
+
+
 
     def set_darkmode(self):
         self.text_entry_section.set_darkmode(self.is_darkmode.get())
@@ -161,7 +185,8 @@ class UserInterface(tk.Frame):
         if(is_word(last_word)
            and last_word not in self.used_words):
             self.used_words.add(last_word)
-            self.unlock_lootbox()
+            word_value = calculate_xp(last_word)
+            self.add_xp(word_value)
 
 
 class TextEntrySection(tk.Frame):
@@ -249,7 +274,8 @@ class KeyboardSection(tk.Frame):
         json_compatible_data = {
             'keys': [button.text_name for button in self.buttons],
             'scales': [button.scale for button in self.buttons],
-            'used_words': list(self.master.used_words)
+            'used_words': list(self.master.used_words),
+            'xp': self.master.xp
         }
         json_data = json.dumps(json_compatible_data, indent=1)
         try:
