@@ -10,7 +10,7 @@ from pygame import mixer
 
 class Tinder:
     '''The main class for the application.'''
-    
+
     def __init__(self):
         # setup for pygame mixer
         mixer.init()
@@ -181,7 +181,6 @@ class Tinder:
         # getting base cat variables from the dict
         image = cat["image"]
         jumpscare = cat["jumpscare"]
-        
 
         # if the image is not a jumpscare, add a Text widget with the cat name
         if not jumpscare:
@@ -191,7 +190,7 @@ class Tinder:
             hobbies = cat["hobbies"]
             age = cat["age"]
             location = cat["location"]
-            
+
             # make the Text widget
             name = tk.Text(self.frame, width=40, height=1)
             # tag to make all text in the widget centered
@@ -222,25 +221,25 @@ class Tinder:
             mixer.music.load(
                 os.path.join(self.dir, os.path.join(
                     "res", os.path.join("sounds", "jumpscare.mp3"))
-                    )
-                )
+                            )
+                            )
             mixer.music.play()
 
             # make a button to allow the user to pass through the image
             # Note: since everyone likes scary monsters, only make a Like button
             tk.Button(
                 self.frame, text="Like", background="green", command=self.new_image
-                ).pack(side=tk.BOTTOM)
+                    ).pack(side=tk.BOTTOM)
 
         # image was not a jumpscare, don't do jumpscare things
         else:
             # setting up like and dislike buttons on opposite sides of the screen
             tk.Button(
                 self.frame, text="Like", background="green", command=self.new_image
-                ).pack(side=tk.RIGHT)
+                    ).pack(side=tk.RIGHT)
             tk.Button(
                 self.frame, text="Dislike", background="red", command=self.new_image
-                ).pack(side=tk.LEFT)
+                    ).pack(side=tk.LEFT)
 
             # defining button functions
             def back_to_photo():
@@ -279,13 +278,13 @@ class Tinder:
                 # setting up like/dislike/Back to Photo buttons on the bio screen
                 tk.Button(
                     self.frame, text="Like", background="green", command=self.new_image
-                    ).pack(side=tk.RIGHT)
+                        ).pack(side=tk.RIGHT)
                 tk.Button(
                     self.frame, text="Dislike", background="red", command=self.new_image
-                    ).pack(side=tk.LEFT)
+                        ).pack(side=tk.LEFT)
                 tk.Button(
                     self.root, text="Back To Photo", background="blue", command=back_to_photo
-                    ).pack(side=tk.BOTTOM)
+                        ).pack(side=tk.BOTTOM)
 
                 # packing the frame
                 self.frame.pack()
@@ -293,7 +292,7 @@ class Tinder:
             # making and packing the Bio button for users to look at the cat's bio
             tk.Button(
                 self.frame, text="Bio", background="blue", command=get_bio
-                ).pack(side=tk.BOTTOM)
+                    ).pack(side=tk.BOTTOM)
 
         # packing the frame
         self.frame.pack()
