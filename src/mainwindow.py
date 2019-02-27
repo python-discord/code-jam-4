@@ -277,13 +277,16 @@ class Tinder:
 
                 # setting up like/dislike/Back to Photo buttons on the bio screen
                 tk.Button(
-                    self.frame, text="Like", background="green", command=self.new_image
+                            self.frame, text="Like", background="green",
+                            command=self.new_image
                         ).pack(side=tk.RIGHT)
                 tk.Button(
-                    self.frame, text="Dislike", background="red", command=self.new_image
+                            self.frame, text="Dislike", background="red",
+                            command=self.new_image
                         ).pack(side=tk.LEFT)
                 tk.Button(
-                    self.root, text="Back To Photo", background="blue", command=back_to_photo
+                            self.root, text="Back To Photo", background="blue",
+                            command=back_to_photo
                         ).pack(side=tk.BOTTOM)
 
                 # packing the frame
@@ -291,7 +294,8 @@ class Tinder:
 
             # making and packing the Bio button for users to look at the cat's bio
             tk.Button(
-                self.frame, text="Bio", background="blue", command=get_bio
+                        self.frame, text="Bio", background="blue",
+                        command=get_bio
                     ).pack(side=tk.BOTTOM)
 
         # packing the frame
