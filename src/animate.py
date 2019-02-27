@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import tkinter as tk
 import operator
-from math import log2
-from typing import NamedTuple, Callable, TypeVar, List
-from enum import Flag
+from typing import NamedTuple, Callable, TypeVar, List, Generator, Tuple
+from contextlib import suppress
+from more_itertools import chunked
+from enum import Enum
 from dataclasses import dataclass
-from functools import partialmethod
+from functools import partialmethod, partial
 
 
 class Coord(NamedTuple):
@@ -17,8 +18,8 @@ class Coord(NamedTuple):
     it to the x and y values individually.
 
     param:
-        x: int -- X position.
-        y: int -- Y position.
+        x: float -- X position.
+        y: float -- Y position.
 
     example::
 
@@ -26,25 +27,20 @@ class Coord(NamedTuple):
     c1 = c2 = Coord(1, 1)
     c1 + c2
     >>> Coord(2, 2)
-    # For convenience, integers are accepted as well
+    # For convenience, numbers are accepted as well
     c1 = Coord(1, 1)
     c1 + 1  # 1 is cast to Coord(1, 1)
     >>> Coord(2, 2)
     ```
-
-    note:
-
-    True divide `round`s in order to remain compatible with tkinter
-    coordinate values (`int`).
     """
 
-    x: int
-    y: int
+    x: float
+    y: float
 
-    Operand = TypeVar('Operand', 'Coord', int)
+    Operand = TypeVar('Operand', 'Coord', float)
 
     def __apply(self, op: Callable, other: Coord.Operand) -> Coord:
-        if isinstance(other, int):
+        if not isinstance(other, Coord):
             other = Coord(other, other)
 
         x = op(self.x, other.x)
@@ -76,28 +72,23 @@ class Coord(NamedTuple):
         dist = map(abs, other - self)
         return sum(dist)
 
-    def __truediv__(self, other):
-        result = self.__apply(operator.truediv, other)
-        return Coord(*map(round, result))
-
     __add__ = partialmethod(__apply, operator.add)
     __sub__ = partialmethod(__apply, operator.sub)
     __mul__ = partialmethod(__apply, operator.mul)
     __mod__ = partialmethod(__apply, operator.mod)
     __pow__ = partialmethod(__apply, operator.pow)
     __floordiv__ = partialmethod(__apply, operator.floordiv)
+    __truediv__ = partialmethod(__apply, operator.truediv)
 
 
-class Direction(Flag):
+class Direction(Enum):
     """
     Defines base directions.
-
-
     """
     LEFT = Coord(-1, 0)
     RIGHT = Coord(1, 0)
-    UP = Coord(0, 1)
-    DOWN = Coord(0, -1)
+    UP = Coord(0, -1)
+    DOWN = Coord(0, 1)
 
     def __mul__(self, other: int) -> Coord:
         return self.value * other
@@ -106,36 +97,100 @@ class Direction(Flag):
         return self.value + other.value
 
 
-class Window(tk.Canvas):
+class Animater(tk.Canvas):
 
-    events = []
+    motions = []
 
-    def set_event(self, event: tk.EventType):
+    def add_event(self, event: tk.EventType):
         self.bind(event, self.run)
 
     def run(self, event):
-        pass
+        active = []
+        for motion in self.motions:
+            with suppress(StopIteration):
+                moves = next(motion)
+                for move in moves:
+                    move()
+                    self.update_idletasks()
+                active.append(motion)
+        self.motions = active
+
+    def add_motion(self, motion: Motion):
+        self.motions.append(iter(motion))
 
 
 @dataclass
 class Motion:
+    """
+    Defines the movements derived from the given vector.
+    The result is a two dimensional generator: the first dimension yields
+    a "frame" generator, which in turn yields move commands. This structure allows
+    for different `speed`s of motion, as the length of the second
+    dimension is determined by `speed`. In other words, the `speed` determines
+    how many movements occur in one frame.
 
+    param:
+        canvas: tk.Canvas -- The parent canvas to issue the move command with.
+        id: int -- The id of the widget to be animated.
+        endpoints: Tuple[Coord] -- The final position(s) of the widget. Multiple positions allow for
+            more intricate pathing.
+        speed: int (optional) -- The multipler for move commands per frame.
+            Defaults to 1.
+
+    example::
+
+    ```
+    root = tk.Tk()
+
+    window = Animater(root)
+    window.pack()
+
+    c1 = Coord(50, 55)
+    c2 = Coord(60, 65)
+    rect = window.create_rectangle(c1, c2)
+
+    end = c1 + Direction.RIGHT * 50
+    end2 = end + Direction.DOWN * 50
+    end3 = end2 + (Direction.UP + Direction.LEFT) * 50
+
+    animation = Motion(window, rect, (end, end2, end3), speed=1)
+
+    window.add_motion(animation)
+    window.add_event('<B1-Motion>')
+
+    root.mainloop()
+    ```
+    """
     canvas: tk.Canvas
-    direction: Direction
-    speed: int
+    id: int
+    endpoints: Tuple[Coord]
 
-    frames = 30
+    steps = 60
+    speed: int = 1
 
+    def start(self) -> Generator[Generator[Callable]]:
+        """
+        The entry point for generating move commands.
+        """
+        move = partial(self.canvas.move, self.id)
 
-class Animate:
+        def frame(points: List, last: Coord) -> Generator[Callable]:
+            for point in points:
+                offset = point - last
+                yield partial(move, *offset)
+                last = point
 
-    def __init__(self, obj: tk.Widget):
-        self.obj = obj
+        for end in self.endpoints:
+            start = Coord(*self.canvas.coords(self.id)[:2])
+            vec = vector(start, end, self.steps)
 
-    def set_event(self, event: tk.EventType):
-        self.bind(event, self.run)
+            last = vec[0]
+            for points in chunked(vec, self.speed):
+                yield frame(points, last)
+                last = points[-1]
 
-    # def add(self, )
+    def __iter__(self):
+        return self.start()
 
 
 def vector(start: Coord, end: Coord, step: int = 60) -> List[Coord]:
