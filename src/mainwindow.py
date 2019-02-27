@@ -176,17 +176,20 @@ class Tinder:
                 self.loop.run_until_complete(self.get_cache())
                 cat = self.cats.pop(0)
 
-        # getting cat variables from the dict
-        cat_name = cat["name"]
+        # getting base cat variables from the dict
         image = cat["image"]
         jumpscare = cat["jumpscare"]
-        gender = cat["gender"].capitalize()
-        hobbies = cat["hobbies"]
-        age = cat["age"]
-        location = cat["location"]
+        
 
         # if the image is not a jumpscare, add a Text widget with the cat name
         if not jumpscare:
+            # since the image is not a jumpscare, get regular cat variables
+            cat_name = cat["name"]
+            gender = cat["gender"].capitalize()
+            hobbies = cat["hobbies"]
+            age = cat["age"]
+            location = cat["location"]
+            
             # make the Text widget
             name = tk.Text(self.frame, width=40, height=1)
             # tag to make all text in the widget centered
