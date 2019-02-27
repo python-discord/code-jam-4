@@ -1,10 +1,9 @@
 import tkinter as tk
 
-from .animate import Window
+from .animate import vector, Coord
 
-root = tk.Tk()
+start = Coord(0, 0)
+end = Coord(120, 0)
 
-w = Window(root)
-w.pack()
-
-tk.mainloop()
+result = vector(start, end, 64)
+print(len(result), result)
