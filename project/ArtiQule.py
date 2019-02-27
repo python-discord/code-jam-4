@@ -3,7 +3,7 @@ from random import randint
 from PyQt5.QtCore import Qt, QSize, QPoint
 from PyQt5.QtWidgets import (QMainWindow, QApplication,
                              QAction, QFileDialog, QPushButton,
-                             QToolBox, QSizePolicy)
+                             QToolBox, QSizePolicy, QToolButton)
 from PyQt5.QtGui import (QImage, QPainter, QPen, QPixmap,
                          QIcon, QCursor, QColor)
 
@@ -17,7 +17,6 @@ def paintEvent(self, event):
     else:
         # do normal stuff ...
 """
-
 
 class PaintBoard(QMainWindow):
     def __init__(self, parent=None):
@@ -38,6 +37,7 @@ class PaintBoard(QMainWindow):
         self.canvas.fill(Qt.white)
 
         self.draw = False
+        self.currentTool = None
         self.currentBrushSize = 1  # TODO: only active when mouseAction allows
         self.currentBrushColor = Qt.black
         self.currentPaintPattern = Qt.SolidLine
@@ -127,6 +127,7 @@ class PaintBoard(QMainWindow):
         class StragglyPaintBrush(ColorTool):
             def __init__(self):
                 super().__init__("straggly_paintbrush", 30, "Straws")
+        #TODO: the two paintbrushes should drip self.color when not mousePressEvent
 
         # like drawing with a rock hard paintbrush
         class SolidifiedBrush(ColorTool):
@@ -171,69 +172,48 @@ class PaintBoard(QMainWindow):
         save_file_action.triggered.connect(self.saveFile)
         exit_action.triggered.connect(self.exit)
 
-        # toolbar picker
-        self.toolBox = QToolBox(self)
-        self.toolBox.setSizePolicy(QSizePolicy(
-            QSizePolicy.Maximum, QSizePolicy.Ignored))
-        self.toolBox.setGeometry(0, 20, 50, 100)
 
-        # self.toolBox.setMinimumWidth(self.sizeHint().width())
-        pointy_pen_btn = QPushButton()
+        pointy_pen_btn = QAction(QIcon('Design/icons/pointy_pen.png'), "Pointy Pen",
+                                 self)
         pointy_pen_btn.setShortcut("CTRL+P")
         pointy_pen_btn.setStatusTip("A very pointy pen")
-        # pointy_pen.setGeometry(200, 0, 50, 20)
-        pointy_pen_btn.clicked.connect(pointy_pen.use)
-        pointy_pen_btn.setIcon(QIcon('Design/icons/pointy_pen.png'))
-        pointy_pen_btn.setIconSize(QSize(20, 20))
-        self.toolBox.addItem(pointy_pen_btn, "Pointy Pen")
+        pointy_pen_btn.triggered.connect(pointy_pen.use)
 
-        fill_btn = QPushButton()
+        fill_btn = QAction(QIcon('Design/icons/fill_empty.png'), "A bucket", self)
         fill_btn.setShortcut("CTRL+P")
         fill_btn.setStatusTip("A bucket.")
-        # fill.setGeometry(200, 0, 50, 20)
-        fill_btn.clicked.connect(fill.use)
-        fill_btn.setIcon(QIcon('Design/icons/fill_empty.png'))
-        fill_btn.setIconSize(QSize(20, 20))
-        self.toolBox.addItem(fill_btn, "Bucket")
+        fill_btn.triggered.connect(fill.use)
 
-        straggly_paintbrush_btn = QPushButton()
+        straggly_paintbrush_btn = QAction(QIcon('Design/icons/straggly_paintbrush.png'),
+                                          "Straggly Paintbrush", self)
         straggly_paintbrush_btn.setShortcut("CTRL+A")
         straggly_paintbrush_btn.setStatusTip("A very Straggly Paintbrush.")
-        # fill.setGeometry(200, 0, 50, 20)
-        straggly_paintbrush_btn.clicked.connect(straggly_paintbrush.use)
-        straggly_paintbrush_btn.setIcon(
-            QIcon('Design/icons/straggly_paintbrush.png'))
-        straggly_paintbrush_btn.setIconSize(QSize(20, 20))
-        self.toolBox.addItem(straggly_paintbrush_btn, "Straggly Paintbrush")
+        straggly_paintbrush_btn.triggered.connect(straggly_paintbrush.use)
 
-        solidified_brush_btn = QPushButton()
+        solidified_brush_btn = QAction( QIcon('Design/icons/solidified_brush.png'),
+                                        "A solid brush", self)
         solidified_brush_btn.setShortcut("CTRL+A")
         solidified_brush_btn.setStatusTip("Gorsh, that is a hard tip")
-        # fill.setGeometry(200, 0, 50, 20)
-        solidified_brush_btn.clicked.connect(solidified_brush.use)
-        solidified_brush_btn.setIcon(
-            QIcon('Design/icons/solidified_brush.png'))
-        solidified_brush_btn.setIconSize(QSize(20, 20))
-        self.toolBox.addItem(solidified_brush_btn, "Solidified Brush")
+        solidified_brush_btn.triggered.connect(solidified_brush.use)
 
-        color_palette_btn = QPushButton()
-        # p1
-        # p2
-        # p3
-        # p4
-        # p5
-        # p6
+        colors = c1, c2, c3, c4, c5, c6 = (PaletteButton()
+                                            for pallette in range(6))
+        self.toolbar = self.addToolBar("Toolbar")
+        pallettes = p1, p2, p3, p4, p5, p6 = (QToolButton(self.toolbar)
+                                              for btn in range(6))
 
-        self.toolBox.addItem(color_palette_btn, "Colors")
+        self.toolbar.addAction(pointy_pen_btn)
+        self.toolbar.addAction(fill_btn)
+        self.toolbar.addAction(straggly_paintbrush_btn)
+        self.toolbar.addAction(solidified_brush_btn)
+
+        for Color, pallette in zip(colors, pallettes):
+            pallette.setStyleSheet("QToolButton{background-color:rgb{}}".format(Color.color))
+            pallette.clicked.connect(Color.mix(self.currentTool))
+            self.toolbar.addItem(pallette)
 
         self.show()
 
-    # if RGB is 0 (white) then recieve only that color;
-    # else mix by taking current color RGB and adding/subtracting on palette
-    # solidified_brush and spangly_brush will drip
-    # if they are put in color palette
-    def color_palette(self, tool):
-        pass
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
