@@ -20,22 +20,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.player = QMediaPlayer()
         self.playlist = QMediaPlaylist()
 
-        self.library_model = QSqlTableModel()
-        self.library_model.setTable("library")
-        self.library_model.setHeaderData(1, Qt.Horizontal, "Title", Qt.DisplayRole)
-        self.library_model.setHeaderData(2, Qt.Horizontal, "Artist", Qt.DisplayRole)
-        self.library_model.setHeaderData(3, Qt.Horizontal, "Album", Qt.DisplayRole)
-        self.library_model.setHeaderData(4, Qt.Horizontal, "Genre", Qt.DisplayRole)
-        self.library_model.setHeaderData(5, Qt.Horizontal, "Date", Qt.DisplayRole)
+        self.playlist_model = QSqlTableModel()
+        self.playlist_model.setTable("playlist")
+        self.playlist_model.setHeaderData(1, Qt.Horizontal, "Title", Qt.DisplayRole)
+        self.playlist_model.setHeaderData(2, Qt.Horizontal, "Artist", Qt.DisplayRole)
+        self.playlist_model.setHeaderData(3, Qt.Horizontal, "Album", Qt.DisplayRole)
+        self.playlist_model.setHeaderData(4, Qt.Horizontal, "Genre", Qt.DisplayRole)
+        self.playlist_model.setHeaderData(5, Qt.Horizontal, "Date", Qt.DisplayRole)
 
-        self.playlist_view.setModel(self.library_model)
+        self.playlist_view.setModel(self.playlist_model)
         self.playlist_view.setEditTriggers(QAbstractItemView.NoEditTriggers)  # Disable editing
         self.playlist_view.setSortingEnabled(True)
         self.playlist_view.hideColumn(0)  # id
         self.playlist_view.hideColumn(6)  # crc32
         self.playlist_view.hideColumn(7)  # path
 
-        self.library_model.select()  # Force-update the view
+        self.playlist_model.select()  # Force-update the view
 
         self.playlist_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.playlist_view.setSelectionMode(QAbstractItemView.SingleSelection)
@@ -60,7 +60,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             The created record.
 
         """
-        record = self.library_model.record()
+        record = self.playlist_model.record()
         record.remove(record.indexOf("id"))  # id field is auto-incremented so it can be removed.
 
         for k, v in metadata.items():
@@ -78,11 +78,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             metadata = media_utils.parse_media(path)
             record = self.create_record(metadata)
 
-            if not self.library_model.insertRecord(-1, record):  # -1 will append
-                log.error(f"Failed to insert record for {path}: {self.library_model.lastError()}")
+            if not self.playlist_model.insertRecord(-1, record):  # -1 will append
+                log.error(f"Failed to insert record for {path}: {self.playlist_model.lastError()}")
                 # TODO: Does a rollback need to happen in case of failure?
 
             media = QMediaContent(QUrl.fromLocalFile(path))
             self.playlist.addMedia(media)
 
-        self.library_model.submitAll()
+        self.playlist_model.submitAll()

@@ -9,7 +9,7 @@ DB_NAME = "library.sqlite"
 
 
 def create_db():
-    """Create the library's database file and table if they don't exist.
+    """Create the playlist's database file and table if they don't exist.
 
     The created database should be accessed using :meth:`PySide2.QtSql.QSqlDatabase.database`, the
     name being specified via :const:`project.library.DB_NAME`.
@@ -18,7 +18,7 @@ def create_db():
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
         cursor.execute("""
-            create table if not exists library (
+            create table if not exists playlist (
                 id     integer primary key,
                 title  text,
                 artist text,
