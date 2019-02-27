@@ -430,13 +430,13 @@ class LootBoxUnlockWindow(tk.Toplevel):
 
         self.lootbox_display = LootBoxUnlockFrame(self)
 
-        self.button = tk.Button(self, text="Close", command=self.close_window)
+        self.button = tk.Button(self, text="Close", command=self.destroy)
         self.button.pack()
 
         self.minsize(400, 700)
 
-    def close_window(self):
-        self.destroy()
+    # def close_window(self):
+    #     self.destroy()
 
 
 class LootBoxUnlockFrame(tk.Frame):
@@ -484,9 +484,7 @@ class LootBoxUnlockFrame(tk.Frame):
             )
         self.image_label.config(image=self.img_capsule[1])
         self.image_label.image = self.img_capsule[1]
-        self.message_label.config(
-            text="You got:\n {}".format(new_keys_str)
-            )
+        self.message_label['text'] = "You got:\n {}".format(new_keys_str)
 
 
 class XPFrame(tk.Frame):
