@@ -1,4 +1,4 @@
-from ..animate import Coord, vector, Motion, Direction
+from ..animate import Coord, vector, Direction
 
 coord1 = Coord(1, 1)
 coord2 = Coord(1, 1)
@@ -44,3 +44,11 @@ def test_direction():
     assert Direction.LEFT.value == Direction.LEFT + Coord(0, 0)
     assert Direction.RIGHT.value == Direction.RIGHT + Coord(0, 0)
     assert Direction.DOWN.value == Direction.DOWN + Coord(0, 0)
+
+
+def test_vector():
+    start = Coord(0, 0)
+    end = start + 50
+    vec = vector(start, end)
+    assert vec[0] == start
+    assert vec[-1] == end
