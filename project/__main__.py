@@ -9,6 +9,8 @@ from pathlib import Path
 # This will be used for images
 # from PIL import Image, ImageTk
 
+nltk.download('words')
+
 SCRIPT_DIR = Path(__file__).parent
 
 KEY_DESCRIPTION_PATH = SCRIPT_DIR / Path("key_descriptions.json")
