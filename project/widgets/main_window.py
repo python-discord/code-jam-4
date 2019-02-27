@@ -37,6 +37,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.library_model.select()  # Force-update the view
 
+        self.playlist_view.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.playlist_view.setSelectionMode(QAbstractItemView.SingleSelection)
+
         self.play_button.pressed.connect(self.player.play)
         self.previous_button.pressed.connect(self.playlist.previous)
         self.next_button.pressed.connect(self.playlist.next)
