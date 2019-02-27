@@ -3,17 +3,20 @@ from PyQt5.Qt import QApplication, QClipboard  # noqa: F401
 
 from project.ClipboardManager.ClipboardObject import TextClipboardObject
 from project.Stack import Stack
+from project.Plugins import Text
 
 
 class ClipboardManager:
-
     def __init__(self):
         self._clipboard_state_callback = None
         QApplication.clipboard().dataChanged.connect(self._clipboard_changed)
         self._clipboard_stack = Stack()
 
     def _clipboard_changed(self):
-        current_text = QApplication.clipboard().text()
+        #testing by bwacpro
+        current_text = Text.apply(QApplication.clipboard().text())
+
+        #current_text = QApplication.clipboard().text()
         print("Current Text", QApplication.clipboard().text())
         print("Current Image Info", QApplication.clipboard().pixmap())
 
