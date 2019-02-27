@@ -21,6 +21,9 @@ cal.title("Calculator")
 operator=""
 text_Input =StringVar()
 
+def add_num(val):
+    print(val)
+
 txtDisplay = Entry(cal,font=('arial',20,'bold'), textvariable=text_Input, bd=30, insertwidth=4, bg="pink", justify='right').grid(columnspan=4)
 
 btn1=Button(cal,  text=("1"), padx=16, bd=8, font=('arial',20,'bold'),  fg="purple", bg="pink", command=lambda:btnClick(1)).grid(row=1,column=0)
