@@ -17,7 +17,7 @@ SCRIPT_DIR = Path(__file__).parent
 
 KEY_DESCRIPTION_PATH = SCRIPT_DIR / Path("key_descriptions.json")
 SAVE_DATA_PATH = SCRIPT_DIR / Path("save_data.json")
-DEFAULT_KEYS_PATH = SCRIPT_DIR / Path("default_keyboard.json")
+DEFAULT_SAVE_PATH = SCRIPT_DIR / Path("default_save.json")
 IMAGE_PATH = SCRIPT_DIR.parent / Path("img/")
 
 
@@ -71,7 +71,7 @@ class UserInterface(tk.Frame):
             with open(SAVE_DATA_PATH) as save_data_file:
                 save_data = json.load(save_data_file)
         except FileNotFoundError:
-            with open(DEFAULT_KEYS_PATH) as save_data_file:
+            with open(DEFAULT_SAVE_PATH) as save_data_file:
                 save_data = json.load(save_data_file)
         saved_keys = save_data['keys']
         saved_scales = save_data['scales']
@@ -420,7 +420,7 @@ class LootBoxUnlockWindow(tk.Toplevel):
         tk.Toplevel.__init__(self)
         self.title("Lootbox unlocked!")
 
-        self.master.attributes("-topmost",True)
+        self.attributes("-topmost",True)
 
         self.new_keys = new_keys
         self.rarities = rarities
