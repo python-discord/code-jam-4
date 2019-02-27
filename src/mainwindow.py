@@ -75,9 +75,9 @@ class Tinder:
             cat_data = dict()
 
             # randomly make jumpscares happen, but not on the first image
-            if randint(1, cachesize) == 5 and i:
+            if randint(1, 10) == 5 and i:
                 # get a random number for an image
-                image_number = randint(1, cachesize)
+                image_number = randint(1, 10)
                 # open and resize the image using Pillow
                 im = Image.open(os.path.join(self.dir, os.path.join("res",
                                 os.path.join("images", f"{image_number}.jpg"))))
