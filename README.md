@@ -32,7 +32,18 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 
 Flamboyant Flamingos jam project.
 
-* UK-based team
+* Team:
+  * Members:
+    * Starwort
+      * Location: UK
+      * Computer Science student in secondary education
+      * Leader
+    * Suhail
+      * Location: UK
+      * *suhail write a bio lmao*
+    * Martmists
+      * Location: *somewhere in Europe idk*
+      * *mists you write your bio too*
 * This paint tool is your worst enemy.
 
 ## Description
