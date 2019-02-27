@@ -4,25 +4,21 @@ from typing import Any, Dict
 from PySide2.QtCore import QUrl, Qt
 from PySide2.QtMultimedia import QMediaContent, QMediaPlayer
 from PySide2.QtSql import QSqlRecord, QSqlTableModel
-from PySide2.QtWidgets import QAbstractItemView, QFileDialog, QMainWindow, QWidget
+from PySide2.QtWidgets import QAbstractItemView, QFileDialog, QMainWindow
 
-from project import media as media_utils
+from project import media as media_utils, ui
 from project.playlist import Playlist
-from project.ui.main_window import Ui_MainWindow
-from project.ui.password import Ui_password
+from project.widgets.password_prompt import PasswordPrompt
+
 log = logging.getLogger(__name__)
 
-class PasswordWindow(QWidget):
-    def __init__(self):
-        super(PasswordWindow, self).__init__()
-        self.ui = Ui_password()
-        self.ui.setupUi(self)
 
-class MainWindow(QMainWindow, Ui_MainWindow):
+class MainWindow(QMainWindow, ui.MainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
-        self.password_prompt = PasswordWindow()
+
         self.setupUi(self)
+        self.password_prompt = PasswordPrompt()
 
         # Model
         self.playlist_model = QSqlTableModel()
@@ -61,9 +57,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.previous_button.pressed.connect(self.playlist.previous)
         self.next_button.pressed.connect(self.playlist.next)
         self.add_files_action.triggered.connect(self.add_media)
-
-    def show_pw(self):
-        self.password_prompt.show()
 
     def create_record(self, metadata: Dict[str, Any]) -> QSqlRecord:
         """Create and return a library record from media `metadata`.

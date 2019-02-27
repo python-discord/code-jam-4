@@ -3,7 +3,7 @@ import sys
 from PySide2.QtWidgets import QApplication
 
 from project import playlist
-from project.widgets.main_window import MainWindow
+from project.widgets import MainWindow
 
 
 def main():
