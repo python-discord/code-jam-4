@@ -1,12 +1,13 @@
 import logging
 from typing import Any, Dict
 
-from PySide2.QtCore import QUrl, Qt
-from PySide2.QtMultimedia import QMediaContent, QMediaPlayer, QMediaPlaylist
+from PySide2.QtCore import Qt
+from PySide2.QtMultimedia import QMediaPlayer
 from PySide2.QtSql import QSqlRecord, QSqlTableModel
 from PySide2.QtWidgets import QAbstractItemView, QFileDialog, QMainWindow
 
 from project import media as media_utils
+from project.playlist import Playlist
 from project.ui.main_window import Ui_MainWindow
 
 log = logging.getLogger(__name__)
@@ -40,7 +41,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Playlist
         self.player = QMediaPlayer()
-        self.playlist = QMediaPlaylist()
+        self.playlist = Playlist(self.playlist_view)
+        self.playlist.setPlaybackMode(Playlist.Loop)
 
         # Widget signals
         self.play_button.pressed.connect(self.player.play)
@@ -83,8 +85,5 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if not self.playlist_model.insertRecord(-1, record):  # -1 will append
                 log.error(f"Failed to insert record for {path}: {self.playlist_model.lastError()}")
                 # TODO: Does a rollback need to happen in case of failure?
-
-            media = QMediaContent(QUrl.fromLocalFile(path))
-            self.playlist.addMedia(media)
 
         self.playlist_model.submitAll()
