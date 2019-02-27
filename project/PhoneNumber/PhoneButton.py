@@ -121,7 +121,6 @@ class PhoneButton:
             self.parent_canvas.master.event_generate("<<Send_Phone_Number>>", when="tail")
         else:
             self.parent_canvas.rotate_all_circles(-rotating_speed)
-            print(self.rotating_speed)
             self.parent_canvas.after(33, self.__animate_rotating_buttons)
 
     def get_elapsed_time(self):
