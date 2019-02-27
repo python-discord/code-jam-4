@@ -15,4 +15,5 @@ CONSTANTS = {
     'NAME': 'Clipboard Mangler',
     'NUMOFOBJECTS': 0,
     'HISTORY_MAX_ITEMS': 10,
+    'APP_SETTINGS': 'project/app.json'
 }
