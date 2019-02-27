@@ -25,6 +25,7 @@ def is_word(text):
     assert text.isalpha()
     return text in words.words()
 
+
 def calculate_xp(word):
     return len(word)
 
@@ -46,7 +47,6 @@ LOOTBOX_RATES = [
     90,
     95,
 ]
-
 
 
 LOOTBOX_PULLS_PER_BOX = 5
@@ -90,7 +90,7 @@ class UserInterface(tk.Frame):
         self.keyboard_section = KeyboardSection(self,
                                                 saved_keys=saved_keys,
                                                 saved_scales=saved_scales)
-        self.command_section.grid(row=0,column=0)
+        self.command_section.grid(row=0, column=0)
         self.text_entry_section.grid(row=1, column=0)
         self.keyboard_section.grid(row=2, column=0, ipadx=5,
                                    ipady=5, sticky="nwse"
@@ -117,20 +117,16 @@ class UserInterface(tk.Frame):
         self.lootbox_window = None
 
     def add_xp(self, xp_increase):
-        print("Prev {}, next {}".format(self.previous_xp_milestone,self.next_xp_milestone))
-        print("Was {}, is now {}".format(self.xp,self.xp+xp_increase))
         self.xp += xp_increase
+        print("XP: {}".format(self.xp))
         while self.xp >= self.next_xp_milestone:
             self.previous_xp_milestone = self.next_xp_milestone
             self.next_xp_milestone = next(self.xp_milestones)
             self.unlock_lootbox()
 
-
-
     def set_darkmode(self):
         self.text_entry_section.set_darkmode(self.is_darkmode.get())
         self.keyboard_section.set_darkmode(self.is_darkmode.get())
-
 
     def receive_key(self, char):
         self.text_entry_section.receive_key(char)
@@ -140,8 +136,6 @@ class UserInterface(tk.Frame):
         self.text_entry_section.backspace()
 
     def unlock_lootbox(self):
-        print("Lootbox added!")
-
         unlocked_keys = []
         rarities = []
 
@@ -420,7 +414,7 @@ class LootBoxUnlockWindow(tk.Toplevel):
         tk.Toplevel.__init__(self)
         self.title("Lootbox unlocked!")
 
-        self.attributes("-topmost",True)
+        self.attributes("-topmost", True)
 
         self.new_keys = new_keys
         self.rarities = rarities
