@@ -219,30 +219,26 @@ class Tinder:
 
             # play a jumpscare sound
             mixer.music.load(
-                os.path.join(self.dir, os.path.join(
-                    "res", os.path.join("sounds", "jumpscare.mp3"))
-                            )
-                            )
+                os.path.join(
+                    self.dir, os.path.join(
+                        "res", os.path.join("sounds", "jumpscare.mp3"))))
             mixer.music.play()
 
             # make a button to allow the user to pass through the image
             # Note: since everyone likes scary monsters, only make a Like button
             tk.Button(
-                        self.frame, text="Like", background="green",
-                        command=self.new_image
-                    ).pack(side=tk.BOTTOM)
+                self.frame, text="Like", background="green",
+                command=self.new_image).pack(side=tk.BOTTOM)
 
         # image was not a jumpscare, don't do jumpscare things
         else:
             # setting up like and dislike buttons on opposite sides of the screen
             tk.Button(
-                        self.frame, text="Like", background="green",
-                        command=self.new_image
-                    ).pack(side=tk.RIGHT)
+                self.frame, text="Like", background="green",
+                command=self.new_image).pack(side=tk.RIGHT)
             tk.Button(
-                        self.frame, text="Dislike", background="red",
-                        command=self.new_image
-                    ).pack(side=tk.LEFT)
+                self.frame, text="Dislike", background="red",
+                command=self.new_image).pack(side=tk.LEFT)
 
             # defining button functions
             def back_to_photo():
@@ -280,26 +276,22 @@ class Tinder:
 
                 # setting up like/dislike/Back to Photo buttons on the bio screen
                 tk.Button(
-                            self.frame, text="Like", background="green",
-                            command=self.new_image
-                        ).pack(side=tk.RIGHT)
+                    self.frame, text="Like", background="green",
+                    command=self.new_image).pack(side=tk.RIGHT)
                 tk.Button(
-                            self.frame, text="Dislike", background="red",
-                            command=self.new_image
-                        ).pack(side=tk.LEFT)
+                    self.frame, text="Dislike", background="red",
+                    command=self.new_image).pack(side=tk.LEFT)
                 tk.Button(
-                            self.root, text="Back To Photo", background="blue",
-                            command=back_to_photo
-                        ).pack(side=tk.BOTTOM)
+                    self.root, text="Back To Photo", background="blue",
+                    command=back_to_photo).pack(side=tk.BOTTOM)
 
                 # packing the frame
                 self.frame.pack()
 
             # making and packing the Bio button for users to look at the cat's bio
             tk.Button(
-                        self.frame, text="Bio", background="blue",
-                        command=get_bio
-                    ).pack(side=tk.BOTTOM)
+                self.frame, text="Bio", background="blue",
+                command=get_bio).pack(side=tk.BOTTOM)
 
         # packing the frame
         self.frame.pack()
