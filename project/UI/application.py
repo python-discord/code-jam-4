@@ -139,8 +139,16 @@ class AddEventPage(tk.Frame):
         self.date = tk.Label(self, text="Date", font=(24))
         self.date.grid(row=3, sticky="E")
         self.dateSpinBoxs = tk.Frame(self)
-        self.timeEntryD = tk.Spinbox(self.dateSpinBoxs, width=4, to=31)
-        self.timeEntryM = tk.Spinbox(self.dateSpinBoxs, width=5, to=12)
+        self.timeEntryD = tk.Spinbox(self.dateSpinBoxs,
+            width=4,
+            from_=1,
+            to=31)
+
+        self.timeEntryM = tk.Spinbox(self.dateSpinBoxs,
+            width=5,
+            from_=1,
+            to=12)
+
         self.timeEntryY = tk.Spinbox(
             self.dateSpinBoxs,
             width=5,
@@ -155,6 +163,7 @@ class AddEventPage(tk.Frame):
         self.description.grid(row=4, sticky="E")
         self.descriptionEntry = tk.Entry(self)
         self.descriptionEntry.grid(row=4, column=1)
+
         # Submit Button
 
         self.submitBtn = tk.Button(
