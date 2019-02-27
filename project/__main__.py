@@ -10,7 +10,7 @@ from pathlib import Path
 from PIL import Image, ImageTk
 from functools import reduce
 
-nltk.download('words')
+nltk.download('words', quiet=True, raise_on_error=True)
 
 SCRIPT_DIR = Path(__file__).parent
 
@@ -71,14 +71,21 @@ class UserInterface(tk.Frame):
         saved_scales = save_data['scales']
         self.used_words = set(save_data['used_words'])
 
+        self.command_section = tk.Frame(self)
         self.text_entry_section = TextEntrySection(self)
         self.keyboard_section = KeyboardSection(self,
                                                 saved_keys=saved_keys,
                                                 saved_scales=saved_scales)
-        self.text_entry_section.grid(row=0, column=0)
-        self.keyboard_section.grid(row=1, column=0, ipadx=5,
+        self.command_section.grid(row=0,column=0)
+        self.text_entry_section.grid(row=1, column=0)
+        self.keyboard_section.grid(row=2, column=0, ipadx=5,
                                    ipady=5, sticky="nwse"
                                    )
+
+        self.is_darkmode = tk.IntVar()
+        tk.Checkbutton(self.command_section, text='Low-Contrast Darkmode',
+                       variable=self.is_darkmode,
+                       command=self.set_darkmode).pack()
 
         key_descriptions = self.keyboard_section.key_descriptions
         self.unlockable_keys = [
@@ -94,6 +101,11 @@ class UserInterface(tk.Frame):
         self.config(padx=40, pady=32)
 
         self.lootbox_window = None
+
+    def set_darkmode(self):
+        self.text_entry_section.set_darkmode(self.is_darkmode.get())
+        self.keyboard_section.set_darkmode(self.is_darkmode.get())
+
 
     def receive_key(self, char):
         self.text_entry_section.receive_key(char)
@@ -182,6 +194,9 @@ class TextEntrySection(tk.Frame):
         self.textbox.delete('end - 2 chars', 'end')
         self.textbox.configure(state="disabled")
 
+    def set_darkmode(self, is_darkmode: bool):
+        self.textbox['bg'] = 'black' if is_darkmode else 'white'
+
 
 class KeyboardSection(tk.Frame):
     '''
@@ -260,6 +275,10 @@ class KeyboardSection(tk.Frame):
                 button.decrease_scale()
             else:
                 button.increase_scale()
+
+    def set_darkmode(self, is_darkmode: bool):
+        for key in self.buttons:
+            key['bg'] = 'black' if is_darkmode else 'white'
 
 
 class KeyboardKey(tk.Button):
