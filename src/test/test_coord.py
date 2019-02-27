@@ -1,4 +1,4 @@
-from ..animation import Coord
+from ..animate import Coord
 
 coord1 = Coord(1, 1)
 coord2 = Coord(1, 1)
@@ -30,8 +30,8 @@ def test_pow():
 
 
 def test_truediv():
-    assert coord1 / coord2 == Coord(1, 1)
-    assert Coord(2, 2) / 3 == Coord(1, 1)
+    assert coord1 / Coord(2, 2) == Coord(0.5, 0.5)
+    assert coord1 / 2 == Coord(0.5, 0.5)
 
 
 def test_floordiv():
