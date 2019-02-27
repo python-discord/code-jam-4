@@ -29,7 +29,7 @@ class DBHandler:
                 ID INTEGER PRIMARY KEY,
                 username TEXT,
                 password TEXT)""")
-        with open("utils/jsonMessage.json") as jsonMessages:
+        with open("./project/backend/utils/jsonMessage.json") as jsonMessages:
             self.jsonMessages = json.load(jsonMessages)
         # self.populate()
 
