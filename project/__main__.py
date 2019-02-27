@@ -461,14 +461,17 @@ def exit_program():
     """
     Save the keyboard before the user closes the window.
     """
-    result = UI.keyboard_section.save_keys()
-    print("Exiting program, save result: {}".format(result))
+    save_successful = UI.keyboard_section.save_keys()
+    if not save_successful:
+        print("Exiting program, failed to save.")
     # End the application
     ROOT.destroy()
 
 
 if __name__ == '__main__':
     ROOT = tk.Tk()
+    ROOT.title('User Friendly Text Editor (change name)')
+    ROOT.iconbitmap(IMAGE_PATH / "window_icon.ico")
     UI = UserInterface(ROOT)
     UI.pack()
     ROOT.protocol("WM_DELETE_WINDOW", exit_program)
