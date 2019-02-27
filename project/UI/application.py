@@ -1,7 +1,7 @@
 """Green Greenhouses Calendar Application."""
 import tkinter as tk
 from tkinter import messagebox
-import re
+
 from ..backend.DBHandler import DBHandler
 
 from .eventViewer import EventViewer
@@ -13,6 +13,9 @@ class Application(tk.Tk):
     def __init__(self):
         """Initialise Application class."""
         super().__init__()
+
+        self.resizable(False, False)
+        self.geometry("500x500")
 
         self.dbh = DBHandler()
 
@@ -96,6 +99,20 @@ class AddEventPage(tk.Frame):
         self.parent = parent
 
         self.create_widgets()
+        self.months = {
+            "1": 31,
+            "2": 28,
+            "3": 31,
+            "4": 30,
+            "5": 31,
+            "6": 30,
+            "7": 31,
+            "8": 31,
+            "9": 30,
+            "10": 31,
+            "11": 30,
+            "12": 31
+        }
 
     def create_widgets(self):
         """
@@ -123,10 +140,10 @@ class AddEventPage(tk.Frame):
         self.date.grid(row=3, sticky="E")
         self.dateSpinBoxs = tk.Frame(self)
         self.timeEntryD = tk.Spinbox(self.dateSpinBoxs, width=4, to=31)
-        self.timeEntryM = tk.Spinbox(self.dateSpinBoxs, width=4, to=12)
+        self.timeEntryM = tk.Spinbox(self.dateSpinBoxs, width=5, to=12)
         self.timeEntryY = tk.Spinbox(
             self.dateSpinBoxs,
-            width=4,
+            width=5,
             from_=2019,
             to=3000)
         self.timeEntryD.grid(row=3, column=1)
@@ -145,6 +162,18 @@ class AddEventPage(tk.Frame):
             text="Submit ✔",
             command=lambda: self.inputCheck())
         self.submitBtn.grid()
+        # back button
+        self.back = tk.Button(
+            self,
+            text="Back",
+            command=lambda: self.parent.change_page(CalendarPage))
+        self.back.grid(row=5, column=1, sticky="w")
+
+    def IsDaysCorrect(self, list):
+        """"""
+        if self.months[str(int(list[1]))] >= int(list[0]):
+            return True
+        return False
 
     def inputCheck(self):
         """
@@ -156,27 +185,29 @@ class AddEventPage(tk.Frame):
         Returns:
             None
         """
-        pattern = re.compile(
-            r"^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$")
-        dateString = f"{self.timeEntryD.get()}.{self.timeEntryM.get().zfill(2)}.{self.timeEntryY.get()}"
-        date = pattern.match(dateString)
-        print(self.nameEntry.get())
-        print(self.locationEntry.get())
-        print(date)
-        print(self.descriptionEntry.get())
+
+        dateList = [
+            self.timeEntryD.get(),
+            self.timeEntryM.get(),
+            self.timeEntryY.get()]
+        print(self.IsDaysCorrect(dateList))
+
         if (self.nameEntry.get() and
                 self.locationEntry.get() and
-                date and self.descriptionEntry.get()):
+                self.IsDaysCorrect(dateList) and
+                self.descriptionEntry.get()):
             self.parent.dbh.addEvent(
                 self.nameEntry.get(),
                 self.locationEntry.get(),
-                dateString,
+                ".".join(dateList),
                 self.descriptionEntry.get())
         else:
             messagebox.showinfo(
                 "Missing arguments",
                 "It seems you didnt fill out all the info boxs \n" +
-                "please fill them all and try again.")
+                "Or you didnt fill the date correctly\n" +
+                "please fill them all correctly and try again.")
+        self.parent.change_page(CalendarPage)
 
 
 class CalendarPage(tk.Frame):
