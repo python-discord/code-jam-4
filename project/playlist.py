@@ -36,11 +36,6 @@ class Playlist(QMediaPlaylist):
         return True
 
     def media(self, index: int):
-        # TODO: This shortcut may backfire if this method is intended to update media when sort
-        # changes but the current index does not.
-        if index == self.currentIndex():
-            return self._current_media
-
         record = self._model.record(index)
         path = record.field("path").value()
         return QMediaContent(QUrl.fromLocalFile(path))
@@ -86,11 +81,9 @@ class Playlist(QMediaPlaylist):
 
     def next(self):
         self.setCurrentIndex(self.nextIndex())
-        log.debug(f"next: {self.currentIndex()}")
 
     def previous(self):
         self.setCurrentIndex(self.previousIndex())
-        log.debug(f"previous: {self.currentIndex()}")
 
     def setCurrentIndex(self, index: int):
         if index is None:
@@ -99,6 +92,7 @@ class Playlist(QMediaPlaylist):
         else:
             self._current_index = self._model.index(index, 0)
             self._current_media = self.media(self.currentIndex())
+            log.debug(f"{self.currentIndex():03d}: {self.currentMedia().canonicalUrl().fileName()}")
 
     def shuffle(self):
         raise NotImplementedError  # TODO: Implement
