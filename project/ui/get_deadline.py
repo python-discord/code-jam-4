@@ -16,7 +16,7 @@ class AddDeadline(QWidget, Ui_deadline_form):
 
     def __init__(self, task):
         super().__init__()
-        self.width, self.height = 600, 500
+        self.width, self.height = 1000, 400
 
         self.init_UI()
         self.comboboxes = [i for i in vars(self) if i.startswith("comboBox")]
@@ -35,7 +35,7 @@ class AddDeadline(QWidget, Ui_deadline_form):
         Adds a random ordering of numbers to each combobox in the window.
         """
         options = [
-            "0", "1", "10", "11", "100", "101", "110", "111", "1000", "1001", "1010"
+            "4-5+1", "0!", "23%3", "7//2", "58%6", "31.5/6.3", "50//8", "15-8", "2^3", "√81", "100//10"
         ]
         for txt in self.comboboxes:
             shuffle(options)
