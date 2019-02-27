@@ -1,13 +1,13 @@
-from PyQt5.QtWidgets import QWizard, QApplication, QMessageBox, QWizardPage
-from troubleshooterUI import Ui_MainWindow
+import pyqt5
+from pyqt5.QtWidgets import QWizard, QApplication, QMessageBox, QWizardPage
 import wizard
 import sys
 import music
 
 class Troubleshooter(QWizard, wizard.Ui_Wizard):
-    def __init__(self, pages):
+    def __init__(self):
         super(self.__class__, self).__init__()
-        self.setupUi(self, pages)
+        self.setupUi(self)
     
     def closeEvent(self, event):
         print("event")
@@ -20,17 +20,9 @@ class Troubleshooter(QWizard, wizard.Ui_Wizard):
         else:
             event.ignore()
 
-class WizardPages:
-
-	class page1(QWizardPage, wizard.Ui_WizardPage1):
-		def __init__(self):
-			super(self.__class__, self).__init__()
-			self.setupUi(self)
-
 def main():
     app = QApplication(sys.argv)
-    pages = [WizardPages.page1()]
-    form = Troubleshooter(pages)
+    form = Troubleshooter()
     app.setApplicationName("Crocpad++ Troubleshooter")
     form.show()
     music.play("good.mid")

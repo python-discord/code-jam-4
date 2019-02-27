@@ -13,10 +13,7 @@ class StopMusic(Exception):
 	
 def play_music(music_file):
     clock = pygame.time.Clock()
-    try:
-        pygame.mixer.music.load(music_file)
-    except Exception as e:
-    	print(e)
+    pygame.mixer.music.load(music_file)
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy():
         clock.tick(30)
