@@ -1,3 +1,4 @@
+import configparser
 import tkinter as tk
 from PIL import Image, ImageTk
 import io
@@ -18,13 +19,25 @@ class Tinder:
         # getting the directory folder for use later when opening files
         self.dir = os.path.dirname(os.path.realpath(__file__))
 
+        # get settings
+        cp = configparser.ConfigParser()
+        cp.read('settings.ini')
+
+        # for now, let's just look up the DEV settings
+        # can change this later
+        # configparser will use values from DEFAULT section if none provided elsewhere
+        if 'DEV' in cp.sections():
+            self.config = cp['DEV']
+        else:
+            self.config = cp['DEFAULT']
+
         # setting up the tkinter root
         self.root = tk.Tk()
-        self.root.title("Cat Tinder")
-        self.root.geometry("400x500")
+        self.root.title(self.config['main.title'])
+        self.root.geometry(self.config['main.geometry'])
         self.root.minsize(400, 500)
         self.root.maxsize(400, 500)
-        self.root.configure(background='black')
+        self.root.configure(background=self.config['main.background'])
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         # getting screen width and height for use with teleporting window/jumpscare
@@ -36,6 +49,8 @@ class Tinder:
         self.loop = asyncio.get_event_loop()
         self.session = None
         self.cats = list()
+
+        self.frame = tk.Frame()
 
     def start(self):
         '''Starts the Tinder application'''
@@ -53,15 +68,16 @@ class Tinder:
         if not self.session:
             self.session = aiohttp.ClientSession()
 
+        cachesize = int(self.config['cachesize'])
         # Run 10 times to get 10 cats
-        for i in range(10):
+        for i in range(cachesize):
             # initialize a dict of cat data
             cat_data = dict()
 
             # randomly make jumpscares happen, but not on the first image
-            if randint(1, 10) == 5 and i:
+            if randint(1, cachesize) == 5 and i:
                 # get a random number for an image
-                image_number = randint(1, 10)
+                image_number = randint(1, cachesize)
                 # open and resize the image using Pillow
                 im = Image.open(os.path.join(self.dir, os.path.join("res",
                                 os.path.join("images", f"{image_number}.jpg"))))
@@ -76,7 +92,7 @@ class Tinder:
                 cat_data.update({"jumpscare": False})
 
                 # get a url from The Cat API
-                async with self.session.get('https://api.thecatapi.com/v1/images/search') as res:
+                async with self.session.get(self.config['catapi']) as res:
                     data = await res.json()
                     url = data[0]['url']
                 # get image data from that url
@@ -91,8 +107,7 @@ class Tinder:
                     cat_data.update({"image": image})
 
                 # get a random name
-                async with self.session.get(
-                        "https://www.pawclub.com.au/assets/js/namesTemp.json") as res:
+                async with self.session.get(self.config['namefile']) as res:
                     data = await res.json()
                     # get a random letter for the name
                     # Note: website doesn't have any b names which is why it is left out here
@@ -104,11 +119,7 @@ class Tinder:
                     cat_data.update({"gender": cat["gender"]})
 
                 # get 5 random hobbies
-                async with self.session.get(
-                    "https://gist.githubusercontent.com/mbejda/" +
-                    "453fdb77ef8d4d3b3a67/raw/e8334f09109dc212892406e25fdee03efdc23f56/" +
-                    "hobbies.txt"
-                ) as res:
+                async with self.session.get(self.config['hobbiesfile']) as res:
                     text = await res.text()
                     # split the raw text of hobbies into a list
                     all_hobbies = text.split("\n")
@@ -276,13 +287,16 @@ class Tinder:
 
                 # setting up like/dislike/Back to Photo buttons on the bio screen
                 tk.Button(
-                    self.frame, text="Like", background="green",
+                    self.frame, text=self.config['like.text'],
+                    background=self.config['like.background'],
                     command=self.new_image).pack(side=tk.RIGHT)
                 tk.Button(
-                    self.frame, text="Dislike", background="red",
+                    self.frame, text=self.config['dislike.text'],
+                    background=self.config['dislike.background'],
                     command=self.new_image).pack(side=tk.LEFT)
                 tk.Button(
-                    self.root, text="Back To Photo", background="blue",
+                    self.root, text=self.config['back.text'],
+                    background=self.config['back.background'],
                     command=back_to_photo).pack(side=tk.BOTTOM)
 
                 # packing the frame
@@ -290,7 +304,7 @@ class Tinder:
 
             # making and packing the Bio button for users to look at the cat's bio
             tk.Button(
-                self.frame, text="Bio", background="blue",
+                self.frame, text=self.config['bio.text'], background=self.config['bio.background'],
                 command=get_bio).pack(side=tk.BOTTOM)
 
         # packing the frame
