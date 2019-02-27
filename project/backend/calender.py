@@ -1,6 +1,9 @@
 """Calendar application for OOP tkinter."""
 import tkinter as tk
 from DBHandler import DBHandler
+from pages.addeventpage import AddEventPage
+from pages.calendarpage import CalendarPage
+from pages.loginpage import LoginPage
 
 
 class Application(tk.Tk):
@@ -31,9 +34,15 @@ class Application(tk.Tk):
         """
         self.pages = {}
 
+        self.pages[AddEventPage] = AddEventPage(self)
+
+        self.pages[AddEventPage] = AddEventPage(self)
+
         self.pages[CalendarPage] = CalendarPage(self)
 
-        self.change_page(CalendarPage)
+        self.pages[LoginPage] = LoginPage(self)
+
+        self.change_page(LoginPage)
 
     def change_page(self, new_page):
         """
@@ -48,54 +57,6 @@ class Application(tk.Tk):
                 page.grid_forget()
         # Place our new page onto the screen
         self.pages[new_page].grid(row=0, column=0)
-
-
-class CalendarPage(tk.Frame):
-    """Example page for Application."""
-
-    eventLabels = {
-        0: "ID",
-        1: "Name",
-        2: "Location",
-        3: "Date",
-        4: "Description"
-    }
-
-    def __init__(self, parent):
-        """
-        Initialise the Example page.
-
-        Arguments:
-            None
-        Returns:
-            None
-        """
-        super().__init__()
-        self.parent = parent
-        self.create_widgets()
-
-    def create_widgets(self):
-        """
-        Create the pages widgets.
-
-        Arguments:
-            None
-        Returns:
-            None
-        """
-        # Fetch all events
-        events = self.parent.dbh.fetchEvents()
-        print(events)
-        # Event format:
-        # (ID, name, location, description)--
-        for event in events:
-            string = ""
-            for value in event:
-                string += self.eventLabels[event.index(value)] + " - "
-                string += str(value) + "\n"
-            eventPanel = tk.PanedWindow(self, bd=5, relief="sunken", width=600)
-            eventPanel.grid()
-            eventPanel.add(tk.Label(self, text=string))
 
 
 if __name__ == "__main__":

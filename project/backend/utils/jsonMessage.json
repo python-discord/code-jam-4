@@ -1,0 +1,5 @@
+{
+  "populateLogin":"You must populate the username and password fields!",
+  "noUser":"No user found with these credentials, would you like to add the user with this username and password?",
+  "userAdded":"User has been added to the database!"
+}
