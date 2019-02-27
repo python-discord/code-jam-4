@@ -17,9 +17,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
 
-        self.player = QMediaPlayer()
-        self.playlist = QMediaPlaylist()
-
+        # Model
         self.playlist_model = QSqlTableModel()
         self.playlist_model.setTable("playlist")
         self.playlist_model.setHeaderData(1, Qt.Horizontal, "Title", Qt.DisplayRole)
@@ -28,26 +26,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.playlist_model.setHeaderData(4, Qt.Horizontal, "Genre", Qt.DisplayRole)
         self.playlist_model.setHeaderData(5, Qt.Horizontal, "Date", Qt.DisplayRole)
 
+        # View
         self.playlist_view.setModel(self.playlist_model)
         self.playlist_view.setEditTriggers(QAbstractItemView.NoEditTriggers)  # Disable editing
         self.playlist_view.setSortingEnabled(True)
+        self.playlist_view.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.playlist_view.setSelectionMode(QAbstractItemView.SingleSelection)
         self.playlist_view.hideColumn(0)  # id
         self.playlist_view.hideColumn(6)  # crc32
         self.playlist_view.hideColumn(7)  # path
 
         self.playlist_model.select()  # Force-update the view
 
-        self.playlist_view.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.playlist_view.setSelectionMode(QAbstractItemView.SingleSelection)
+        # Playlist
+        self.player = QMediaPlayer()
+        self.playlist = QMediaPlaylist()
 
+        # Widget signals
         self.play_button.pressed.connect(self.player.play)
         self.previous_button.pressed.connect(self.playlist.previous)
         self.next_button.pressed.connect(self.playlist.next)
-
         self.add_files_action.triggered.connect(self.add_media)
 
     def create_record(self, metadata: Dict[str, Any]) -> QSqlRecord:
-        """Create and return a library record from media metadata.
+        """Create and return a library record from media `metadata`.
 
         Parameters
         ----------
