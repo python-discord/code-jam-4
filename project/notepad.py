@@ -1,8 +1,8 @@
 import sys
 
-from PyQt5.QtCore import Qt, QEvent, pyqtSignal
+from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtMultimedia import QSound
-from PyQt5.QtGui import QFontDatabase, QIcon, QFont, QKeyEvent
+from PyQt5.QtGui import QFontDatabase, QIcon, QFont
 from PyQt5.QtWidgets import (QApplication, QDesktopWidget, QMainWindow,
                              QMessageBox, QPlainTextEdit, QStatusBar,
                              QVBoxLayout, QWidget)
@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
-        self.setWindowIcon(QIcon('project\crocpad.ico'))
+        self.setWindowIcon(QIcon('project\\crocpad.ico'))
 
         # Add Menus
         mainMenu = self.menuBar()
@@ -62,7 +62,7 @@ class MainWindow(QMainWindow):
         self.show()
 
         if app_config['License']['eulaaccepted'] != 'yes':
-            with open('project\EULA.txt', 'r', encoding="utf8") as f:
+            with open('EULA.txt', 'r', encoding="utf8") as f:
                 eula = f.read()
             self.eula_dialog = EulaDialog(eula)
             self.eula_dialog.exec_()
