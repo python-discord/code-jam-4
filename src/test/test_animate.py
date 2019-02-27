@@ -1,4 +1,4 @@
-from ..animate import Coord
+from ..animate import Coord, vector, Motion, Direction
 
 coord1 = Coord(1, 1)
 coord2 = Coord(1, 1)
@@ -37,3 +37,10 @@ def test_truediv():
 def test_floordiv():
     assert coord1 // coord2 == Coord(1, 1)
     assert coord1 // 1 == Coord(1, 1)
+
+
+def test_direction():
+    assert Direction.UP.value == Direction.UP + Coord(0, 0)
+    assert Direction.LEFT.value == Direction.LEFT + Coord(0, 0)
+    assert Direction.RIGHT.value == Direction.RIGHT + Coord(0, 0)
+    assert Direction.DOWN.value == Direction.DOWN + Coord(0, 0)

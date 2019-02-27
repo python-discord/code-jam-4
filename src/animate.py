@@ -42,6 +42,8 @@ class Coord(NamedTuple):
     def __apply(self, op: Callable, other: Coord.Operand) -> Coord:
         if not isinstance(other, self.__class__):
             other = self.__class__(other, other)
+        if isinstance(other, Direction):
+            other = other.value
 
         x = op(self.x, other.x)
         y = op(self.y, other.y)
