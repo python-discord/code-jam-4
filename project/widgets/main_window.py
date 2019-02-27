@@ -13,11 +13,13 @@ from project.widgets.password_prompt import PasswordPrompt
 log = logging.getLogger(__name__)
 
 
-class MainWindow(QMainWindow, ui.MainWindow):
+class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
-        self.setupUi(self)
+        self.ui = ui.MainWindow()
+        self.ui.setupUi(self)
+
         self.password_prompt = PasswordPrompt()
 
         # Model
@@ -30,14 +32,14 @@ class MainWindow(QMainWindow, ui.MainWindow):
         self.playlist_model.setHeaderData(5, Qt.Horizontal, "Date", Qt.DisplayRole)
 
         # View
-        self.playlist_view.setModel(self.playlist_model)
-        self.playlist_view.setEditTriggers(QAbstractItemView.NoEditTriggers)  # Disable editing
-        self.playlist_view.setSortingEnabled(True)
-        self.playlist_view.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.playlist_view.setSelectionMode(QAbstractItemView.SingleSelection)
-        self.playlist_view.hideColumn(0)  # id
-        self.playlist_view.hideColumn(6)  # crc32
-        self.playlist_view.hideColumn(7)  # path
+        self.ui.playlist_view.setModel(self.playlist_model)
+        self.ui.playlist_view.setEditTriggers(QAbstractItemView.NoEditTriggers)  # Disable editing
+        self.ui.playlist_view.setSortingEnabled(True)
+        self.ui.playlist_view.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.ui.playlist_view.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.ui.playlist_view.hideColumn(0)  # id
+        self.ui.playlist_view.hideColumn(6)  # crc32
+        self.ui.playlist_view.hideColumn(7)  # path
 
         self.playlist_model.select()  # Force-update the view
 
@@ -53,10 +55,10 @@ class MainWindow(QMainWindow, ui.MainWindow):
         self.player.setPlaylist(self.playlist)
 
         # Widget signals
-        self.play_button.pressed.connect(self.player.play)
-        self.previous_button.pressed.connect(self.playlist.previous)
-        self.next_button.pressed.connect(self.playlist.next)
-        self.add_files_action.triggered.connect(self.add_media)
+        self.ui.play_button.pressed.connect(self.player.play)
+        self.ui.previous_button.pressed.connect(self.playlist.previous)
+        self.ui.next_button.pressed.connect(self.playlist.next)
+        self.ui.add_files_action.triggered.connect(self.add_media)
 
     def create_record(self, metadata: Dict[str, Any]) -> QSqlRecord:
         """Create and return a library record from media `metadata`.
