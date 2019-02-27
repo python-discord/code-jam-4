@@ -40,12 +40,12 @@ class Coord(NamedTuple):
     Operand = TypeVar('Operand', 'Coord', float)
 
     def __apply(self, op: Callable, other: Coord.Operand) -> Coord:
-        if not isinstance(other, Coord):
-            other = Coord(other, other)
+        if not isinstance(other, self.__class__):
+            other = self.__class__(other, other)
 
         x = op(self.x, other.x)
         y = op(self.y, other.y)
-        return Coord(x, y)
+        return self.__class__(x, y)
 
     def midpoint(self, other: Coord) -> Coord:
         """
@@ -103,7 +103,10 @@ class Direction(Enum):
         return self.value * other
 
     def __add__(self, other: Direction) -> Coord:
-        return self.value + other.value
+        if isinstance(other, self.__class__):
+            return self.value + other.value
+        else:
+            return self.value + other
 
 
 class Animater(tk.Canvas):
