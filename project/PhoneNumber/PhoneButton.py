@@ -1,5 +1,5 @@
 import math
-
+import time
 
 class PhoneButton:
     """
@@ -30,6 +30,7 @@ class PhoneButton:
     def __init__(self, parent_canvas, position_x: int, position_y: int,
                  rotation_point_x: int, rotation_point_y: int, radius: int, text: str):
         self.parent_canvas = parent_canvas
+        self.rotating_speed = 1.5
         self.position_x = position_x
         self.position_y = position_y
         self.rotation_point_x = rotation_point_x
@@ -39,7 +40,9 @@ class PhoneButton:
         self.is_dragging = False
         self.item = None
         self.initial_angle = self.find_current_angle()
+        self.current_angle = self.initial_angle
         self.__max_angle = None
+        self.animation_timer = None
         self.draw()
 
     def draw(self) -> None:
@@ -78,18 +81,13 @@ class PhoneButton:
         """
         # Calculate the new x,y position of the PhoneButton
         pos_radius = self.parent_canvas.phone_button_pos_radius
-        new_angle = self.find_current_angle() + angle
-        new_position_x = self.parent_canvas.canvas_size/2 - pos_radius * math.cos(new_angle)
-        new_position_y = self.parent_canvas.canvas_size/2 - pos_radius * math.sin(new_angle)
-        x_to_move = new_position_x - self.position_x
-        y_to_move = new_position_y - self.position_y
-
-        # Update the position attributes
-        self.position_x = new_position_x
-        self.position_y = new_position_y
+        self.current_angle = self.current_angle + angle
+        self.position_x = self.parent_canvas.canvas_size / 2 - pos_radius * math.cos(self.current_angle)
+        self.position_y = self.parent_canvas.canvas_size / 2 - pos_radius * math.sin(self.current_angle)
 
         # Move the button
-        self.parent_canvas.move(self.item, x_to_move, y_to_move)
+        self.parent_canvas.coords(self.item, self.position_x-self.radius, self.position_y-self.radius,
+                                  self.position_x+self.radius, self.position_y+self.radius)
 
     def on_click_down(self) -> None:
         """
@@ -111,45 +109,54 @@ class PhoneButton:
         self.__animate_rotating_buttons()
 
     def __animate_rotating_buttons(self) -> None:
-        rotating_speed = 0.08
-        total_angle_to_rotate = self.find_current_angle() - self.initial_angle
-        if self.find_current_angle() != self.initial_angle:
-            if total_angle_to_rotate <= rotating_speed:
-                self.parent_canvas.rotate_all_circles(-total_angle_to_rotate)
-                self.parent_canvas.master.event_generate("<<Send_Phone_Number>>", when="tail")
-            else:
-                self.parent_canvas.rotate_all_circles(-rotating_speed)
-                self.parent_canvas.after(50, self.__animate_rotating_buttons)
+        # Making the rotation speed dependant on the time between the frame to make it more fluid.
+        elapsed_time = self.get_elapsed_time()
+        self.animation_timer = time.time()
+        rotating_speed = self.rotating_speed * elapsed_time
+
+        total_angle_to_rotate = self.current_angle - self.initial_angle
+        if total_angle_to_rotate <= rotating_speed:
+            self.parent_canvas.rotate_all_circles(-total_angle_to_rotate)
+            self.animation_timer = None
+            self.parent_canvas.master.event_generate("<<Send_Phone_Number>>", when="tail")
+        else:
+            self.parent_canvas.rotate_all_circles(-rotating_speed)
+            print(self.rotating_speed)
+            self.parent_canvas.after(33, self.__animate_rotating_buttons)
+
+    def get_elapsed_time(self):
+        if self.animation_timer is None:
+            elapsed_time = 0.0177
+        else:
+            elapsed_time = time.time() - self.animation_timer
+        return elapsed_time
 
     def __drag(self) -> None:
         if self.is_dragging:
             angle_to_rotate = self.__find_angle_to_rotate_from_mouse_pos()
             self.parent_canvas.rotate_all_circles(angle_to_rotate)
-
             self.__update_highest_angle()
-            self.parent_canvas.after(30, self.__drag)
+            self.parent_canvas.after(50, self.__drag)
 
     def __find_angle_to_rotate_from_mouse_pos(self) -> float:
-        angle_of_stopper = 5.100
+        angle_of_stopper = 5.1
         mouse_pos_x, mouse_pos_y = self.parent_canvas.mouse_controller.get_absolute_position()
 
         current_mouse_pos_angle = self.parent_canvas.find_angle_from_center(mouse_pos_x, mouse_pos_y)
-        current_button_angle = self.find_current_angle()
-
         if current_mouse_pos_angle <= self.initial_angle:
-            angle_to_rotate = self.initial_angle - current_button_angle
+            angle_to_rotate = self.initial_angle - self.current_angle
         else:
-            angle_to_rotate = current_mouse_pos_angle - current_button_angle
-            if angle_to_rotate <= math.pi / 2:
-
+            angle_to_rotate = current_mouse_pos_angle - self.current_angle
+            if not -2 <= angle_to_rotate <= 2: # To avoid the user from taking shortcut while rotating the phone
+                return 0
                 # If the next position would be passed the stopper, we stop the rotation at the stopper angle
-                if self.find_current_angle() + angle_to_rotate >= angle_of_stopper:
-                    angle_to_rotate = angle_of_stopper - self.find_current_angle()
+            if self.current_angle + angle_to_rotate >= angle_of_stopper:
+                angle_to_rotate = angle_of_stopper - self.current_angle
         return angle_to_rotate
 
     def __update_highest_angle(self) -> None:
-        if self.find_current_angle() > self.__max_angle:
-            self.__max_angle = self.find_current_angle()
+        if self.current_angle > self.__max_angle:
+            self.__max_angle = self.current_angle
             self.parent_canvas.update_current_phone_number()
 
 

@@ -43,7 +43,7 @@ class PhoneCanvas(tk.Canvas):
         self.phone_button_pos_radius = int(0.7*self.canvas_size/2)  
         # List containing all the buttons
         self.circle_buttons = []
-        self.mouse_controller = MouseController(master)
+        self.mouse_controller = MouseController(self)
 
         # Stores the phone number that will be output in the current click.
         self.__current_phone_number = None
@@ -57,7 +57,6 @@ class PhoneCanvas(tk.Canvas):
 
         self.bind("<Button-1>", self.verify_click_position)
         self.bind("<ButtonRelease-1>", self.mouse_release)
-
 
     def create_circle(self, x, y, r, **kwargs) -> classmethod:
         """
@@ -85,10 +84,11 @@ class PhoneCanvas(tk.Canvas):
         return self.create_arc(x - r, y - r, x + r, y + r, **kwargs)
 
     def send_output_number(self):
-        # TODO -> Figure out exactly how the output will be managed.
+        if self.__current_phone_number is None:
+            return None
         return self.__current_phone_number.text
 
-    def rotate_all_circles(self, angle: float) -> None:
+    def rotate_all_circles(self, angle) -> None:
         """
         This method rotates all the PhoneButton by the given angle (rad)
         :param angle: angle that we want to rotate all the buttons (rad)
@@ -132,12 +132,12 @@ class PhoneCanvas(tk.Canvas):
         that should be dialed if the user release the current drag.
         :return: None
         """
-        min_angle = 5.000
+        min_angle = 5
         current_button = None
         nearest_angle = math.inf
         for button in self.circle_buttons:
-            if min_angle <= button.find_current_angle() < nearest_angle:
-                nearest_angle = button.find_current_angle()
+            if min_angle <= button.current_angle < nearest_angle:
+                nearest_angle = button.current_angle
                 current_button = button
         if current_button is not None and self.__current_phone_number is None:
             self.__current_phone_number = current_button
@@ -151,38 +151,7 @@ class PhoneCanvas(tk.Canvas):
         :param pos_y: Y position to calculate the angle to
         :return: angle in rad
         """
-        # First quadrant of the circle.
-        if pos_x <= self.canvas_size/2 and pos_y <= self.canvas_size/2:
-            try:
-                angle = math.atan((self.canvas_size/2 - pos_y) / (self.canvas_size/2 - pos_x))
-            except ZeroDivisionError:
-                angle = 90/180*math.pi
-            # print("#1 Current angle = " + str(angle))
-            return angle
-        # 2nd quadrant of the circle.
-        elif pos_y <= self.canvas_size/2 <= pos_x:
-            try:
-                angle = math.atan((pos_x - self.canvas_size/2)/(self.canvas_size/2 - pos_y))
-            except ZeroDivisionError:
-                angle = 90/180*math.pi
-            # print("#2 Current angle = " + str(angle + 90/180*math.pi))
-            return angle + 90/180*math.pi
-        # 3rd quadrant of the circle.
-        elif pos_x >= self.canvas_size/2 and pos_y >= self.canvas_size/2:
-            try:
-                angle = math.atan((pos_y - self.canvas_size/2) / (pos_x - self.canvas_size/2))
-            except ZeroDivisionError:
-                angle = 90/180*math.pi
-            # print("#3 Current angle = " + str(angle + 180 / 180 * math.pi))
-            return angle + 180/180*math.pi
-        # 4th quadrant of the circle.
-        else:
-            try:
-                angle = math.atan((self.canvas_size/2 - pos_x)/(pos_y - self.canvas_size/2))
-            except ZeroDivisionError:
-                angle = 90/180*math.pi
-            # print("#4 Current angle = " + str(angle + 270 / 180 * math.pi))
-            return angle + 270/180*math.pi
+        return math.atan2(pos_y - self.canvas_size/2 , pos_x - self.canvas_size/2) +math.pi
 
     def __draw_circles(self):
         self.create_circle(self.canvas_size/2, self.canvas_size/2, self.radius, fill='black',
