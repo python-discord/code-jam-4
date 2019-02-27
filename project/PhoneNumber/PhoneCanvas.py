@@ -32,20 +32,18 @@ class PhoneCanvas(tk.Canvas):
     find_angle_from_center: This method takes a position (x,y) and returns the angle of this position according to
                             the center of the phone.
     """
-    def __init__(self, master, output_entry: tk.Entry, width=600):
+    def __init__(self, master, width=300):
         super().__init__(master, width=width, height=width)
         self.master = master
-
+        self.configure(bg='#00536a', border=0, bd=0, highlightthickness=0, relief='ridge')
         self.canvas_size = width
-        self.radius = int(self.canvas_size/2 * 0.9)
+        self.radius = int(self.canvas_size/2 * 0.99)
         self.phone_button_radius = int(self.radius*0.10)
         # radius of the circle where all the buttons will be layed out. 
         self.phone_button_pos_radius = int(0.7*self.canvas_size/2)  
         # List containing all the buttons
         self.circle_buttons = []
         self.mouse_controller = MouseController(master)
-
-        self.__output_entry = output_entry
 
         # Stores the phone number that will be output in the current click.
         self.__current_phone_number = None
@@ -59,8 +57,7 @@ class PhoneCanvas(tk.Canvas):
 
         self.bind("<Button-1>", self.verify_click_position)
         self.bind("<ButtonRelease-1>", self.mouse_release)
-        
-        self.pack()
+
 
     def create_circle(self, x, y, r, **kwargs) -> classmethod:
         """
