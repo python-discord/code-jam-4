@@ -1,19 +1,22 @@
 from random import randint, choice
 import string
+import json
 
-quotes = [
-    'O-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo',
-    '╠═══╣Lets build a ladder╠═══╣',
-    '( ͠° ͟ʖ ͡°) OVERCONFIDENCE IS A SLOW AND INSIDIOUS KILLER ( ͠° ͟ʖ ͡°)',
-    '┴┬┴┤( ͡° ͜ʖ├┬┴┬ HEY KIDS DO YOU WANT SOME DANK MEMES?',
-    "(▀̿Ĺ̯▀̿ ̿) This is the 0-3 Police, You're coming with us. (▀̿Ĺ̯▀̿ ̿)",
-    'Born too late to explore the Earth, born too early to explore the universe, born perfectly to explore dank memes',
-    'Hi, my name is Bill Gates and today I’ll teach you how to count to ten: 1, 2, 3, 95, 98, NT, 2000, XP, Vista, 7, \
-    8, 10',
-]
+# quotes = [
+#     'O-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo',
+#     '╠═══╣Lets build a ladder╠═══╣',
+#     '( ͠° ͟ʖ ͡°) OVERCONFIDENCE IS A SLOW AND INSIDIOUS KILLER ( ͠° ͟ʖ ͡°)',
+#     '┴┬┴┤( ͡° ͜ʖ├┬┴┬ HEY KIDS DO YOU WANT SOME DANK MEMES?',
+#     "(▀̿Ĺ̯▀̿ ̿) This is the 0-3 Police, You're coming with us. (▀̿Ĺ̯▀̿ ̿)",
+#     'Born too late to explore the Earth, born too early to explore the universe, born perfectly to explore dank memes',
+#     'Hi, my name is Bill Gates and today I’ll teach you how to count to ten: 1, 2, 3, 95, 98, NT, 2000, XP, Vista, 7, \
+#     8, 10',
+# ]
+
+def __init__():
+
 
 class Vars:
-
     times_appled = 0
 
 
@@ -61,7 +64,7 @@ def random_spelling_mistakes(text):
         else:
             spot = randint(0, len(word) - 1)
             if spot == 0:
-                '''Give it two chances to not be 0, I think its better if its mostly the middle letters that get 
+                '''Give it two chances to not be 0, I think its better if its mostly the middle letters that get
                 removed'''
                 spot = randint(0, len(word) - 1)
                 if spot == 0:

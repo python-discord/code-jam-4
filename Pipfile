@@ -12,6 +12,7 @@ sphinx = "*"
 pyqt5 = "*"
 flake8 = "*"
 infi-systray = "*"
+json = "*"
 
 [requires]
 python_version = "3.7"
