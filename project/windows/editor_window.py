@@ -4,6 +4,7 @@ from typing import Tuple
 
 from project.windows.editor_window_events import NewWordEvent
 from project.functionality.constants import Constants
+from project.functionality.utility import pairwise
 
 # TODO: Fix docstring inconsistencies. Some have param docs, some don't etc.
 
@@ -178,7 +179,7 @@ class EditorWindow(tk.Toplevel):
 
         # Find position of first space before index.
         while start > 0:
-            current_character = self.text_box.get(
+            current_character: str = self.text_box.get(
                 f'{line}.{start - 1}'
             )
 
@@ -189,7 +190,7 @@ class EditorWindow(tk.Toplevel):
 
         # Find position of first space after index.
         while True:
-            current_character = self.text_box.get(
+            current_character: str = self.text_box.get(
                 f'{line}.{end}'
             )
 
@@ -212,17 +213,15 @@ class EditorWindow(tk.Toplevel):
         start += start_offset
 
         end_offset = 0
-        for index in range(-1, -len(word)-1, -1):
-            character = word[index]
+
+        for character, next_character in pairwise(reversed(word.lower())):
             if character == "'":
-                try:
-                    next_character = word[index-1]
-                    if next_character.lower() != 's':
+                if next_character:
+                    if next_character != 's':
                         end_offset -= 1
-                except IndexError:
+                else:
                     end_offset -= 1
                     break
-
             else:
                 break
 
@@ -255,9 +254,8 @@ class EditorWindow(tk.Toplevel):
 
         If the mouse isn't over a word it will return an empty string.
 
-        :return: Current word in the editor window's text box closest to the
-                 mouse pointer, or an empty string if the mouse isn't over a
-                 word.
+        :return: A tuple containing the starting index, ending index and
+                 content of the word in the text box closest the mouse cursor.
         """
 
         return self.get_word_at_text_box_index(

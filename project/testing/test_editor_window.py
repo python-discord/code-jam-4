@@ -32,6 +32,7 @@ class TestEditorWindow(EditorWindow):
 
         self.new_word.add_callback(underline_new_word)
 
+        self.bind('<Button-1>', self.on_left_click)
         # self.test_button = tk.Button(
         #     master=self,
         #     text='test',
@@ -48,6 +49,22 @@ class TestEditorWindow(EditorWindow):
     #     # print(f'"{self.get_word_under_mouse()}"')
     #     # context_menu = EditorContextMenu(self)
     #     # context_menu.show()
+
+    def on_left_click(self, event: tk.Event):
+        start, end, word = self.get_word_under_mouse()
+        if word:
+            if self.previous_word:
+                self.text_box.tag_remove(
+                    'Underlined',
+                    self.previous_word.start, self.previous_word.end
+                )
+
+            self.text_box.tag_add(
+                'Underlined', start, end
+            )
+
+            self.previous_word = NewWordEventData(start, end, word)
+
 
 
 if __name__ == '__main__':
