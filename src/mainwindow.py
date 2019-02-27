@@ -9,6 +9,8 @@ from pygame import mixer
 
 
 class Tinder:
+    '''The main class for the application.'''
+    
     def __init__(self):
         # setup for pygame mixer
         mixer.init()
