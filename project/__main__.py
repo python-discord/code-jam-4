@@ -2,12 +2,9 @@ from tkinter import *
 from tkinter.ttk import *
 from project.contact import Contact
 import pickle
-import sys
 
 """
 TODO:
-Fix scrolling with mousewheel in ContactsPage
-Make preview_field in AddContactsPage update when an contact attribute is added
 Settings Page:
 - Change color schemes; all options are terrible color palettes
 - Change fonts; all options are terrible fonts
@@ -90,6 +87,7 @@ class ContactsPage(Frame):
     load_contacts: Loads contacts in from a file
     save_contacts: Saves contacts as a file
     yview: Adjusts the view of contacts_field & letters_field at the same time
+    on_mouse_wheel: Adjusts the view of contacts_field and letters_field at the same time, for the mouse wheel
     """
     def __init__(self, master, controller, **kw):
         super().__init__(master, **kw)
@@ -147,6 +145,8 @@ class ContactsPage(Frame):
         self.letters_field.grid(row=1, column=4, sticky=N+S+E+W)
         self.scroll_bar.grid(row=1, column=5, sticky=N+S+E+W)
         self.scroll_bar.config(command=self.yview)
+        self.contacts_field.bind("<MouseWheel>", self.on_mouse_wheel)
+        self.letters_field.bind("<MouseWheel>", self.on_mouse_wheel)
 
         self.save = Button(
             self,
@@ -167,6 +167,11 @@ class ContactsPage(Frame):
 
         for i in range(4):
             self.grid_columnconfigure(i, weight=1)
+
+    def on_mouse_wheel(self, event) -> str:
+        self.contacts_field.yview("scroll", int(-event.delta/80), "units")
+        self.letters_field.yview("scroll", int(-event.delta/80), "units")
+        return "break"
 
     def yview(self, *args) -> None:
         self.contacts_field.yview(*args)
@@ -286,7 +291,12 @@ class AddContactPage(Frame):
                 If the contact is new, the name of the contact is added to
                 the contacts Listbox on ContactsPage
     clear_all: Loops over all text entries and clears them
-    add_phone_num: TEMPORARY METHOD; Used for debugging
+    add_name: Changes the new contact's name and updates the preview
+    add_phone_num: Adds the phone number to the new contact and updates the preview
+    add_email: Adds the email to the new contact and updates the preview
+    add_address: Adds the address to the new contact and updates the preview
+    add_notes: Adds the note to the new contact and updates the preview
+    refresh_field: Clears the field then populates it with all the current information of the new contact
     """
     def __init__(self, master, controller, **kw):
         super().__init__(master, **kw)
@@ -355,7 +365,7 @@ class AddContactPage(Frame):
         self.enter_notes_button = Button(
             self,
             text="Add",
-            command=lambda: self.contact_new.add_note(self.enter_notes.get()),
+            command=lambda: self.add_notes(self.enter_notes.get()),
             width=5
         )
         self.enter_notes_button.grid(row=6, column=4, columnspan=2, sticky=N+S+E+W)
@@ -367,7 +377,7 @@ class AddContactPage(Frame):
         self.enter_address_button = Button(
             self,
             text="Add",
-            command=lambda: self.contact_new.add_address("Physical", self.enter_address.get()),
+            command=lambda: self.add_address(self.enter_address.get()),
             width=5
         )
         self.enter_address_label.grid(row=5, column=0, sticky=N+S+E+W)
@@ -379,7 +389,7 @@ class AddContactPage(Frame):
         self.enter_email_button = Button(
             self,
             text="Add",
-            command=lambda: self.contact_new.add_address("Email", self.enter_email.get()),
+            command=lambda: self.add_email(self.enter_email.get()),
             width=5
         )
         self.enter_email_label.grid(row=4, column=0, sticky=N+S+E+W)
@@ -411,15 +421,12 @@ class AddContactPage(Frame):
         self.enter_name_button = Button(
             self,
             text="Add",
-            command=lambda: self.contact_new.change_name(self.enter_name.get()),
+            command=lambda: self.add_name(self.enter_name.get()),
             width=5
         )
         self.enter_name_button.grid(row=1, column=4, columnspan=2, sticky=N+S+E+W)
         self.enter_name_label.grid(row=1, column=0, sticky=N+S+E+W)
         self.enter_name.grid(row=1, column=1, columnspan=3, sticky=N+S+E+W)
-
-        self.text_entries = [self.enter_name, self.enter_phone_num, self.enter_email, self.enter_address,
-                             self.enter_notes]
 
         for i in range(8):
             self.grid_rowconfigure(i, weight=1)
@@ -427,9 +434,59 @@ class AddContactPage(Frame):
         for i in range(5):
             self.grid_columnconfigure(i, weight=1)
 
+    def add_name(self, name):
+        self.contact_new.change_name(name)
+        self.refresh_field()
+
     def add_phone_num(self, num_type, num) -> None:
         if num_type != '':
             self.contact_new.add_phone_number(num_type, num)
+        self.refresh_field()
+
+    def add_email(self, email):
+        self.contact_new.add_address("Email", email)
+        self.refresh_field()
+
+    def add_address(self, address):
+        self.contact_new.add_address("Physical", address)
+        self.refresh_field()
+
+    def add_notes(self, note):
+        self.contact_new.add_note(note)
+        self.refresh_field()
+
+    def refresh_field(self) -> None:
+        self.preview.delete(0, END)
+        name = self.contact_new.name
+        home_phone_nums = self.contact_new.phone_numbers["Home"]
+        work_phone_nums = self.contact_new.phone_numbers["Work"]
+        personal_phone_nums = self.contact_new.phone_numbers["Personal"]
+        emails = self.contact_new.email_addresses
+        addresses = self.contact_new.addresses
+        notes = self.contact_new.notes
+        self.preview.delete(0, END)
+        self.preview.insert(END, name)
+        self.preview.insert(END, "")
+        if len(home_phone_nums) or len(work_phone_nums) or len(personal_phone_nums) > 0:
+            self.preview.insert(END, "Phone:")
+            for elem in home_phone_nums:
+                self.preview.insert(END, "   Home: " + elem)
+            for elem in work_phone_nums:
+                self.preview.insert(END, "   Work: " + elem)
+            for elem in personal_phone_nums:
+                self.preview.insert(END, "   Personal: " + elem)
+        if len(emails) > 0:
+            self.preview.insert(END, "Emails:")
+            for elem in emails:
+                self.preview.insert(END, "   " + elem)
+        if len(addresses) > 0:
+            self.preview.insert(END, "Addresses:")
+            for elem in addresses:
+                self.preview.insert(END, "   " + elem)
+        if len(notes) > 0:
+            self.preview.insert(END, "Notes:")
+            for elem in notes:
+                self.preview.insert(END, "   " + elem)
 
     def add_contact(self) -> None:
         name = self.contact_new.name
@@ -450,7 +507,8 @@ class AddContactPage(Frame):
         self.contact_new = Contact('')
 
     def clear_all(self) -> None:
-        for entry in self.text_entries:
+        for entry in [self.enter_name, self.enter_phone_num, self.enter_email, self.enter_address, self.enter_notes,
+                      self.preview]:
             entry.delete(0, END)
 
 
