@@ -8,7 +8,7 @@ from project import ClipboardManager
 from project.ClipboardManager.ClipboardObject import TextClipboardObject
 from project.Stack import Stack
 from project.Widgets import MainListWidget, TextListWidgetItem
-# from project.SystrayManager import Systray  # noqa: F401
+from project.Plugins.Systray import SystemTrayIcon
 from .utils import CONSTANTS
 
 from PyQt5 import QtCore, QtWidgets
@@ -50,8 +50,11 @@ class ActionBar(QWidget):
 
 
 class MainWindow(QMainWindow):
-    remove_btn_signal = pyqtSignal()
     add_btn_signal = pyqtSignal()
+    remove_btn_signal = pyqtSignal()
+
+    move_up_btn_signal = pyqtSignal()
+    move_down_btn_signal = pyqtSignal()
 
     item_selected = pyqtSignal(int)
 
@@ -78,7 +81,11 @@ class MainWindow(QMainWindow):
 
         # self._clipboard_manager.bind_clipboard_state_callback(self._render_clipboard_stack)
         self._clipboard_manager.clipboard_changed_signal.connect(self._render_clipboard_stack)
+        self._clipboard_manager.stack_changed_signal.connect(self._render_clipboard_stack)
+
         self.remove_btn_signal.connect(self._clipboard_manager.remove_clipboard_item)
+        self.move_up_btn_signal.connect(self._clipboard_manager.move_selected_item_up)
+        self.move_down_btn_signal.connect(self._clipboard_manager.move_selected_item_down)
 
         self.item_selected.connect(self._clipboard_manager.set_selected_object)
         # self._main_list_widget.itemClicked.connect(self._set_selected_object)
@@ -130,6 +137,8 @@ class MainWindow(QMainWindow):
 
         self._action_bar = ActionBar()
         self._action_bar._remove_btn.clicked.connect(self.remove_btn_signal)
+        self._action_bar._move_up_btn.clicked.connect(self.move_up_btn_signal)
+        self._action_bar._move_down_btn.clicked.connect(self.move_down_btn_signal)
 
         self._central_widget_layout.addWidget(self._action_bar)
 
@@ -253,8 +262,8 @@ if __name__ == '__main__':
     main_window = MainWindow(clipboard_mgr)
 
     # Creates and starts systray icon
-    # systray = Systray.systray(app.quit)
-    # systray.start()
-    # app.aboutToQuit.connect(systray.close)
+    w = QtWidgets.QDesktopWidget()
+    systray = SystemTrayIcon(w)
+    systray.show()
 
     sys.exit(app.exec_())

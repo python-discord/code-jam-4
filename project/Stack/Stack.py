@@ -14,8 +14,8 @@ class Stack:
     # methods for this (e.g. "__len__", "__iter__",...)
 
     class SHIFT_DIRECTION(enum.Enum):
-        UP: 1
-        DOWN: 2
+        UP = 1
+        DOWN = 2
 
     def __init__(self, existing_stack=[], cur_stack_pointer=None):
         # Stack is backwards???
@@ -24,7 +24,7 @@ class Stack:
         if cur_stack_pointer:
             self._stack_pointer = cur_stack_pointer
         else:
-            # By default the stack pointer is at the top of the stack
+            # By default the stack pointer is at the top of the stack (-1 ??)
             self._stack_pointer = len(self._stack) - 1
 
     # this should be __iter__
@@ -45,16 +45,24 @@ class Stack:
     def current_item(self):
         return self._stack_pointer
 
-    def shift_current_item(self, idx, shift_direction: SHIFT_DIRECTION):
-        # again what does idx relate to
+    def shift_current_item(self, shift_direction: SHIFT_DIRECTION):
+        """Shifts the current item pointed to by the stack pointer up or down"""
+
+        if self._stack_pointer <= 0 and shift_direction == Stack.SHIFT_DIRECTION.DOWN or \
+                self._stack_pointer == self.items_count() - 1 \
+                and shift_direction == Stack.SHIFT_DIRECTION.UP:
+            return
+
         _temp = self._stack[self._stack_pointer]
         if shift_direction == Stack.SHIFT_DIRECTION.UP:
-            self._stack[idx] = self._stack[idx + 1]
-            self._stack[idx + 1] = _temp
+            self._stack[self._stack_pointer] = self._stack[self._stack_pointer + 1]
+            self._stack[self._stack_pointer + 1] = _temp
+            self._stack_pointer += 1
 
         elif shift_direction == Stack.SHIFT_DIRECTION.DOWN:
-            self._stack[idx] = self._stack[idx - 1]
-            self._stack[idx - 1] = _temp
+            self._stack[self._stack_pointer] = self._stack[self._stack_pointer - 1]
+            self._stack[self._stack_pointer - 1] = _temp
+            self._stack_pointer -= 1
 
     def swap_items(self, idx, target_idx):
         _temp = self._stack[idx]

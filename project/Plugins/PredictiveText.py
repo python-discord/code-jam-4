@@ -1,5 +1,6 @@
 from random import randint, choice
 import string
+<<<<<<< HEAD
 import json
 
 # quotes = [
@@ -14,6 +15,12 @@ import json
 # ]
 
 def __init__():
+=======
+from project.Plugins.Save import getQuotes
+
+# Quotes are now loadeded from 'app.json' instead of being hard coded
+quotes = getQuotes()
+>>>>>>> 7a2fcf7ba3a3da3f6595eac864af40ad08c710f8
 
 
 class Vars:
@@ -64,8 +71,13 @@ def random_spelling_mistakes(text):
         else:
             spot = randint(0, len(word) - 1)
             if spot == 0:
+<<<<<<< HEAD
                 '''Give it two chances to not be 0, I think its better if its mostly the middle letters that get
                 removed'''
+=======
+                '''Give it two chances to not be 0, I think its better
+                if its mostly the middle letters that get removed'''
+>>>>>>> 7a2fcf7ba3a3da3f6595eac864af40ad08c710f8
                 spot = randint(0, len(word) - 1)
                 if spot == 0:
                     pass
