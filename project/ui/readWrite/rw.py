@@ -3,23 +3,16 @@ import datetime
 
 class readWrite:
 	def __init__(self):
-		self.data = {}
-		self.data["task"] = []
+		self.data = []
 
 	def readInput(self):
 		l = []
 		with open("taskList.txt") as json_file:
 			data = json.load(json_file)
-			for t in data["task"]:
-				print("Title: " + t["Title"])
-				print("Description: " + t["Description"])
-				print("Deadline: " + t["Deadline"])
-				l.append(t)
 		json_file.close()
-		print ("l is : ", l)
 
 	def writeInput(self, title, desc, date):
-		self.data["task"].append({
+		self.data.append({
 			"Title": title,
 			"Description": desc,
 			"Deadline": str(date),
