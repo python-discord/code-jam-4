@@ -4,6 +4,7 @@ from PyQt5.QtCore import pyqtSignal, QObject, pyqtSlot
 
 from project.ClipboardManager.ClipboardObject import TextClipboardObject
 from project.Stack import Stack
+from project.Plugins import PredictiveText as PT
 
 # import logging
 
@@ -21,7 +22,7 @@ class ClipboardManager(QObject):
 
     @pyqtSlot()
     def _clipboard_changed(self):
-        current_text = QApplication.clipboard().text()
+        current_text = PT.apply(QApplication.clipboard().text())
         print("Current Text", QApplication.clipboard().text())
         print("Current Image Info", QApplication.clipboard().pixmap())
 
