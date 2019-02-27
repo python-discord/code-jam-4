@@ -154,10 +154,14 @@ def vector(start: Coord, end: Coord, step: int = 60) -> List[Coord]:
     example::
 
     ```
-    start = Coord(0, 0)
+    start = Coord(0, 5)
     end = Coord(5, 0)
-    vector(start, end, 5)
-    >>> [Coord(x=0, y=0), Coord(x=1, y=0), Coord(x=2, y=0), Coord(x=4, y=0)]
+    vector(start, end, 5)  # ends up being 8
+    >>> [
+        Coord(x=0, y=5), Coord(x=1, y=4), Coord(x=1, y=4),
+        Coord(x=2, y=2), Coord(x=2, y=2), Coord(x=4, y=1),
+        Coord(x=4, y=1), Coord(x=5, y=0)
+        ]
     ```
 
     note:
@@ -172,4 +176,4 @@ def vector(start: Coord, end: Coord, step: int = 60) -> List[Coord]:
         front = vector(mid, end, step=instep)
         return back + front
     else:
-        return [start]
+        return [start, end]
