@@ -8,7 +8,7 @@ from project import ClipboardManager
 from project.ClipboardManager.ClipboardObject import TextClipboardObject
 from project.Stack import Stack
 from project.Widgets import MainListWidget, TextListWidgetItem
-# from project.SystrayManager import Systray  # noqa: F401
+from project.Plugins.Systray import SystemTrayIcon
 from .utils import CONSTANTS
 
 from PyQt5 import QtCore, QtWidgets
@@ -252,9 +252,9 @@ if __name__ == '__main__':
     clipboard_mgr = ClipboardManager.ClipboardManager()
     main_window = MainWindow(clipboard_mgr)
 
-    # Creates and starts systray icon
-    # systray = Systray.systray(app.quit)
-    # systray.start()
-    # app.aboutToQuit.connect(systray.close)
+    #Creates and starts systray icon
+    w = QtWidgets.QDesktopWidget()
+    systray = SystemTrayIcon(w)
+    systray.show()
 
     sys.exit(app.exec_())
