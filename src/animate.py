@@ -83,7 +83,16 @@ class Coord(NamedTuple):
 
 class Direction(Enum):
     """
-    Defines base directions.
+    Defines base directions. Can be used to create Coords relative
+    to a direction.
+
+    example::
+
+    ```
+    start = Coord(1, 1)
+    end = start + (Direction.LEFT * 20)
+    end
+    >>> Coord(x=-19, y=1)
     """
     LEFT = Coord(-1, 0)
     RIGHT = Coord(1, 0)
@@ -98,7 +107,19 @@ class Direction(Enum):
 
 
 class Animater(tk.Canvas):
+    """
+    Inherits Canvas. Manager for executing animation move commands.
+    Currently only event base animations are supported.
 
+    example::
+
+    ```
+    motion = Motion(...)
+    window = Animator(...)
+    window.add_motion(motion)
+    window.add_event('<Enter>')
+    ```
+    """
     motions = []
 
     def add_event(self, event: tk.EventType):
@@ -195,11 +216,11 @@ class Motion:
 
 def vector(start: Coord, end: Coord, step: int = 60) -> List[Coord]:
     """
-    Creates a list of all the Coords on a straight line from `start` to `end`.
+    Creates a list of all the Coords on a straight line from `start` to `end` (inclusive).
 
     param:
         start: Coord -- The starting point.
-        end: Coord -- The ending point.
+        end: Coord -- The end point.
         step: int (optional) -- The desired number of points to include. Defaults to 60.
             Actual resulting length may vary.
 
