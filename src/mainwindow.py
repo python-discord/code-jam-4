@@ -16,9 +16,14 @@ class Tinder:
         self.root = tk.Tk()
         self.root.title("Cat Tinder")
         self.root.geometry("400x500")
-        self.root.configure(background='grey')
+        self.root.minsize(400, 500)
+        self.root.maxsize(400, 500)
+        self.root.configure(background='black')
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         #self.root.bind('<Motion>', self.motion)
+        self.screen_x = self.root.winfo_screenwidth()
+        self.screen_y = self.root.winfo_screenheight()
+        self.jumpscare = False
         self.loop = asyncio.get_event_loop()
         self.session = None
         self.images = list()
@@ -34,12 +39,12 @@ class Tinder:
         t = time.time()
         if not self.session:
             self.session = aiohttp.ClientSession()
-        for _ in range(10):
+        for i in range(10):
             cat_data = dict()
-            if randint(0,9) == 9:
+            if randint(1,10) == 5 and i:
                 image_number = randint(1,10)
                 im = Image.open(os.path.join(self.dir, os.path.join("res", os.path.join("images", f"{image_number}.jpg"))))
-                im = im.resize((400, 400), Image.NEAREST)
+                im = im.resize((self.screen_x, self.screen_y - 150), Image.NEAREST)
                 image = ImageTk.PhotoImage(im)
                 cat_data.update({"image" : image})
                 cat_data.update({"jumpscare": True})
@@ -51,7 +56,7 @@ class Tinder:
                 async with self.session.get(url) as res:
                     image_bytes = await res.read()
                     im = Image.open(io.BytesIO(image_bytes))
-                    im = im.resize((400, 450), Image.NEAREST)
+                    im = im.resize((400, 440), Image.NEAREST)
                     image = ImageTk.PhotoImage(im)
                     cat_data.update({"image":image})
             async with self.session.get("https://www.pawclub.com.au/assets/js/namesTemp.json") as res:
@@ -85,6 +90,9 @@ class Tinder:
 
 
     def new_image(self, cat= None):
+        if self.jumpscare:
+            self.root.maxsize(400, 500)
+            self.jumpscare = False
         widget_list = self.all_children()
         for item in widget_list:
             item.pack_forget()
@@ -111,6 +119,9 @@ class Tinder:
             name.pack(side = tk.TOP)
         tk.Label(self.frame, image=image).pack(side = tk.TOP)
         if jumpscare:
+            self.jumpscare = True
+            self.root.maxsize(self.screen_x, self.screen_y)
+            self.root.geometry(f"{self.screen_x}x{self.screen_y}+0+0")
             mixer.music.load(os.path.join(self.dir, os.path.join("res", os.path.join("sounds", "jumpscare.mp3"))))
             mixer.music.play()
             tk.Button(self.frame, text="Like", background="green", command = self.new_image).pack(side = tk.BOTTOM)
@@ -123,7 +134,7 @@ class Tinder:
                 widget_list = self.all_children()
                 for item in widget_list:
                     item.pack_forget()
-                self.frame = tk.Frame(self.root, bg = "black")
+                self.frame = tk.Frame(self.root, bg = "black", height = 450, width= 400)
                 bio = tk.Text(self.frame)
                 bio.insert(tk.END, f"Name: {cat_name} \n")
                 bio.insert(tk.END, f"Age: {age} \n")
@@ -132,7 +143,9 @@ class Tinder:
                 bio.insert(tk.END, f"{hobbies} \n")                
                 bio.configure(state="disabled")
                 bio.pack(side = tk.TOP)
-                tk.Button(self.frame, text="Back To Photo", background="blue", command = back_to_photo).pack(side = tk.BOTTOM)
+                tk.Button(self.frame, text="Like", background="green", command = self.new_image).pack(side = tk.RIGHT)
+                tk.Button(self.frame, text="Dislike", background="red", command = self.new_image).pack(side = tk.LEFT)
+                tk.Button(self.root, text="Back To Photo", background="blue", command = back_to_photo).pack(side = tk.BOTTOM)
                 self.frame.pack()
             tk.Button(self.frame, text="Bio", background="blue", command = get_bio).pack(side = tk.BOTTOM)
         self.frame.pack()
@@ -140,9 +153,10 @@ class Tinder:
 
 
     def on_closing(self):
-        x = randint(0, 1520)
-        y = randint(0, 580)
-        self.root.geometry(f"+{x}+{y}")
+        if not self.jumpscare:
+            max_x, max_y = self.screen_x - 400, self.screen_y - 500
+            x, y = randint(0, max_x), randint(0, max_y)
+            self.root.geometry(f"+{x}+{y}")
 
 
     def motion(self,event):
