@@ -28,7 +28,7 @@ class AddTask(QWidget, Ui_task_form):
 
     def __init__(self):
         super().__init__()
-        self.width, self.height = 600, 500
+        self.width, self.height = 650, 500
 
         self.init_UI()
         self.bind_buttons()
@@ -75,6 +75,7 @@ class AddTask(QWidget, Ui_task_form):
             return (box_1.x1 < box_2.x2 and box_2.x1 < box_1.x2) and (
                 box_1.y1 < box_2.y2 and box_2.y1 < box_1.y2)
 
+        min_y = 70
         max_x, max_y = self.width - 250, self.height - 25
 
         Box = namedtuple("Box", ["x1", "x2", "y1", "y2"])
@@ -82,8 +83,7 @@ class AddTask(QWidget, Ui_task_form):
 
         for txt in self.buttons:
             while True:
-                rand_x, rand_y = randint(0, max_x), randint(
-                    0, max_y)  # random position
+                rand_x, rand_y = randint(0, max_x), randint(min_y, max_y)
                 cur_box = Box(rand_x, rand_x + 250, rand_y, rand_y + 25)
 
                 if any(overlap(cur_box, box) for box in boxes):
