@@ -7,26 +7,23 @@ import sys
 from project import ClipboardManager
 from project.ClipboardManager.ClipboardObject import TextClipboardObject
 from project.Stack import Stack
-from project.Widgets.MainListWidget import MainListWidget, TextListWidgetItem
+from project.Widgets import MainListWidget, TextListWidgetItem
+# from project.SystrayManager import Systray  # noqa: F401
 from .utils import CONSTANTS
 
 from PyQt5 import QtCore, QtWidgets
 
 
-# print("hello %s" % sys.argv[1])
-# print(add(2, 2))
-
 class ActionBar(QWidget):
+    """ A bar which contains the controls for adding to this list of clipboard items"""
+
     def __init__(self):
         super().__init__()
         _horizontal_layout = QHBoxLayout(self)
 
         self._add_btn = QtWidgets.QPushButton("Add")
-        # self._add_btn.setGeometry(QtCore.QRect(0, 3, 51, 20))
-        # self._add_btn.clicked.connect(self._add_object)
+        # can we not do this in the constructor?
         self._add_btn.setObjectName(MainWindow.ADD_BUTTON_NAME)
-
-        # self._add_btn.setStyleSheet("QPushButton {background-color: yellow, margin: 0}")
 
         self._remove_btn = QtWidgets.QPushButton("Remove")
         # self._remove_btn.setGeometry(QtCore.QRect(50, 3, 51, 20))
@@ -58,6 +55,8 @@ class MainWindow(QMainWindow):
 
     item_selected = pyqtSignal(int)
 
+    """ MainWindow """
+    # strange constants:
     CENTRAL_WIDGET_NAME = 'central_widget'
     ADD_BUTTON_NAME = 'add_btn'
     REMOVE_BUTTON_NAME = 'remove_btn'
@@ -65,10 +64,12 @@ class MainWindow(QMainWindow):
     MOVE_UP_BUTTON_NAME = 'move_up_btn'
     MOVE_DOWN_BUTTON_NAME = 'move_down_btn'
 
+    # please label what these are / relate to:
     num_of_objects = 0
     items = []
 
     def __init__(self, clipboard_manager: ClipboardManager):
+        """ Initialises new MainWindow class """
         super().__init__()
 
         self._central_widget_layout = QVBoxLayout()
@@ -122,6 +123,9 @@ class MainWindow(QMainWindow):
     def setupUi(self):
         # MainWindow.setObjectName("MainWindow")
         # self.setFixedSize(640, 480)
+
+        # No idea what all these widgets are. Please clarify and comment around BWAC?
+
         self._central_widget.setObjectName(MainWindow.CENTRAL_WIDGET_NAME)
 
         self._action_bar = ActionBar()
@@ -154,6 +158,7 @@ class MainWindow(QMainWindow):
         # self.treeWidget.setFrameShape(QtWidgets.QFrame.StyledPanel)
         # self.treeWidget.setObjectName("treeWidget")
 
+        # menu bar has no members?
         self.menubar = self.menuBar()
         # self.menubar.setGeometry(QtCore.QRect(0, 0, 640, 21))
         # self.menubar.setObjectName("menubar")
@@ -196,7 +201,12 @@ class MainWindow(QMainWindow):
         # Better to use new-style decorator @QtCore.pyqtSlot()
         # QtCore.QMetaObject.connectSlotsByName(self)
 
+        self.show()
+
+    # temp?
     def retranslateUi(self):
+        """ @transfusion What does this do?"""
+
         _translate = QtCore.QCoreApplication.translate
         # MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         # self._add_btn.setText(_translate("MainWindow", "Add"))
@@ -231,13 +241,20 @@ class MainWindow(QMainWindow):
     #
     #     self.num_of_objects + 1
 
+    def closeEvent(self, event):
+        """ Fires on window close"""
+        pass
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    # label = QLabel('Hello World!')
-    # label.show()
 
     clipboard_mgr = ClipboardManager.ClipboardManager()
     main_window = MainWindow(clipboard_mgr)
+
+    # Creates and starts systray icon
+    # systray = Systray.systray(app.quit)
+    # systray.start()
+    # app.aboutToQuit.connect(systray.close)
 
     sys.exit(app.exec_())

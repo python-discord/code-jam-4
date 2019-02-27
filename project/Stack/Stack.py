@@ -8,15 +8,18 @@ import enum
 
 
 class Stack:
+    """ A collection of strings/other objects """
+
+    # if it is a collection please consider adding magic
+    # methods for this (e.g. "__len__", "__iter__",...)
+
     class SHIFT_DIRECTION(enum.Enum):
         UP: 1
         DOWN: 2
 
-    def __init__(self, existing_stack=None, cur_stack_pointer=None):
-        if existing_stack:
-            self._stack = existing_stack
-        else:
-            self._stack = []
+    def __init__(self, existing_stack=[], cur_stack_pointer=None):
+        # Stack is backwards???
+        self._stack = existing_stack
 
         if cur_stack_pointer:
             self._stack_pointer = cur_stack_pointer
@@ -24,13 +27,16 @@ class Stack:
             # By default the stack pointer is at the top of the stack
             self._stack_pointer = len(self._stack) - 1
 
+    # this should be __iter__
     def items(self):
         return self._stack
 
     def items_count(self):
         return len(self._stack)
 
+    # this should be __setitem__
     def set_current_item(self, idx):
+        # What does idx relate to
         if not 0 <= idx < len(self._stack):
             raise Exception("Index is out of bounds")
 
@@ -40,6 +46,7 @@ class Stack:
         return self._stack_pointer
 
     def shift_current_item(self, idx, shift_direction: SHIFT_DIRECTION):
+        # again what does idx relate to
         _temp = self._stack[self._stack_pointer]
         if shift_direction == Stack.SHIFT_DIRECTION.UP:
             self._stack[idx] = self._stack[idx + 1]
@@ -59,13 +66,16 @@ class Stack:
         if self.items_count() == 1:
             self.set_current_item(0)
 
+        self._stack_pointer = self.items_count() - 1
+
+    # this should be __getitem__
     def peek(self):
         if not self._stack:
             return None
-        return self._stack[-1]
+        return self._stack[-1]  # if we reverse stack at start we won't have to do this
 
     def pop(self, index=-1):
-        self._stack_pointer = max(0, self._stack_pointer-1)
+        self._stack_pointer = max(0, self._stack_pointer - 1)
 
         return self._stack.pop(index)
 

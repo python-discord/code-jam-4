@@ -11,6 +11,7 @@ sphinx = "*"
 [packages]
 pyqt5 = "*"
 flake8 = "*"
+infi-systray = "*"
 
 [requires]
 python_version = "3.7"
