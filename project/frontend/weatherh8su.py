@@ -1,5 +1,6 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+from os.path import realpath
 
 
 class weatherh8su:
@@ -9,7 +10,7 @@ class weatherh8su:
         self.create_widgets()
 
     def create_widgets(self):
-        self.directory = "\\".join(__file__.split("\\")[:-3])
+        self.directory = "\\".join(realpath(__file__).split("\\")[:-3])+"\\data\\"
         self.topframe = tk.Frame(self.master)
         self.topframe.pack()
         self.glass = Image.open(f"{self.directory}glass.png")
