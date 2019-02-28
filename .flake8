@@ -2,5 +2,5 @@
 max-line-length=100
 application_import_names=projectt
 ignore=P102,B311,W503,E226,S311,W504,F821
-exclude=__pycache__, venv, .venv, tests
+exclude=__pycache__, venv, .venv, tests, crocpad/ui, crocpad/troubleshooter
 import-order-style=pycharm
