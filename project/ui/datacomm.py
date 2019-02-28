@@ -1,65 +1,55 @@
+
 import datetime
 import time
 from operator import itemgetter
 import itertools
-from .readWrite.rw import readWrite 
+from readWrite.rw import readWrite
+from random import randint
+
 
 class datacomm:
-    '''
-    This class does the data communication and conversion between GUI and file
-    '''
-
-    #data refers to the data gotten from the Json file
     def __init__(self):
-        self.rw = readWrite()
-        self.data = rw.readInput()#get from Json Read
-        self.pass_to_GUI() #This will pass to the GUI the moment the class is called
-
-    #This list of functions passes data to file
-    #CALL THIS FUNCTION
-    def get_from_GUI(self, d):
-        title = d['Title'] # Title will be in string
-        desc = d['Description'] #Description is in string
-        deadline = d['Deadline'] #Deadline is in int
-        deleted = d['Deleted'] #This is in boolean
-
-        #This function checks if it suppose to be added to or removed from data
-        if (deleted == True):
-            self.data[:] = [d for d in self.data if ((d.get('Title') != title) and (d.get('Description') != desc))]
-        else:
-            header = ('Title', 'Description', 'Deadline')
-            converted_dt = self.unix_to_datetime(int(d['Deadline']))
-            if (converted_dt):
-                values = (i[0], i[1], converted_dt)
-                d = dict(zip(header,values))
-                self.data.append(d)
-            else:
-                return False #This means that Unix timing is before the actual current time which is impossible
-            
-        #Then Return to Json File
-        #Call write to Json file
-        self.rw = writeFile(self.data)
-        #Get back to GUI
-        return self.pass_to_GUI()
-
-    '''
-    This converts the unix in seconds to the current time(UTC) "Str format"
-    '''
-    def unix_to_datetime(self, dt):
-        now = int(time.time())
-        if ( dt - now <0):
-            print("False")
-            return False
-        return str(datetime.datetime.utcfromtimestamp(dt))
-    
-    #This set of functions passes data to GUI
-    '''
-    This changes the data of list of dictionaries to tuple
-    '''
-    def pass_to_GUI(self):
-        if is_empty(self.data):
+        self.file = readWrite()
+        self.data = self.file.readInput()
+        return self.update()
+        
+    #Takes a random task and deletes it
+    def deletedtask(self):
+        #Get the size of self.data
+        if (len(self.data) == 0):
             return []
-        #self.header = ['Task Title', 'Task Desc', 'Date and Time', 'Mark']
+        
+        self.data.pop(randint(0, len(self.data)))
+        return self.update()
+    
+    #Adds in a new task
+    def addtask(self, d):
+        header = ('Title', 'Description', 'Deadline', 'Mark')
+        if not(d['Description']):
+            passive_aggressive_statement = ["What?", "You can't even describe your task?","Elaborate it somehow...", "Now, this is just plain lazy"]
+            d['Description'] = passive_aggressive_statement[randint(0, 3)]
+            
+        if not(d['Deadline']):
+            passive_aggressive_statement = ["I guess deadlines just aren't real to you", "So your task is probably just a dream","You miss the deadlines just like how storm trooper misses Jedi","Did you know that the ultimate inspiration is the deadline?"]
+            d['Deadline'] = passive_aggressive_statement[randint(0, 3)]
+            
+        elif(type(d['Deadline']) == "int"):
+            d['Deadline'] = str(datetime.datetime.utcfromtimestamp(int(d['Deadline'])))
+                                
+        values = (d['Title'], d['Description'], d['Deadline'], d['Mark'])
+        d = dict(zip(header,values))
+        print(d['Title'])
+        print(d['Description'])
+        print(d['Deadline'])
+        print(d['Mark'])
+        self.data.append(d)
+        return self.update()
+
+    def update(self):
+        #Writes to file
+        self.file.writeFile(self.data)
+        if not(self.data):
+            return []
         tup = [tuple(d.values()) for d in self.data]
-        sorted(tup,key=itemgetter(2)) #This sorts the tup by date and time
+        #I didn't sort it by date and time anymore since the passive_aggressive_statements are added in
         return tup
