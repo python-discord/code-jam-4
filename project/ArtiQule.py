@@ -140,13 +140,14 @@ class PaintBoard(QMainWindow):
         self.setFixedSize(1000, 500)
         self.setWindowTitle('ArtiQule')
         self.setWindowIcon(QIcon("Design/icons/app_logo.png"))
-
         self.Setup()
 
     def Setup(self):
         self.canvas = QImage(self.size(), QImage.Format_RGB32)
         self.canvas.fill(Qt.white)
         self.changePaintBoardVars()
+        self.painter = QPainter(self.canvas)
+        self.ToolDead = False
 
         # patterns = []   # TODO: custom paintPatterns here
 
@@ -183,6 +184,7 @@ class PaintBoard(QMainWindow):
         exit_action.triggered.connect(self.exit)
 
         self.toolbar = self.addToolBar("Toolbar")
+        self.toolbar.setStyleSheet('background-color: white')
 
         self.pointy_pen = Tool("Pointy Pen", 1, Qt.black,
                                [randint(1, 4), randint(1, 2), randint(0, 3),
@@ -268,7 +270,6 @@ class PaintBoard(QMainWindow):
         colorBox.addPallette(p2)
         p3.setStyleSheet("background-color: rgb{0}"
                          .format(c3.color))
-        print("background-color: rgb{0}".format(c3.color))
         p3.clicked.connect(lambda: c3.mixColor(self.currentTool))
         colorBox.addPallette(p3)
         p4.setStyleSheet("background-color: rgb{0};"
@@ -279,7 +280,7 @@ class PaintBoard(QMainWindow):
                          .format(c5.color))
         p5.clicked.connect(lambda: c5.mixColor(self.currentTool))
         colorBox.addPallette(p5)
-        p1.setStyleSheet("background-color: rgb{0}"
+        p6.setStyleSheet("background-color: rgb{0}"
                          .format(c6.color))
         p6.clicked.connect(lambda: c6.mixColor(self.currentTool))
         colorBox.addPallette(p6)
@@ -291,28 +292,29 @@ class PaintBoard(QMainWindow):
         if event.button() == Qt.LeftButton:
             self.drawing = True
             if self.currentToolName == "A Bucket":
-                painter = QPainter(self.canvas)
                 Pen = QPen()
                 Pen.setWidth(self.currentBrushSize)
                 Pen.setColor(self.currentBrushColor)
-                painter.setPen(Pen)
-                painter.drawLine(0, 0, 1000, 500)
-                print('called directly')
+                self.painter.setPen(Pen)
+                self.painter.drawLine(0, 0, 1000, 500)
             self.lastPoint = event.pos()
             self.update()
 
     def mouseMoveEvent(self, event):
         if (event.buttons() and Qt.LeftButton) and\
                 self.drawing and self.currentToolName is not None:
-            painter = QPainter(self.canvas)
+
             Pen = QPen()
-            if self.currentToolName != "A Bucket":
+            if self.currentToolName != "A Bucket" and \
+                    self.currentToolName != "Eraser":
                 if self.currentToolDuration <= 0.0:
+                    self.ToolDead = True
                     print('Tools Died')
                     self.currentToolDuration = 0
                     Pen.setDashPattern([0, 0, 0, 0])
                     self.drawing = False
                 else:
+                    self.ToolDead = False
                     self.currentToolDuration -= 0.01
                 # print(self.currentToolDuration)
 
@@ -329,11 +331,15 @@ class PaintBoard(QMainWindow):
                 Pen.setJoinStyle(Qt.MiterJoin)
             Pen.setColor(self.currentBrushColor)
             Pen.setWidth(self.currentBrushSize)
-            painter.setPen(Pen)
-            if event.pos().y() > 53 and self.currentToolName is not None:
-                painter.drawLine(self.lastPoint, event.pos())
-                self.lastPoint = event.pos()
-                self.update()
+            self.painter.setPen(Pen)
+            if self.ToolDead is True:
+                if self.currentToolName == "Pointy Pen":
+                    self.setCursor(QCursor(
+                        QPixmap("Design/icons/Pointy Pen Broken.png")))
+            # if event.pos().y() > 53 and self.currentToolName is not None:
+            self.painter.drawLine(self.lastPoint, event.pos())
+            self.lastPoint = event.pos()
+            self.update()
 
     def mouseRealeaseEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -346,7 +352,12 @@ class PaintBoard(QMainWindow):
 
     def newCanvas(self):
         # TODO: Add New Canvas
-        self.canvasPainter.resetTransform()
+        Pen = QPen()
+        Pen.setWidth(5000)
+        Pen.setColor(Qt.white)
+        self.painter.setPen(Pen)
+        self.painter.drawLine(0, 0, 1000, 500)
+        self.update()
         print('new canvas')
 
     def openFile(self):

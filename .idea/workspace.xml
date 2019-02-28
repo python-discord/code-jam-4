@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b3fadb6e-a4f7-45b3-8f6e-9b28d34a2c00" name="Default Changelist" comment="&lt;NEW_FEATURES: -Fixed toolbar&#10;-added instances of PaintButton and put them in toolbar&#10;&gt;&#10;&lt;ERRORS: &#10;- App Crashes when clicking top area of application&#10;- color pallettes not displaying&#10;&gt;">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/ArtiQule.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/ArtiQule.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/Design/icons/pointy_penbroken.png" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,8 +17,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/project/ArtiQule.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="310">
-              <caret line="215" column="50" lean-forward="true" selection-start-line="215" selection-start-column="50" selection-end-line="215" selection-end-column="50" />
+            <state relative-caret-position="277">
+              <caret line="339" column="62" lean-forward="true" selection-start-line="339" selection-start-column="62" selection-end-line="339" selection-end-column="62" />
             </state>
           </provider>
         </entry>
@@ -184,13 +186,13 @@
     <frame x="-8" y="-8" width="1296" height="1000" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24960254" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24483307" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49920508" weight="0.3069307" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.39976957" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.43894008" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -287,8 +289,8 @@
     <entry file="file://$PROJECT_DIR$/project/Design/icons/fill_empty.png" />
     <entry file="file://$PROJECT_DIR$/project/ArtiQule.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="310">
-          <caret line="215" column="50" lean-forward="true" selection-start-line="215" selection-start-column="50" selection-end-line="215" selection-end-column="50" />
+        <state relative-caret-position="277">
+          <caret line="339" column="62" lean-forward="true" selection-start-line="339" selection-start-column="62" selection-end-line="339" selection-end-column="62" />
         </state>
       </provider>
     </entry>
