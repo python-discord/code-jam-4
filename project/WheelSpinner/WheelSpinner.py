@@ -1,27 +1,40 @@
 import tkinter as tk
 from random import randint
 import time
+import math
+from project.MouseController import MouseController
 
 class WheelSpinner(tk.Frame):
 
-    def __init__(self, master, wheel_options, *args, **kwargs):
+    def __init__(self, master, wheel_options, radius, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
         self.master = master
+        self.radius = radius
+        self.display_label = tk.Label(self)
         self.wheel_options = wheel_options
-        self.canvas = tk.Canvas(self, width=300, height=300)
+        self.size = radius*2.1
+        self.canvas = tk.Canvas(self, width=self.size, height=self.size)
         self.drawn_arc = []
         self.count = None
         self.angle_increment = None
-        self.current_time = None
-        self.delta_time = None
-        self.is_rotating = False
 
         self.frame = 0
         self.speed = 400
         self.draw()
+        self.display_label.pack()
         self.canvas.pack()
-        self.canvas.bind("<Button-1>", lambda event: self.r(event))
+        self.canvas.bind("<Button-1>", lambda event: self.verify_click_position(event))
+        self.canvas.bind("<ButtonRelease-1>", lambda event: self.on_mouse_release(event))
+
+        self.__rotation_speed_list = []
+        self.__is_dragging = False
+        self.__init_drag_pos = None
+        self.__current_time = None
+        self.__delta_time = None
+        self.__is_rotating = False
+        self.__mouse_controller = MouseController(self.canvas)
+
         self.update()
         self.pack()
 
@@ -30,54 +43,105 @@ class WheelSpinner(tk.Frame):
         angle = 0
         self.angle_increment = 360/self.count
         for option in self.wheel_options:
+            print(option)
             if self.wheel_options[self.count-1] == option:
-                self.drawn_arc.append(RotatingArc(self, 150, 150, 100, angle, 360, option,
+                self.drawn_arc.append(RotatingArc(self, self.size/2, self.size/2, self.radius, angle, 360, option,
                                                   fill=self.generate_random_color(), width=3))
             else:
-                self.drawn_arc.append(RotatingArc(self, 150, 150, 100, angle, angle + self.angle_increment, option,
-                                              fill=self.generate_random_color(), width=3))
+                self.drawn_arc.append(RotatingArc(self, self.size/2, self.size/2, self.radius, angle,
+                                                  angle + self.angle_increment, option,
+                                                  fill=self.generate_random_color(), width=3))
             angle = angle + self.angle_increment
 
-    def find_current_winner(self):
+    def display_current_winner(self):
+        winner = None
         for arc in self.drawn_arc:
-            if 90+self.angle_increment >= arc.start_angle >= 90:
+            if 90 >= arc.start_angle >= 90-self.angle_increment:
 
                 winner = arc.text
-        print(winner)
-        self.after(500, self.find_current_winner)
+        if winner is not None:
+            self.display_label['text'] = winner
 
     def update(self):
-        if self.current_time is None:
-            self.delta_time = 1/30
+        if self.__current_time is None:
+            self.__delta_time = 1 / 30
         else:
-            self.delta_time = time.time() - self.current_time
+            self.__delta_time = time.time() - self.__current_time
 
-        if self.is_rotating:
-            self.rotate_all()
+        if self.__is_rotating:
+            self.rotate_all_with_speed()
             self.calculate_new_speed()
+            self.display_current_winner()
+
+        if self.__is_dragging:
+            self.drag()
 
         self.after(33, self.update)
 
-    def r(self, event):
-        self.is_rotating = True
+    def verify_click_position(self, event):
+        if self.__is_dragging or self.__is_rotating:
+            return
 
-    def rotate_all(self):
+        x, y = event.x, event.y
+        #self.is_rotating = True
+
+        if math.sqrt(math.pow(self.size/2 - x, 2) + math.pow(self.size/2 - y, 2)) <= self.radius:
+            self.__is_dragging = True
+            self.__rotation_speed_list = []
+            self.__init_drag_pos = x, y
+
+    def drag(self):
+        x0, y0 = self.__init_drag_pos
+        x, y = self.__mouse_controller.get_absolute_position()
+        angle_to_rotate = math.atan2(y - self.size/2, x - self.size/2) - math.atan2(y0 - self.size/2, x0 - self.size/2)
+        self.rotate_all(-angle_to_rotate/math.pi*180)
+        self.__rotation_speed_list.append((angle_to_rotate/math.pi*180/self.__delta_time))
+        self.__init_drag_pos = x, y
+
+    def on_mouse_release(self, event):
+        if self.__is_dragging:
+            self.__is_dragging = False
+            self.__calculate_initial_speed()
+            self.__is_rotating = True
+
+    def __calculate_initial_speed(self):
+        self.speed = -self.__rotation_speed_list[-1]
+
+    def rotate_all(self, degree):
         for arc in self.drawn_arc:
-            arc.rotate(int(self.speed*self.delta_time))
-        #self.find_current_winner()
-        self.frame += 1
+            arc.rotate(degree)
+
+    def rotate_all_with_speed(self):
+        for arc in self.drawn_arc:
+            arc.rotate(self.speed * self.__delta_time)
 
     def calculate_new_speed(self):
-        if self.speed >= 200:
-            acceleration = -30
-        elif self.speed >= 100:
-            acceleration = -20
+        speed_pos = abs(self.speed)
+        if speed_pos >= 2000:
+            acceleration = 600 * -math.copysign(1, self.speed)
+        elif speed_pos >= 1000:
+            acceleration = 250 * -math.copysign(1, self.speed)
+        elif speed_pos >= 600:
+            acceleration = 120 * -math.copysign(1, self.speed)
+        elif speed_pos >= 350:
+            acceleration = 60 * -math.copysign(1, self.speed)
+        elif speed_pos >= 200:
+            acceleration = 30 * -math.copysign(1, self.speed)
+        elif speed_pos >= 100:
+            acceleration = 20 * -math.copysign(1, self.speed)
         else:
-            acceleration = -10
-        self.speed = self.speed + acceleration*self.delta_time
-        if self.speed <= 0:
+            acceleration = 10 * -math.copysign(1, self.speed)
+
+        if math.copysign(1, self.speed) != math.copysign(1, self.speed + acceleration*self.__delta_time):
             self.speed = 0
-            self.is_rotating = False
+            self.__is_rotating = False
+        else:
+            self.speed = self.speed + acceleration*self.__delta_time
+        print('speed = ' + str(self.speed))
+        print(acceleration)
+
+
+
 
     def __get_elapsed_time(self):
         """
@@ -132,13 +196,15 @@ class RotatingArc:
     def rotate(self, angle, *args):
         self.canvas_parent.itemconfigure(self.item, start=self.start_angle + angle)
         self.start_angle += angle
-        #if self.start_angle >= 360:
-        #    self.start_angle -= 360
+        if self.start_angle >= 360:
+            self.start_angle -= 360
+        if self.start_angle < 0:
+            self.start_angle += 360
 
 
 
 if __name__ == '__main__':
     root = tk.Tk()
     options = ['Name', 'Home Phone Number', 'Work Phone Number', 'Personal Phone Number', 'Email', 'Home Address', 'Notes']
-    WheelSpinner(root, options, width=300, height=300)
+    WheelSpinner(root, options, width=300, height=500, radius=150)
     root.mainloop()
