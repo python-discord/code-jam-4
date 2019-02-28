@@ -1,8 +1,9 @@
 import logging
 import sqlite3
+from pathlib import Path
 
 from bidict import bidict
-from PySide2.QtCore import QAbstractItemModel, Qt
+from PySide2.QtCore import QAbstractItemModel, Qt, QUrl
 from PySide2.QtMultimedia import QMediaContent, QMediaPlaylist
 from PySide2.QtSql import QSqlDatabase
 
@@ -32,6 +33,8 @@ class Playlist(QMediaPlaylist):
         self._indices = bidict()  # media_id: playlist_index
         self._current_media = QMediaContent()
         self._current_index = -1
+
+        self._populate()
 
     def _get_playlist_index(self, row: int) -> int:
         """Return the playlist index which corresponds to the `row`."""
@@ -73,6 +76,25 @@ class Playlist(QMediaPlaylist):
 
         # This should be equivalent to QMediaPlaylistNavigator's "activate" signal
         self.currentMediaChanged.emit(self._current_media)
+
+    def _populate(self):
+        """Populate the playlist with existing media in the model."""
+        for row in range(self._model.rowCount()):
+            path = self._model.index(row, 7).data()
+            if Path(path).is_file():
+                media = QMediaContent(QUrl.fromLocalFile(path))
+                if not self.addMedia(media, row):
+                    # TODO: Prompt user to remove from model on failure
+                    log.warning(
+                        f"Could not populate playlist for row {row}: "
+                        f"adding media for {path} failed."
+                    )
+            else:
+                # TODO: Prompt user to remove from model on failure
+                log.warning(
+                    f"Could not populate playlist for row {row}: "
+                    f"{path} does not exist or isn't a file."
+                )
 
     def currentIndex(self) -> int:
         return self._current_index
