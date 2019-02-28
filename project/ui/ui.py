@@ -2,6 +2,7 @@ from PySide2.QtWidgets import QDesktopWidget, QMainWindow, qApp
 
 from .ui_files.ui_main import Ui_MainApplication
 from .add_task import AddTask
+from .datacomm import DataComm
 
 
 class MainApplication(QMainWindow, Ui_MainApplication):
@@ -18,7 +19,7 @@ class MainApplication(QMainWindow, Ui_MainApplication):
         self.init_UI()
         self.bind_buttons()
         self.windows = []
-        self.count =0
+        self.datacomm = DataComm()
 
     def init_UI(self):
         """
@@ -39,14 +40,14 @@ class MainApplication(QMainWindow, Ui_MainApplication):
 
     def bind_buttons(self):
         self.create_task_button.clicked.connect(self.add_task)
-        #Added Edit task button
+        # Added Edit task button
         self.edit_task_button.clicked.connect(self.edit_task)
 
     def add_task(self):
         """
         Create the Add Task window and append it to the list of windows.
         """
-        form = AddTask()
+        form = AddTask(self.datacomm)
         self.windows.append(form)
 
     def edit_task(self):

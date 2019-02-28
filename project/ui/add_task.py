@@ -7,7 +7,6 @@ from .ui_files.ui_add_task import Ui_task_form
 from .get_title import AddTitle
 from .get_desc import AddDesc
 from .get_deadline import AddDeadline
-from .datacomm import DataComm
 
 
 class AddTask(QWidget, Ui_task_form):
@@ -27,7 +26,7 @@ class AddTask(QWidget, Ui_task_form):
             }
     """
 
-    def __init__(self):
+    def __init__(self, datacomm):
         super().__init__()
         self.width, self.height = 650, 500
 
@@ -36,7 +35,7 @@ class AddTask(QWidget, Ui_task_form):
         self.windows = []
         self.task = {}
 
-        self.datacomm = DataComm()
+        self.datacomm = datacomm
 
     def init_UI(self):
         """
