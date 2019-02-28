@@ -10,6 +10,11 @@ class menu:
         # se i vu   pu ro se so ru   ta i mu | Save Processor Time
         close = "Close"
 
+    class edit:
+        name = "Edit"
+        undo = "Undo"
+        redo = "Redo"
+
     class fileselect:
         file = " 【ファイル】"  # [fa i ru] | [FILE]
         folder = " 【フォルデル】"  # [fo ru de ru] | [FOLDER]

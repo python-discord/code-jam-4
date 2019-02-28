@@ -77,20 +77,32 @@ class Framed(tk.AsyncTk):
         menu = tk.AsyncMenu(self)
         self.config(menu=menu)
 
-        dropdown = tk.AsyncMenu(menu)
+        file_menu = tk.AsyncMenu(menu)
 
-        dropdown.add_command(label=kata.menu.unhelpful.nothing, command=nothing)
-        dropdown.add_command(
+        file_menu.add_command(label=kata.menu.unhelpful.nothing, command=nothing)
+        file_menu.add_command(
             label=kata.menu.unhelpful.save,
             command=lambda: asyncio.ensure_future(self.destroy()),
         )
-        dropdown.add_separator()
-        dropdown.add_command(
+        file_menu.add_separator()
+        file_menu.add_command(
             label=kata.menu.unhelpful.close,
             command=lambda: asyncio.ensure_future(self.open_file()),
         )
 
-        menu.add_cascade(label=kata.menu.unhelpful.name, menu=dropdown)
+        edit_menu = tk.AsyncMenu(menu)
+
+        edit_menu.add_command(
+            label=kata.menu.edit.undo,
+            command=lambda: asyncio.ensure_future(self.canvas.redo()),  # intentionally switched
+        )
+        edit_menu.add_command(
+            label=kata.menu.edit.redo,
+            command=lambda: asyncio.ensure_future(self.canvas.undo()),  # intentionally switched
+        )
+
+        menu.add_cascade(label=kata.menu.unhelpful.name, menu=file_menu)
+        menu.add_cascade(label=kata.menu.edit.name, menu=edit_menu)
 
     async def file_select(self, *, new_file: bool = True):
         """File select dialogue"""

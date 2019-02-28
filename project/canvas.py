@@ -57,6 +57,11 @@ class Colour:
         The colour in an (r, g, b) tuple.
         e.g. (171, 205, 239)
 
+    Methods
+    -------
+    from_rgb: classmethod
+        Creates class from an (r, g, b) tuple.
+
     """
 
     def __init__(self, colour: typing.Union[str, int]):
@@ -79,6 +84,13 @@ class Colour:
     def as_rgb(self):
         return (int(self.r, 16), int(self.g, 16), int(self.b, 16))
 
+    @classmethod
+    def from_rgb(cls, colour):
+        r, g, b = map(lambda x: hex(x)[2:], colour)
+        fake = b+g+r
+        fake_int = int(fake, 16)
+        return cls(fake_int)
+
 
 class Canvas(tk.AsyncCanvas):
 
@@ -98,11 +110,21 @@ class Canvas(tk.AsyncCanvas):
         The height of the canvas (in pixels)
     width: int
         The width of the canvas (in pixels)
+    undo_list: list[tuple[int, int, Colour]]
+        The list of tuples containing the pixels that have been edited in chronological order
+        in the format [x, y, old_colour] where old_colour is the colour of the original pixel
+        before it was overwritten
+    redo_list: list[tuple[int, int, Colour]]
+        The list of tuples containing the pixels that have been undone in reverse chronological
+        order in the format [x, y, new_colour] where new_colour is the new colour of the pixel
+        that was shown before the undo button was pressed
 
     Methods
     -------
     add_pixel: coroutine
     save: coroutine
+    undo: coroutine
+    redo: coroutine
     forget: method
     from_image: classmethod coroutine
 
@@ -123,6 +145,9 @@ class Canvas(tk.AsyncCanvas):
         self.pil_image = Image.new("RGB", (width, height), (255, 255, 255))
         self.pil_draw = ImageDraw.Draw(self.pil_image)
 
+        self.undo_list = []
+        self.redo_list = []
+
     async def add_pixel(self, x: int, y: int, colour: Colour):
         """
         Adds pixel to both the displayed canvas and the backend PIL image
@@ -140,6 +165,22 @@ class Canvas(tk.AsyncCanvas):
         await self.create_line(x, y, x, y, fill=colour.as_hex)
         self.pil_draw.point([(x, y)], fill=colour.as_rgb)
 
+    async def undo(self):
+        """Undoes the most previous action by taking the most recent value from the undo_list"""
+        if self.undo_list:
+            x, y, old_colour = self.undo_list.pop()
+            new_colour = self.pil_image.getpixel((x, y))
+            self.redo_list.append((x, y, Colour.from_rgb(new_colour)))
+            await self.add_pixel(x, y, old_colour)
+
+    async def redo(self):
+        """Redoes the most previous action by taking the most recent value from the redo_list"""
+        if self.redo_list:
+            x, y, new_colour = self.redo_list.pop()
+            old_colour = self.pil_image.getpixel((x, y))
+            self.undo_list.append((x, y, Colour.from_rgb(old_colour)))
+            await self.add_pixel(x, y, new_colour)
+
     async def save(self, file: typing.Union[str, pathlib.Path]):
         """Shortcut to save the PIL file"""
         self.pil_image.save(file)
@@ -152,6 +193,7 @@ class Canvas(tk.AsyncCanvas):
     async def from_image(cls, master: tk.AsyncTk, file: typing.Union[str, pathlib.Path]):
         """
         Classmethod to open the image from a file
+        It also takes out the transparency in any RGBA photo, defaulting the alpha color to white
 
         Parameters
         ----------
@@ -169,7 +211,6 @@ class Canvas(tk.AsyncCanvas):
         pil_image = Image.open(file)
         photoimage = ImageTk.PhotoImage(pil_image, master=master)
         width, height = pil_image.width, pil_image.height
-        print(f"{height}x{width}")
         new_cls = cls(
             master,
             height=height,
@@ -178,7 +219,11 @@ class Canvas(tk.AsyncCanvas):
 
         await new_cls.create_image(0, 0, image=photoimage, anchor=tk.NW)
         new_cls.image = photoimage
-        new_cls.pil_image = pil_image
+        png = pil_image.convert("RGBA")
+        png.load()
+        rgb_img = Image.new("RGB", png.size, (255, 255, 255))
+        rgb_img.paste(png, mask=png.split()[3])
+        new_cls.pil_image = rgb_img
         new_cls.pil_draw = ImageDraw.Draw(new_cls.pil_image)
         return new_cls
 
@@ -279,5 +324,9 @@ class EntrySection(tk.AsyncFrame):
         except (ValueError, TypeError):
             await self._add_error(kata.menu.entry.colour_error)
             return
+
+        old_colour = self.canvas.pil_image.getpixel((x, y))
+        self.canvas.undo_list.append((x, y, Colour.from_rgb(old_colour)))
+        self.canvas.redo_list = []
 
         await self.canvas.add_pixel(int(x), int(y), colour)
