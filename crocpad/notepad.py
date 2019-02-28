@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import (QApplication, QDesktopWidget, QMainWindow,
                              QVBoxLayout, QWidget)
 from crocpad.configuration import app_config, save_config
 from crocpad.eula_dialog import EulaDialog
+from crocpad.eula_quiz_dialog import EulaQuizDialog
 
 
 class MainWindow(QMainWindow):
@@ -63,14 +64,20 @@ class MainWindow(QMainWindow):
         self.show()
 
         if app_config['License']['eulaaccepted'] != 'yes':
-            with open('crocpad\\EULA.txt', 'r', encoding="utf8") as f:
-                eula = f.read()
-            self.eula_dialog = EulaDialog(eula)
+            self.do_eula()
+
+    def do_eula(self):
+        with open('crocpad\\EULA.txt', 'r', encoding="utf8") as f:
+            eula = f.read()
+        self.eula_dialog = EulaDialog(eula)
+        self.eula_quiz_dialog = EulaQuizDialog()
+        while not self.eula_quiz_dialog.quiz_correct():
             self.eula_dialog.exec_()
             if self.eula_dialog.clicked_button == self.eula_dialog.eula_agree_button:
                 # We click the agree button
                 app_config['License']['eulaaccepted'] = 'yes'
                 save_config(app_config)
+            self.eula_quiz_dialog.exec_()
 
     def eventFilter(self, source, event):
         if event.type() == QEvent.KeyPress:

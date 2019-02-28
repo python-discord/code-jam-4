@@ -24,6 +24,7 @@ class Ui_EulaDialog(object):
         self.eula_agree_button.clicked.connect(self.clickedButton)
         self.eula_disagree_button.clicked.connect(self.clickedDisagree)
         self.eula_TextEdit.verticalScrollBar().sliderMoved.connect(self.slider_moved)
+        self.eula_agree_button.setEnabled(False)
 
 
         self.retranslateUi(EulaDialog)
@@ -31,6 +32,8 @@ class Ui_EulaDialog(object):
 
     def slider_moved(self):
         if self.eula_TextEdit.verticalScrollBar().value() == self.eula_TextEdit.verticalScrollBar().maximum():
+            if self.scrolled_to_bottom >= 3 and self.scrolled_to_top >= 2:
+                self.eula_agree_button.setEnabled(True)
             self.scrolled_to_bottom += 1
         if self.eula_TextEdit.verticalScrollBar().value() == self.eula_TextEdit.verticalScrollBar().minimum():
             self.scrolled_to_top += 1
@@ -39,7 +42,7 @@ class Ui_EulaDialog(object):
         dlg = QtWidgets.QMessageBox(self)
         dlg.setText("I believe you mean to select AGREE")
         dlg.setIcon(QtWidgets.QMessageBox.Critical)
-        dlg.show()        
+        dlg.show()
 
     def clickedButton(self):
         self.clicked_button = self.eula_agree_button
