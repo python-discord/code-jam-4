@@ -7,6 +7,7 @@ from .ui_files.ui_add_task import Ui_task_form
 from .get_title import AddTitle
 from .get_desc import AddDesc
 from .get_deadline import AddDeadline
+from .datacomm import datacomm
 
 
 class AddTask(QWidget, Ui_task_form):
@@ -35,6 +36,8 @@ class AddTask(QWidget, Ui_task_form):
         self.windows = []
         self.task = {}
 
+        self.datacomm = datacomm()
+
     def init_UI(self):
         """
         Load the .ui-converted .py file, set the size and display the window.
@@ -42,7 +45,8 @@ class AddTask(QWidget, Ui_task_form):
         self.setupUi(self)
         self.setFixedSize(self.width, self.height)
 
-        self.buttons = [i for i in vars(self) if i.endswith("button")]
+        self.buttons = [getattr(self, i)
+                        for i in vars(self) if i.endswith("button")]
         self.button_text = ["Add Title",
                             "Add Deadline", "Done", "Add Description"]
         self.move_buttons()
@@ -54,8 +58,8 @@ class AddTask(QWidget, Ui_task_form):
         Randomizes the names of the buttons. The tooltip remains unchanged.
         """
         shuffle(self.button_text)
-        for index, txt in enumerate(self.buttons):
-            getattr(self, txt).setText(self.button_text[index])
+        for index, button in enumerate(self.buttons):
+            button.setText(self.button_text[index])
 
     def move_buttons(self):
         """
@@ -81,7 +85,7 @@ class AddTask(QWidget, Ui_task_form):
         Box = namedtuple("Box", ["x1", "x2", "y1", "y2"])
         boxes = []
 
-        for txt in self.buttons:
+        for button in self.buttons:
             while True:
                 rand_x, rand_y = randint(0, max_x), randint(min_y, max_y)
                 cur_box = Box(rand_x, rand_x + 250, rand_y, rand_y + 25)
@@ -90,7 +94,7 @@ class AddTask(QWidget, Ui_task_form):
                     # Retry if box overlaps any other box already set
                     continue
                 else:
-                    getattr(self, txt).move(rand_x, rand_y)
+                    button.move(rand_x, rand_y)
                     boxes.append(cur_box)
                     break
 
@@ -98,20 +102,23 @@ class AddTask(QWidget, Ui_task_form):
         """
         Binds each button to their respective functions.
         """
+        for button in self.buttons:
+            # call function related to button pressed
+            button.clicked.connect(self.button_pressed)
+            # randomize button positions
+            button.clicked.connect(self.move_buttons)
+            # randomize button names
+            button.clicked.connect(self.randomize_names)
+
+    def button_pressed(self):
         func_dict = {
             "form_title_button": self.get_title,
             "form_desc_button": self.get_desc,
             "form_date_button": self.get_date,
             "form_done_button": self.done,
         }
-        for txt in self.buttons:
-            button = getattr(self, txt)
-            # execute function
-            button.clicked.connect(func_dict[txt])
-            # randomize button positions
-            button.clicked.connect(self.move_buttons)
-            # randomize button names
-            button.clicked.connect(self.randomize_names)
+        button_name = self.sender().objectName()
+        func_dict[button_name]()
 
     def get_title(self):
         form = AddTitle(self.task)
@@ -127,3 +134,4 @@ class AddTask(QWidget, Ui_task_form):
 
     def done(self):
         print(self.task)
+        self.datacomm.addtask(self.task)
