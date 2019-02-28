@@ -87,6 +87,7 @@ def format_forecast(weather: Weather, unit: str) -> Dict[str, str]:
         key = temperature_naming.get(t, t) + ' temperature'
         output_dict[key] = str(temperatures[t]) + ' ' + unit_symbols[unit]
 
+    output_dict['weather_status'] = weather.get_status()
     return output_dict
 
 
