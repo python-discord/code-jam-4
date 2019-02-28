@@ -1,8 +1,7 @@
 import itertools
 import tkinter as tk
 import tkinter.font as tkFont
-# from tkinter import messagebox
-import math
+from tkinter import ttk
 import json
 import nltk
 from nltk.corpus import words
@@ -39,14 +38,7 @@ LOOTBOX_RARITIES = [
     "legendary",
 ]
 
-LOOTBOX_RATES = [
-    0,
-    50,
-    70,
-    85,
-    90,
-    95,
-]
+LOOTBOX_RATES = [0, 50, 70, 85, 90, 95]
 
 
 LOOTBOX_PULLS_PER_BOX = 5
@@ -68,21 +60,23 @@ class UserInterface(tk.Frame):
         tk.Frame.__init__(self, master, *args, **kwargs)
 
         try:
-            with open(SAVE_DATA_PATH) as save_data_file:
-                save_data = json.load(save_data_file)
+            save_data_file = open(SAVE_DATA_PATH)
         except FileNotFoundError:
-            with open(DEFAULT_SAVE_PATH) as save_data_file:
-                save_data = json.load(save_data_file)
+            save_data_file = open(DEFAULT_SAVE_PATH)
+        finally:
+            save_data = json.load(save_data_file)
+            save_data_file.close()
+
         saved_keys = save_data['keys']
         saved_scales = save_data['scales']
         self.used_words = set(save_data['used_words'])
 
         self.xp_milestones = (index*10 for index in itertools.count())
         self.xp = save_data['xp']
-        self.previous_xp_milestone = 0
+        self.prev_xp_milestone = 0
         self.next_xp_milestone = 0
         while self.xp >= self.next_xp_milestone:
-            self.previous_xp_milestone = self.next_xp_milestone
+            self.prev_xp_milestone = self.next_xp_milestone
             self.next_xp_milestone = next(self.xp_milestones)
 
         self.command_section = tk.Frame(self)
@@ -90,7 +84,7 @@ class UserInterface(tk.Frame):
         self.keyboard_section = KeyboardSection(self,
                                                 saved_keys=saved_keys,
                                                 saved_scales=saved_scales)
-        self.command_section.grid(row=0, column=0)
+        self.command_section.grid(row=0, column=0, sticky='nwse')
         self.text_entry_section.grid(row=1, column=0)
         self.keyboard_section.grid(row=2, column=0, ipadx=5,
                                    ipady=5, sticky="nwse"
@@ -99,30 +93,32 @@ class UserInterface(tk.Frame):
         self.is_darkmode = tk.IntVar()
         tk.Checkbutton(self.command_section, text='Low-Contrast Darkmode',
                        variable=self.is_darkmode,
-                       command=self.set_darkmode).pack()
+                       command=self.set_darkmode).pack(side='left')
+
+        self.xp_frame = XPFrame(self.command_section, start_xp=self.xp,
+                                prev_xp_milestone=self.prev_xp_milestone,
+                                next_xp_milestone=self.next_xp_milestone)
+        self.xp_frame.pack(side='right')
 
         key_descriptions = self.keyboard_section.key_descriptions
-        self.unlockable_keys = [
-                                [key_descriptions[key]["name"] for key
+        self.unlockable_keys = [[key_descriptions[key]["name"] for key
                                  in key_descriptions
                                  if key_descriptions[key]["rarity"]
-                                 == rarity_level
-                                 ]
+                                 == rarity_level]
                                 for rarity_level
-                                in range(len(LOOTBOX_RARITIES))
-                               ]
+                                in range(len(LOOTBOX_RARITIES))]
 
         self.config(padx=40, pady=32)
 
-        self.lootbox_window = None
-
     def add_xp(self, xp_increase):
         self.xp += xp_increase
-        print("XP: {}".format(self.xp))
         while self.xp >= self.next_xp_milestone:
-            self.previous_xp_milestone = self.next_xp_milestone
+            self.prev_xp_milestone = self.next_xp_milestone
             self.next_xp_milestone = next(self.xp_milestones)
             self.unlock_lootbox()
+        self.xp_frame.set_xp(self.xp,
+                             self.prev_xp_milestone,
+                             self.next_xp_milestone)
 
     def set_darkmode(self):
         self.text_entry_section.set_darkmode(self.is_darkmode.get())
@@ -141,35 +137,14 @@ class UserInterface(tk.Frame):
 
         for i in range(LOOTBOX_PULLS_PER_BOX):
             rand_int = random.randint(0, 100)
-            lootbox_rank = -1
-            for threshold in LOOTBOX_RATES:
-                if rand_int >= threshold:
-                    lootbox_rank += 1
-
+            lootbox_rank = -1 + len([threshold for threshold in LOOTBOX_RATES
+                                     if rand_int >= threshold])
             unlocked_key = random.choice(self.unlockable_keys[lootbox_rank])
-
             unlocked_keys.append(unlocked_key)
             rarities.append(lootbox_rank)
-
             self.keyboard_section.add_key(unlocked_key)
 
-            lootbox_rarity = LOOTBOX_RARITIES[lootbox_rank]
-
-            # mbox_title = "{} item unlocked!".format(lootbox_rarity.title())
-            # mbox_text = "You got a \"{}\"!".format(unlocked_key)
-
-            """
-            messagebox.showinfo(
-                                mbox_title,
-                                mbox_text
-                                )
-            """
-
-            print("rolled {}".format(rand_int), lootbox_rarity, unlocked_key)
-
-        self.lootbox_window = LootBoxUnlockWindow(new_keys=unlocked_keys,
-                                                  rarities=rarities
-                                                  )
+        LootBoxUnlockWindow(new_keys=unlocked_keys, rarities=rarities)
 
     def on_word_complete(self, last_word: str):
         if last_word is None:
@@ -299,7 +274,7 @@ class KeyboardSection(tk.Frame):
 
     def set_darkmode(self, is_darkmode: bool):
         for key in self.buttons:
-            key['bg'] = 'black' if is_darkmode else 'white'
+            key['bg'] = 'black' if is_darkmode else 'SystemButtonFace'
 
 
 class KeyboardKey(tk.Button):
@@ -335,10 +310,7 @@ class KeyboardKey(tk.Button):
         else:
             self.shift_name = shift_name
         # Char sent to master when clicked
-        if char is None:
-            self.char = name.lower()
-        else:
-            self.char = char
+        self.char = name.lower() if char is None else char
         # Char sent to master when shift is on
         if shift_char is None:
             self.shift_char = self.char.upper()
@@ -361,14 +333,10 @@ class KeyboardKey(tk.Button):
         else:
             button_action = self.send_key
 
-        self.config(
-            textvar=self.name,
-            command=button_action,
-            font=self.font,
-            )
+        self.config(textvar=self.name, command=button_action, font=self.font)
 
     def get_font_size(self):
-        return math.floor(KeyboardKey.KEY_SIZE * self.scale)
+        return int(KeyboardKey.KEY_SIZE * self.scale)
 
     def increase_scale(self):
         self.scale = min(self.scale+self.scale_inc, self.scale_max)
@@ -390,9 +358,7 @@ class KeyboardKey(tk.Button):
         self.name.set(self.text_name if not self.shift_on else self.shift_name)
 
     def send_key(self):
-        self.master.send_key(
-            self.char if not self.shift_on else self.shift_char
-            )
+        self.master.send_key(self.shift_char if self.shift_on else self.char)
 
         if self.scale < self.scale_max:
             self.master.recalc_key_sizes(self)
@@ -412,6 +378,7 @@ class KeyboardKey(tk.Button):
 class LootBoxUnlockWindow(tk.Toplevel):
     def __init__(self, new_keys=[], rarities=[], *args, **kwargs):
         tk.Toplevel.__init__(self)
+        self.iconbitmap(IMAGE_PATH / Path("capsule_small.ico"))
         self.title("Lootbox unlocked!")
 
         self.attributes("-topmost", True)
@@ -421,13 +388,9 @@ class LootBoxUnlockWindow(tk.Toplevel):
 
         self.lootbox_display = LootBoxUnlockFrame(self)
 
-        self.button = tk.Button(self, text="Close", command=self.close_window)
-        self.button.pack()
+        tk.Button(self, text="Close", command=self.destroy).pack()
 
         self.minsize(400, 700)
-
-    def close_window(self):
-        self.destroy()
 
 
 class LootBoxUnlockFrame(tk.Frame):
@@ -475,9 +438,37 @@ class LootBoxUnlockFrame(tk.Frame):
             )
         self.image_label.config(image=self.img_capsule[1])
         self.image_label.image = self.img_capsule[1]
-        self.message_label.config(
-            text="You got:\n {}".format(new_keys_str)
-            )
+        self.message_label['text'] = "You got:\n {}".format(new_keys_str)
+
+
+class XPFrame(tk.Frame):
+    def __init__(self, master, xp=0, prev_xp_milestone=0,
+                 next_xp_milestone=0, *args, **kwargs):
+        tk.Frame.__init__(self, master)
+        self.prev_xp_label = tk.Label(self, text=prev_xp_milestone)
+        self.xp_label = tk.Label(self, text="XP:{}".format(xp),
+                                 font=('Helvetica 18 bold'))
+        self.next_xp_label = tk.Label(self, text=next_xp_milestone)
+        self.xp_progressbar = ttk.Progressbar(self, orient='horizontal',
+                                              mode='determinate',
+                                              maximum=next_xp_milestone
+                                              - prev_xp_milestone,
+                                              value=xp-prev_xp_milestone)
+        lootbox_image_data = Image.open(IMAGE_PATH / Path("capsule_small.ico"))
+        self.lootbox_image = ImageTk.PhotoImage(lootbox_image_data)
+        self.lootbox_image_label = tk.Label(self, image=self.lootbox_image)
+        self.xp_label.pack(side='left')
+        self.prev_xp_label.pack(side='left')
+        self.xp_progressbar.pack(side='left')
+        self.next_xp_label.pack(side='left')
+        self.lootbox_image_label.pack(side='left')
+
+    def set_xp(self, xp, prev_xp_milestone, next_xp_milestone):
+        self.xp_label['text'] = "XP:{}".format(xp)
+        self.prev_xp_label['text'] = prev_xp_milestone
+        self.next_xp_label['text'] = next_xp_milestone
+        self.xp_progressbar['maximum'] = next_xp_milestone - prev_xp_milestone
+        self.xp_progressbar['value'] = xp - prev_xp_milestone
 
 
 def exit_program():
@@ -487,7 +478,6 @@ def exit_program():
     save_successful = UI.keyboard_section.save_keys()
     if not save_successful:
         print("Exiting program, failed to save.")
-    # End the application
     ROOT.destroy()
 
 
