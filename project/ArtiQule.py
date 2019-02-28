@@ -160,7 +160,7 @@ class PaintBoard(QMainWindow):
         self.lastPoint = QPoint()
 
     def changePaintBoardVars(self, curToolName=None,
-                             curBrushsize=1, curBrushColor=None,
+                             curBrushsize=1, curBrushColor=Qt.black,
                              curPaintPattern=Qt.SolidLine):
         #print("hey from inside changePaintBoardVars. These are my args: Toolname: {}, Brushsize: {}, Brushcolor: {}, Paintpattern: {}".format(curToolName,curBrushsize,curBrushColor,curPaintPattern))
         self.currentToolName = curToolName
@@ -208,8 +208,9 @@ class PaintBoard(QMainWindow):
                                 Qt.RoundJoin
                                 )
                            )
-            painter.drawLine(self.lastPoint, event.pos())
-            self.lastPoint = event.pos()
+            if event.pos().y() > 53 and self.currentToolName is not None:
+                painter.drawLine(self.lastPoint, event.pos())
+                self.lastPoint = event.pos()
             self.update()
 
     def mouseRealeaseEvent(self, event):
