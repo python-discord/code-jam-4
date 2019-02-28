@@ -1,12 +1,11 @@
 import sys
 from random import randint
-from PyQt5.QtCore import Qt, QPoint  # , QSize
-from PyQt5.QtWidgets import (QMainWindow, QApplication,
-                             QAction, QFileDialog,
-                             )
+
+from PyQt5.QtCore import QPoint, Qt  # , QSize
 #  QPushButton, QToolBox, QSizePolicy, QToolButton
-from PyQt5.QtGui import (QImage, QPainter, QPen, QPixmap,
-                         QIcon, QCursor, QColor)
+from PyQt5.QtGui import QColor, QCursor, QIcon, QImage, QPainter, QPen, QPixmap
+from PyQt5.QtWidgets import QAction, QApplication, QFileDialog, QMainWindow
+
 # QBrush
 
 """
@@ -20,6 +19,58 @@ def paintEvent(self, event):
     else:
         # do normal stuff ...
 """
+
+
+class Tool():
+    def __init__(self, toolName, duration, brushSize, color,
+                 paintPattern, PaintBoard, iconPath, shortcut, statusTip,
+                 isDipped=False
+                 ):
+        """class for creating drawing tools
+
+        Arguments:
+            toolName {str} -- Tools name for display
+            duration {float} -- duration
+            brushSize {float} -- tools brushsize
+            color {QColor} -- the Color to be used
+            paintPattern {PaintPattern} -- the paint pattern that will be used
+            PaintBoard {PaintBoard} -- Its a paintboard?
+            iconPath {str} -- the path to the icon. duh...
+            shortcut {str} -- well. its a shortcut. nothing less, nothing more.
+            statusTip {str} -- the status tip that will be displayed...
+        """
+
+        self.toolName = toolName
+        self.duration = duration
+        self.brushSize = brushSize
+        self.color = color
+        self.isDipped = isDipped
+        self.paintPattern = paintPattern
+        self.PaintBoard = PaintBoard
+        self.iconPath = iconPath
+        self.shortcut = shortcut
+        self.statusTip = statusTip
+
+        self.create_button()
+
+    def create_button(self):
+        tool_btn = QAction(
+            QIcon(self.iconPath),
+            self.toolName,
+            parent=self.PaintBoard
+        )
+
+        tool_btn.setShortcut(self.shortcut)
+        tool_btn.setStatusTip(self.statusTip)
+        tool_btn.triggered.connect(
+            lambda: self.PaintBoard.changePaintBoardVars(
+                self.toolName,
+                self.brushSize,
+                self.paintPattern,
+                self.color
+            )
+        )
+        self.PaintBoard.toolbar.addAction(tool_btn)
 
 
 class PaintBoard(QMainWindow):
@@ -65,89 +116,6 @@ class PaintBoard(QMainWindow):
         save_file_action.triggered.connect(self.saveFile)
         exit_action.triggered.connect(self.exit)
 
-        self.pointy_pen = {
-            "toolName": "pointy_pen",
-            "duration": randint(0, 10),
-            "brushSize": 1,
-            "color": Qt.black,
-            "paintPattern": Qt.SolidLine
-
-        }
-        pointy_pen_btn = QAction(QIcon('Design/icons/pointy_pen.png'),
-                                 "Pointy Pen", self)
-        pointy_pen_btn.setShortcut("CTRL+P")
-        pointy_pen_btn.setStatusTip("A very pointy pen")
-        pointy_pen_btn.triggered.connect(lambda: self.changePaintBoardVars(
-            self.pointy_pen["toolName"],
-            self.pointy_pen["brushSize"],
-            self.pointy_pen["paintPattern"],
-            self.pointy_pen["color"]
-        ))
-
-        self.fill = {
-            "toolName": "fill_empty",
-            "duration": 1,
-            "brushSize": 50,
-            "color": None,
-            "paintPattern": "big dump",  # TODO: Custom pattern
-            "is_dipped": False
-        }
-        fill_btn = QAction(QIcon('Design/icons/fill_empty.png'),
-                           "A bucket", self)
-        fill_btn.setShortcut("CTRL+P")
-        fill_btn.setStatusTip("A bucket.")
-        fill_btn.triggered.connect(lambda: self.changePaintBoardVars(
-            self.fill["toolName"],
-            self.fill["brushSize"],
-            self.fill["color"],
-            self.fill["paintPattern"]
-        ))
-
-        self.straggly_paintbrush = {
-            "toolName": "straggly_paintbrush",
-            "duration": randint(10, 30),
-            "brushSize": 10,
-            "color": None,
-            "paintPattern": "spread out pattern",  # TODO: Custom pattern
-            "is_dipped": False
-
-        }
-        straggly_paintbrush_btn = QAction(QIcon(
-            'Design/icons/straggly_paintbrush.png'),
-            "Straggly Paintbrush", self)
-        straggly_paintbrush_btn.setShortcut("CTRL+A")
-        straggly_paintbrush_btn.setStatusTip("A very Straggly Paintbrush.")
-        straggly_paintbrush_btn.triggered.connect(
-            lambda: self.changePaintBoardVars(
-                self.straggly_paintbrush["toolName"],
-                self.straggly_paintbrush["brushSize"],
-                self.straggly_paintbrush["color"],
-                self.straggly_paintbrush["paintPattern"]
-                )
-            )
-
-        self.solidifed_brush = {
-            "toolName": "solidified_brush",
-            "duration": 1,
-            "brushSize": 50,
-            "paintPattern": "hit with a brick",  # TODO: Custom pattern
-            "color": self.currentBrushColor,
-            "is_dipped": False
-        }
-        solidified_brush_btn = QAction(QIcon(
-            'Design/icons/solidified_brush.png'),
-            "A solid brush", self)
-        solidified_brush_btn.setShortcut("CTRL+A")
-        solidified_brush_btn.setStatusTip("Gorsh, that is a hard tip")
-        solidified_brush_btn.triggered.connect(
-            lambda: self.changePaintBoardVars(
-                self.solidifed_brush["toolName"],
-                self.solidifed_brush["brushSize"],
-                self.solidifed_brush["color"],
-                self.solidifed_brush["paintPattern"]
-                )
-            )
-
         colors = c1, c2, c3, c4, c5, c6 = (QColor(randint(0, 255),
                                                   randint(0, 255),
                                                   randint(0, 255))
@@ -156,16 +124,35 @@ class PaintBoard(QMainWindow):
         pallettes = p1, p2, p3, p4, p5, p6 = (QAction(self)
                                               for _ in range(6))
 
-        self.toolbar.addAction(pointy_pen_btn)
-        self.toolbar.addAction(fill_btn)
-        self.toolbar.addAction(straggly_paintbrush_btn)
-        self.toolbar.addAction(solidified_brush_btn)
-
         for color, pallette in zip(colors, pallettes):
             pallette.setStyleSheet("QPushButton{background-color:{color}}"
                                    .format(color=color))
             pallette.clicked.connect(lambda: self.mixColor)
             self.toolbar.addAction(pallette)
+
+        self.pointy_pen = Tool("Pointy Pen", randint(0, 10), 1, Qt.black,
+                               Qt.SolidLine, self,
+                               "Design/icons/pointy_pen.png",
+                               "CTRL+P", "A very pointy pen"
+                               )
+
+        self.fill = Tool("A bucket", 1, 50, None,
+                         "big dump", self,
+                         'Design/icons/fill_empty.png',
+                         "CTRL+B", "A bucket"
+                         )
+
+        self.straggly_paintbrush = Tool("Straggly Paintbrush", randint(0, 10),
+                                        10, None, "spread out pattern", self,
+                                        "Design/icons/straggly_paintbrush.png",
+                                        "CTRL+A", "A very Straggly Paintbrush."
+                                        )
+
+        self.solidifed_brush = Tool("Solid Brush", 1, 10, None,
+                                    "hit with a brick", self,
+                                    'Design/icons/solidified_brush.png',
+                                    "CTRL+J", "Gosh, that is a hard tip"
+                                    )
 
         self.show()
 
@@ -175,6 +162,7 @@ class PaintBoard(QMainWindow):
     def changePaintBoardVars(self, curToolName=None,
                              curBrushsize=1, curBrushColor=None,
                              curPaintPattern=Qt.SolidLine):
+
         self.currentToolName = curToolName
         self.currentBrushSize = curBrushsize
         self.currentPaintPattern = curPaintPattern
