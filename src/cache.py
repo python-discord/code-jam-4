@@ -5,6 +5,7 @@ import os
 import io
 import configparser
 
+
 class Cache:
     '''Class used for caching images and data about the cats'''
 

@@ -5,6 +5,7 @@ from pygame import mixer
 import os
 from cache import Cache
 
+
 class Tinder:
     '''The main class for the application.'''
 
@@ -51,7 +52,6 @@ class Tinder:
 
         # starting the program loop
         self.new_image()
-
 
     def all_children(self):
         '''Used to get all children of the root window
