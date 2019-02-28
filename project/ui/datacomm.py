@@ -35,13 +35,10 @@ class datacomm:
             
         elif(type(d['Deadline']) == "int"):
             d['Deadline'] = str(datetime.datetime.utcfromtimestamp(int(d['Deadline'])))
-                                
+
+        d['Mark'] = False
         values = (d['Title'], d['Description'], d['Deadline'], d['Mark'])
         d = dict(zip(header,values))
-        print(d['Title'])
-        print(d['Description'])
-        print(d['Deadline'])
-        print(d['Mark'])
         self.data.append(d)
         return self.update()
 
