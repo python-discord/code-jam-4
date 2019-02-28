@@ -1,9 +1,10 @@
 import aiohttp
 from random import randint, choice, sample
 from PIL import Image, ImageTk
-import os
 import io
 import configparser
+
+from . import SETTINGS, IMAGES
 
 
 class Cache:
@@ -20,9 +21,8 @@ class Cache:
         self.session = None
 
         # get settings
-        self.dir = os.path.dirname(os.path.realpath(__file__))
         cp = configparser.ConfigParser()
-        cp.read(os.path.join(self.dir, 'settings.ini'))
+        cp.read(str(SETTINGS))
         cp.read('settings.ini')
 
         # for now, let's just look up the DEV settings
@@ -54,8 +54,8 @@ class Cache:
                 # get a random number for an image
                 image_number = randint(1, 10)
                 # open and resize the image using Pillow
-                im = Image.open(os.path.join(self.dir, os.path.join("res",
-                                os.path.join("images", f"{image_number}.jpg"))))
+                imagepath = IMAGES / f"{image_number}.jpg"
+                im = Image.open(imagepath)
                 im = im.resize((self.screen_x, self.screen_y - 150), Image.NEAREST)
                 # make the image a tkinter image
                 image = ImageTk.PhotoImage(im)

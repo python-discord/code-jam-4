@@ -1,9 +1,9 @@
 from pathlib import Path
 
-SRC = Path(__file__).parent
-ROOT = SRC.parent
-RES = ROOT / 'res'
+SRC: Path = Path(__file__).parent
+ROOT: Path = SRC.parent
+RES: Path = ROOT / 'res'
 
-SETTINGS = RES / 'settings.ini'
-IMAGES = RES / 'images'
-SOUNDS = RES / 'sounds'
+SETTINGS: Path = RES / 'settings.ini'
+IMAGES: Path = RES / 'images'
+SOUNDS: Path = RES / 'sounds'

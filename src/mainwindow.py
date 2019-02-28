@@ -2,10 +2,9 @@ import configparser
 import tkinter as tk
 import asyncio
 from pygame import mixer
-import os
-from cache import Cache
+from .cache import Cache
 
-from . import SETTINGS, IMAGES, SOUNDS
+from . import SETTINGS
 
 
 class Tinder:
@@ -16,9 +15,8 @@ class Tinder:
         mixer.init()
 
         # get settings
-        self.dir = os.path.dirname(os.path.realpath(__file__))
         cp = configparser.ConfigParser()
-        cp.read(os.path.join(self.dir, 'settings.ini'))
+        cp.read(SETTINGS)
 
         # for now, let's just look up the DEV settings
         # can change this later
