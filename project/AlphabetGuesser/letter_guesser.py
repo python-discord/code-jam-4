@@ -17,6 +17,7 @@ class LetterGuesser:
     remove_possible_words: removes all words/phrases from dictionary that contain none of the characters in the given
                            word/phrase
     contains_none_letters: Returns True only if none the letters in word_2 are contained in word_1
+    answer: Handles the user's answer of either "Yes" or "No"
     """
     def __init__(self):
         self.dictionary = None
@@ -27,13 +28,26 @@ class LetterGuesser:
             self.dictionary = pickle.load(openfile)
             openfile.close()
 
+    def answer(self, requested_word, answer):
+        """
+        Handles the user's answer for a given word
+        :param requested_word: The context of the user's answer
+        :param answer: string that should be either "Yes" or "No"; the program will  not respond to anything else
+        :return: None
+        """
+        if answer == "Yes":
+            self.remove_possible_words(requested_word)
+        self.remove_possible_letters(requested_word, answer)
+
     def request_word(self) -> str:
         return random.choice(list(self.dictionary))
 
-    def remove_possible_letters(self, word) -> None:
+    def remove_possible_letters(self, word, yes_no) -> None:
         characters_to_delete = []
         for character in self.possible_characters:
-            if character not in word:
+            if character not in word and yes_no == "Yes":
+                characters_to_delete.append(character)
+            elif character in word and yes_no == "No":
                 characters_to_delete.append(character)
         for character in characters_to_delete:
             self.possible_characters.remove(character)
@@ -63,9 +77,8 @@ if __name__ == '__main__':
     while True:
         word = guesser.request_word()
         yes_no = input('Is your letter in the word/phrase:\n{}\n(Yes/No):'.format(word))
-        if yes_no == 'Yes':
-            guesser.remove_possible_words(word)
-            guesser.remove_possible_letters(word)
+        guesser.answer(word, yes_no)
+        print(guesser.possible_characters)
         if len(guesser.possible_characters) == 1:
             print('The letter you want is \'{0}\''.format(guesser.possible_characters[0]))
             break
