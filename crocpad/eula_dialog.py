@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog
-from ui.eula import Ui_EulaDialog
+from crocpad.ui.eula import Ui_EulaDialog
 from PyQt5.QtCore import Qt
 
 

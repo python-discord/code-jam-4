@@ -34,15 +34,15 @@ This is the Code Jam 4 entry for team Cool Crocodiles.
 
 ## Description
 
-`# TODO`
+Crocpad++ is a free replacement for Notepad.
 
 ## Setup & Installation
 
-`# TODO`
+Use `pipenv install` from the root directory.
 
 ## How do I use this thing?
 
-`# TODO`
+Use `pipenv run start` to run Crocpad++.
 
 ## Project Structure
 `project/`  
@@ -50,6 +50,9 @@ Contains the Crocpad++ application.
 
 `project/ui`  
 Contains `.ui` files created for Qt and the Python modules generated from those UI files.
+
+`project/sounds`  
+Contains sound resources for a multimedia, user-friendly experience.
 
 ## Attributions
 `wrong.wav` is from https://freesound.org/people/sharesynth/sounds/341256/

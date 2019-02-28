@@ -6,8 +6,8 @@ from PyQt5.QtGui import QFontDatabase, QIcon, QFont
 from PyQt5.QtWidgets import (QApplication, QDesktopWidget, QMainWindow,
                              QMessageBox, QPlainTextEdit, QStatusBar,
                              QVBoxLayout, QWidget)
-from configuration import app_config
-from eula_dialog import EulaDialog
+from crocpad.configuration import app_config
+from crocpad.eula_dialog import EulaDialog
 
 
 class MainWindow(QMainWindow):
@@ -24,9 +24,9 @@ class MainWindow(QMainWindow):
         fixedfont.setPointSize(24)
         self.main_window.setFont(QFont('Comic Sans MS', 30))
         self.main_window.installEventFilter(self)
-        self.sound = QSound("click.wav")
-        self.enter_sound = QSound("scream.wav")
-        self.backspace_sound = QSound("wrong.wav")
+        self.sound = QSound("crocpad\\sounds\\click.wav")
+        self.enter_sound = QSound("crocpad\\sounds\\scream.wav")
+        self.backspace_sound = QSound("crocpad\\sounds\\wrong.wav")
 
         layout.addWidget(self.main_window)
 
@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
-        self.setWindowIcon(QIcon('project\\crocpad.ico'))
+        self.setWindowIcon(QIcon('crocpad\\crocpad.ico'))
 
         # Add Menus
         mainMenu = self.menuBar()
@@ -63,7 +63,7 @@ class MainWindow(QMainWindow):
         self.show()
 
         if app_config['License']['eulaaccepted'] != 'yes':
-            with open('EULA.txt', 'r', encoding="utf8") as f:
+            with open('crocpad\\EULA.txt', 'r', encoding="utf8") as f:
                 eula = f.read()
             self.eula_dialog = EulaDialog(eula)
             self.eula_dialog.exec_()
