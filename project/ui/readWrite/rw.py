@@ -4,10 +4,10 @@ import os
 
 class readWrite:
 	def __init__(self):
-		self.data = []
+                self.data = []
 
 	def readInput(self):
-		if os.path.exists("taskList.txt"):
+		if os.path.exists("taskList.json"):
 			if os.stat("taskList.txt").st_size < 1:
 				return []
 			else:
@@ -16,7 +16,7 @@ class readWrite:
 				json_file.close()
 				return data
 		else:
-			f = open("taskList.txt", "x")
+			f = open("taskList.json", "x")
 			return []
 
 	def writeInput(self, title, desc, date, mark):
@@ -27,8 +27,10 @@ class readWrite:
 			"Mark": mark
 		})
 		
-	def	writeFile(self):
-		with open("taskList.txt", "w") as outfile:
-			json.dump(self.data, outfile, indent = 4)
+	def writeFile(self, data):
+                
+		with open("taskList.json", "w") as outfile:
+                        for i in data:
+                                json.dump(i, outfile, indent = 4)
 			
 		outfile.close()

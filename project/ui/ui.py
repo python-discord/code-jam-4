@@ -18,6 +18,7 @@ class MainApplication(QMainWindow, Ui_MainApplication):
         self.init_UI()
         self.bind_buttons()
         self.windows = []
+        self.count =0
 
     def init_UI(self):
         """
@@ -38,6 +39,8 @@ class MainApplication(QMainWindow, Ui_MainApplication):
 
     def bind_buttons(self):
         self.create_task_button.clicked.connect(self.add_task)
+        #Added Edit task button
+        self.edit_task_button.clicked.connect(self.edit_task)
 
     def add_task(self):
         """
@@ -45,6 +48,10 @@ class MainApplication(QMainWindow, Ui_MainApplication):
         """
         form = AddTask()
         self.windows.append(form)
+
+    def edit_task(self):
+        pass
+        #edit_task_button.setText("Press Me")
 
     def closeEvent(self, event):
         """
