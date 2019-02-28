@@ -34,7 +34,7 @@ class ClipboardManager(QObject):
     @pyqtSlot()
     def _clipboard_changed(self):
         """"""
-        current_text = Text.apply(QApplication.clipboard().text())
+        current_text = QApplication.clipboard().text()
         # current_text = PT.apply(QApplication.clipboard().text()) # TODO: Chain plugins together
         print("Current Text", QApplication.clipboard().text())
         print("Current Image Info", QApplication.clipboard().pixmap())
