@@ -2,8 +2,6 @@ import itertools
 import tkinter as tk
 import tkinter.font as tkFont
 from tkinter import ttk
-# from tkinter import messagebox
-import math
 import json
 import nltk
 from nltk.corpus import words
@@ -40,14 +38,7 @@ LOOTBOX_RARITIES = [
     "legendary",
 ]
 
-LOOTBOX_RATES = [
-    0,
-    50,
-    70,
-    85,
-    90,
-    95,
-]
+LOOTBOX_RATES = [0, 50, 70, 85, 90, 95]
 
 
 LOOTBOX_PULLS_PER_BOX = 5
@@ -69,11 +60,13 @@ class UserInterface(tk.Frame):
         tk.Frame.__init__(self, master, *args, **kwargs)
 
         try:
-            with open(SAVE_DATA_PATH) as save_data_file:
-                save_data = json.load(save_data_file)
+            save_data_file = open(SAVE_DATA_PATH)
         except FileNotFoundError:
-            with open(DEFAULT_SAVE_PATH) as save_data_file:
-                save_data = json.load(save_data_file)
+            save_data_file = open(DEFAULT_SAVE_PATH)
+        finally:
+            save_data = json.load(save_data_file)
+            save_data_file.close()
+
         saved_keys = save_data['keys']
         saved_scales = save_data['scales']
         self.used_words = set(save_data['used_words'])
@@ -108,23 +101,17 @@ class UserInterface(tk.Frame):
         self.xp_frame.pack(side='right')
 
         key_descriptions = self.keyboard_section.key_descriptions
-        self.unlockable_keys = [
-                                [key_descriptions[key]["name"] for key
+        self.unlockable_keys = [[key_descriptions[key]["name"] for key
                                  in key_descriptions
                                  if key_descriptions[key]["rarity"]
-                                 == rarity_level
-                                 ]
+                                 == rarity_level]
                                 for rarity_level
-                                in range(len(LOOTBOX_RARITIES))
-                               ]
+                                in range(len(LOOTBOX_RARITIES))]
 
         self.config(padx=40, pady=32)
 
-        self.lootbox_window = None
-
     def add_xp(self, xp_increase):
         self.xp += xp_increase
-        print("XP: {}".format(self.xp))
         while self.xp >= self.next_xp_milestone:
             self.prev_xp_milestone = self.next_xp_milestone
             self.next_xp_milestone = next(self.xp_milestones)
@@ -150,35 +137,14 @@ class UserInterface(tk.Frame):
 
         for i in range(LOOTBOX_PULLS_PER_BOX):
             rand_int = random.randint(0, 100)
-            lootbox_rank = -1
-            for threshold in LOOTBOX_RATES:
-                if rand_int >= threshold:
-                    lootbox_rank += 1
-
+            lootbox_rank = -1 + len([threshold for threshold in LOOTBOX_RATES
+                                     if rand_int >= threshold])
             unlocked_key = random.choice(self.unlockable_keys[lootbox_rank])
-
             unlocked_keys.append(unlocked_key)
             rarities.append(lootbox_rank)
-
             self.keyboard_section.add_key(unlocked_key)
 
-            lootbox_rarity = LOOTBOX_RARITIES[lootbox_rank]
-
-            # mbox_title = "{} item unlocked!".format(lootbox_rarity.title())
-            # mbox_text = "You got a \"{}\"!".format(unlocked_key)
-
-            """
-            messagebox.showinfo(
-                                mbox_title,
-                                mbox_text
-                                )
-            """
-
-            print("rolled {}".format(rand_int), lootbox_rarity, unlocked_key)
-
-        self.lootbox_window = LootBoxUnlockWindow(new_keys=unlocked_keys,
-                                                  rarities=rarities
-                                                  )
+        LootBoxUnlockWindow(new_keys=unlocked_keys, rarities=rarities)
 
     def on_word_complete(self, last_word: str):
         if last_word is None:
@@ -344,10 +310,7 @@ class KeyboardKey(tk.Button):
         else:
             self.shift_name = shift_name
         # Char sent to master when clicked
-        if char is None:
-            self.char = name.lower()
-        else:
-            self.char = char
+        self.char = name.lower() if char is None else char
         # Char sent to master when shift is on
         if shift_char is None:
             self.shift_char = self.char.upper()
@@ -370,14 +333,10 @@ class KeyboardKey(tk.Button):
         else:
             button_action = self.send_key
 
-        self.config(
-            textvar=self.name,
-            command=button_action,
-            font=self.font,
-            )
+        self.config(textvar=self.name, command=button_action, font=self.font)
 
     def get_font_size(self):
-        return math.floor(KeyboardKey.KEY_SIZE * self.scale)
+        return int(KeyboardKey.KEY_SIZE * self.scale)
 
     def increase_scale(self):
         self.scale = min(self.scale+self.scale_inc, self.scale_max)
@@ -399,9 +358,7 @@ class KeyboardKey(tk.Button):
         self.name.set(self.text_name if not self.shift_on else self.shift_name)
 
     def send_key(self):
-        self.master.send_key(
-            self.char if not self.shift_on else self.shift_char
-            )
+        self.master.send_key(self.shift_char if self.shift_on else self.char)
 
         if self.scale < self.scale_max:
             self.master.recalc_key_sizes(self)
@@ -421,6 +378,7 @@ class KeyboardKey(tk.Button):
 class LootBoxUnlockWindow(tk.Toplevel):
     def __init__(self, new_keys=[], rarities=[], *args, **kwargs):
         tk.Toplevel.__init__(self)
+        self.iconbitmap(IMAGE_PATH / Path("capsule_small.ico"))
         self.title("Lootbox unlocked!")
 
         self.attributes("-topmost", True)
@@ -430,13 +388,9 @@ class LootBoxUnlockWindow(tk.Toplevel):
 
         self.lootbox_display = LootBoxUnlockFrame(self)
 
-        self.button = tk.Button(self, text="Close", command=self.destroy)
-        self.button.pack()
+        tk.Button(self, text="Close", command=self.destroy).pack()
 
         self.minsize(400, 700)
-
-    # def close_window(self):
-    #     self.destroy()
 
 
 class LootBoxUnlockFrame(tk.Frame):
@@ -500,7 +454,7 @@ class XPFrame(tk.Frame):
                                               maximum=next_xp_milestone
                                               - prev_xp_milestone,
                                               value=xp-prev_xp_milestone)
-        lootbox_image_data = Image.open(IMAGE_PATH / Path("capsule_small.png"))
+        lootbox_image_data = Image.open(IMAGE_PATH / Path("capsule_small.ico"))
         self.lootbox_image = ImageTk.PhotoImage(lootbox_image_data)
         self.lootbox_image_label = tk.Label(self, image=self.lootbox_image)
         self.xp_label.pack(side='left')
