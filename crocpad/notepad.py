@@ -1,3 +1,4 @@
+import random
 import sys
 
 from PyQt5.QtCore import Qt, QEvent
@@ -90,6 +91,13 @@ class MainWindow(QMainWindow):
                     self.backspace_sound.play()
                 else:
                     self.sound.play()
+            if event.key() == Qt.Key_Space:
+                if random.random() > 0.8:
+                    dlg = QMessageBox(self)
+                    dlg.setWindowTitle("Are you sure?")
+                    dlg.setText("_" * 100)
+                    dlg.show()
+                    dlg.close()
         return False
 
     def dialog_critical(self, alert_text):
