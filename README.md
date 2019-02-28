@@ -44,7 +44,7 @@ Our team name is **Wild Whispers** and consists of the following users:
 ## Setup & Installation
 
 Make sure you have installed `git` and `python` (>=3.7) and `pipenv`
-```python
+```shell
 git clone https://github.com/JonasKs/code-jam-4 
 cd code-jam-4
 pipenv --python 3.7
