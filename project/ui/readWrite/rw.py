@@ -28,7 +28,6 @@ class readWrite:
 		})
 		
 	def writeFile(self, data):
-                
 		with open("taskList.json", "w") as outfile:
                         for i in data:
                                 json.dump(i, outfile, indent = 4)
