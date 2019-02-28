@@ -5,10 +5,11 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, \
 import sys
 
 from project import ClipboardManager
-from project.ClipboardManager.ClipboardObject import TextClipboardObject
+from project.ClipboardManager.ClipboardObject import TextClipboardObject, ImageClipboardObject
 from project.Stack import Stack
 from project.Widgets import MainListWidget, TextListWidgetItem
 from project.Plugins.Systray import SystemTrayIcon
+from project.Widgets.MainListWidget import ImageListWidgetItem
 from .utils import CONSTANTS
 
 from PyQt5 import QtCore, QtWidgets
@@ -123,9 +124,17 @@ class MainWindow(QMainWindow):
                 self._main_list_widget.addItem(_item)
                 self._main_list_widget.setItemWidget(_item, _custom_item)
 
+            elif isinstance(clipboard_object, ImageClipboardObject):
+                _item = QListWidgetItem(self._main_list_widget)
+                _custom_item = ImageListWidgetItem(clipboard_stack.items_count() - idx - 1,
+                                                   clipboard_object)
+                _item.setSizeHint(_custom_item.sizeHint())
+                self._main_list_widget.addItem(_item)
+                self._main_list_widget.setItemWidget(_item, _custom_item)
+
         self._main_list_widget.setCurrentRow(self._clipboard_manager.clipboard_stack.items_count()
                                              - self._clipboard_manager.clipboard_stack
-                                             .current_item() - 1)
+                                             .current_item_idx - 1)
 
     def setupUi(self):
         # MainWindow.setObjectName("MainWindow")

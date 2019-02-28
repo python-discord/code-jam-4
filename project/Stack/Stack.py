@@ -42,8 +42,13 @@ class Stack:
 
         self._stack_pointer = idx
 
-    def current_item(self):
+    @property
+    def current_item_idx(self):
         return self._stack_pointer
+
+    @property
+    def current_item(self):
+        return self._stack[self._stack_pointer] if self._stack else None
 
     def shift_current_item(self, shift_direction: SHIFT_DIRECTION):
         """Shifts the current item pointed to by the stack pointer up or down"""
