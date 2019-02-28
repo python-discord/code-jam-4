@@ -10,7 +10,8 @@ class weatherh8su:
         self.create_widgets()
 
     def create_widgets(self):
-        self.directory = "\\".join(realpath(__file__).split("\\")[:-3])+"\\data\\"
+        self.directory = "\\".join(realpath(__file__)
+                                   .split("\\")[:-3]) + "\\data\\"
         self.topframe = tk.Frame(self.master)
         self.topframe.pack()
         self.glass = Image.open(f"{self.directory}glass.png")
