@@ -1,6 +1,8 @@
+import configparser
 import tkinter as tk
 import asyncio
 from pygame import mixer
+import os
 from cache import Cache
 
 
@@ -11,13 +13,26 @@ class Tinder:
         # setup for pygame mixer
         mixer.init()
 
+        # get settings
+        self.dir = os.path.dirname(os.path.realpath(__file__))
+        cp = configparser.ConfigParser()
+        cp.read(os.path.join(self.dir, 'settings.ini'))
+
+        # for now, let's just look up the DEV settings
+        # can change this later
+        # configparser will use values from DEFAULT section if none provided elsewhere
+        if 'DEV' in cp.sections():
+            self.config = cp['DEV']
+        else:
+            self.config = cp['DEFAULT']
+
         # setting up the tkinter root
         self.root = tk.Tk()
-        self.root.title("Cat Tinder")
-        self.root.geometry("400x500")
+        self.root.title(self.config['main.title'])
+        self.root.geometry(self.config['main.geometry'])
         self.root.minsize(400, 500)
         self.root.maxsize(400, 500)
-        self.root.configure(background='black')
+        self.root.configure(background=self.config['main.background'])
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         # getting screen width and height for use with teleporting window/jumpscare
@@ -25,9 +40,9 @@ class Tinder:
         self.screen_y = self.root.winfo_screenheight()
 
         # setting class variables to be used later
-        self.cache = Cache()
         self.jumpscare = False
         self.loop = asyncio.get_event_loop()
+        self.cache = Cache(self.root)
 
     def start(self):
         '''Starts the Tinder application'''
@@ -63,7 +78,6 @@ class Tinder:
 
         # if the previous image was a jumpscare, resize the window and reset the variable
         if self.jumpscare:
-            self.root.geometry()
             self.root.maxsize(400, 500)
             self.jumpscare = False
 
@@ -134,17 +148,17 @@ class Tinder:
             # make a button to allow the user to pass through the image
             # Note: since everyone likes scary monsters, only make a Like button
             tk.Button(
-                self.frame, text="Like", background="green",
+                self.frame, text=self.config['like.text'], background="green",
                 command=self.new_image).pack(side=tk.BOTTOM)
 
         # image was not a jumpscare, don't do jumpscare things
         else:
             # setting up like and dislike buttons on opposite sides of the screen
             tk.Button(
-                self.frame, text="Like", background="green",
+                self.frame, text=self.config['like.text'], background="green",
                 command=self.new_image).pack(side=tk.RIGHT)
             tk.Button(
-                self.frame, text="Dislike", background="red",
+                self.frame, text=self.config['dislike.text'], background="red",
                 command=self.new_image).pack(side=tk.LEFT)
 
             # defining button functions
@@ -183,13 +197,16 @@ class Tinder:
 
                 # setting up like/dislike/Back to Photo buttons on the bio screen
                 tk.Button(
-                    self.frame, text="Like", background="green",
+                    self.frame, text=self.config['like.text'],
+                    background=self.config['like.background'],
                     command=self.new_image).pack(side=tk.RIGHT)
                 tk.Button(
-                    self.frame, text="Dislike", background="red",
+                    self.frame, text=self.config['dislike.text'],
+                    background=self.config['dislike.background'],
                     command=self.new_image).pack(side=tk.LEFT)
                 tk.Button(
-                    self.root, text="Back To Photo", background="blue",
+                    self.root, text=self.config['back.text'],
+                    background=self.config['back.background'],
                     command=back_to_photo).pack(side=tk.BOTTOM)
 
                 # packing the frame
@@ -197,7 +214,7 @@ class Tinder:
 
             # making and packing the Bio button for users to look at the cat's bio
             tk.Button(
-                self.frame, text="Bio", background="blue",
+                self.frame, text=self.config['bio.text'], background=self.config['bio.background'],
                 command=get_bio).pack(side=tk.BOTTOM)
 
         # packing the frame

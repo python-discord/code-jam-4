@@ -3,18 +3,37 @@ from random import randint, choice, sample
 from PIL import Image, ImageTk
 import os
 import io
+import configparser
 
 
 class Cache:
-    '''Class used for caching images and data about the cats.'''
+    '''Class used for caching images and data about the cats'''
 
-    def __init__(self):
+    def __init__(self, root):
+        # setting root
+        self.root = root
+        self.screen_x = self.root.winfo_screenwidth()
+        self.screen_y = self.root.winfo_screenheight()
+
         # setting class variables for use later
         self.cats = list()
         self.session = None
 
-        # getting the directory folder for use later when opening files
+        # get settings
         self.dir = os.path.dirname(os.path.realpath(__file__))
+        cp = configparser.ConfigParser()
+        cp.read(os.path.join(self.dir, 'settings.ini'))
+        cp.read('settings.ini')
+
+        # for now, let's just look up the DEV settings
+        # can change this later
+        # configparser will use values from DEFAULT section if none provided elsewhere
+        if 'DEV' in cp.sections():
+            self.config = cp['DEV']
+        else:
+            self.config = cp['DEFAULT']
+
+        # getting the directory folder for use later when opening files
 
     async def refill(self):
         '''Gets a cache of cat data and adds it to the self.cats list'''
@@ -23,8 +42,10 @@ class Cache:
         if not self.session:
             self.session = aiohttp.ClientSession()
 
+        cachesize = int(self.config['cachesize'])
+
         # Run 10 times to get 10 cats
-        for i in range(10):
+        for i in range(cachesize):
             # initialize a dict of cat data
             cat_data = dict()
 
