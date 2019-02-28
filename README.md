@@ -50,3 +50,6 @@ Contains the Crocpad++ application.
 
 `project/ui`  
 Contains `.ui` files created for Qt and the Python modules generated from those UI files.
+
+## Attributions
+`wrong.wav` is from https://freesound.org/people/sharesynth/sounds/341256/

@@ -26,6 +26,7 @@ class MainWindow(QMainWindow):
         self.main_window.installEventFilter(self)
         self.sound = QSound("click.wav")
         self.enter_sound = QSound("scream.wav")
+        self.backspace_sound = QSound("wrong.wav")
 
         layout.addWidget(self.main_window)
 
@@ -75,6 +76,9 @@ class MainWindow(QMainWindow):
             if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
                 self.sound.stop()
                 self.enter_sound.play()
+            if event.key() == Qt.Key_Backspace:
+                self.sound.stop()
+                self.backspace_sound.play()
             else:
                 self.sound.play()
         return False
