@@ -1,20 +1,6 @@
 abject
 aberration
 abjure
-abnegation
-abrogate
-abscond
-abstruse
-accede
-accost
-accretion
-acumen
-adamant
-admonish
-adumbrate
-adverse
-advocate
-affluent
 aggrandize
 alacrity
 alias
@@ -74,12 +60,6 @@ congruity
 connive
 consign
 constituent
-construe
-contusion
-contrite
-contentious
-contravene
-convivial
 corpulence
 covet
 cupidity
@@ -109,11 +89,6 @@ eclectic
 edict
 ebullient
 egregious
-elegy
-elicit
-embezzlement
-emend
-emollient
 empirical
 emulate
 enervate
@@ -146,24 +121,8 @@ forbearance
 fortuitous
 fractious
 garrulous
-gourmand
-grandiloquent
-gratuitous
-hapless
-hegemony
-heterogenous
 iconoclast
 idiosyncratic
-impecunious
-impetuous
-impinge
-impute
-inane
-inchoate
-incontrovertible
-incumbent
-inexorable
-inimical
 injunction
 inoculate
 insidious
@@ -220,35 +179,14 @@ penurious
 pert
 pernicious
 pertinacious
-phlegmatic
-philanthropic
-pithy
-platitude
-plaudit
-plenitude
-plethora
-portent
-potentate
-preclude
-predilection
-preponderance
-presage
 probity
 proclivity
 profligate
 promulgate
 proscribe
-protean
-prurient
-puerile
-pugnacious
-pulchritude
-punctilious
 quaint
 quixotic
 quandary
-recalcitrant
-redoubtable
 relegate
 remiss
 reprieve
@@ -259,22 +197,8 @@ rife
 sanctimonious
 sanguine
 scurrilous
-semaphore
-serendipity
-sobriety
-solicitous
-solipsism
-spurious
-staid
-stolid
-subjugate
-surfeit
-surreptitious
-swarthy
-tangential
 tome
 toady
-torpid
 travesty
 trenchant
 trite
@@ -282,19 +206,215 @@ truculent
 turpitude
 ubiquitous
 umbrage
-upbraid
-utilitarian
-veracity
-vestige
-vicissitude
-vilify
-virtuoso
-vitriolic
-vituperate
-vociferous
 wanton
 winsome
 yoke
 zephyr
 wily
 tirade
+python
+disaffected@hotmail.fr
+nadi@yahoo.com
+embezzlement@hotmail.com
+caucus@gmail.com
+duress@gmail.com
+cove@outlook.com
+derivative@hotmail.fr
+corpulence@hotmail.com
+pellucio@outlook.com
+blandishment@yahoo.com
+adumbrate@outlook.com
+aspersion@yahoo.com
+concomitan@outlook.com
+elege@hotmail.com
+inchoate@yahoo.com
+proclivity@hotmail.fr
+extraneous@gmail.com
+carous@hotmail.fr
+compunction@hotmail.com
+vociferous@hotmail.fr
+equanimity@outlook.com
+travesty@gmail.com
+bashful@outlook.com
+concomitan@gmail.com
+commensurate@hotmail.fr
+surreptitious@outlook.com
+libertarian@hotmail.com
+vituperate@hotmail.fr
+trite@hotmail.com
+proscribe@yahoo.com
+panaces@hotmail.fr
+hegemone@gmail.com
+duplicite@outlook.com
+abject@outlook.com
+concomitant@hotmail.com
+derivative.co.uk
+extant.gov
+amorphous.edu
+dearth.gov
+libertarian.ca
+insurgent.io
+rife.io
+ostensible.edu
+accretion.com
+inveterate.edu
+penchant.org
+defunct.io
+inimical.es
+preclude.edu
+redoubtable.co.uk
+irreverence.es
+ambivalent.es
+disaffected.me
+inveterate.net
+debunk.com
+elegy.com
+defunct.ca
+duress.es
+inexorable.org
+quaint.edu
+inexorable.me
+beguile.co.uk
+negligent.es
+dour.com
+abstruse.gov
+emollient.net
+archetypal.ca
+impute.edu
+stolid.net
+cajole.gg
+extra-vestige
+auto-epistolary
+hypo-apocryphal
+post-camaraderie
+hypo-circumlocution
+hypo-winsome
+auto-pithy
+hypo-amorphous
+auto-arboreal
+trans-winsome
+non-foil
+auto-vicissitude
+semi-contravene
+hypo-atrophy
+un-rife
+anti-pernicious
+anti-bashful
+hypo-maverick
+non-accretion
+extra-obstreperous
+hypo-prurient
+anti-noxious
+non-empirical
+mid-contusion
+dis-veracity
+de-hegemony
+anti-impute
+auto-dispel
+mis-abjure
+anti-toady
+non-preponderance
+mid-insurgent
+extra-scurrilous
+pre-torpid
+anti-negligent
+execrable!
+sobriety!
+atrophy?
+abjure?
+callous?
+edict!
+anathema?
+connive!
+contentious?
+caucus!
+reprieve?
+edict?
+heterogenous!
+approbation?
+expunge?
+virtuoso!
+covet!
+disaffected?
+disparate!
+utilitarian!
+partisan!
+archetypal?
+heterogenous?
+pejorative!
+contentious?
+admonish?
+duress?
+emollient!
+subjugate?
+pariah!
+paradigm!
+probity?
+penchant!
+covet!
+antediluvian?
+disparate51
+vilify36
+advocate10
+penurious50
+scurrilous66
+corpulence11
+ostracism49
+cobbler11
+expedient31
+surreptitious50
+largesse14
+commensurate96
+insurgent95
+plenitude63
+connive70
+utilitarian14
+idiosyncratic89
+incumbent26
+pithy99
+arbitrary17
+cleave30
+nadir78
+demagogue22
+atrophy97
+ebullient70
+vilify91
+litigant90
+antiseptic69
+platitude22
+gourmand63
+dogmatic83
+noisome46
+obdurate12
+arboreal49
+recalcitrant21
+ascetic exacerbate
+licentious maelstrom
+annex reprieve
+congruity arrogate
+dirge forbearance
+tirade tome
+antiseptic expurgate
+apocryphal palliate
+bombastic evanescent
+duplicity yoke
+disaffected maelstrom
+forbearance ascetic
+arcane quaint
+diaphanous yoke
+circumlocution probity
+congruity fortuitous
+obstreperous probity
+zephyr duress
+morass exigent
+connive dearth
+camaraderie aspersion
+nadir probity
+pellucid antediluvian
+truculent apathetic
+exhort cobbler
+amorphous quaint
+conduit engender
+proclivity insidious
+fallacious munificent
+amenable injunction
