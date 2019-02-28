@@ -1,11 +1,13 @@
 import sys
 from random import randint
-from PyQt5.QtCore import Qt, QSize, QPoint
+from PyQt5.QtCore import Qt, QPoint  # , QSize
 from PyQt5.QtWidgets import (QMainWindow, QApplication,
-                             QAction, QFileDialog, QPushButton,
-                             QToolBox, QSizePolicy, QToolButton)
+                             QAction, QFileDialog,
+                             )
+#  QPushButton, QToolBox, QSizePolicy, QToolButton
 from PyQt5.QtGui import (QImage, QPainter, QPen, QPixmap,
-                         QIcon, QCursor, QColor, QBrush)
+                         QIcon, QCursor, QColor)
+# QBrush
 
 """
 Hover on QPaint detection
@@ -65,9 +67,9 @@ class PaintBoard(QMainWindow):
 
         self.pointy_pen = {
             "toolName": "pointy_pen",
-            "duration": randint(0,10),
+            "duration": randint(0, 10),
             "brushSize": 1,
-            "color":Qt.black,
+            "color": Qt.black,
             "paintPattern": Qt.SolidLine
 
         }
@@ -75,7 +77,7 @@ class PaintBoard(QMainWindow):
                                  "Pointy Pen", self)
         pointy_pen_btn.setShortcut("CTRL+P")
         pointy_pen_btn.setStatusTip("A very pointy pen")
-        pointy_pen_btn.triggered.connect(lambda :self.changePaintBoardVars(
+        pointy_pen_btn.triggered.connect(lambda: self.changePaintBoardVars(
             self.pointy_pen["toolName"],
             self.pointy_pen["brushSize"],
             self.pointy_pen["paintPattern"],
@@ -87,7 +89,7 @@ class PaintBoard(QMainWindow):
             "duration": 1,
             "brushSize": 50,
             "color": None,
-            "paintPattern": "big dump",  #TODO: Custom pattern
+            "paintPattern": "big dump",  # TODO: Custom pattern
             "is_dipped": False
         }
         fill_btn = QAction(QIcon('Design/icons/fill_empty.png'),
@@ -103,7 +105,7 @@ class PaintBoard(QMainWindow):
 
         self.straggly_paintbrush = {
             "toolName": "straggly_paintbrush",
-            "duration": randint(10,30),
+            "duration": randint(10, 30),
             "brushSize": 10,
             "color": None,
             "paintPattern": "spread out pattern",  # TODO: Custom pattern
@@ -111,16 +113,18 @@ class PaintBoard(QMainWindow):
 
         }
         straggly_paintbrush_btn = QAction(QIcon(
-                             'Design/icons/straggly_paintbrush.png'),
-                                          "Straggly Paintbrush", self)
+            'Design/icons/straggly_paintbrush.png'),
+            "Straggly Paintbrush", self)
         straggly_paintbrush_btn.setShortcut("CTRL+A")
         straggly_paintbrush_btn.setStatusTip("A very Straggly Paintbrush.")
-        straggly_paintbrush_btn.triggered.connect(lambda: self.changePaintBoardVars(
-            self.straggly_paintbrush["toolName"],
-            self.straggly_paintbrush["brushSize"],
-            self.straggly_paintbrush["color"],
-            self.straggly_paintbrush["paintPattern"]
-        ))
+        straggly_paintbrush_btn.triggered.connect(
+            lambda: self.changePaintBoardVars(
+                self.straggly_paintbrush["toolName"],
+                self.straggly_paintbrush["brushSize"],
+                self.straggly_paintbrush["color"],
+                self.straggly_paintbrush["paintPattern"]
+                )
+            )
 
         self.solidifed_brush = {
             "toolName": "solidified_brush",
@@ -131,20 +135,22 @@ class PaintBoard(QMainWindow):
             "is_dipped": False
         }
         solidified_brush_btn = QAction(QIcon(
-                               'Design/icons/solidified_brush.png'),
-                                        "A solid brush", self)
+            'Design/icons/solidified_brush.png'),
+            "A solid brush", self)
         solidified_brush_btn.setShortcut("CTRL+A")
         solidified_brush_btn.setStatusTip("Gorsh, that is a hard tip")
-        solidified_brush_btn.triggered.connect(lambda: self.changePaintBoardVars(
-            self.solidifed_brush["toolName"],
-            self.solidifed_brush["brushSize"],
-            self.solidifed_brush["color"],
-            self.solidifed_brush["paintPattern"]
-        ))
+        solidified_brush_btn.triggered.connect(
+            lambda: self.changePaintBoardVars(
+                self.solidifed_brush["toolName"],
+                self.solidifed_brush["brushSize"],
+                self.solidifed_brush["color"],
+                self.solidifed_brush["paintPattern"]
+                )
+            )
 
-        colors = c1, c2, c3, c4, c5, c6 = (QColor(randint(0,255),
-                                                  randint(0,255),
-                                                  randint(0,255))
+        colors = c1, c2, c3, c4, c5, c6 = (QColor(randint(0, 255),
+                                                  randint(0, 255),
+                                                  randint(0, 255))
                                            for _ in range(6))
         self.toolbar = self.addToolBar("Toolbar")
         pallettes = p1, p2, p3, p4, p5, p6 = (QAction(self)
@@ -156,7 +162,7 @@ class PaintBoard(QMainWindow):
         self.toolbar.addAction(solidified_brush_btn)
 
         for color, pallette in zip(colors, pallettes):
-            pallette.setStyleSheet("QPushButton{background-color:{color}}"\
+            pallette.setStyleSheet("QPushButton{background-color:{color}}"
                                    .format(color=color))
             pallette.clicked.connect(lambda: self.mixColor)
             self.toolbar.addAction(pallette)
@@ -167,7 +173,8 @@ class PaintBoard(QMainWindow):
         self.lastPoint = QPoint()
 
     def changePaintBoardVars(self, curToolName=None,
-        curBrushsize=1, curBrushColor=None, curPaintPattern=Qt.SolidLine):
+                             curBrushsize=1, curBrushColor=None,
+                             curPaintPattern=Qt.SolidLine):
         self.currentToolName = curToolName
         self.currentBrushSize = curBrushsize
         self.currentPaintPattern = curPaintPattern
@@ -180,19 +187,19 @@ class PaintBoard(QMainWindow):
                                                  ))))
 
     def mix_color(self, pallette, tool):
-        if tool["toolName"] in ["fill_empty","straggly_paintbrush"
+        if tool["toolName"] in ["fill_empty", "straggly_paintbrush"
                                 "solidified_brush"]:
-                   #r             #g          #b
+            # tool[r,b,g]
             if not ((tool[0] and tool[1] and tool[2]) and self.t):
                 tool["color"] = pallette.QColor
             else:  # perhaps don't divide by 4
                 mixedColor = QColor(
                     pallette[0] - (max(pallette[0], tool[0] // 4) -
-                              min(pallette[0], tool[0] // 4)),
+                                   min(pallette[0], tool[0] // 4)),
                     pallette[1] - (max(pallette[1], tool[1] // 4) -
-                              min(pallette[1], tool[1] // 4)),
+                                   min(pallette[1], tool[1] // 4)),
                     pallette[2] - (max(pallette[2], tool[2] // 4) -
-                              min(pallette[2], tool[2] // 4)),
+                                   min(pallette[2], tool[2] // 4)),
                     255
                 )
                 pallette.QColor, tool["color"] = mixedColor, mixedColor
@@ -206,8 +213,13 @@ class PaintBoard(QMainWindow):
     def mouseMoveEvent(self, event):
         if (event.buttons() and Qt.LeftButton) and self.drawing:
             painter = QPainter(self.canvas)
-            painter.setPen(QPen(self.currentBrushColor, self.currentBrushSize,
-                        self.currentPaintPattern, Qt.RoundCap, Qt.RoundJoin))
+            painter.setPen(QPen(self.currentBrushColor,
+                                self.currentBrushSize,
+                                self.currentPaintPattern,
+                                Qt.RoundCap,
+                                Qt.RoundJoin
+                                )
+                           )
             painter.drawLine(self.lastPoint, event.pos())
             self.lastPoint = event.pos()
             self.update()
