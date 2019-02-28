@@ -2,16 +2,19 @@
     {
         "Title": "task 1",
         "Description": "Copy Hello World",
-        "Deadline": "2019-02-27 17:49:07.380205"
+        "Deadline": "2019-02-28 11:37:20.700885",
+        "Mark": true
     },
     {
         "Title": "task 2",
         "Description": "Paste Hello World",
-        "Deadline": "2019-02-27 17:49:07.380205"
+        "Deadline": "2019-02-28 11:37:20.700885",
+        "Mark": false
     },
     {
         "Title": "task 3",
         "Description": "Modify Hello World",
-        "Deadline": "2019-02-27 17:49:07.380205"
+        "Deadline": "2019-02-28 11:37:20.700885",
+        "Mark": true
     }
 ]

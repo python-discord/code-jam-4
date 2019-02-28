@@ -11,11 +11,12 @@ class readWrite:
 			data = json.load(json_file)
 		json_file.close()
 
-	def writeInput(self, title, desc, date):
+	def writeInput(self, title, desc, date, mark):
 		self.data.append({
 			"Title": title,
 			"Description": desc,
 			"Deadline": str(date),
+			"Mark": mark
 		})
 		
 	def	writeFile(self):
