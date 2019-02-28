@@ -27,6 +27,7 @@ class ColorBox(QMainWindow):
         self.toolsX = 5
         self.toolsY = 0
         self.tools_holder = 1
+        self.exists = True
         self.Setup()
 
     def Setup(self):
@@ -48,16 +49,19 @@ class ColorBox(QMainWindow):
         print('Showing ToolBox')
         self.show()
 
+    def closeEvent(self, *args, **kwargs):
+        self.exists = False
+        print("Closing color pallet window")
+
 
 class PalletteButton:
     def __init__(self):
         self.r = randint(0, 255)
         self.g = randint(0, 255)
         self.b = randint(0, 255)
-        self.t = 255  # no transparancy now
-        self.color = (self.r, self.g, self.b)
+        self.t = 1.0  # no transparancy now, it goes from 0.0 to 1.0
+        self.color = (self.r, self.g, self.b, self.t)
         # self.color = QColor(self.r, self.g, self.b, self.t)
-        print(self.color)
 
     def mixColor(self, tool):
         if tool.toolName in ["fill_empty", "straggly_paintbrush",
@@ -245,8 +249,11 @@ class PaintBoard(QMainWindow):
 
     # TODO: make a variable self.currentTool
     #  that'll hold the current selected tool, i fixed the class
+    # TODO: check if window already exists if not make one
     def colorBoxRun(self):
+
         colorBox = ColorBox(self)
+
         geo = self.geometry()
         geo.moveLeft(geo.right())  # moves window right
         colorBox.setGeometry(geo)
@@ -260,27 +267,27 @@ class PaintBoard(QMainWindow):
         c5 = PalletteButton()
         c6 = PalletteButton()
 
-        p1.setStyleSheet("background-color: rgb{0}"
+        p1.setStyleSheet("background-color: rgba{0}"
                          .format(c1.color))
         p1.clicked.connect(lambda: c1.mixColor(self.currentTool))
         colorBox.addPallette(p1)
-        p2.setStyleSheet("background-color: rgb{0}"
+        p2.setStyleSheet("background-color: rgba{0}"
                          .format(c2.color))
         p2.clicked.connect(lambda: c2.mixColor(self.currentTool))
         colorBox.addPallette(p2)
-        p3.setStyleSheet("background-color: rgb{0}"
+        p3.setStyleSheet("background-color: rgba{0}"
                          .format(c3.color))
         p3.clicked.connect(lambda: c3.mixColor(self.currentTool))
         colorBox.addPallette(p3)
-        p4.setStyleSheet("background-color: rgb{0};"
+        p4.setStyleSheet("background-color: rgba{0};"
                          .format(c4.color))
         p4.clicked.connect(lambda: c4.mixColor(self.currentTool))
         colorBox.addPallette(p4)
-        p5.setStyleSheet("background-color: rgb{0}"
+        p5.setStyleSheet("background-color: rgba{0}"
                          .format(c5.color))
         p5.clicked.connect(lambda: c5.mixColor(self.currentTool))
         colorBox.addPallette(p5)
-        p6.setStyleSheet("background-color: rgb{0}"
+        p6.setStyleSheet("background-color: rgba{0}"
                          .format(c6.color))
         p6.clicked.connect(lambda: c6.mixColor(self.currentTool))
         colorBox.addPallette(p6)
