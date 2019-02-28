@@ -104,3 +104,4 @@ venv.bak/
 .mypy_cache/
 
 OWM_API_KEY
+data/
