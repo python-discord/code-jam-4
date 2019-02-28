@@ -7,7 +7,7 @@ from .ui_files.ui_add_task import Ui_task_form
 from .get_title import AddTitle
 from .get_desc import AddDesc
 from .get_deadline import AddDeadline
-from .datacomm import datacomm
+from .datacomm import DataComm
 
 
 class AddTask(QWidget, Ui_task_form):
@@ -36,7 +36,7 @@ class AddTask(QWidget, Ui_task_form):
         self.windows = []
         self.task = {}
 
-        self.datacomm = datacomm()
+        self.datacomm = DataComm()
 
     def init_UI(self):
         """
@@ -133,5 +133,6 @@ class AddTask(QWidget, Ui_task_form):
         self.windows.append(form)
 
     def done(self):
-        print(self.task)
-        self.datacomm.addtask(self.task)
+        # print(self.task)
+        self.datacomm.add_task(self.task)
+        self.close()
