@@ -6,7 +6,7 @@ from PyQt5.QtGui import QFontDatabase, QIcon, QFont
 from PyQt5.QtWidgets import (QApplication, QDesktopWidget, QMainWindow,
                              QMessageBox, QPlainTextEdit, QStatusBar,
                              QVBoxLayout, QWidget)
-from crocpad.configuration import app_config
+from crocpad.configuration import app_config, save_config
 from crocpad.eula_dialog import EulaDialog
 
 
@@ -69,18 +69,20 @@ class MainWindow(QMainWindow):
             self.eula_dialog.exec_()
             if self.eula_dialog.clicked_button == self.eula_dialog.eula_agree_button:
                 # We click the agree button
-                pass
+                app_config['License']['eulaaccepted'] = 'yes'
+                save_config(app_config)
 
     def eventFilter(self, source, event):
         if event.type() == QEvent.KeyPress:
-            if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
-                self.sound.stop()
-                self.enter_sound.play()
-            if event.key() == Qt.Key_Backspace:
-                self.sound.stop()
-                self.backspace_sound.play()
-            else:
-                self.sound.play()
+            if app_config['Sound']['sounds'] == 'on':
+                if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+                    self.sound.stop()
+                    self.enter_sound.play()
+                if event.key() == Qt.Key_Backspace:
+                    self.sound.stop()
+                    self.backspace_sound.play()
+                else:
+                    self.sound.play()
         return False
 
     def dialog_critical(self, alert_text):
