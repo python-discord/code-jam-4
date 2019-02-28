@@ -1,6 +1,7 @@
 import math
 import time
 
+
 class PhoneButton:
     """
         Class for phone button
@@ -59,7 +60,7 @@ class PhoneButton:
         """
         return self.parent_canvas.find_angle_from_center(self.position_x, self.position_y)
 
-    def is_position_inside_circle(self, x, y) -> bool:
+    def is_position_inside_circle(self, x: int, y: int) -> bool:
         """
         This method verifies if the position (x,y) is inside the circle of the PhoneButton
         :param x: absolute X position that is getting verified
@@ -72,7 +73,7 @@ class PhoneButton:
         else:
             return False
 
-    def rotate(self, angle) -> None:
+    def rotate(self, angle: float) -> None:
         """
         This method allows the user to rotate the button by the angle of its choice around the rotation point
         (typically the rotation point is the center of the phone)
@@ -109,8 +110,14 @@ class PhoneButton:
         self.__animate_rotating_buttons()
 
     def __animate_rotating_buttons(self) -> None:
+        """
+        This function rotates the buttons until they get back to their original position. It calls the
+        __get_elapsed_time method to make sure the rotating speed is constant. It generate the
+        <<Send_Phone_Number>> event when the animation is done.
+        :return:
+        """
         # Making the rotation speed dependant on the time between the frame to make it more fluid.
-        elapsed_time = self.get_elapsed_time()
+        elapsed_time = self.__get_elapsed_time()
         self.animation_timer = time.time()
         rotating_speed = self.rotating_speed * elapsed_time
 
@@ -123,9 +130,14 @@ class PhoneButton:
             self.parent_canvas.rotate_all_circles(-rotating_speed)
             self.parent_canvas.after(33, self.__animate_rotating_buttons)
 
-    def get_elapsed_time(self):
+    def __get_elapsed_time(self):
+        """
+        This function returns the elapsed time since the last time we updated the rotating animation. If it's the first
+        frame of the animation, we assume the elapsed_time is 0.033s which correspond to 30 fps.
+        :return:
+        """
         if self.animation_timer is None:
-            elapsed_time = 0.0177
+            elapsed_time = 0.0333
         else:
             elapsed_time = time.time() - self.animation_timer
         return elapsed_time

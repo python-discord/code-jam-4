@@ -5,7 +5,6 @@ from project.PhoneNumber.PhoneButton import PhoneButton
 
 
 class PhoneCanvas(tk.Canvas):
-    # TODO disable button click while the phone rotation animation is running.
     """
     Class for PhoneCanvas, draws a working rotary phone. The user can click and drag the button in order to dial a
     phone number. It outputs
@@ -37,6 +36,7 @@ class PhoneCanvas(tk.Canvas):
         super().__init__(master, width=width, height=width)
         self.master = master
         self.configure(bg='#00536a', border=0, bd=0, highlightthickness=0, relief='ridge')
+
         self.canvas_size = width
         self.radius = int(self.canvas_size/2 * 0.99)
         self.phone_button_radius = int(self.radius*0.10)
@@ -86,7 +86,11 @@ class PhoneCanvas(tk.Canvas):
             del kwargs["end"]
         return self.create_arc(x - r, y - r, x + r, y + r, **kwargs)
 
-    def send_output_number(self):
+    def send_output_number(self) -> str:
+        """
+        This method is to get the last output number that was dialed.
+        :return: A string with a number in it, or None if nothing was dialed.
+        """
         self.__is_button_animated = False
         if self.__current_phone_number is None:
             return None
@@ -139,17 +143,19 @@ class PhoneCanvas(tk.Canvas):
         that should be dialed if the user release the current drag.
         :return: None
         """
-        min_angle = 5
+        min_angle = 5  # This is the angle of the stopper.
         current_button = None
         nearest_angle = math.inf
+        # We loop through the buttons to verify if any went up to the stopper, and which on went further.
         for button in self.circle_buttons:
             if min_angle <= button.current_angle < nearest_angle:
                 nearest_angle = button.current_angle
                 current_button = button
-        if current_button is not None and self.__current_phone_number is None:
-            self.__current_phone_number = current_button
-        elif current_button is not None and int(current_button.text) < int(self.__current_phone_number.text):
-            self.__current_phone_number = current_button
+        if current_button is not None:
+            if self.__current_phone_number is None:
+                self.__current_phone_number = current_button
+            elif int(current_button.text) < int(self.__current_phone_number.text):
+                self.__current_phone_number = current_button
 
     def find_angle_from_center(self, pos_x: int, pos_y: int) -> float:
         """
