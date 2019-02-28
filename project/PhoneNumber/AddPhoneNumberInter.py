@@ -61,13 +61,29 @@ class AddPhoneNumberInter(tk.Frame):
         if number is not None:
             self.add_phone_number_to_entry(number)
 
+
 class PhoneNumberLabel(tk.Label):
-    #TODO document PhoneNumberEntry class
+    """
+    PhoneNumberLabel is a simple class inherited from tk.Label. It allows the user to add one number at the time and
+    will keep the ###-###-#### formatting.
+    === Public Attributes ===
+
+    === Methods ===
+    add_phone_number: This method adds one number to the displayed text. It automatically adds '-' to keep the
+    ###-###-#### formatting.
+    clear_phone_number: This method erases all the number that were displayed on the label.
+    """
 
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
-    def add_phone_number(self, num: int):
+    def add_phone_number(self, num: int) -> None:
+        """
+        This method adds a number to the label, it automatically adds '-' at the right location in order to keep the
+        ###-###-#### formatting.
+        :param num: Number we wish to add to the label.
+        :return: None
+        """
         current_text = self['text']
         current_length = len(current_text)
         if current_length == 12:
@@ -76,7 +92,11 @@ class PhoneNumberLabel(tk.Label):
             self['text'] = self['text'] + '-'
         self['text'] = self['text'] + num
 
-    def clear_phone_number(self):
+    def clear_phone_number(self) -> None:
+        """
+        This method clears the phone number displayed in the label.
+        :return: None
+        """
         self['text'] = ''
 
 if __name__ == '__main__':
