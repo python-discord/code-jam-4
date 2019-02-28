@@ -12,6 +12,7 @@ more-itertools = "*"
 pillow = "*"
 pygame = "*"
 aiohttp = "*"
+configparser = "*"
 
 [requires]
 python_version = "3.7"
