@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="65cf2a5e-052b-4ef5-848b-0d35bd195abc" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/code-jam-4.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/code-jam-4.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/ArtiQule.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/ArtiQule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/__main__.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/project/ArtiQule.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="388">
-              <caret line="220" column="20" selection-start-line="220" selection-start-column="20" selection-end-line="220" selection-end-column="20" />
+            <state relative-caret-position="235">
+              <caret line="141" column="36" selection-start-line="141" selection-start-column="36" selection-end-line="141" selection-end-column="36" />
             </state>
           </provider>
         </entry>
@@ -252,8 +249,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/project/ArtiQule.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="388">
-          <caret line="220" column="20" selection-start-line="220" selection-start-column="20" selection-end-line="220" selection-end-column="20" />
+        <state relative-caret-position="235">
+          <caret line="141" column="36" selection-start-line="141" selection-start-column="36" selection-end-line="141" selection-end-column="36" />
         </state>
       </provider>
     </entry>

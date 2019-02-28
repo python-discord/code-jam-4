@@ -67,7 +67,8 @@ class Tool():
                 self.toolName,
                 self.brushSize,
                 self.color,
-                self.paintPattern
+                self.paintPattern,
+                self.duration
             )
         )
         self.PaintBoard.toolbar.addAction(tool_btn)
@@ -131,26 +132,30 @@ class PaintBoard(QMainWindow):
             self.toolbar.addAction(pallette)
 
         self.pointy_pen = Tool("Pointy Pen", randint(0, 10), 1, Qt.black,
-                               Qt.SolidLine, self,
+                               [randint(1, 4), randint(1, 2), randint(0, 3),
+                                randint(0, 5)], self,
                                "Design/icons/Pointy Pen.png",
                                "CTRL+P", "A very pointy pen"
                                )
 
         self.fill = Tool("A bucket", 1, 2000, Qt.black,
-                         "big dump", self,
+                         [1, 1, 1, 1], self,
                          'Design/icons/A bucket.png',
                          "CTRL+B", "A bucket"
                          )
 
         self.straggly_paintbrush = Tool("Straggly Paintbrush", randint(0, 10),
-                                        10, Qt.black, "spread out pattern",
+                                        10, Qt.black,
+                                        [randint(1, 4), randint(1, 2),
+                                         randint(0, 3), randint(0, 5)],
                                         self,
                                         "Design/icons/Straggly Paintbrush.png",
                                         "CTRL+A", "A very Straggly Paintbrush."
                                         )
 
         self.solidifed_brush = Tool("Solid Brush", 1, 10, Qt.black,
-                                    "hit with a brick", self,
+                                    [randint(1, 4), randint(1, 2),
+                                     randint(0, 3), randint(0, 5)], self,
                                     'Design/icons/Solid Brush.png',
                                     "CTRL+J", "Gosh, that is a hard tip"
                                     )
@@ -162,7 +167,7 @@ class PaintBoard(QMainWindow):
 
     def changePaintBoardVars(self, curToolName=None,
                              curBrushsize=1, curBrushColor=Qt.black,
-                             curPaintPattern=Qt.SolidLine):
+                             curPaintPattern=0, curDuration=5):
         # print("hey from inside changePaintBoardVars.
         # These are my args:
         # Toolname: {},
@@ -176,6 +181,7 @@ class PaintBoard(QMainWindow):
         self.currentBrushSize = curBrushsize
         self.currentPaintPattern = curPaintPattern
         self.currentBrushColor = curBrushColor
+        self.currentToolDuration = curDuration
 
         self.setCursor(QCursor(
             QPixmap("Design/icons/{}.png".format(self.currentToolName
@@ -212,6 +218,19 @@ class PaintBoard(QMainWindow):
         if (event.buttons() and Qt.LeftButton) and self.drawing:
             painter = QPainter(self.canvas)
             Pen = QPen()
+            if self.currentToolDuration <= 0.0:
+                print('Tools Died')
+                self.currentToolDuration = 0
+                Pen.setDashPattern([0, 0, 0, 0])
+                self.drawing = False
+            else:
+                self.currentToolDuration -= 0.01
+                print(self.currentToolDuration)
+
+            if self.currentToolDuration < 1.5:
+                size_of_dashes = self.currentPaintPattern
+                Pen.setDashPattern(size_of_dashes)
+
             Pen.setColor(self.currentBrushColor)
             Pen.setWidth(self.currentBrushSize)
             if self.currentToolName == "Pointy Pen":
