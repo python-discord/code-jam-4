@@ -13,6 +13,7 @@ pyqt5 = "*"
 flake8 = "*"
 lxml = "*"
 requests = "*"
+thesaurus = "*"
 
 [requires]
 python_version = "3.7"

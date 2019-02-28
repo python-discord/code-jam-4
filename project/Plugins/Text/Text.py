@@ -1,51 +1,19 @@
 from random import randint, choice
 import string
-import json
-
-def __init__():
-    from project.Plugins.Save import getQuotes
-
-    # Quotes are now loadeded from 'app.json' instead of being hard coded
-    quotes = getQuotes()
-
-
-class Vars:
-    times_appled = 0
-
+from thesaurus import Word
 
 '''Use this function, not any other one. It as a 50/50 chance of applying each'''
 
 
 def apply(text):
-    """First time coping, its normal, then it starts to go down hill...."""
-    Vars.times_appled = + 1
-    if Vars.times_appled > 0 and Vars.times_appled < 2:
-        if randint(0, 5) == 5:
-            text = random_spelling_mistakes(text)
-            return text
-        else:
-            return text
-    elif Vars.times_appled > 2 and Vars.times_appled < 4:
-        if randint(0, 5) == 5:
-            text = random_spelling_mistakes(text)
-            return text
-        else:
-            text = quotify(text)
-            return text
-    elif Vars.times_appled > 4 and Vars.times_appled < 15:
-        if randint(0, 1) == 3:
-            text = random_spelling_mistakes(text)
-            return text
-        else:
-            text = quotify(text)
-            return text
 
-    elif Vars.times_appled > 15:
-        text = quotify(text)
+
+    if randint(0, 1):
+        text = random_spelling_mistakes(text)
         return text
     else:
+        text = quotify(text)
         return text
-
 
 def random_spelling_mistakes(text):
     text = text.split()
@@ -69,6 +37,24 @@ def random_spelling_mistakes(text):
 
 
 def quotify(text):
-    from project.Plugins.Text import Parse
-    quote = Parse.parse()
-    return quote
+    from lxml import html
+    import requests
+
+    try:
+        page = requests.get('https://funnysentences.com/sentence-generator/')
+        tree = html.fromstring(page.content)
+        quote = tree.xpath('//*[@id="sentencegen"]/text()')
+        return ''.join(quote)
+    except requests.exceptions.ConnectionError:
+        return "lol you don't have internet"
+
+def synonym(text):
+    try:
+        w = Word(text)
+        w.synonyms('all')
+        text = w.synonyms()[randint(0, len(w))]
+        return text
+    except:
+        return text
+
+print(synonym('osuidf'))

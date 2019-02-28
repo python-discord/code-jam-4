@@ -1,6 +1,7 @@
 from lxml import html
 import requests
 
+
 def parse():
     try:
         page = requests.get('https://funnysentences.com/sentence-generator/')
