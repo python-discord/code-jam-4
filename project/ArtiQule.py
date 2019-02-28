@@ -7,7 +7,8 @@ from PyQt5.QtWidgets import (QMainWindow, QApplication,
 from PyQt5.QtGui import (QImage, QPainter, QPen, QPixmap,
                          QIcon, QCursor, QColor, QBrush)
 
-"""Hover on QPaint detection
+"""
+Hover on QPaint detection
 def paintEvent(self, event):
     option = QtGui.QStyleOptionButton()
     option.initFrom(self)
