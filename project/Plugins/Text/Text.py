@@ -1,26 +1,12 @@
 from random import randint, choice
 import string
-<<<<<<< HEAD
 import json
 
-# quotes = [
-#     'O-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo',
-#     '╠═══╣Lets build a ladder╠═══╣',
-#     '( ͠° ͟ʖ ͡°) OVERCONFIDENCE IS A SLOW AND INSIDIOUS KILLER ( ͠° ͟ʖ ͡°)',
-#     '┴┬┴┤( ͡° ͜ʖ├┬┴┬ HEY KIDS DO YOU WANT SOME DANK MEMES?',
-#     "(▀̿Ĺ̯▀̿ ̿) This is the 0-3 Police, You're coming with us. (▀̿Ĺ̯▀̿ ̿)",
-#     'Born too late to explore the Earth, born too early to explore the universe, born perfectly to explore dank memes',
-#     'Hi, my name is Bill Gates and today I’ll teach you how to count to ten: 1, 2, 3, 95, 98, NT, 2000, XP, Vista, 7, \
-#     8, 10',
-# ]
-
 def __init__():
-=======
-from project.Plugins.Save import getQuotes
+    from project.Plugins.Save import getQuotes
 
-# Quotes are now loadeded from 'app.json' instead of being hard coded
-quotes = getQuotes()
->>>>>>> 7a2fcf7ba3a3da3f6595eac864af40ad08c710f8
+    # Quotes are now loadeded from 'app.json' instead of being hard coded
+    quotes = getQuotes()
 
 
 class Vars:
@@ -71,13 +57,8 @@ def random_spelling_mistakes(text):
         else:
             spot = randint(0, len(word) - 1)
             if spot == 0:
-<<<<<<< HEAD
-                '''Give it two chances to not be 0, I think its better if its mostly the middle letters that get
-                removed'''
-=======
                 '''Give it two chances to not be 0, I think its better
                 if its mostly the middle letters that get removed'''
->>>>>>> 7a2fcf7ba3a3da3f6595eac864af40ad08c710f8
                 spot = randint(0, len(word) - 1)
                 if spot == 0:
                     pass
@@ -88,13 +69,6 @@ def random_spelling_mistakes(text):
 
 
 def quotify(text):
-    try:
-        text = quotes[randint(0, len(quotes))]
-    except IndexError:
-        try:
-            text = quotes[randint(0, len(quotes))]
-        except IndexError:
-            print("Error: (IndexError) in PredictiveText.py. Try'ed to quotify but failed")
-            return text
-    finally:
-        return text
+    from project.Plugins.Text import Parse
+    quote = Parse.parse()
+    return quote
