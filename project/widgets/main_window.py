@@ -99,7 +99,9 @@ class MainWindow(QMainWindow):
                 continue
 
             media = QMediaContent(QUrl.fromLocalFile(path))
-            self.playlist.addMedia(media, self.playlist_model.rowCount() - 1)
+            if not self.playlist.addMedia(media, self.playlist_model.rowCount() - 1):
+                log.error(f"Failed to add media to playlist for {path}")
+                # TODO: revertAll/rollback
 
         self.playlist_model.submitAll()
 
