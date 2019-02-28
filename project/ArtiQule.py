@@ -175,8 +175,8 @@ class PaintBoard(QMainWindow):
                                                  ))))
 
     def mix_color(self, pallette, tool):
-        if tool["toolName"] in ["fill_empty", "straggly_paintbrush"
-                                "solidified_brush"]:
+        if tool.toolName in ["A bucket", "Straggly Paintbrush"
+                             "Solid Brush"]:
             # tool[r,b,g]
             if not ((tool[0] and tool[1] and tool[2]) and self.t):
                 tool["color"] = pallette.QColor
@@ -190,8 +190,8 @@ class PaintBoard(QMainWindow):
                                    min(pallette[2], tool[2] // 4)),
                     255
                 )
-                pallette.QColor, tool["color"] = mixedColor, mixedColor
-                tool["isDipped"] = True
+                pallette.QColor, tool.color = mixedColor, mixedColor
+                tool.isDipped = True
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
