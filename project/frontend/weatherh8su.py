@@ -9,9 +9,10 @@ class weatherh8su:
         self.create_widgets()
 
     def create_widgets(self):
+        self.directory = "\\".join(__file__.split("\\")[:-3])
         self.topframe = tk.Frame(self.master)
         self.topframe.pack()
-        self.glass = Image.open("pics/glass.png")
+        self.glass = Image.open(f"{self.directory}glass.png")
         self.glass = ImageTk.PhotoImage(self.glass)
         self.searchicon = tk.Label(self.topframe, image=self.glass)
         self.searchicon.grid(row=0, column=0)
@@ -19,7 +20,7 @@ class weatherh8su:
         self.searchbar.grid(row=0, column=1)
         self.f = tk.Frame(self.topframe, width=26, height=30)
         self.f.grid(column=2, row=1)
-        self.gear = Image.open("pics/gear.png")
+        self.gear = Image.open(f"{self.directory}gear.png")
         self.gear = ImageTk.PhotoImage(self.gear)
         self.settings = tk.Label(self.topframe, image=self.gear)
         self.settings.bind("<Enter>", lambda a: self.annoy())
