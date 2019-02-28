@@ -44,9 +44,11 @@ class PhoneCanvas(tk.Canvas):
         self.phone_button_pos_radius = int(0.7*self.canvas_size/2)  
         # List containing all the buttons
         self.circle_buttons = []
+
         self.mouse_controller = MouseController(self)
 
         # Stores the phone number that will be output in the current click.
+        self.__is_button_animated = False
         self.__current_phone_number = None
         self.__clicked_button = None
 
@@ -85,6 +87,7 @@ class PhoneCanvas(tk.Canvas):
         return self.create_arc(x - r, y - r, x + r, y + r, **kwargs)
 
     def send_output_number(self):
+        self.__is_button_animated = False
         if self.__current_phone_number is None:
             return None
         return self.__current_phone_number.text
@@ -107,12 +110,15 @@ class PhoneCanvas(tk.Canvas):
         :param event: The event is a "<Button-1>" event.
         :return: None
         """
+        if self.__is_button_animated:
+            return
         x = event.x
         y = event.y
         for button in self.circle_buttons:
             if button.is_position_inside_circle(x, y):
                 self.__current_phone_number = None
                 self.__clicked_button = button
+                self.__is_button_animated = True
                 button.on_click_down()
                 return
 
