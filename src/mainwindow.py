@@ -5,8 +5,9 @@ import io
 from random import randint, choice, sample
 import asyncio
 import aiohttp
-import os
 from pygame import mixer
+
+from . import SETTINGS, IMAGES, SOUNDS
 
 
 class Tinder:
@@ -17,11 +18,9 @@ class Tinder:
         mixer.init()
 
         # getting the directory folder for use later when opening files
-        self.dir = os.path.dirname(os.path.realpath(__file__))
-
         # get settings
         cp = configparser.ConfigParser()
-        cp.read('settings.ini')
+        cp.read(str(SETTINGS))
 
         # for now, let's just look up the DEV settings
         # can change this later
@@ -79,8 +78,8 @@ class Tinder:
                 # get a random number for an image
                 image_number = randint(1, 10)
                 # open and resize the image using Pillow
-                im = Image.open(os.path.join(self.dir, os.path.join("res",
-                                os.path.join("images", f"{image_number}.jpg"))))
+                imagepath = IMAGES / f'{image_number}.jpg'
+                im = Image.open(str(imagepath))
                 im = im.resize((self.screen_x, self.screen_y - 150), Image.NEAREST)
                 # make the image a tkinter image
                 image = ImageTk.PhotoImage(im)
@@ -229,10 +228,8 @@ class Tinder:
             self.root.geometry(f"{self.screen_x}x{self.screen_y}+0+0")
 
             # play a jumpscare sound
-            mixer.music.load(
-                os.path.join(
-                    self.dir, os.path.join(
-                        "res", os.path.join("sounds", "jumpscare.mp3"))))
+            soundpath = SOUNDS / "jumpscare.mp3"
+            mixer.music.load(str(soundpath))
             mixer.music.play()
 
             # make a button to allow the user to pass through the image
