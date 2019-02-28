@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b3fadb6e-a4f7-45b3-8f6e-9b28d34a2c00" name="Default Changelist" comment="&lt;NEW_FEATURES: -Fixed toolbar&#10;-added instances of PaintButton and put them in toolbar&#10;&gt;&#10;&lt;ERRORS: &#10;- App Crashes when clicking top area of application&#10;- color pallettes not displaying&#10;&gt;">
-      <change beforePath="$PROJECT_DIR$/.idea/code-jam-4.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/code-jam-4.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/ArtiQule.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/ArtiQule.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/project/ArtiQule.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="300" column="16" selection-start-line="300" selection-start-column="16" selection-end-line="300" selection-end-column="16" />
+            <state relative-caret-position="310">
+              <caret line="215" column="50" lean-forward="true" selection-start-line="215" selection-start-column="50" selection-end-line="215" selection-end-column="50" />
             </state>
           </provider>
         </entry>
@@ -290,8 +287,8 @@
     <entry file="file://$PROJECT_DIR$/project/Design/icons/fill_empty.png" />
     <entry file="file://$PROJECT_DIR$/project/ArtiQule.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="300" column="16" selection-start-line="300" selection-start-column="16" selection-end-line="300" selection-end-column="16" />
+        <state relative-caret-position="310">
+          <caret line="215" column="50" lean-forward="true" selection-start-line="215" selection-start-column="50" selection-end-line="215" selection-end-column="50" />
         </state>
       </provider>
     </entry>

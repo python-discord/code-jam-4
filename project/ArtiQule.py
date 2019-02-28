@@ -213,6 +213,10 @@ class PaintBoard(QMainWindow):
                                     "CTRL+J", "Gosh, that is a hard tip"
                                     )
 
+        self.eraser = Tool("Eraser", 10, Qt.white,
+                           [0, 0, 0, 0], self, "", "Ctrl+F",
+                           "Erase Your Mistakes, Kid!")
+
         self.show()
 
         self.drawing = False
@@ -295,6 +299,7 @@ class PaintBoard(QMainWindow):
                 painter.drawLine(0, 0, 1000, 500)
                 print('called directly')
             self.lastPoint = event.pos()
+            self.update()
 
     def mouseMoveEvent(self, event):
         if (event.buttons() and Qt.LeftButton) and\
