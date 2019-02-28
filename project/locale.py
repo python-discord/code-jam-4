@@ -36,6 +36,8 @@ class menu:
         colour_error = "コロー ムスト ビー ベトイーン 0 アンヅ 16777215"
         # ko ro-   mu su to   bi-   be to i- n   0   a n du   16777215
         # Colour must be between 0 and 16777215
+        x_error = "X must be between 1 and {}"
+        y_error = "Y must be between 1 and {}"
 
 
 class general:

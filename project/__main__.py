@@ -40,6 +40,8 @@ class Framed(tk.AsyncTk):
         Returns the path to the file
     save: coroutine
         Runs file_select and saves the current image to that file
+    open_file: coroutine
+        Runs file_select and recreates the canvas with the new image
 
     """
 

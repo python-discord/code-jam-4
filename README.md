@@ -40,7 +40,7 @@ Flamboyant Flamingos jam project.
       * Leader
     * Suhail
       * Location: UK
-      * *suhail write a bio lmao*
+      * Computer Science student in secondary education
     * Martmists
       * Location: *somewhere in Europe idk*
       * *mists you write your bio too*

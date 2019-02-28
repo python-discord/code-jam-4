@@ -23,7 +23,7 @@ class Colour:
 
     Parameters
     ----------
-    colour: int
+    colour: int or str
         The colour inputted (given by the text box Entry)
 
     All examples are with the Colour initialised with Colour("15715755")
@@ -91,11 +91,6 @@ class Canvas(tk.AsyncCanvas):
         The height of the canvas (in pixels)
     width: int
         The width of the canvas (in pixels)
-    photoimage: asynctk.PhotoImage, optional
-        A photo, used when opening an image instead of creating a new painting
-    pil_image: PIL.Image, optional
-        The PIL version of the image currently being opened
-
 
     Attributes
     ----------
@@ -142,7 +137,7 @@ class Canvas(tk.AsyncCanvas):
             The fill colour of the pixel
         """
 
-        await self.create_line(x, y, x + 1, y, fill=colour.as_hex)
+        await self.create_line(x, y, x, y, fill=colour.as_hex)
         self.pil_draw.point([(x, y)], fill=colour.as_rgb)
 
     async def save(self, file: typing.Union[str, pathlib.Path]):
@@ -232,11 +227,11 @@ class EntrySection(tk.AsyncFrame):
 
     def _setupFields(self):
         tk.AsyncLabel(self, text=kata.menu.entry.x).pack()
-        self.x = tk.AsyncSpinbox(self, from_=0, to=self.canvas.width)
+        self.x = tk.AsyncSpinbox(self, from_=1, to=self.canvas.width)
         self.x.pack()
 
         tk.AsyncLabel(self, text=kata.menu.entry.y).pack()
-        self.y = tk.AsyncSpinbox(self, from_=0, to=self.canvas.height)
+        self.y = tk.AsyncSpinbox(self, from_=1, to=self.canvas.height)
         self.y.pack()
 
         tk.AsyncLabel(self, text=kata.menu.entry.colour).pack()
@@ -250,18 +245,39 @@ class EntrySection(tk.AsyncFrame):
         self.error_label = tk.AsyncLabel(self, text="", fg="red")
         self.error_label.pack()
 
+    async def _add_error(self, error):
+        """This private method adds an error to the label for 5 seconds before removing it"""
+        self.error_label["text"] = error
+        await asyncio.sleep(5)
+        self.error_label["text"] = ""
+
     async def setupPixel(self):
         """The method that grabs the entries from the fields and calls the canvas function"""
 
         x = self.x.get()
         y = self.y.get()
         colour = self.colour.get()
+
+        try:
+            x = int(x)
+            if x not in range(1, self.canvas.width):
+                raise ValueError
+        except ValueError:
+            await self._add_error(kata.menu.entry.x_error.format(self.canvas.width))
+            return
+
+        try:
+            y = int(y)
+            if y not in range(1, self.canvas.height):
+                raise ValueError
+        except ValueError:
+            await self._add_error(kata.menu.entry.y_error.format(self.canvas.height))
+            return
+
         try:
             colour = Colour(colour)
         except (ValueError, TypeError):
-            self.error_label["text"] = kata.menu.entry.colour_error
-            await asyncio.sleep(5)
-            self.error_label["text"] = ""
+            await self._add_error(kata.menu.entry.colour_error)
             return
 
         await self.canvas.add_pixel(int(x), int(y), colour)
