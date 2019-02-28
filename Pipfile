@@ -11,6 +11,8 @@ sphinx = "*"
 [packages]
 pyqt5 = "*"
 flake8 = "*"
+lxml = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"

@@ -1,9 +1,12 @@
 from random import randint, choice
 import string
-from project.Plugins.Save import getQuotes
+import json
 
-# Quotes are now loadeded from 'app.json' instead of being hard coded
-quotes = getQuotes()
+def __init__():
+    from project.Plugins.Save import getQuotes
+
+    # Quotes are now loadeded from 'app.json' instead of being hard coded
+    quotes = getQuotes()
 
 
 class Vars:
@@ -66,13 +69,6 @@ def random_spelling_mistakes(text):
 
 
 def quotify(text):
-    try:
-        text = quotes[randint(0, len(quotes))]
-    except IndexError:
-        try:
-            text = quotes[randint(0, len(quotes))]
-        except IndexError:
-            print("Error: (IndexError) in PredictiveText.py. Try'ed to quotify but failed")
-            return text
-    finally:
-        return text
+    from project.Plugins.Text import Parse
+    quote = Parse.parse()
+    return quote

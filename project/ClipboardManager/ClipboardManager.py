@@ -6,7 +6,7 @@ from project.ClipboardManager.ClipboardObject import TextClipboardObject, ImageC
 from project.Stack import Stack
 
 
-# from project.Plugins import PredictiveText as PT
+from project.Plugins.Text import Text
 
 # import logging
 
