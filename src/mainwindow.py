@@ -1,12 +1,7 @@
-import configparser
 import tkinter as tk
-from PIL import Image, ImageTk
-import io
-from random import randint, choice, sample
 import asyncio
-import aiohttp
-import os
 from pygame import mixer
+from cache import Cache
 
 
 class Tinder:
@@ -16,28 +11,13 @@ class Tinder:
         # setup for pygame mixer
         mixer.init()
 
-        # getting the directory folder for use later when opening files
-        self.dir = os.path.dirname(os.path.realpath(__file__))
-
-        # get settings
-        cp = configparser.ConfigParser()
-        cp.read('settings.ini')
-
-        # for now, let's just look up the DEV settings
-        # can change this later
-        # configparser will use values from DEFAULT section if none provided elsewhere
-        if 'DEV' in cp.sections():
-            self.config = cp['DEV']
-        else:
-            self.config = cp['DEFAULT']
-
         # setting up the tkinter root
         self.root = tk.Tk()
-        self.root.title(self.config['main.title'])
-        self.root.geometry(self.config['main.geometry'])
+        self.root.title("Cat Tinder")
+        self.root.geometry("400x500")
         self.root.minsize(400, 500)
         self.root.maxsize(400, 500)
-        self.root.configure(background=self.config['main.background'])
+        self.root.configure(background='black')
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         # getting screen width and height for use with teleporting window/jumpscare
@@ -45,103 +25,18 @@ class Tinder:
         self.screen_y = self.root.winfo_screenheight()
 
         # setting class variables to be used later
+        self.cache = Cache()
         self.jumpscare = False
         self.loop = asyncio.get_event_loop()
-        self.session = None
-        self.cats = list()
-
-        self.frame = tk.Frame()
 
     def start(self):
         '''Starts the Tinder application'''
 
         # getting a cache of cat info
-        self.loop.run_until_complete(self.get_cache())
+        self.loop.run_until_complete(self.cache.refill())
 
         # starting the program loop
         self.new_image()
-
-    async def get_cache(self):
-        '''Gets a cache of cat data and adds it to the self.cats list'''
-
-        # if we haven't created a session yet, do so
-        if not self.session:
-            self.session = aiohttp.ClientSession()
-
-        cachesize = int(self.config['cachesize'])
-        # Run 10 times to get 10 cats
-        for i in range(cachesize):
-            # initialize a dict of cat data
-            cat_data = dict()
-
-            # randomly make jumpscares happen, but not on the first image
-            if randint(1, 10) == 5 and i:
-                # get a random number for an image
-                image_number = randint(1, 10)
-                # open and resize the image using Pillow
-                im = Image.open(os.path.join(self.dir, os.path.join("res",
-                                os.path.join("images", f"{image_number}.jpg"))))
-                im = im.resize((self.screen_x, self.screen_y - 150), Image.NEAREST)
-                # make the image a tkinter image
-                image = ImageTk.PhotoImage(im)
-                # update the cat data dict
-                cat_data.update({"image": image})
-                cat_data.update({"jumpscare": True})
-            else:
-                # set jumpscare to False because it isnt a jumpscare image
-                cat_data.update({"jumpscare": False})
-
-                # get a url from The Cat API
-                async with self.session.get(self.config['catapi']) as res:
-                    data = await res.json()
-                    url = data[0]['url']
-                # get image data from that url
-                async with self.session.get(url) as res:
-                    image_bytes = await res.read()
-                    # open and the image in pillow
-                    im = Image.open(io.BytesIO(image_bytes))
-                    im = im.resize((400, 440), Image.NEAREST)
-                    # make the image a tkinter image
-                    image = ImageTk.PhotoImage(im)
-                    # update the cat data dict
-                    cat_data.update({"image": image})
-
-                # get a random name
-                async with self.session.get(self.config['namefile']) as res:
-                    data = await res.json()
-                    # get a random letter for the name
-                    # Note: website doesn't have any b names which is why it is left out here
-                    letter = choice(list('acdefghijklmnopqrstuvwxyz'))
-                    # randomly choose a name from the json with that letter
-                    cat = choice(data[letter])
-                    # update the cat data dict
-                    cat_data.update({"name": cat["name"]})
-                    cat_data.update({"gender": cat["gender"]})
-
-                # get 5 random hobbies
-                async with self.session.get(self.config['hobbiesfile']) as res:
-                    text = await res.text()
-                    # split the raw text of hobbies into a list
-                    all_hobbies = text.split("\n")
-                    # get 5 of those hobbies
-                    hobby_list = sample(all_hobbies, 5)
-                    # join those 5 hobbies into a bulleted list (string)
-                    list_of_hobbies = "\n •".join(hobby_list)
-                    hobbies = f"Hobbies:\n •{list_of_hobbies}"
-                    # update the cat_data dict
-                    cat_data.update({"hobbies": hobbies})
-
-                # get a random age between 1 and 15 (avg lifespan of a cat)
-                age = str(randint(1, 15))
-                # update the cat data dict
-                cat_data.update({"age": age})
-
-                # get a random number of miles away between 1 and 5
-                miles = randint(1, 5)
-                location = f"{miles} miles away"
-                # update the cat data dict
-                cat_data.update({"location": location})
-            self.cats.append(cat_data)
 
     def all_children(self):
         '''Used to get all children of the root window
@@ -168,6 +63,7 @@ class Tinder:
 
         # if the previous image was a jumpscare, resize the window and reset the variable
         if self.jumpscare:
+            self.root.geometry()
             self.root.maxsize(400, 500)
             self.jumpscare = False
 
@@ -183,11 +79,11 @@ class Tinder:
         # if a dict wasn't passed to the function, get a dict from self.cats
         if not cat:
             try:
-                cat = self.cats.pop(0)
+                cat = self.cache.cats.pop(0)
             except IndexError:
                 # the cache is empty so refill it
-                self.loop.run_until_complete(self.get_cache())
-                cat = self.cats.pop(0)
+                self.loop.run_until_complete(self.cache.refill())
+                cat = self.cache.cats.pop(0)
 
         # getting base cat variables from the dict
         image = cat["image"]
@@ -287,16 +183,13 @@ class Tinder:
 
                 # setting up like/dislike/Back to Photo buttons on the bio screen
                 tk.Button(
-                    self.frame, text=self.config['like.text'],
-                    background=self.config['like.background'],
+                    self.frame, text="Like", background="green",
                     command=self.new_image).pack(side=tk.RIGHT)
                 tk.Button(
-                    self.frame, text=self.config['dislike.text'],
-                    background=self.config['dislike.background'],
+                    self.frame, text="Dislike", background="red",
                     command=self.new_image).pack(side=tk.LEFT)
                 tk.Button(
-                    self.root, text=self.config['back.text'],
-                    background=self.config['back.background'],
+                    self.root, text="Back To Photo", background="blue",
                     command=back_to_photo).pack(side=tk.BOTTOM)
 
                 # packing the frame
@@ -304,7 +197,7 @@ class Tinder:
 
             # making and packing the Bio button for users to look at the cat's bio
             tk.Button(
-                self.frame, text=self.config['bio.text'], background=self.config['bio.background'],
+                self.frame, text="Bio", background="blue",
                 command=get_bio).pack(side=tk.BOTTOM)
 
         # packing the frame
