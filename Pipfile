@@ -9,6 +9,9 @@ pytest = "*"
 
 [packages]
 more-itertools = "*"
+pillow = "*"
+pygame = "*"
+aiohttp = "*"
 
 [requires]
 python_version = "3.7"
