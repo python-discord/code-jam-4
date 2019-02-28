@@ -118,6 +118,9 @@ class Canvas(tk.AsyncCanvas):
         The list of tuples containing the pixels that have been undone in reverse chronological
         order in the format [x, y, new_colour] where new_colour is the new colour of the pixel
         that was shown before the undo button was pressed
+    frame: asynctk.AsyncFrame or None
+        The frame created that the canvas is in, if any. This is only created if the image
+        surpasses the 400x400 grid, in which case a frame is added for scrollbars.
 
     Methods
     -------
@@ -137,11 +140,42 @@ class Canvas(tk.AsyncCanvas):
         height: int,
         width: int,
     ):
-        super().__init__(master, height=height, width=width, bg="white")
+        self.frame = None
+
+        if height > 400 or width > 400:
+
+            true_height = 400 if height > 400 else height
+            true_width = 400 if width > 400 else width
+
+            self.frame = tk.AsyncFrame(master)
+            self.frame.pack(side=tk.LEFT)
+            super().__init__(
+                self.frame,
+                height=true_height,
+                width=true_width,
+                bg="white",
+                scrollregion=(0, 0, width, height),
+            )
+
+            if height > 400:
+                hbar = tk.AsyncScrollbar(self.frame, orient=tk.HORIZONTAL)
+                hbar.pack(side=tk.BOTTOM, fill=tk.X)
+                hbar.config(command=self.yview)
+                self.config(yscrollcommand=hbar.set)  # intentional switch
+
+            if width > 400:
+                vbar = tk.AsyncScrollbar(self.frame, orient=tk.VERTICAL)
+                vbar.pack(side=tk.RIGHT, fill=tk.Y)
+                vbar.config(command=self.xview)
+                self.config(xscrollcommand=vbar.set)  # intentional switch
+            self.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+
+        else:
+            super().__init__(master, height=height, width=width, bg="white")
+            self.pack(side=tk.LEFT)
 
         self.width, self.height = width, height
 
-        self.pack(side=tk.LEFT)
         self.pil_image = Image.new("RGB", (width, height), (255, 255, 255))
         self.pil_draw = ImageDraw.Draw(self.pil_image)
 
@@ -187,7 +221,10 @@ class Canvas(tk.AsyncCanvas):
 
     def forget(self):
         """Shortcut to remove the canvas from the main window"""
-        self.pack_forget()
+        if self.frame:
+            self.frame.pack_forget()
+        else:
+            self.pack_forget()
 
     @classmethod
     async def from_image(cls, master: tk.AsyncTk, file: typing.Union[str, pathlib.Path]):

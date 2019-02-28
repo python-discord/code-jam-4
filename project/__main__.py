@@ -59,6 +59,9 @@ class Framed(tk.AsyncTk):
         self.protocol("WM_DELETE_WINDOW", lambda: asyncio.ensure_future(self.save()))
         self.bind("<Control-s>", lambda i: asyncio.ensure_future(self.destroy()))
         self.bind("<Control-S>", lambda i: asyncio.ensure_future(self.destroy()))
+        self.bind("<Control-z>", lambda i: asyncio.ensure_future(self.canvas.redo()))
+        self.bind("<Control-Z>", lambda i: asyncio.ensure_future(self.canvas.undo()))
+        self.bind("<Control-y>", lambda i: asyncio.ensure_future(self.canvas.undo()))
 
     async def save(self):
         file = await self.file_select()

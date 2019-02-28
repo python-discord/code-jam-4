@@ -57,6 +57,7 @@ An intense editor that:
 
 ## Setup & Installation
 
+* `pipenv sync`
 * `pipenv run start`
 
 ## How do I use this thing?
