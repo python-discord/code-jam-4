@@ -66,8 +66,8 @@ class Tool():
             lambda: self.PaintBoard.changePaintBoardVars(
                 self.toolName,
                 self.brushSize,
-                self.paintPattern,
-                self.color
+                self.color,
+                self.paintPattern
             )
         )
         self.PaintBoard.toolbar.addAction(tool_btn)
@@ -162,7 +162,7 @@ class PaintBoard(QMainWindow):
     def changePaintBoardVars(self, curToolName=None,
                              curBrushsize=1, curBrushColor=None,
                              curPaintPattern=Qt.SolidLine):
-
+        #print("hey from inside changePaintBoardVars. These are my args: Toolname: {}, Brushsize: {}, Brushcolor: {}, Paintpattern: {}".format(curToolName,curBrushsize,curBrushColor,curPaintPattern))
         self.currentToolName = curToolName
         self.currentBrushSize = curBrushsize
         self.currentPaintPattern = curPaintPattern
