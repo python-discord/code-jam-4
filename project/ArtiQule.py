@@ -19,6 +19,8 @@ def paintEvent(self, event):
     else:
         # do normal stuff ...
 """
+
+
 class ColorBox(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -46,17 +48,20 @@ class ColorBox(QMainWindow):
         print('Showing ToolBox')
         self.show()
 
+
 class PalletteButton:
     def __init__(self):
         self.r = randint(0, 255)
         self.g = randint(0, 255)
         self.b = randint(0, 255)
         self.t = 255  # no transparancy now
-        self.color = QColor(self.r, self.g, self.b, self.t)
+        self.color = (self.r, self.g, self.b)
+        # self.color = QColor(self.r, self.g, self.b, self.t)
+        print(self.color)
 
     def mixColor(self, tool):
-        if tool.toolName in ["fill_empty", "straggly_paintbrush"
-                                "solidified_brush"]:
+        if tool.toolName in ["fill_empty", "straggly_paintbrush",
+                             "solidified_brush"]:
             # tool[r,b,g]  ERROR PRONE IF QCOLOR NOT WORK AS TUPLE
             if not ((tool[0] and tool[1] and tool[2]) and self.t):
                 tool.color = self.color
@@ -72,10 +77,12 @@ class PalletteButton:
                 )
                 self.color, tool.color = mixedColor, mixedColor
                 if tool.toolName in ["straggly_paintbrush",
-                "solidified_brush"]: tool.isDipped = True
+                                     "solidified_brush"]:
+                    tool.isDipped = True
+
 
 class Tool():
-    def __init__(self, toolName, duration, brushSize, color,
+    def __init__(self, toolName, brushSize, color,
                  paintPattern, PaintBoard, iconPath, shortcut, statusTip,
                  isDipped=False
                  ):
@@ -94,7 +101,7 @@ class Tool():
         """
 
         self.toolName = toolName
-        self.duration = duration
+        # self.duration = duration
         self.brushSize = brushSize
         self.color = color
         self.isDipped = isDipped
@@ -177,26 +184,31 @@ class PaintBoard(QMainWindow):
 
         self.toolbar = self.addToolBar("Toolbar")
 
-        self.pointy_pen = Tool("Pointy Pen", randint(0, 10), 1, Qt.black,
-                               Qt.SolidLine, self,
+        self.pointy_pen = Tool("Pointy Pen", 1, Qt.black,
+                               [randint(1, 4), randint(1, 2), randint(0, 3),
+                                randint(0, 5)], self,
                                "Design/icons/Pointy Pen.png",
                                "CTRL+P", "A very pointy pen"
                                )
 
-        self.fill = Tool("A bucket", 1, 50, None,
-                         "big dump", self,
+        self.fill = Tool("A Bucket", 2000, Qt.black,
+                         [1, 1, 1, 1], self,
                          'Design/icons/A bucket.png',
                          "CTRL+B", "A bucket"
                          )
 
-        self.straggly_paintbrush = Tool("Straggly Paintbrush", randint(0, 10),
-                                        10, None, "spread out pattern", self,
+        self.straggly_paintbrush = Tool("Straggly Paintbrush",
+                                        10, Qt.black,
+                                        [randint(1, 4), randint(1, 2),
+                                         randint(0, 3), randint(0, 5)],
+                                        self,
                                         "Design/icons/Straggly Paintbrush.png",
                                         "CTRL+A", "A very Straggly Paintbrush."
                                         )
 
-        self.solidifed_brush = Tool("Solid Brush", 1, 10, None,
-                                    "hit with a brick", self,
+        self.solidifed_brush = Tool("Solid Brush", 10, Qt.black,
+                                    [randint(1, 4), randint(1, 2),
+                                     randint(0, 3), randint(0, 5)], self,
                                     'Design/icons/Solid Brush.png',
                                     "CTRL+J", "Gosh, that is a hard tip"
                                     )
@@ -209,11 +221,15 @@ class PaintBoard(QMainWindow):
     def changePaintBoardVars(self, curToolName=None,
                              curBrushsize=1, curBrushColor=None,
                              curPaintPattern=Qt.SolidLine):
-        #print("hey from inside changePaintBoardVars. These are my args: Toolname: {}, Brushsize: {}, Brushcolor: {}, Paintpattern: {}".format(curToolName,curBrushsize,curBrushColor,curPaintPattern))
+
         self.currentToolName = curToolName
         self.currentBrushSize = curBrushsize
         self.currentPaintPattern = curPaintPattern
         self.currentBrushColor = curBrushColor
+        self.currentToolDuration = randint(5, 10)
+        print(self.currentToolName)
+        print(self.currentToolDuration)
+        print(self.currentBrushSize)
 
         self.setCursor(QCursor(
             QPixmap("Design/icons/{}.png".format(self.currentToolName
@@ -221,14 +237,15 @@ class PaintBoard(QMainWindow):
                                                  else None
                                                  ))))
 
+    # TODO: make a variable self.currentTool
+    #  that'll hold the current selected tool, i fixed the class
     def colorBoxRun(self):
         colorBox = ColorBox(self)
         geo = self.geometry()
-        geo.moveLeft(geo.right())  # moves right
+        geo.moveLeft(geo.right())  # moves window right
         colorBox.setGeometry(geo)
 
-        pallettes = p1,p2,p3,p4,p5,p6 = (QPushButton() for _ in
-                                         range(6))
+        p1, p2, p3, p4, p5, p6 = (QPushButton() for _ in range(6))
 
         c1 = PalletteButton()
         c2 = PalletteButton()
@@ -237,14 +254,31 @@ class PaintBoard(QMainWindow):
         c5 = PalletteButton()
         c6 = PalletteButton()
 
-        colors = [c1,c2,c3,c4,c5,c6]
-
-        for Color, pallette in zip(colors, pallettes):
-            print(Color)
-            pallette.setStyleSheet("QPushButton{background-color:rgb{color}}"
-                                   .format(color=Color.color))
-            pallette.clicked.connect(lambda: self.mixColor(self.currentTool))
-            self.colorBox.addPallette(pallette)
+        p1.setStyleSheet("background-color: rgb{0}"
+                         .format(c1.color))
+        p1.clicked.connect(lambda: c1.mixColor(self.currentTool))
+        colorBox.addPallette(p1)
+        p2.setStyleSheet("background-color: rgb{0}"
+                         .format(c2.color))
+        p2.clicked.connect(lambda: c2.mixColor(self.currentTool))
+        colorBox.addPallette(p2)
+        p3.setStyleSheet("background-color: rgb{0}"
+                         .format(c3.color))
+        print("background-color: rgb{0}".format(c3.color))
+        p3.clicked.connect(lambda: c3.mixColor(self.currentTool))
+        colorBox.addPallette(p3)
+        p4.setStyleSheet("background-color: rgb{0};"
+                         .format(c4.color))
+        p4.clicked.connect(lambda: c4.mixColor(self.currentTool))
+        colorBox.addPallette(p4)
+        p5.setStyleSheet("background-color: rgb{0}"
+                         .format(c5.color))
+        p5.clicked.connect(lambda: c5.mixColor(self.currentTool))
+        colorBox.addPallette(p5)
+        p1.setStyleSheet("background-color: rgb{0}"
+                         .format(c6.color))
+        p6.clicked.connect(lambda: c6.mixColor(self.currentTool))
+        colorBox.addPallette(p6)
 
         # showing toolBox
         colorBox.showColorBox()
@@ -252,21 +286,49 @@ class PaintBoard(QMainWindow):
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.drawing = True
+            if self.currentToolName == "A Bucket":
+                painter = QPainter(self.canvas)
+                Pen = QPen()
+                Pen.setWidth(self.currentBrushSize)
+                Pen.setColor(self.currentBrushColor)
+                painter.setPen(Pen)
+                painter.drawLine(0, 0, 1000, 500)
+                print('called directly')
             self.lastPoint = event.pos()
 
     def mouseMoveEvent(self, event):
-        if (event.buttons() and Qt.LeftButton) and self.drawing:
+        if (event.buttons() and Qt.LeftButton) and\
+                self.drawing and self.currentToolName is not None:
             painter = QPainter(self.canvas)
-            painter.setPen(QPen(self.currentBrushColor,
-                                self.currentBrushSize,
-                                self.currentPaintPattern,
-                                Qt.RoundCap,
-                                Qt.RoundJoin
-                                )
-                           )
-            painter.drawLine(self.lastPoint, event.pos())
-            self.lastPoint = event.pos()
-            self.update()
+            Pen = QPen()
+            if self.currentToolName != "A Bucket":
+                if self.currentToolDuration <= 0.0:
+                    print('Tools Died')
+                    self.currentToolDuration = 0
+                    Pen.setDashPattern([0, 0, 0, 0])
+                    self.drawing = False
+                else:
+                    self.currentToolDuration -= 0.01
+                # print(self.currentToolDuration)
+
+            if self.currentToolDuration < 1.5:
+                size_of_dashes = self.currentPaintPattern
+                Pen.setDashPattern(size_of_dashes)
+
+            if self.currentToolName == "Pointy Pen":
+                Pen.setCapStyle(Qt.RoundCap)
+                Pen.setJoinStyle(Qt.BevelJoin)
+            elif self.currentToolName == "Straggly Paintbrush" or \
+                    "Solid Brush":
+                Pen.setCapStyle(Qt.SquareCap)
+                Pen.setJoinStyle(Qt.MiterJoin)
+            Pen.setColor(self.currentBrushColor)
+            Pen.setWidth(self.currentBrushSize)
+            painter.setPen(Pen)
+            if event.pos().y() > 53 and self.currentToolName is not None:
+                painter.drawLine(self.lastPoint, event.pos())
+                self.lastPoint = event.pos()
+                self.update()
 
     def mouseRealeaseEvent(self, event):
         if event.button() == Qt.LeftButton:
