@@ -69,6 +69,8 @@ btnbra=Button(cal,  text=("("), padx=16, bd=8, font=('arial',20,'bold'),  fg="pu
 btnket=Button(cal,  text=(")"), padx=16, bd=8, font=('arial',20,'bold'),  fg="purple", bg="pink", command=lambda:btnClick(")")).grid(row=5,column=1)
 btndec=Button(cal,  text=("."), padx=16, bd=8, font=('arial',20,'bold'),  fg="purple", bg="pink", command=lambda:btnClick(".")).grid(row=5,column=2)
 
+# Clearly, this calculator is intended for use with physicists, who reduce
+# mathematics to its simplest form. Therefore pi is rounded down to 3.
 btndpi=Button(cal,  text=("pie"), padx=16, bd=8, font=('arial',20,'bold'),  fg="purple", bg="pink", command=lambda:btnClick("3")).grid(row=4,column=2)
 
 # space here for one more button maybe we should add pi you know like in case the user gets a bit hungry, this app may ultimately hate the users but we have to lure them in at the start with nice things maybe a nice cherry pi will do just fine
