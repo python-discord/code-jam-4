@@ -2,6 +2,7 @@ import binascii
 import json
 import logging
 import subprocess
+from pathlib import Path
 
 log = logging.getLogger(__name__)
 
@@ -55,6 +56,7 @@ def parse_media(path: str):
 
     if process.returncode != 0:
         log.error(f"Failed to fetch metadata for {path}: return code {process.returncode}")
+        log.debug(process.stderr)
 
     try:
         metadata = json.loads(process.stdout, encoding="utf-8")
@@ -67,5 +69,9 @@ def parse_media(path: str):
 
     tags["path"] = path
     tags["crc32"] = compute_crc32(path)
+
+    # Use the file name as the title if one doesn't exist.
+    if not tags.get("title"):
+        tags["title"] = Path(path).stem
 
     return tags
