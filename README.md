@@ -43,8 +43,14 @@ Our team name is **Wild Whispers** and consists of the following users:
 
 ## Setup & Installation
 
-`# TODO`
-
+Make sure you have installed `git` and `python` (>=3.7) and `pipenv`
+```shell
+git clone https://github.com/JonasKs/code-jam-4 
+cd code-jam-4
+pipenv --python 3.7
+pipenv install
+python setup.py # make sure you have an internet connection
+```
 ## How do I use this thing?
 
 `# TODO`

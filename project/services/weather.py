@@ -1,7 +1,7 @@
 import pyowm
 import random
 
-from typing import Iterable, Dict
+from typing import Dict
 
 from pyowm.weatherapi25.weather import Weather
 from pyowm.exceptions.api_response_error import UnauthorizedError
@@ -35,9 +35,8 @@ class ForecastFetcher:
         except UnauthorizedError:
             raise AttributeError("The provided API key is not valid.")
 
-    def fetch_forecast_7_days(self,
-                              location: str,
-                              unit: str) -> Iterable[Dict[str, str]]:
+    def fetch_forecast_7_days(self, location: str,
+                              unit: str) -> [Dict[str, str]]:
         """Fetches the forecast for the next seven days from openweathermap.org
 
         :param location: The name of the location this
@@ -88,6 +87,7 @@ def format_forecast(weather: Weather, unit: str) -> Dict[str, str]:
         key = temperature_naming.get(t, t) + ' temperature'
         output_dict[key] = str(temperatures[t]) + ' ' + unit_symbols[unit]
 
+    output_dict['weather_status'] = weather.get_status()
     return output_dict
 
 

@@ -12,6 +12,9 @@ flake8 = "*"
 ipython = "*"
 pytest = "*"
 pillow = "*"
+geonames = "*"
+python-levenshtein = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.7"
