@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QDesktopWidget, QMainWindow
+from PySide2.QtWidgets import QDesktopWidget, QMainWindow, qApp
 
 from .ui_files.ui_main import Ui_MainApplication
 from .add_task import AddTask
@@ -45,3 +45,10 @@ class MainApplication(QMainWindow, Ui_MainApplication):
         """
         form = AddTask()
         self.windows.append(form)
+
+    def closeEvent(self, event):
+        """
+        Reimplementing the closeEvent handler to close all windows when the main
+        window is closed.
+        """
+        qApp.quit()
