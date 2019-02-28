@@ -132,25 +132,25 @@ class PaintBoard(QMainWindow):
 
         self.pointy_pen = Tool("Pointy Pen", randint(0, 10), 1, Qt.black,
                                Qt.SolidLine, self,
-                               "Design/icons/pointy_pen.png",
+                               "Design/icons/Pointy Pen.png",
                                "CTRL+P", "A very pointy pen"
                                )
 
         self.fill = Tool("A bucket", 1, 50, None,
                          "big dump", self,
-                         'Design/icons/fill_empty.png',
+                         'Design/icons/A bucket.png',
                          "CTRL+B", "A bucket"
                          )
 
         self.straggly_paintbrush = Tool("Straggly Paintbrush", randint(0, 10),
                                         10, None, "spread out pattern", self,
-                                        "Design/icons/straggly_paintbrush.png",
+                                        "Design/icons/Straggly Paintbrush.png",
                                         "CTRL+A", "A very Straggly Paintbrush."
                                         )
 
         self.solidifed_brush = Tool("Solid Brush", 1, 10, None,
                                     "hit with a brick", self,
-                                    'Design/icons/solidified_brush.png',
+                                    'Design/icons/Solid Brush.png',
                                     "CTRL+J", "Gosh, that is a hard tip"
                                     )
 
@@ -178,16 +178,16 @@ class PaintBoard(QMainWindow):
         if tool.toolName in ["A bucket", "Straggly Paintbrush"
                              "Solid Brush"]:
             # tool[r,b,g]
-            if not ((tool[0] and tool[1] and tool[2]) and self.t):
-                tool["color"] = pallette.QColor
+            if not ((tool.color[0] and tool.color[1] and tool.color[2]) and self.t):
+                tool.color = pallette.QColor
             else:  # perhaps don't divide by 4
                 mixedColor = QColor(
-                    pallette[0] - (max(pallette[0], tool[0] // 4) -
-                                   min(pallette[0], tool[0] // 4)),
-                    pallette[1] - (max(pallette[1], tool[1] // 4) -
-                                   min(pallette[1], tool[1] // 4)),
-                    pallette[2] - (max(pallette[2], tool[2] // 4) -
-                                   min(pallette[2], tool[2] // 4)),
+                    pallette[0] - (max(pallette[0], tool.color[0] // 4) -
+                                   min(pallette[0], tool.color[0] // 4)),
+                    pallette[1] - (max(pallette[1], tool.color[1] // 4) -
+                                   min(pallette[1], tool.color[1] // 4)),
+                    pallette[2] - (max(pallette[2], tool.color[2] // 4) -
+                                   min(pallette[2], tool.color[2] // 4)),
                     255
                 )
                 pallette.QColor, tool.color = mixedColor, mixedColor
