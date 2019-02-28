@@ -5,11 +5,7 @@ from project.services.weather import format_forecast
 def test_format_forecast():
     """
     Testing the correctness of the values and the output format of the function
-<<<<<<< HEAD
     `format_forecast`.
-=======
-    format_forecast`.
->>>>>>> 35ad8bd3ab7fa917b9c6d3c4b15cc99047c392eb
 
     In this test only the 'kelvin' will be tested because the conversion is
     unnessesary of the elements
@@ -43,7 +39,8 @@ def test_format_forecast():
                 "highest temperature": "282.86 K",
                 "night temperature": "275.18 K",
                 "evening temperature": "281.87 K",
-                "morning temperature": "279.83 K"}
+                "morning temperature": "279.83 K",
+                'weather_status': 'Rain'}
 
     for k in formated:
         assert formated[k] == expected[k]
