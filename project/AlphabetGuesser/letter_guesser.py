@@ -55,7 +55,11 @@ class LetterGuesser:
 
 
 if __name__ == '__main__':
+    """
+    This is a simple demo showing how the letter guesser should be implemented
+    """
     guesser = LetterGuesser()
+    print('Pick a letter, any letter; keep it in mind as you answer these questions!\n')
     while True:
         word = guesser.request_word()
         yes_no = input('Is your letter in the word/phrase:\n{}\n(Yes/No):'.format(word))
