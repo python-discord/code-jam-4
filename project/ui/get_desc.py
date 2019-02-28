@@ -1,3 +1,4 @@
+from random import shuffle
 from PySide2.QtWidgets import QWidget
 from .ui_files.ui_add_desc import Ui_desc_form
 
@@ -17,6 +18,8 @@ class AddDesc(QWidget, Ui_desc_form):
             }
         label_text (list of str): The list of characters in the description
             to be added.
+        available_text (list of str): The list of characters corresponding to the
+            current slider position.
     """
 
     def __init__(self, task):
@@ -26,9 +29,15 @@ class AddDesc(QWidget, Ui_desc_form):
         self.label_text = []
 
         self.init_UI()
+        self.available_text = list((
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            " 0123456789"
+            "!@#$(),./?:\"'"
+        ))
 
         self.buttons = [i for i in vars(self) if i.endswith("button")]
         self.bind_buttons()
+        self.update()
 
     def init_UI(self):
         """
@@ -37,6 +46,12 @@ class AddDesc(QWidget, Ui_desc_form):
         self.setupUi(self)
         self.setFixedSize(self.width, self.height)
         self.show()
+
+    def randomize_text(self):
+        """
+        Randomizes the guide text.
+        """
+        shuffle(self.available_text)
 
     def bind_buttons(self):
         """
@@ -58,11 +73,8 @@ class AddDesc(QWidget, Ui_desc_form):
         Adds the character corresponding to the current slider position to the
         label text.
         """
-        available_text = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        available_text += " 0123456789"
-        available_text += "!@#$(),./?:\"'"
 
-        to_add = available_text[self.text_slider.sliderPosition()]
+        to_add = self.available_text[self.text_slider.sliderPosition()]
         self.label_text.append(to_add)
 
     def delete(self):
@@ -77,6 +89,8 @@ class AddDesc(QWidget, Ui_desc_form):
         Update the display label text.
         """
         self.label.setText("".join(self.label_text))
+        self.randomize_text()
+        self.reference_label.setText("".join(self.available_text))
 
     def done(self):
         """
