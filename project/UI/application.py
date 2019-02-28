@@ -140,20 +140,20 @@ class AddEventPage(tk.Frame):
         self.date.grid(row=3, sticky="E")
         self.dateSpinBoxs = tk.Frame(self)
         self.timeEntryD = tk.Spinbox(self.dateSpinBoxs,
-            width=4,
-            from_=1,
-            to=31)
+                                     width=4,
+                                     from_=1,
+                                     to=31)
 
         self.timeEntryM = tk.Spinbox(self.dateSpinBoxs,
-            width=5,
-            from_=1,
-            to=12)
+                                     width=5,
+                                     from_=1,
+                                     to=12)
 
         self.timeEntryY = tk.Spinbox(
-            self.dateSpinBoxs,
-            width=5,
-            from_=2019,
-            to=3000)
+                                     self.dateSpinBoxs,
+                                     width=5,
+                                     from_=2019,
+                                     to=3000)
         self.timeEntryD.grid(row=3, column=1)
         self.timeEntryM.grid(row=3, column=2)
         self.timeEntryY.grid(row=3, column=3)
@@ -173,9 +173,10 @@ class AddEventPage(tk.Frame):
         self.submitBtn.grid()
         # back button
         self.back = tk.Button(
-            self,
-            text="Back",
-            command=lambda: self.parent.change_page(CalendarPage))
+                              self,
+                              text="Back",
+                              command=lambda:
+                              self.parent.change_page(CalendarPage))
         self.back.grid(row=5, column=1, sticky="w")
 
     def IsDaysCorrect(self, list):
@@ -201,15 +202,16 @@ class AddEventPage(tk.Frame):
             self.timeEntryY.get()]
         print(self.IsDaysCorrect(dateList))
 
-        if (self.nameEntry.get() and
+        if (
+                self.nameEntry.get() and
                 self.locationEntry.get() and
                 self.IsDaysCorrect(dateList) and
                 self.descriptionEntry.get()):
             self.parent.dbh.addEvent(
-                self.nameEntry.get(),
-                self.locationEntry.get(),
-                ".".join(dateList),
-                self.descriptionEntry.get())
+                                     self.nameEntry.get(),
+                                     self.locationEntry.get(),
+                                     ".".join(dateList),
+                                     self.descriptionEntry.get())
         else:
             messagebox.showinfo(
                 "Missing arguments",
