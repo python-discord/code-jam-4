@@ -51,6 +51,7 @@ class MainWindow(QMainWindow):
         # Player
         self.player = QMediaPlayer()
         self.player.error.connect(self.player_error)
+        self.player.mediaStatusChanged.connect(self.player_media_status_changed)
         self.player.stateChanged.connect(self.player_state_changed)
         self.player.setPlaylist(self.playlist)
 
@@ -66,7 +67,7 @@ class MainWindow(QMainWindow):
         Parameters
         ----------
         metadata: Dict[str, Any]
-            The media's metadata
+            The media's metadata.
 
         Returns
         -------
@@ -105,6 +106,10 @@ class MainWindow(QMainWindow):
     @staticmethod
     def player_state_changed(state):
         log.debug(f"State changed: {state}")
+
+    @staticmethod
+    def player_media_status_changed(status):
+        log.debug(f"Status changed: {status}")
 
     def playlist_index_changed(self, index: int):
         name = self.playlist.currentMedia().canonicalUrl().fileName()
