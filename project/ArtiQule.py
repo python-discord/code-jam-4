@@ -136,19 +136,20 @@ class PaintBoard(QMainWindow):
                                "CTRL+P", "A very pointy pen"
                                )
 
-        self.fill = Tool("A bucket", 1, 50, None,
+        self.fill = Tool("A bucket", 1, 2000, Qt.black,
                          "big dump", self,
                          'Design/icons/A bucket.png',
                          "CTRL+B", "A bucket"
                          )
 
         self.straggly_paintbrush = Tool("Straggly Paintbrush", randint(0, 10),
-                                        10, None, "spread out pattern", self,
+                                        10, Qt.black, "spread out pattern",
+                                        self,
                                         "Design/icons/Straggly Paintbrush.png",
                                         "CTRL+A", "A very Straggly Paintbrush."
                                         )
 
-        self.solidifed_brush = Tool("Solid Brush", 1, 10, None,
+        self.solidifed_brush = Tool("Solid Brush", 1, 10, Qt.black,
                                     "hit with a brick", self,
                                     'Design/icons/Solid Brush.png',
                                     "CTRL+J", "Gosh, that is a hard tip"
@@ -162,7 +163,15 @@ class PaintBoard(QMainWindow):
     def changePaintBoardVars(self, curToolName=None,
                              curBrushsize=1, curBrushColor=Qt.black,
                              curPaintPattern=Qt.SolidLine):
-        #print("hey from inside changePaintBoardVars. These are my args: Toolname: {}, Brushsize: {}, Brushcolor: {}, Paintpattern: {}".format(curToolName,curBrushsize,curBrushColor,curPaintPattern))
+        # print("hey from inside changePaintBoardVars.
+        # These are my args:
+        # Toolname: {},
+        # Brushsize: {},
+        # Brushcolor: {},
+        # Paintpattern: {}".format(curToolName,
+        #                   curBrushsize,
+        #                   curBrushColor,
+        #                   curPaintPattern))
         self.currentToolName = curToolName
         self.currentBrushSize = curBrushsize
         self.currentPaintPattern = curPaintPattern
@@ -178,7 +187,8 @@ class PaintBoard(QMainWindow):
         if tool.toolName in ["A bucket", "Straggly Paintbrush"
                              "Solid Brush"]:
             # tool[r,b,g]
-            if not ((tool.color[0] and tool.color[1] and tool.color[2]) and self.t):
+            if not ((tool.color[0] and tool.color[1]
+                     and tool.color[2]) and self.t):
                 tool.color = pallette.QColor
             else:  # perhaps don't divide by 4
                 mixedColor = QColor(
@@ -201,13 +211,17 @@ class PaintBoard(QMainWindow):
     def mouseMoveEvent(self, event):
         if (event.buttons() and Qt.LeftButton) and self.drawing:
             painter = QPainter(self.canvas)
-            painter.setPen(QPen(self.currentBrushColor,
-                                self.currentBrushSize,
-                                self.currentPaintPattern,
-                                Qt.RoundCap,
-                                Qt.RoundJoin
-                                )
-                           )
+            Pen = QPen()
+            Pen.setColor(self.currentBrushColor)
+            Pen.setWidth(self.currentBrushSize)
+            if self.currentToolName == "Pointy Pen":
+                Pen.setCapStyle(Qt.RoundCap)
+                Pen.setJoinStyle(Qt.BevelJoin)
+            elif self.currentToolName == "Straggly Paintbrush" or\
+                    "Solid Brush":
+                Pen.setCapStyle(Qt.SquareCap)
+                Pen.setJoinStyle(Qt.MiterJoin)
+            painter.setPen(Pen)
             if event.pos().y() > 53 and self.currentToolName is not None:
                 painter.drawLine(self.lastPoint, event.pos())
                 self.lastPoint = event.pos()
