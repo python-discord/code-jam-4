@@ -148,7 +148,7 @@ class Animater(tk.Canvas):
 @dataclass
 class Motion:
     """
-    Defines the movements derived from the given vector.
+    Defines the movements derived from a generated vector.
     The result is a two dimensional generator: the first dimension yields
     a "frame" generator, which in turn yields move commands. This structure allows
     for different `speed`s of motion, as the length of the second
