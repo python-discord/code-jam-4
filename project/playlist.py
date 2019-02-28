@@ -101,8 +101,22 @@ class Playlist(QMediaPlaylist):
     def moveMedia(self, *args, **kwargs):
         raise NotImplementedError
 
-    def removeMedia(self, *args, **kwargs):
-        raise NotImplementedError
+    def removeMedia(self, index: int):
+        log.debug(f"Adding media for index {index}.")
+        success = super().removeMedia(index)
+
+        if success:
+            row = self._get_row(index)
+
+            # TODO: Handle partial removals better. Maybe re-add media to playlist?
+            if not self._model.removeRow(row):
+                log.error(
+                    f"Media was only partially removed: "
+                    f"failed to remove media at row {row} from model."
+                )
+                return False
+
+        return success
 
     def nextIndex(self, steps: int = 1) -> int:
         if self.mediaCount() == 0:
