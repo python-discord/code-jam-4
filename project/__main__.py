@@ -250,15 +250,17 @@ class UserInterface(tk.Frame):
         self.xp_frame.set_xp(self.xp,
                              self.prev_xp_milestone,
                              self.next_xp_milestone)
+        self.tutorial_trigger('xpgain')
 
     def set_darkmode(self):
         self.text_entry_section.set_darkmode(self.is_darkmode.get())
         self.keyboard_section.set_darkmode(self.is_darkmode.get())
+        self.tutorial_trigger('darkmode')
 
     def receive_key(self, char):
-        TutorialWindow(self,"Test message")
         play_sound('tap')
         self.text_entry_section.receive_key(char)
+        self.tutorial_trigger('grow')
 
     def backspace(self):
         play_sound('tap')
@@ -279,6 +281,7 @@ class UserInterface(tk.Frame):
 
         LootBoxUnlockWindow(new_keys=unlocked_keys, rarities=rarities)
         play_sound('pop')
+        self.tutorial_trigger('lootbox')
 
     def on_word_complete(self, last_word: str):
         if last_word is not None:
@@ -290,6 +293,8 @@ class UserInterface(tk.Frame):
                 self.used_words.add(last_word)
                 word_value = calculate_xp(last_word)
                 self.add_xp(word_value)
+            else:
+                self.tutorial_trigger('fakeword')
 
 
 class TextEntrySection(tk.Frame):
@@ -616,8 +621,15 @@ class XPFrame(tk.Frame):
 
 
 class TutorialWindow(tk.Toplevel):
+    previous_tutorial_window = None
+
     def __init__(self, master, message=None, smirk=False, *args, **kwargs):
         tk.Toplevel.__init__(self)
+
+        if TutorialWindow.previous_tutorial_window:
+            TutorialWindow.previous_tutorial_window.destroy()
+        TutorialWindow.previous_tutorial_window = self
+
         self.master = master
         self.title('Tutorial')
         self.attributes('-topmost', True)

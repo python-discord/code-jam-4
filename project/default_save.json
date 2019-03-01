@@ -26,8 +26,5 @@
  "used_words": [
  ],
  "xp":0,
- "tutorials": {
-     "start": ["Hi there start",0],
-     "grow": ["Growing",1]
- }
+ "tutorials": ["start","grow","xpgain","darkmode","lootbox","fakeword"]
 }
