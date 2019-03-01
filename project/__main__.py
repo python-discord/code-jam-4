@@ -9,6 +9,8 @@ import random
 from pathlib import Path
 from PIL import Image, ImageTk
 from functools import reduce
+import pyaudio
+import wave
 
 nltk.download('words', quiet=True, raise_on_error=True)
 
@@ -18,6 +20,26 @@ KEY_DESCRIPTION_PATH = SCRIPT_DIR / Path("key_descriptions.json")
 SAVE_DATA_PATH = SCRIPT_DIR / Path("save_data.json")
 DEFAULT_SAVE_PATH = SCRIPT_DIR / Path("default_save.json")
 IMAGE_PATH = SCRIPT_DIR.parent / Path("img/")
+AUDIO_PATH = SCRIPT_DIR.parent / Path("audio/")
+
+
+audio_player = pyaudio.PyAudio()
+
+
+def play_sound(soundcode='tap'):
+    sound_file = open((AUDIO_PATH / '{}.wav'.format(soundcode)), 'rb')
+    sound = wave.open(sound_file, 'rb')
+
+    def audio_callback(in_data, frame_count, time_info, status):
+        data = sound.readframes(frame_count)
+        return (data, pyaudio.paContinue)
+
+    sound_format = audio_player.get_format_from_width(sound.getsampwidth())
+    audio_player.open(format=sound_format,
+                      channels=sound.getnchannels(),
+                      rate=sound.getframerate(),
+                      output=True,
+                      stream_callback=audio_callback)
 
 
 def is_word(text):
@@ -125,9 +147,11 @@ class UserInterface(tk.Frame):
         self.keyboard_section.set_darkmode(self.is_darkmode.get())
 
     def receive_key(self, char):
+        play_sound('tap')
         self.text_entry_section.receive_key(char)
 
     def backspace(self):
+        play_sound('tap')
         print("Backspace")
         self.text_entry_section.backspace()
 
@@ -145,18 +169,18 @@ class UserInterface(tk.Frame):
             self.keyboard_section.add_key(unlocked_key)
 
         LootBoxUnlockWindow(new_keys=unlocked_keys, rarities=rarities)
+        play_sound('pop')
 
     def on_word_complete(self, last_word: str):
-        if last_word is None:
-            return
-        assert last_word.lower() == last_word
-        assert last_word.strip() == last_word
-        assert last_word.isalpha()
-        if(is_word(last_word)
-           and last_word not in self.used_words):
-            self.used_words.add(last_word)
-            word_value = calculate_xp(last_word)
-            self.add_xp(word_value)
+        if last_word is not None:
+            assert last_word.lower() == last_word
+            assert last_word.strip() == last_word
+            assert last_word.isalpha()
+            if(is_word(last_word)
+               and last_word not in self.used_words):
+                self.used_words.add(last_word)
+                word_value = calculate_xp(last_word)
+                self.add_xp(word_value)
 
 
 class TextEntrySection(tk.Frame):
@@ -478,6 +502,7 @@ def exit_program():
     save_successful = UI.keyboard_section.save_keys()
     if not save_successful:
         print("Exiting program, failed to save.")
+    audio_player.terminate()
     ROOT.destroy()
 
 
