@@ -65,6 +65,7 @@ class MainApplication(QMainWindow, Ui_MainApplication):
     def update_table(self):
         self.task_table.setModel(self.tabel_model)
         self.task_table.setSortingEnabled(True)
+        self.task_table.resizeColumnsToContents()
 
     def closeEvent(self, event):
         """

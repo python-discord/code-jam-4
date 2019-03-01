@@ -8,7 +8,6 @@ class DataComm:
     def __init__(self):
         self.file = readWrite()
         self.data = self.file.readInput()
-        #print ("Done")
         self.header = ('Title', 'Description', 'Deadline', 'Completed')
         self.update()
 
