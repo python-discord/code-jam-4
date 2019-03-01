@@ -110,10 +110,9 @@ class Direction(Enum):
             return self.value + other
 
 
-class Animater(tk.Canvas):
+class Animater:
     """
-    Inherits Canvas. Manager for executing animation move commands.
-    Currently only event base animations are supported.
+    Manager for executing animations.
 
     example::
 
@@ -123,31 +122,38 @@ class Animater(tk.Canvas):
     window.add_motion(motion)
     ```
     """
-    motions = set()
+    _motions = set()
     fps = 60
 
+    def __init__(self, canvas: tk.Canvas):
+        self.canvas = canvas
+
     def start(self):
-        while self.motions:
+        while self._motions:
             time.sleep(1/self.fps)
             self.run()
 
     def run(self):
-        for motion in self.motions:
+        for motion in self._motions:
             try:
                 next(motion)()
             except StopIteration:
-                self.motions.remove(motion)
+                self._motions.remove(motion)
                 break
 
     def add(self, motion: Motion):
-        self.motions.add(iter(motion))
+        self._motions.add(iter(motion))
 
     def add_motion(self, id: int, endpoints: Iterable[Coord], **kwargs):
-        motion = Motion(self, id, endpoints, **kwargs)
+        if not isinstance(endpoints, Iterable):
+            endpoints = (endpoints,)
+
+        endpoints = (Coord(*point) for point in endpoints)  # Reinforce type
+        motion = Motion(self.canvas, id, endpoints, **kwargs)
         self.add(motion)
 
     def clear(self):
-        self.motions.clear()
+        self._motions.clear()
 
 
 @dataclass
@@ -208,7 +214,7 @@ class Motion:
             for _ in range(count):
                 move(*increment)
                 self.canvas.master.update_idletasks()
-                self.canvas.master.update()
+                # self.canvas.master.update()
 
         for end in self.endpoints:
             start = Coord(*self.canvas.coords(self.id)[:2])
