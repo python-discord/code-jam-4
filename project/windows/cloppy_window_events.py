@@ -6,7 +6,7 @@ class CloppyChoiceMadeEvent(Event):
         super().__call__(
             CloppyChoiceMadeEventData(message, choice)
         )
-        
+
 
 class CloppyChoiceMadeEventData:
     def __init__(self, message, choice):

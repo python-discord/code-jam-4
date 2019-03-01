@@ -22,4 +22,3 @@ class Constants:
     cloppy_greeting = (
         f"Hi, I'm Cloppy, your {program_name} personal assistant!"
     )
-
