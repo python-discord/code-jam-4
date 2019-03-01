@@ -51,17 +51,6 @@ class MainWindow(QMainWindow):
 
         return model
 
-    @staticmethod
-    def create_view_context_menu(view: QTableView, pos: QPoint) -> QMenu:
-        menu = QMenu()
-        remove_action = QAction("Remove", view)
-        menu.addAction(remove_action)
-
-        # row = view.rowAt(pos.y())
-        # remove_action.triggered.connect()
-
-        return menu
-
     def configure_view(self):
         """Configure the playlist table view."""
         self.ui.playlist_view.setModel(self.playlist_model)
@@ -78,9 +67,20 @@ class MainWindow(QMainWindow):
         self.ui.playlist_view.hideColumn(6)  # crc32
         self.ui.playlist_view.hideColumn(7)  # path
 
+    def create_view_context_menu(self, pos: QPoint) -> QMenu:
+        """Create and return a context menu to use with the playlist view."""
+        menu = QMenu()
+        remove_action = QAction("Remove", self.ui.playlist_view)
+        menu.addAction(remove_action)
+
+        row = self.ui.playlist_view.rowAt(pos.y())
+        remove_action.triggered.connect(lambda: self.player.remove_media(row))
+
+        return menu
+
     def show_view_context_menu(self, pos: QPoint):
         """Display a context menu for the table view."""
-        menu = self.create_view_context_menu(self.ui.playlist_view, pos)
+        menu = self.create_view_context_menu(pos)
         self.ui.playlist_view.context_menu = menu  # Prevents it from being GC'd
 
         global_pos = self.ui.playlist_view.mapToGlobal(pos)
