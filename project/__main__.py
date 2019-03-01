@@ -1,6 +1,8 @@
 import itertools
 import tkinter as tk
 import tkinter.font as tkFont
+from tkinter import filedialog as fd
+from tkinter import messagebox
 from tkinter import ttk
 import json
 import random
@@ -43,7 +45,8 @@ def play_sound(soundcode='tap'):
 with open(WORDS_PATH, 'r') as words_file:
     real_words = set(json.load(words_file))
 
-DEFAULT_DOC_PATH = SCRIPT_DIR.parent / Path("documents/")
+DEFAULT_DOC_PATH = SCRIPT_DIR.parent / Path('documents/')
+
 
 def is_word(text):
     assert text.isalpha()
@@ -92,7 +95,7 @@ class UserInterface(tk.Frame):
             save_data = json.load(save_data_file)
             save_data_file.close()
 
-        self.window_name = "Typing Program"
+        self.window_name = 'Typing Program'
 
         saved_keys = save_data['keys']
         saved_scales = save_data['scales']
@@ -149,38 +152,36 @@ class UserInterface(tk.Frame):
 
         # File menu
         file_menu = tk.Menu(self.menu)
-        self.menu.add_cascade(label="File", menu=file_menu)
+        self.menu.add_cascade(label='File', menu=file_menu)
 
-        file_menu.add_command(label="New", command=self.new_file)
-        file_menu.add_command(label="Save", command=self.save_file)
-        file_menu.add_command(label="Save As", command=self.save_file_as)
-        file_menu.add_command(label="Load", command=self.load_file)
-        file_menu.add_command(label="Quit", command=exit_program)
-
+        file_menu.add_command(label='New', command=self.new_file)
+        file_menu.add_command(label='Save', command=self.save_file)
+        file_menu.add_command(label='Save As', command=self.save_file_as)
+        file_menu.add_command(label='Load', command=self.load_file)
+        file_menu.add_command(label='Quit', command=exit_program)
 
     def new_file(self):
         self.working_file = None
-        self.text_entry_section.set_text("")
-        
+        self.text_entry_section.set_text('')
+
     def save_file(self):
-        print("Save command")
+        print('Save command')
         if self.working_file is None:
             self.save_file_as()
         else:
             self.write_file(self.working_file)
 
     def save_file_as(self):
-        print("Save as command")
-        fd = tk.filedialog
+        print('Save as command')
         filepath = fd.asksaveasfilename(
                                         initialdir=self.working_directory,
-                                        title="Save as...",
-                                        filetypes=(("text files", ".txt"),
-                                                   ("all files", "*.*")
+                                        title='Save as...',
+                                        filetypes=(('text files', '.txt'),
+                                                   ('all files', '*.*')
                                                    )
                                         )
         # User hit cancel
-        if filepath == "":
+        if filepath == '':
             return
         print(filepath)
         self.working_file = filepath
@@ -193,30 +194,29 @@ class UserInterface(tk.Frame):
             filepath.write_text(doc_text)
             save_complete = True
         except IOError:
-            tk.messagebox.showinfo("Error", "Error saving file")
+            messagebox.showinfo('Error', 'Error saving file')
 
         if save_complete:
-            tk.messagebox.showinfo(self.window_name, "Save complete.")
+            messagebox.showinfo(self.window_name, 'Save complete.')
 
     def load_file(self):
-        print("Load command")
-        fd = tk.filedialog
+        print('Load command')
         filepath = fd.askopenfilename(
                                       initialdir=self.working_directory,
-                                      title="Open file",
-                                      filetypes=(("text files", ".txt"),
-                                                 ("all files", "*.*")
+                                      title='Open file',
+                                      filetypes=(('text files', '.txt'),
+                                                 ('all files', '*.*')
                                                  )
                                       )
         # User hit cancel
-        if filepath == "":
+        if filepath == '':
             return
         filepath = Path(filepath)
         try:
             doc_text = filepath.read_text()
             load_complete = True
         except IOError:
-            tk.messagebox.showinfo("Error", "Error loading file")
+            messagebox.showinfo('Error', 'Error loading file')
 
         if load_complete:
             self.text_entry_section.set_text(doc_text)
@@ -306,13 +306,13 @@ class TextEntrySection(tk.Frame):
         self.textbox['bg'] = 'black' if is_darkmode else 'white'
 
     def get_text(self):
-        return self.textbox.get(1.0, "end")
+        return self.textbox.get(1.0, 'end')
 
     def set_text(self, new_text):
-        self.textbox.configure(state="normal")
-        self.textbox.delete(1.0, "end")
+        self.textbox.configure(state='normal')
+        self.textbox.delete(1.0, 'end')
         self.textbox.insert(1.0, new_text)
-        self.textbox.configure(state="disabled")
+        self.textbox.configure(state='disabled')
 
 
 class KeyboardSection(tk.Frame):
@@ -368,7 +368,7 @@ class KeyboardSection(tk.Frame):
             'scales': [button.scale for button in self.buttons],
             'used_words': list(self.master.used_words),
             'xp': self.master.xp,
-            'working_directory' : str(self.master.working_directory)
+            'working_directory': str(self.master.working_directory)
         }
         json_data = json.dumps(json_compatible_data, indent=1)
         try:
