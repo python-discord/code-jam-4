@@ -21,6 +21,7 @@ WORDS_PATH = SCRIPT_DIR / Path('words.json')
 DEFAULT_SAVE_PATH = SCRIPT_DIR / Path('default_save.json')
 IMAGE_PATH = SCRIPT_DIR.parent / Path('img/')
 AUDIO_PATH = SCRIPT_DIR.parent / Path('audio/')
+DEFAULT_DOC_PATH = SCRIPT_DIR.parent / Path('documents/')
 
 
 audio_player = pyaudio.PyAudio()
@@ -45,16 +46,20 @@ def play_sound(soundcode='tap'):
 with open(WORDS_PATH, 'r') as words_file:
     real_words = set(json.load(words_file))
 
-DEFAULT_DOC_PATH = SCRIPT_DIR.parent / Path('documents/')
-
 
 def is_word(text):
     assert text.isalpha()
     return text in real_words
 
 
+letter_scores = {'a': 1, 'e': 1, 'i': 1, 'u': 1, 'n': 1, 'r': 1, 'o': 1,
+                 's': 1, 'l': 1, 't': 1, 'd': 2, 'g': 2, 'm': 3, 'b': 3,
+                 'c': 3, 'p': 3, 'y': 4, 'f': 4, 'v': 4, 'w': 4, 'h': 4,
+                 'k': 5, 'j': 8, 'x': 8, 'q': 10, 'z': 10}
+
+
 def calculate_xp(word):
-    return len(word)
+    return sum([letter_scores[letter] for letter in word])
 
 
 LOOTBOX_RARITIES = [
