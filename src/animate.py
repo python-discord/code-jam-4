@@ -112,6 +112,9 @@ class Direction(Enum):
         else:
             return self.value + other
 
+    def flip(self):
+        return Direction(Coord(0, 0) - self.value)
+
 
 class Animater:
     """
@@ -239,6 +242,7 @@ class Motion:
 class Window(widget.PrimaryCanvas):
     animation_speed = 4
     _current = None
+    _views = {}
 
     def init(self):
         self.animater = Animater(self)
@@ -258,35 +262,56 @@ class Window(widget.PrimaryCanvas):
 
     def __set(self, view, coord, viewtype):
         if viewtype == 'image':
-            return self.__set_image(view, coord)
+            wid = self.__set_image(view, coord)
         else:
-            return self.__set_widget(view, coord)
+            wid = self.__set_widget(view, coord)
+        self._views[view] = wid
+        return wid
 
     def set_view(self, view: tk.Widget, viewtype='image'):
-        self._current = self.__set(view, self.origin, viewtype)
+        self._current = view
+        self.__set(self._current, self.origin, viewtype)
+
+    def move_view(self, wid, end):
+        self.animater.add_motion(
+            wid, end, speed=self.animation_speed
+        )
+
+    def move_in(self, view, direction: Direction, viewtype='image'):
+        distance = self.get_distance(direction)
+        start = self.origin + distance
+        wid = self.__set(view, start, viewtype)
+        self.move_view(wid, self.origin)
+        return wid
+
+    def move_out(self, view, direction, viewtype='image'):
+        wid = self._views[view]
+        distance = self.get_distance(direction)
+        end = self.origin + distance
+        self.move_view(wid, end)
+        del self._views[view]
 
     def change_view(self, view: tk.Widget, direction: Direction, viewtype='image'):
         if not isinstance(direction, Direction):
             direction = Direction[direction.upper()]  # Cast string for convenience
-
-        if direction in (Direction.UP, Direction.DOWN):
-            dist = Coord(0, self.winfo_height())
-        elif direction in (Direction.LEFT, Direction.RIGHT):
-            dist = Coord(self.winfo_width(), 0)
-        else:
-            raise NotImplementedError
-
-        edge = direction * dist
-        end = self.origin + edge
-        beg = self.origin - edge
-        wid = self.__set(view, beg, viewtype)
-
         self.animater.clear()
-        self.animater.add_motion(self._current, end, speed=self.animation_speed)
-        self.animater.add_motion(wid, self.origin, speed=self.animation_speed)
+
+        self.move_out(self._current, direction, viewtype=viewtype)
+        self.move_in(view, direction.flip(), viewtype=viewtype)
 
         self.animater.start()
-        self._current = wid
+        self._current = view
+
+    def get_distance(self, direction: Direction):
+        if not isinstance(direction, Direction):
+            direction = Direction[direction.upper()]  # Cast string for convenience
+
+        if direction in (Direction.UP, Direction.DOWN):
+            return direction * Coord(0, self.winfo_height())
+        elif direction in (Direction.LEFT, Direction.RIGHT):
+            return direction * Coord(self.winfo_width(), 0)
+        else:
+            raise NotImplementedError
 
     @property
     def origin(self):

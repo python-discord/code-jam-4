@@ -30,7 +30,10 @@ class SecondaryButton(tk.Button):
 
 
 class SecondaryLabel(tk.Label):
-    DEFAULT = {}
+    DEFAULT = {
+        'justify': 'left',
+        'width': 10
+    }
 
     def __init__(self, *args, **kwds):
         self.DEFAULT.update(kwds)

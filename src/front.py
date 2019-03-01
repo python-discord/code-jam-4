@@ -71,7 +71,7 @@ class Front(widget.PrimaryFrame):
         self.__change_image('RIGHT')
 
     def cmd_bio(self):
-        self.window.change_view(self.bio, 'UP')
+        self.window.change_view(self.bio, 'UP', 'widget')
 
     @property
     def cache(self):
