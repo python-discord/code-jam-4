@@ -9,6 +9,11 @@ class Front(widget.PrimaryFrame):
 
     cachesize = 10
 
+    # Quick fix to keep a reference count on the
+    # last image, making sure the garbage collector
+    # doesn't delete it before the animation ends
+    _last = None
+
     def __next(self):
         data: dict = self.cache.pop()
         data.pop('jumpscare')  # not using it for now
@@ -22,13 +27,13 @@ class Front(widget.PrimaryFrame):
     def __load(self, name, image, data):
         self.title.config(text=name)
         self.bio.load(data)
-
-        self.image = widget.PrimaryLabel(self.window, image=image)
+        self._last = self.image
+        self.image = image
         self.update()
 
     def __change_image(self, direction: Direction):
         self.__next()
-        self.window.change_view(self.image, direction)
+        self.window.change_view(self.image, direction, viewtype='image')
 
     def init(self):
         self.title = widget.PrimaryLabel(self)
@@ -57,6 +62,7 @@ class Front(widget.PrimaryFrame):
 
         self._loop = asyncio.get_event_loop()
         self.cache = Cache(self.window)
+        self.cache
 
     def cmd_dislike(self):
         self.__change_image('LEFT')

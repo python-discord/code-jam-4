@@ -3,11 +3,13 @@ from __future__ import annotations
 import tkinter as tk
 import operator
 import time
-from . import widget
 from typing import NamedTuple, Callable, TypeVar, Generator, Tuple
 from enum import Enum
 from dataclasses import dataclass
 from functools import partialmethod, partial
+
+from . import widget
+from .cache import ImageTk
 
 
 class Coord(NamedTuple):
@@ -235,7 +237,7 @@ class Motion:
 
 
 class Window(widget.PrimaryCanvas):
-    animation_speed = 3
+    animation_speed = 4
     _current = None
 
     def init(self):
@@ -244,34 +246,41 @@ class Window(widget.PrimaryCanvas):
     def __coord(self, id):
         return Coord(*self.coords(id)[:2])
 
-    def clear(self):
-        if self._current is not None:
-            self.delete(self._current)
-            self.update()
+    def __set_image(self, view: ImageTk.PhotoImage, coord: Coord):
+        return self.create_image(
+            coord, image=view, anchor='nw'
+        )
 
-    def __set(self, view: tk.Widget, coord: Coord):
+    def __set_widget(self, view: tk.Widget, coord: Coord):
         return self.create_window(
             coord, window=view, anchor='nw'
         )
 
-    def set_view(self, view: tk.Widget):
-        self.clear()
-        self._current = self.__set(view, self.origin)
+    def __set(self, view, coord, viewtype):
+        if viewtype == 'image':
+            return self.__set_image(view, coord)
+        else:
+            return self.__set_widget(view, coord)
 
-    def change_view(self, view: tk.Widget, direction: Direction):
+    def set_view(self, view: tk.Widget, viewtype='image'):
+        print(self.origin)
+        self._current = self.__set(view, self.origin, viewtype)
+
+    def change_view(self, view: tk.Widget, direction: Direction, viewtype='image'):
         if not isinstance(direction, Direction):
             direction = Direction[direction.upper()]  # Cast string for convenience
 
         if direction in (Direction.UP, Direction.DOWN):
-            dist = self.winfo_height()
+            dist = Coord(0, self.winfo_height())
         elif direction in (Direction.LEFT, Direction.RIGHT):
-            dist = self.winfo_width()
+            dist = Coord(self.winfo_width(), 0)
         else:
             raise NotImplementedError
+
         edge = direction * dist
         end = self.origin + edge
         beg = self.origin - edge
-        wid = self.__set(view, beg)
+        wid = self.__set(view, beg, viewtype)
 
         self.animater.clear()
         self.animater.add_motion(self._current, end, speed=self.animation_speed)
@@ -282,4 +291,4 @@ class Window(widget.PrimaryCanvas):
 
     @property
     def origin(self):
-        return Coord(self.winfo_x(), self.winfo_y())
+        return Coord(0, 0)
