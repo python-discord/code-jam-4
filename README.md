@@ -30,17 +30,23 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 
 # Project Information
 
-`# TODO`
+
 TEAM: RED REINDEER
+
 
 ## Description
 
-`# TODO`
+This is a graphical representation of that calculator you purchase just before
+an exam. The buttons seem to move every time you go to use it and for some 
+reason it seems as though the pi button just doesn't quite mean 'pi'.
 
 ## Setup & Installation
 
-`# TODO`
+Requires: 
+- Tkinter
+- Random
+- Math
 
 ## How do I use this thing?
 
-`# TODO`
+./project/__main__.py

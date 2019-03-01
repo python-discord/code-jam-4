@@ -10,85 +10,148 @@ Requirements:
     Python 3
     tkinter
 """
-from tkinter import Button, Tk, StringVar, Frame
-import tkinter as tk
-
-class Num(Button):
-    def __init__(self, *args, **kwargs):
-        Button.__init__(self, *args, **kwargs)
-        self.val = int(self['text'])
-        self['bg'] = "pink"
-        self['fg'] = "purple"
-        # command = add_num(self['text'])
+from tkinter import Button, Entry, StringVar, Tk
+import random
+import math
 
 
-
-class Op(Button):
-    def __init__(self, *args, **kwargs):
-        Button.__init__(self, *args, **kwargs)
-        self['bg'] = "purple"
-        self['fg'] = "pink"
-        # command = add_num(self['text'])
-
-class Calculator(Frame):
-    def __init__(self, master = None):
-        super().__init__(master)
-        self.master = master
-        
-        # Number Buttons
-        self.btn1 = None
-        self.btn2 = None
-        self.btn3 = None
-        self.btn4 = None
-        self.btn5 = None
-        self.btn6 = None
-        self.btn7 = None
-        self.btn8 = None
-        self.btn9 = None
-        self.btn0 = None
-        
-        # Operator buttons
-        self.op1 = None
-        self.op2 = None
-        self.op3 = None
-        self.op4 = None
-        self.op5 = None
-        
-        self.create()
-    
-    def create(self):
-        """
-        Generates the actual GUI
-        """
-        self.btn1 = Num(self, text=("1"), command = self.add_num()).grid(row=1, column=0)
-        self.btn2 = Num(self, text=("2")).grid(row=1, column=1)
-        self.btn3 = Num(self, text=("3")).grid(row=1, column=1)
-        self.btn4 = Num(self, text=("4")).grid(row=1, column=1)
-        self.btn5 = Num(self, text=("5")).grid(row=1, column=1)
-        self.btn6 = Num(self, text=("6")).grid(row=1, column=1)
-        self.btn7 = Num(self, text=("7")).grid(row=1, column=1)
-        self.btn8 = Num(self, text=("8")).grid(row=1, column=1)
-        self.btn9 = Num(self, text=("9")).grid(row=1, column=1)
-        self.btn0 = Num(self, text=("0")).grid(row=1, column=1)
-        
-        # Operator buttons
-        self.op1 = Op(self, text=("+")).grid(row=1, column=3)
-        self.op2 = Op(self, text=("-")).grid(row=2, column=3)
-        self.op3 = Op(self, text=("*")).grid(row=3, column=3)
-        self.op4 = Op(self, text=("/")).grid(row=4, column=3)
-        self.op5 = Op(self, text=("=")).grid(row=4, column=2)
-        
-    def add_num(self):
-        print(self['val'])
+def btnClick(numbers):
+    global operator
+    operator = operator + str(numbers)
+    text_Input.set(operator)
 
 
+def btnPi():
+    global operator
+    c = random.randint(0, 101)
+
+    if c <= 20:
+        k = math.pi
+    elif c <= 80:
+        k = 2*math.pi
+    else:
+        k = math.floor(c/100)
+
+    operator = operator + str(k)
+    text_Input.set(operator)
 
 
+def btnClearDisplay():
+    global operator
+    operator = ""
+    text_Input.set("")
 
 
+def btnEqualsInput():
+    global operator
+    sumup = str(eval(operator))
+    text_Input.set(sumup)
+    # operator=""  # uncomment this line to stop carry-over operations
 
 
+numbers = [x for x in range(10)]
 
-root = tk.Tk()
-app = Calculator(master = root)
-app.mainloop()
+
+def assign_num():
+    index = random.randint(0, len(numbers)-1)
+    num = numbers[index]
+    if len(numbers) >= 2:
+        numbers.pop(index)
+    return num
+
+
+cal = Tk()
+cal.title("Calculator")
+operator = ""
+text_Input = StringVar()
+
+
+txtDisplay = Entry(cal, font=('arial', 20, 'bold'), textvariable=text_Input,
+                   bd=30, insertwidth=4, bg="pink",
+                   justify='right').grid(columnspan=4)
+
+a = assign_num()
+b = assign_num()
+c = assign_num()
+d = assign_num()
+e = assign_num()
+f = assign_num()
+g = assign_num()
+h = assign_num()
+i = assign_num()
+j = assign_num()
+
+
+btn1 = Button(cal,  text=(str(a)), padx=16, bd=8, font=('arial', 20, 'bold'),
+              fg="purple", bg="pink",
+              command=lambda: btnClick(a)).grid(row=1, column=0)
+btn2 = Button(cal,  text=(str(b)), padx=16, bd=8, font=('arial', 20, 'bold'),
+              fg="purple", bg="pink",
+              command=lambda: btnClick(b)).grid(row=1, column=1)
+btn3 = Button(cal,  text=(str(c)), padx=16, bd=8, font=('arial', 20, 'bold'),
+              fg="purple", bg="pink",
+              command=lambda: btnClick(c)).grid(row=1, column=2)
+btn4 = Button(cal,  text=(str(d)), padx=16, bd=8, font=('arial', 20, 'bold'),
+              fg="purple", bg="pink",
+              command=lambda: btnClick(d)).grid(row=2, column=0)
+btn5 = Button(cal,  text=(str(e)), padx=16, bd=8, font=('arial', 20, 'bold'),
+              fg="purple", bg="pink",
+              command=lambda: btnClick(e)).grid(row=2, column=1)
+btn6 = Button(cal,  text=(str(f)), padx=16, bd=8, font=('arial', 20, 'bold'),
+              fg="purple", bg="pink",
+              command=lambda: btnClick(f)).grid(row=2, column=2)
+btn7 = Button(cal,  text=(str(g)), padx=16, bd=8, font=('arial', 20, 'bold'),
+              fg="purple", bg="pink",
+              command=lambda: btnClick(g)).grid(row=3, column=0)
+btn8 = Button(cal,  text=(str(h)), padx=16, bd=8, font=('arial', 20, 'bold'),
+              fg="purple", bg="pink",
+              command=lambda: btnClick(h)).grid(row=3, column=1)
+btn9 = Button(cal,  text=(str(i)), padx=16, bd=8, font=('arial', 20, 'bold'),
+              fg="purple", bg="pink",
+              command=lambda: btnClick(i)).grid(row=3, column=2)
+btn0 = Button(cal,  text=(str(j)), padx=16, bd=8, font=('arial', 20, 'bold'),
+              fg="purple", bg="pink",
+              command=lambda: btnClick(j)).grid(row=4, column=1)
+
+btncle = Button(cal,  text=("C"), padx=16, bd=8, font=('arial', 20, 'bold'),
+                fg="purple", bg="pink",
+                command=btnClearDisplay).grid(row=4, column=0)
+
+btnequ = Button(cal,  text=("="), padx=16, bd=8, font=('arial', 20, 'bold'),
+                fg="purple", bg="pink",
+                command=btnEqualsInput).grid(row=5, column=3)
+
+btnbra = Button(cal,  text=("("), padx=16, bd=8, font=('arial', 20, 'bold'),
+                fg="purple", bg="pink",
+                command=lambda: btnClick("(")).grid(row=5, column=0)
+btnket = Button(cal,  text=(")"), padx=16, bd=8, font=('arial', 20, 'bold'),
+                fg="purple", bg="pink",
+                command=lambda: btnClick(")")).grid(row=5, column=1)
+btndec = Button(cal,  text=("."), padx=16, bd=8, font=('arial', 20, 'bold'),
+                fg="purple", bg="pink",
+                command=lambda: btnClick(".")).grid(row=5, column=2)
+
+btndpi = Button(cal,  text=("pie"), padx=16, bd=8, font=('arial', 20, 'bold'),
+                fg="purple", bg="pink",
+                command=lambda: btnPi()).grid(row=4, column=2)
+
+# space here for one more button maybe we should add pi you know like in case
+# the user gets a bit hungry, this app may ultimately hate the users but we
+# have to lure them in at the start with nice things maybe a nice cherry pi
+# will do just fine
+
+btnadd = Button(cal,  text=("+"), padx=16, bd=8, font=('arial', 20, 'bold'),
+                fg="purple", bg="pink",
+                command=lambda: btnClick("+")).grid(row=1, column=3)
+btnsub = Button(cal,  text=("-"), padx=16, bd=8, font=('arial', 20, 'bold'),
+                fg="purple", bg="pink",
+                command=lambda: btnClick("-")).grid(row=2, column=3)
+btnmul = Button(cal, text=("*"), padx=16, bd=8, font=('arial', 20, 'bold'),
+                fg="purple", bg="pink",
+                command=lambda: btnClick("*")).grid(row=3, column=3)
+btndiv = Button(cal, text=("/"), padx=16, bd=8, font=('arial', 20, 'bold'),
+                fg="purple", bg="pink",
+                command=lambda: btnClick("/")).grid(row=4, column=3)
+
+
+cal.mainloop()
