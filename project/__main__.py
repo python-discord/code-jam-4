@@ -599,6 +599,20 @@ class XPFrame(tk.Frame):
         self.xp_progressbar['value'] = xp - prev_xp_milestone
 
 
+tutorial_images = {expression: ImageTk.PhotoImage(
+                   Image.open(IMAGE_PATH / 'tutorial_{}.png'.format(expression)))
+                   for expression in ['neutral', 'smirk']}
+
+
+class TutorialWindow(tk.Toplevel):
+    def __init__(self, message=None, smirk=False, *args, **kwargs):
+        tk.Toplevel.__init__(self)
+        self.title('Tutorial')
+        self.attributes('-topmost', True)
+        self.message_label = tk.Label
+        #self.image_label = tk.Label(
+
+
 def exit_program():
     '''
     Save the keyboard before the user closes the window.
