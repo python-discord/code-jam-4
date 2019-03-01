@@ -9,6 +9,8 @@ import random
 from pathlib import Path
 from PIL import Image, ImageTk
 from functools import reduce
+import pyaudio
+import wave
 
 nltk.download('words', quiet=True, raise_on_error=True)
 
@@ -18,6 +20,36 @@ KEY_DESCRIPTION_PATH = SCRIPT_DIR / Path("key_descriptions.json")
 SAVE_DATA_PATH = SCRIPT_DIR / Path("save_data.json")
 DEFAULT_SAVE_PATH = SCRIPT_DIR / Path("default_save.json")
 IMAGE_PATH = SCRIPT_DIR.parent / Path("img/")
+AUDIO_PATH = SCRIPT_DIR.parent / Path("audio/")
+
+
+audio_player = pyaudio.PyAudio()
+def audio_callback(in_data, frame_count, time_info, status):
+    data = audio_player.readframes(frame_count)
+    return (data, pyaudio.paContinue)
+taptest = (AUDIO_PATH / 'tap.wav').absolute()
+tap_sound = wave.open(taptest, 'rb')
+pop_sound = wave.open(AUDIO_PATH / 'pop.wav', 'rb')
+tap_format = audio_player.get_format_from_width(tap_sound.getsampwidth())
+pop_format = audio_player.get_format_from_width(pop_sound.getsampwidth())
+tap_stream = audio_player.open(format=tap_format,
+                               channels=tap_sound.getnchannels(),
+                               rate=tap_sound.getframerate(),
+                               output=True,
+                               stream_callback=callback)
+pop_stream = audio_player.open(format=pop_format,
+                               channels=pop_sound.getnchannels(),
+                               rate=pop_sound.getframerate(),
+                               output=True,
+                               stream_callback=callback)
+
+def play_tap():
+    tap_stream.start_stream()
+
+def play_pop():
+    pop_stream.start_stream()
+
+#TODO pyaudio cleanup
 
 
 def is_word(text):
