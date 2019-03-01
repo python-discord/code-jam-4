@@ -1,0 +1,10 @@
+If you're having a hard time with something, don't take a break - just try harder, especially if tired.
+You can start a new line by pressing Enter.
+You can add a letter to the current file by pressing it on your keyboard.
+The backspace key erases the letter to the left of the cursor.
+You can minimize the editor window by pressing the minimize button.
+Maximize the editor window for additional workspace.
+You can double-space a document by adding an additional line between lines of text.
+To get tips about using Crocpad++, look at the tips of the day.
+To close this tip, press the OK button.
+You have an itch.

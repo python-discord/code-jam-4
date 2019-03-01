@@ -49,13 +49,14 @@ class MainWindow(QMainWindow):
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
         self.setWindowIcon(QIcon('crocpad\\crocpad.ico'))
-
         self.create_menus()
-
         self.show()
 
+        # Post-startup tasks
         if app_config['License']['eulaaccepted'] != 'yes':
             self.do_eula()
+        if app_config['Editor']['tips'] == 'on':
+            self.show_tip()
 
     def create_menus(self):
         mainMenu = self.menuBar()
@@ -66,6 +67,12 @@ class MainWindow(QMainWindow):
         searchMenu = mainMenu.addMenu('S&earch')
         toolsMenu = mainMenu.addMenu('&Tools')
 
+        # Help menu
+        action_tip = QAction("Tip of th&e Day", self)
+        action_tip.triggered.connect(self.show_tip)
+        helpMenu.addAction(action_tip)
+
+        # Search menu
         action_open = QAction("S&earch for file to open", self)
         action_open.triggered.connect(self.open_file)
         searchMenu.addAction(action_open)
@@ -82,7 +89,7 @@ class MainWindow(QMainWindow):
             testmenu.append(fileMenu.addMenu(f'{i}'))
 
     def do_eula(self):
-        with open('crocpad\\EULA.txt', 'r', encoding="utf8") as f:
+        with open('crocpad\\EULA.txt', 'r', encoding='utf8') as f:
             eula = f.read()
         self.eula_dialog = EulaDialog(eula)
         self.eula_quiz_dialog = EulaQuizDialog()
@@ -93,6 +100,17 @@ class MainWindow(QMainWindow):
                 app_config['License']['eulaaccepted'] = 'yes'
                 save_config(app_config)
             self.eula_quiz_dialog.exec_()
+
+    def show_tip(self):
+        with open('crocpad\\tips.txt', 'r', encoding='utf8') as f:
+            tips = f.readlines()
+        print(len(tips), tips)
+        tip = random.choice(tips)
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Tip of the Day")
+        dlg.setText(tip.strip())
+        dlg.setIcon(QMessageBox.Information)
+        dlg.show()
 
     def eventFilter(self, source, event):
         if event.type() == QEvent.KeyPress:
