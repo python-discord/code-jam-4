@@ -84,8 +84,8 @@ if __name__ == '__main__':
             break
         question_num += 1
         guesser.answer(word, yes_no)
-        print(guesser.possible_characters)
-        print(len(list(guesser.dictionary)))
+        print('Possible characters:', guesser.possible_characters)
+        print('Words left to pick from:', len(list(guesser.dictionary)))
         if len(guesser.possible_characters) == 1:
             print('The character you want is \'{0}\''.format(guesser.possible_characters[0]))
             break
