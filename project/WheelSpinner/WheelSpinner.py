@@ -49,7 +49,7 @@ class WheelSpinner(tk.Frame):
         angle = 0
         self.angle_increment = 360/self.count
         for option in self.wheel_options:
-            print(option)
+
             if self.wheel_options[self.count-1] == option:
                 self.drawn_arc.append(RotatingArc(self, self.size/2, self.size/2, self.radius, angle, 360, option,
                                                   fill=self.generate_random_color(), width=3))
@@ -88,7 +88,6 @@ class WheelSpinner(tk.Frame):
             self.display_current_winner()
 
         if self.__is_dragging:
-            print('drag')
             self.drag()
 
         self.after(33, self.update)
@@ -161,8 +160,6 @@ class WheelSpinner(tk.Frame):
             self.finish_rotation()
         else:
             self.speed = self.speed + acceleration*self.__delta_time
-        print('speed = ' + str(self.speed))
-        print(acceleration)
 
     def finish_rotation(self):
         self.winner = self.display_label['text']

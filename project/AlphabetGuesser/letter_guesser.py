@@ -36,10 +36,15 @@ class LetterGuesser:
         :return: None
         """
         self.remove_possible_letters(requested_word, answer)
-        self.remove_possible_words(requested_word, answer)
+        self.remove_possible_words()
 
     def request_word(self) -> str:
-        return random.choice(list(self.dictionary))
+        words = list(self.dictionary.keys())
+        random.shuffle(words)
+        for word in words:
+            if self.find_ratio_of_remaining_letter_in_word(word) > 30:
+                return word
+        return random.choice(words)
 
     def remove_possible_letters(self, word, answer) -> None:
         characters_to_delete = []
@@ -51,16 +56,23 @@ class LetterGuesser:
         for character in characters_to_delete:
             self.possible_characters.remove(character)
 
-    def remove_possible_words(self, word, answer) -> None:
+    def remove_possible_words(self) -> None:
         words_to_delete = []
         for elem in self.dictionary:
-            if self.contains_none_letters(elem, word) and answer == "Yes":
+            if self.contains_none_letters(elem, self.possible_characters) or \
+                    self.contains_all_letters(self.possible_characters, elem):
                 words_to_delete.append(elem)
             # if a word contains none of the possible letters, remove it
-            elif self.contains_none_letters(elem, self.possible_characters) and answer == "No":
-                words_to_delete.append(elem)
         for elem in words_to_delete:
             del self.dictionary[elem]
+
+    def find_ratio_of_remaining_letter_in_word(self, word):
+        i = 0
+        for letter in self.possible_characters:
+            if letter in word:
+                i = i + 1
+
+        return i/len(word)*100
 
     @staticmethod
     def contains_none_letters(word_1, word_2) -> bool:
@@ -69,11 +81,19 @@ class LetterGuesser:
                 return False
         return True
 
+    @staticmethod
+    def contains_all_letters(word_1, word_2) -> bool:
+        for letter in word_1:
+            if letter not in word_2:
+                return False
+        return True
+
 
 if __name__ == '__main__':
     """
     This is a simple demo showing how the letter guesser should be implemented
     """
+
     guesser = LetterGuesser()
     question_num = 1
     print('Pick a character, any character; keep it in mind as you answer these questions!\n')
