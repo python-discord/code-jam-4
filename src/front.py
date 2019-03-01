@@ -67,7 +67,7 @@ class Front(widget.PrimaryFrame):
     @cache.setter
     def cache(self, data: list):
         self._cache = data
-        # Pump the well
+        # Prime the pump
         self.__next()
         self.window.set_view(self.image)
 
