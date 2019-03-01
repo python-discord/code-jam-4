@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import tkinter as tk
 import operator
-from typing import NamedTuple, Callable, TypeVar, List, Generator, Tuple
-from contextlib import suppress
-from more_itertools import chunked
+import time
+from typing import NamedTuple, Callable, TypeVar, Generator, Tuple, Iterable
 from enum import Enum
 from dataclasses import dataclass
 from functools import partialmethod, partial
@@ -120,29 +119,32 @@ class Animater(tk.Canvas):
 
     ```
     motion = Motion(...)
-    window = Animator(...)
+    window = Animater(...)
     window.add_motion(motion)
-    window.add_event('<Enter>')
     ```
     """
-    motions = []
+    motions = set()
+    fps = 60
 
-    def add_event(self, event: tk.EventType):
-        self.bind(event, self.run)
+    def start(self):
+        while self.motions:
+            time.sleep(1/self.fps)
+            self.run()
 
-    def run(self, event):
-        active = []
+    def run(self):
         for motion in self.motions:
-            with suppress(StopIteration):
-                moves = next(motion)
-                for move in moves:
-                    move()
-                    self.update_idletasks()
-                active.append(motion)
-        self.motions = active
+            try:
+                next(motion)()
+            except StopIteration:
+                self.motions.remove(motion)
+                break
 
-    def add_motion(self, motion: Motion):
-        self.motions.append(iter(motion))
+    def add(self, motion: Motion):
+        self.motions.add(iter(motion))
+
+    def add_motion(self, id: int, endpoints: Iterable[Coord], **kwargs):
+        motion = Motion(self, id, endpoints, **kwargs)
+        self.add(motion)
 
 
 @dataclass
@@ -191,70 +193,37 @@ class Motion:
     id: int
     endpoints: Tuple[Coord]
 
-    steps = 60
     speed: int = 1
 
-    def start(self) -> Generator[Generator[Callable]]:
+    def start(self) -> Generator[Callable]:
         """
         The entry point for generating move commands.
         """
         move = partial(self.canvas.move, self.id)
 
-        def frame(points: List, last: Coord) -> Generator[Callable]:
-            for point in points:
-                offset = point - last
-                yield partial(move, *offset)
-                last = point
+        def frame(increment: Coord, count: int):
+            for _ in range(count):
+                move(*increment)
+                self.canvas.master.update_idletasks()
+                self.canvas.master.update()
 
         for end in self.endpoints:
             start = Coord(*self.canvas.coords(self.id)[:2])
-            vec = vector(start, end, self.steps)
+            steps = round(start.distance(end) / self.speed)
+            frames = round(steps / self.speed)
+            increment = (end - start) / steps
 
-            last = vec[0]
-            for points in chunked(vec, self.speed):
-                yield frame(points, last)
-                last = points[-1]
+            for _ in range(frames):
+                yield partial(frame, increment, round(steps / frames))
 
     def __iter__(self):
         return self.start()
 
+    def __key(self):
+        return self.id
 
-def vector(start: Coord, end: Coord, step: int = 60) -> List[Coord]:
-    """
-    Creates a list of all the Coords on a straight line from `start` to `end` (inclusive).
+    def __hash__(self):
+        return hash(self.__key())
 
-    param:
-        start: Coord -- The starting point.
-        end: Coord -- The end point.
-        step: int (optional) -- The desired number of points to include. Defaults to 60.
-            Actual resulting length may vary.
-
-    return:
-        List[Coord] -- All points that fall on the line from start to end.
-
-    example::
-
-    ```
-    start = Coord(0, 5)
-    end = Coord(5, 0)
-    vector(start, end, 5)  # ends up being 8
-    >>> [
-        Coord(x=0, y=5), Coord(x=1, y=4), Coord(x=1, y=4),
-        Coord(x=2, y=2), Coord(x=2, y=2), Coord(x=4, y=1),
-        Coord(x=4, y=1), Coord(x=5, y=0)
-        ]
-    ```
-
-    note:
-
-    The current implementation recursively finds midpoints to build the line.
-    This means the resulting length may vary, due to its eager nature.
-    """
-    mid = start.midpoint(end)
-    instep = round(step / 2)
-    if instep:
-        back = vector(start, mid, step=instep)
-        front = vector(mid, end, step=instep)
-        return back + front
-    else:
-        return [start, end]
+    def __eq__(self):
+        return isinstance(self, type(other)) and self.__key() == other.__key()

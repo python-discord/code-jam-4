@@ -3,6 +3,7 @@ import tkinter as tk
 import asyncio
 from pygame import mixer
 from .cache import Cache
+from .animate import Animater, Motion, Direction
 
 from . import SETTINGS
 
@@ -33,7 +34,7 @@ class Tinder:
         self.root.minsize(400, 500)
         self.root.maxsize(400, 500)
         self.root.configure(background=self.config['main.background'])
-        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+        #self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         # getting screen width and height for use with teleporting window/jumpscare
         self.screen_x = self.root.winfo_screenwidth()
@@ -177,7 +178,8 @@ class Tinder:
                     item.pack_forget()
 
                 # make a new Frame for the bio
-                self.frame = tk.Frame(self.root, bg="black", height=450, width=400)
+                self.window = Animater(self.root)
+                self.frame = tk.Frame(self.window, bg="black", height=450, width=400)
 
                 # makes a Text widget on the Frame
                 bio = tk.Text(self.frame)
@@ -208,7 +210,13 @@ class Tinder:
                     command=back_to_photo).pack(side=tk.BOTTOM)
 
                 # packing the frame
-                self.frame.pack()
+                wid = self.window.create_window((0, 0), window=self.frame, anchor='nw')
+                end = Direction.DOWN * 100
+                motion = Motion(self.window, wid, (end,))
+                self.window.add_motion(motion)
+                self.window.pack(fill='both', expand=True)
+                self.root.after(1, self.window.run)
+
 
             # making and packing the Bio button for users to look at the cat's bio
             tk.Button(
@@ -226,6 +234,7 @@ class Tinder:
 
         # checks if the image is a jumpscare (if so, can't teleport the
         # window because it takes up the entire screen)
+        return
         if not self.jumpscare:
             # get the max x and y values that the window can teleport
             # to without going off the screen
