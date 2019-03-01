@@ -3,7 +3,7 @@ import logging
 from PySide2.QtCore import QPoint, Qt
 from PySide2.QtSql import QSqlTableModel
 from PySide2.QtWidgets import (
-    QAbstractItemView, QAction, QFileDialog, QMainWindow, QMenu, QTableView
+    QAbstractItemView, QAction, QFileDialog, QMainWindow, QMenu
 )
 
 from project import media, ui
