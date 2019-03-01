@@ -119,7 +119,7 @@ class UserInterface(tk.Frame):
                        variable=self.is_darkmode,
                        command=self.set_darkmode).pack(side='left')
 
-        self.xp_frame = XPFrame(self.command_section, start_xp=self.xp,
+        self.xp_frame = XPFrame(self.command_section, xp=self.xp,
                                 prev_xp_milestone=self.prev_xp_milestone,
                                 next_xp_milestone=self.next_xp_milestone)
         self.xp_frame.pack(side='right')
