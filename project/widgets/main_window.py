@@ -19,16 +19,36 @@ class MainWindow(QMainWindow):
 
         self.password_prompt = PasswordPrompt()
 
-        # Model
-        self.playlist_model = QSqlTableModel()
-        self.playlist_model.setTable("playlist")
-        self.playlist_model.setHeaderData(1, Qt.Horizontal, "Title", Qt.DisplayRole)
-        self.playlist_model.setHeaderData(2, Qt.Horizontal, "Artist", Qt.DisplayRole)
-        self.playlist_model.setHeaderData(3, Qt.Horizontal, "Album", Qt.DisplayRole)
-        self.playlist_model.setHeaderData(4, Qt.Horizontal, "Genre", Qt.DisplayRole)
-        self.playlist_model.setHeaderData(5, Qt.Horizontal, "Date", Qt.DisplayRole)
+        self.playlist_model = self.create_model()
+        self.configure_view()
 
-        # View
+        self.player = media.Player(self.playlist_model)
+
+        # Signal connections
+        self.ui.play_button.pressed.connect(self.player.play)
+        self.ui.previous_button.pressed.connect(self.player.playlist().previous)
+        self.ui.next_button.pressed.connect(self.player.playlist().next)
+        self.ui.add_files_action.triggered.connect(self.add_files)
+
+    @staticmethod
+    def create_model() -> QSqlTableModel:
+        """Create and return the model to use with the playlist table view."""
+        model = QSqlTableModel()
+        model.setTable("playlist")
+        model.setHeaderData(1, Qt.Horizontal, "Title", Qt.DisplayRole)
+        model.setHeaderData(2, Qt.Horizontal, "Artist", Qt.DisplayRole)
+        model.setHeaderData(3, Qt.Horizontal, "Album", Qt.DisplayRole)
+        model.setHeaderData(4, Qt.Horizontal, "Genre", Qt.DisplayRole)
+        model.setHeaderData(5, Qt.Horizontal, "Date", Qt.DisplayRole)
+
+        # Default is a descending sort, which leads to an inconsistency given media is appended
+        model.setSort(0, Qt.AscendingOrder)
+        model.select()  # Force-update the view
+
+        return model
+
+    def configure_view(self):
+        """Configure the playlist table view."""
         self.ui.playlist_view.setModel(self.playlist_model)
         self.ui.playlist_view.setEditTriggers(QAbstractItemView.NoEditTriggers)  # Disable editing
         self.ui.playlist_view.setSortingEnabled(True)
@@ -37,18 +57,6 @@ class MainWindow(QMainWindow):
         self.ui.playlist_view.hideColumn(0)  # id
         self.ui.playlist_view.hideColumn(6)  # crc32
         self.ui.playlist_view.hideColumn(7)  # path
-
-        # Default is a descending sort, which leads to an inconsistency given media is appended
-        self.playlist_model.setSort(0, Qt.AscendingOrder)
-        self.playlist_model.select()  # Force-update the view
-
-        self.player = media.Player(self.playlist_model)
-
-        # Widget signals
-        self.ui.play_button.pressed.connect(self.player.play)
-        self.ui.previous_button.pressed.connect(self.player.playlist().previous)
-        self.ui.next_button.pressed.connect(self.player.playlist().next)
-        self.ui.add_files_action.triggered.connect(self.add_files)
 
     def add_files(self, checked: bool = False):
         """Show a file dialogue and add selected files to the playlist."""
