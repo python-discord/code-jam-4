@@ -70,7 +70,7 @@ class LetterGuesser:
         i = 0
         for letter in self.possible_characters:
             if letter in word:
-                i = i + 1
+                i += 1
 
         return i/len(word)*100
 

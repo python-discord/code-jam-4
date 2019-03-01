@@ -54,6 +54,7 @@ class Controller(Tk):
     def show(self):
         self.deiconify()
 
+
 class ContactsPage(Frame):
     """
     Contacts Page:
@@ -275,11 +276,10 @@ class ContactsPage(Frame):
                 self.info_field.insert(END, "   " + elem)
         """
 
-    def show_winning_info(self, event) -> None:
+    def show_winning_info(self) -> None:
         """
         This method is called when the event <<Finish Spinning Wheel>> is invoked. It displays the current contact
         information that was selected by the spinning wheel.
-        :param event:
         :return: None
         """
         winner = self.wheel_spin.winner
@@ -308,6 +308,7 @@ class ContactsPage(Frame):
             for elem in self.current_contact.notes:
                 text1 = text1 + elem + ', '
         label['text'] = text0 + text1
+
 
 class AddContactPage(Frame):
     """
@@ -471,7 +472,7 @@ class AddContactPage(Frame):
         self.enter_phone_num_button = Button(
             self,
             text="Add",
-            command=lambda: self.add_phone_num(phone_type_var.get(), self.enter_phone_num.get()),
+            command=lambda: self.add_phone_num(phone_type_var.get(), self.enter_phone_num['text']),
             width=5
         )
         self.enter_phone_num_label.grid(row=2, column=0, sticky=N+S+E+W)
@@ -520,16 +521,18 @@ class AddContactPage(Frame):
         self.contact_new.add_note(note)
         self.refresh_field()
 
-    def input_phone_number(self, event):
+    def input_phone_number(self):
         new_window = Toplevel(self)
         new_window.geometry("300x400")
         new_window.configure(background='#00536a')
 
         self.controller.withdraw()
+
         def quit_phone_input():
             self.controller.show()
             new_window.destroy()
-        def send_phone_input(event):
+
+        def send_phone_input():
             self.controller.show()
             self.enter_phone_num['text'] = phone.get_complete_phone_number()
             new_window.destroy()
@@ -537,9 +540,6 @@ class AddContactPage(Frame):
         new_window.wm_protocol("WM_DELETE_WINDOW", quit_phone_input)
 
         phone = AddPhoneNumberInter(new_window, bg='#00536a')
-
-
-
 
     def refresh_field(self) -> None:
         self.preview.delete(0, END)
