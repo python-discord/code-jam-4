@@ -3,7 +3,7 @@ import sqlite3
 from pathlib import Path
 
 from bidict import bidict
-from PySide2.QtCore import QAbstractItemModel, Qt, QUrl
+from PySide2.QtCore import QAbstractItemModel, QUrl, Qt
 from PySide2.QtMultimedia import QMediaContent, QMediaPlaylist
 from PySide2.QtSql import QSqlDatabase
 
