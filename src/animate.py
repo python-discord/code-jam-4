@@ -4,7 +4,7 @@ import tkinter as tk
 import operator
 import time
 from . import widget
-from typing import NamedTuple, Callable, TypeVar, Generator, Tuple, Iterable
+from typing import NamedTuple, Callable, TypeVar, Generator, Tuple
 from enum import Enum
 from dataclasses import dataclass
 from functools import partialmethod, partial
@@ -145,11 +145,8 @@ class Animater:
     def add(self, motion: Motion):
         self._motions.add(iter(motion))
 
-    def add_motion(self, id: int, endpoints: Iterable[Coord], **kwargs):
-        if not isinstance(endpoints, Iterable):
-            endpoints = (endpoints,)
-
-        motion = Motion(self.canvas, id, endpoints, **kwargs)
+    def add_motion(self, id: int, end: Coord, **kwargs):
+        motion = Motion(self.canvas, id, (end,), **kwargs)
         self.add(motion)
 
     def clear(self):
@@ -257,7 +254,7 @@ class Window(widget.PrimaryCanvas):
 
     def set_view(self, view: tk.Widget):
         self.clear()
-        self.current = self.create_window(self.origin, view)
+        self.current = self.create_window(self.origin, window=view)
 
     def change_view(self, view: tk.Widget, direction: Direction):
         if self.current is None:
@@ -277,11 +274,11 @@ class Window(widget.PrimaryCanvas):
         pos = self.__coord(self.current)
         end = pos + edge
         beg = pos - edge
-        wid = self.create_window(beg, view)
+        wid = self.create_window(beg, window=view)
 
         self.animater.clear()
-        self.animater.add_motion(self.current, end)
-        self.animater.add_motion(wid, self.origin)
+        self.animater.add_motion(self.current, end, speed=self.animation_speed)
+        self.animater.add_motion(wid, self.origin, speed=self.animation_speed)
 
         self.animater.start()
         self.current = wid

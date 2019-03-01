@@ -1,4 +1,4 @@
-from .mainwindow import App
+from .main import App
 
 if __name__ == "__main__":
     App().mainloop()

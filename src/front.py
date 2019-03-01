@@ -17,10 +17,7 @@ class Front(widget.PrimaryFrame):
         self.title.config(text=name)
         self.bio.load(data)
 
-        test = tk.Frame(self.window)
-        self.image = widget.PrimaryLabel(test, image=image)
-        self.image.pack()
-        self.image = test
+        self.image = widget.PrimaryLabel(self.window, image=image)
         self.update()
 
     def __change_image(self, direction: Direction):

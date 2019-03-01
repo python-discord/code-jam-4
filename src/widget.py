@@ -39,8 +39,6 @@ class Primary(Base):
 
 
 class SecondaryFrame(tk.Frame, Secondary):
-    __qualname__ = tk.Frame.__qualname__
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if hasattr(self, 'init'):
@@ -48,8 +46,6 @@ class SecondaryFrame(tk.Frame, Secondary):
 
 
 class SecondaryButton(tk.Button, Secondary):
-    __qualname__ = tk.Button.__qualname__
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if hasattr(self, 'init'):
@@ -57,8 +53,6 @@ class SecondaryButton(tk.Button, Secondary):
 
 
 class SecondaryLabel(tk.Label, Secondary):
-    __qualname__ = tk.Label.__qualname__
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if hasattr(self, 'init'):
@@ -66,8 +60,6 @@ class SecondaryLabel(tk.Label, Secondary):
 
 
 class SecondaryCanvas(tk.Canvas, Secondary):
-    __qualname__ = tk.Canvas.__qualname__
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if hasattr(self, 'init'):
@@ -75,8 +67,6 @@ class SecondaryCanvas(tk.Canvas, Secondary):
 
 
 class PrimaryFrame(tk.Frame, Primary):
-    __qualname__ = tk.Frame.__qualname__
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if hasattr(self, 'init'):
@@ -84,8 +74,6 @@ class PrimaryFrame(tk.Frame, Primary):
 
 
 class PrimaryButton(tk.Button, Primary):
-    __qualname__ = tk.Button.__qualname__
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if hasattr(self, 'init'):
@@ -93,8 +81,6 @@ class PrimaryButton(tk.Button, Primary):
 
 
 class PrimaryLabel(tk.Label, Primary):
-    __qualname__ = tk.Label.__qualname__
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if hasattr(self, 'init'):
@@ -102,8 +88,6 @@ class PrimaryLabel(tk.Label, Primary):
 
 
 class PrimaryCanvas(tk.Canvas, Primary):
-    __qualname__ = tk.Canvas.__qualname__
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if hasattr(self, 'init'):
