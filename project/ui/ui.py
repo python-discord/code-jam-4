@@ -31,6 +31,9 @@ class MainApplication(QMainWindow, Ui_MainApplication):
         Load the .ui-converted .py file, center the application and display it.
         """
         self.setupUi(self)
+
+        self.task_table.horizontalHeader().setStretchLastSection(True)
+
         self.center()
         self.show()
 
