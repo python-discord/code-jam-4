@@ -43,6 +43,7 @@ def play_sound(soundcode='tap'):
 with open(WORDS_PATH, 'r') as words_file:
     real_words = set(json.load(words_file))
 
+DEFAULT_DOC_PATH = SCRIPT_DIR.parent / Path("documents/")
 
 def is_word(text):
     assert text.isalpha()
@@ -91,9 +92,18 @@ class UserInterface(tk.Frame):
             save_data = json.load(save_data_file)
             save_data_file.close()
 
+        self.window_name = "Typing Program"
+
         saved_keys = save_data['keys']
         saved_scales = save_data['scales']
         self.used_words = set(save_data['used_words'])
+
+        if 'working_directory' in save_data.keys():
+            self.working_directory = Path(save_data['working_directory'])
+        else:
+            self.working_directory = DEFAULT_DOC_PATH
+
+        self.working_file = None
 
         self.xp_milestones = (index*10 for index in itertools.count())
         self.xp = save_data['xp']
@@ -133,6 +143,84 @@ class UserInterface(tk.Frame):
                                 in range(len(LOOTBOX_RARITIES))]
 
         self.config(padx=40, pady=32)
+
+        self.menu = tk.Menu(self.master)
+        self.master.config(menu=self.menu)
+
+        # File menu
+        file_menu = tk.Menu(self.menu)
+        self.menu.add_cascade(label="File", menu=file_menu)
+
+        file_menu.add_command(label="New", command=self.new_file)
+        file_menu.add_command(label="Save", command=self.save_file)
+        file_menu.add_command(label="Save As", command=self.save_file_as)
+        file_menu.add_command(label="Load", command=self.load_file)
+        file_menu.add_command(label="Quit", command=exit_program)
+
+
+    def new_file(self):
+        self.working_file = None
+        self.text_entry_section.set_text("")
+        
+    def save_file(self):
+        print("Save command")
+        if self.working_file is None:
+            self.save_file_as()
+        else:
+            self.write_file(self.working_file)
+
+    def save_file_as(self):
+        print("Save as command")
+        fd = tk.filedialog
+        filepath = fd.asksaveasfilename(
+                                        initialdir=self.working_directory,
+                                        title="Save as...",
+                                        filetypes=(("text files", ".txt"),
+                                                   ("all files", "*.*")
+                                                   )
+                                        )
+        # User hit cancel
+        if filepath == "":
+            return
+        print(filepath)
+        self.working_file = filepath
+        self.write_file(filepath)
+
+    def write_file(self, filepath):
+        filepath = Path(filepath)
+        doc_text = self.text_entry_section.get_text()
+        try:
+            filepath.write_text(doc_text)
+            save_complete = True
+        except IOError:
+            tk.messagebox.showinfo("Error", "Error saving file")
+
+        if save_complete:
+            tk.messagebox.showinfo(self.window_name, "Save complete.")
+
+    def load_file(self):
+        print("Load command")
+        fd = tk.filedialog
+        filepath = fd.askopenfilename(
+                                      initialdir=self.working_directory,
+                                      title="Open file",
+                                      filetypes=(("text files", ".txt"),
+                                                 ("all files", "*.*")
+                                                 )
+                                      )
+        # User hit cancel
+        if filepath == "":
+            return
+        filepath = Path(filepath)
+        try:
+            doc_text = filepath.read_text()
+            load_complete = True
+        except IOError:
+            tk.messagebox.showinfo("Error", "Error loading file")
+
+        if load_complete:
+            self.text_entry_section.set_text(doc_text)
+            self.working_file = str(filepath)
 
     def add_xp(self, xp_increase):
         self.xp += xp_increase
@@ -217,6 +305,15 @@ class TextEntrySection(tk.Frame):
     def set_darkmode(self, is_darkmode: bool):
         self.textbox['bg'] = 'black' if is_darkmode else 'white'
 
+    def get_text(self):
+        return self.textbox.get(1.0, "end")
+
+    def set_text(self, new_text):
+        self.textbox.configure(state="normal")
+        self.textbox.delete(1.0, "end")
+        self.textbox.insert(1.0, new_text)
+        self.textbox.configure(state="disabled")
+
 
 class KeyboardSection(tk.Frame):
     '''
@@ -270,7 +367,8 @@ class KeyboardSection(tk.Frame):
             'keys': [button.text_name for button in self.buttons],
             'scales': [button.scale for button in self.buttons],
             'used_words': list(self.master.used_words),
-            'xp': self.master.xp
+            'xp': self.master.xp,
+            'working_directory' : str(self.master.working_directory)
         }
         json_data = json.dumps(json_compatible_data, indent=1)
         try:
