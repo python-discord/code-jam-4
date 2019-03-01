@@ -1,0 +1,1 @@
+/usr/local/include/python3.7m/py_curses.h
