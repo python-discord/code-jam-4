@@ -6,7 +6,7 @@ from project.ClipboardManager.ClipboardObject import TextClipboardObject, ImageC
 from project.Stack import Stack
 
 
-from project.Plugins.Text import Text
+# from project.Plugins.Text import Text
 
 # import logging
 
@@ -29,6 +29,8 @@ class ClipboardManager(QObject):
 
     @pyqtSlot(Stack)
     def _stack_changed(self):
+        """Slot to be called when the state of the stack changes (usually on add, move, delete, or moving items
+        around """
         # copy the top of the stack into the clipboard if the stack is not empty.
         if self.clipboard_stack.items_count():
             if isinstance(self.clipboard_stack.peek(), TextClipboardObject):
@@ -38,8 +40,9 @@ class ClipboardManager(QObject):
 
     @pyqtSlot()
     def _clipboard_changed(self):
-        """"""
-        current_text = Text.apply(QApplication.clipboard().text())
+        """Slot to be called when the state of the system's clipboard changes (mostly after copying)"""
+        # current_text = Text.apply(QApplication.clipboard().text())
+        current_text = QApplication.clipboard().text()
         current_image = QApplication.clipboard().pixmap()
 
         top_item = self.clipboard_stack.peek()
@@ -63,8 +66,6 @@ class ClipboardManager(QObject):
 
         self._last_image = current_image
         self._last_text = current_text
-        # if self._clipboard_state_callback is not None:
-        #     self._clipboard_state_callback(self._clipboard_stack)
 
     # DONE: use Qt signals properly
     # https://stackoverflow.com/questions/36434706/pyqt-proper-use-of-emit-and-pyqtsignal
