@@ -1,10 +1,10 @@
 {
     "start": {
-        "text": "Hey, start message",
+        "text": "Hello there! Did you know that the first keyboard was invented in 1868? Here at Adorable Laboratories, we believe that it needs to be modernized. Therefore, we are proud to introduce the first personalized onscreen keyboard text editor! Go ahead, press a button!",
         "smirk": false
     },
     "grow": {
-        "text": "Growing",
+        "text": "See that? The key that you pressed just grew! In order to personalize every user's keyboard, we use artificial intelligence and machine learning to recognize your most used keys, and enlarge those so that you can hit them easier in the future!",
         "smirk": true
     }
 }
