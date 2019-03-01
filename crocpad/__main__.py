@@ -4,5 +4,5 @@ import crocpad.notepad
 
 app = QApplication(sys.argv)
 app.setApplicationName("Crocpad++")
-window = crocpad.notepad.MainWindow()
+window = crocpad.notepad.MainWindow(app)
 app.exec_()

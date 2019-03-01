@@ -12,15 +12,15 @@ from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
 from crocpad.configuration import app_config, save_config
 from crocpad.eula_dialog import EulaDialog
 from crocpad.eula_quiz_dialog import EulaQuizDialog
+import crocpad.stylesheets
 
 
 class MainWindow(QMainWindow):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, app, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
-        layout = QVBoxLayout()
-
+        self.app = app
         self.main_window = QPlainTextEdit()
 
         # Setup the QTextEdit editor configuration
@@ -32,6 +32,7 @@ class MainWindow(QMainWindow):
         self.enter_sound = QSound("crocpad\\sounds\\scream.wav")
         self.backspace_sound = QSound("crocpad\\sounds\\wrong.wav")
 
+        layout = QVBoxLayout()
         layout.addWidget(self.main_window)
 
         container = QWidget()
@@ -50,6 +51,7 @@ class MainWindow(QMainWindow):
         self.move(qtRectangle.topLeft())
         self.setWindowIcon(QIcon('crocpad\\crocpad.ico'))
         self.create_menus()
+        self.app.setStyleSheet(crocpad.stylesheets.default)
         self.show()
 
         # Post-startup tasks
@@ -71,6 +73,22 @@ class MainWindow(QMainWindow):
         action_tip = QAction("Tip of th&e Day", self)
         action_tip.triggered.connect(self.show_tip)
         helpMenu.addAction(action_tip)
+
+        # View menu
+        themeMenu = viewMenu.addMenu("Themes")
+        action_light_theme = QAction("Light mod&e", self)
+        action_light_theme.triggered.connect(self.set_light_theme)
+        themeMenu.addAction(action_light_theme)
+        action_dark_theme = QAction("Dark mod&e", self)
+        action_dark_theme.triggered.connect(self.set_dark_theme)
+        themeMenu.addAction(action_dark_theme)
+        accessibilityMenu = viewMenu.addMenu("Accessibility")
+        action_hotdogstand_theme = QAction("High visibility th&eme", self)
+        action_hotdogstand_theme.triggered.connect(self.set_hotdogstand_theme)
+        accessibilityMenu.addAction(action_hotdogstand_theme)
+        action_quitedark_theme = QAction("Th&eme for blind users", self)
+        action_quitedark_theme.triggered.connect(self.set_quitedark_theme)
+        accessibilityMenu.addAction(action_quitedark_theme)
 
         # Search menu
         action_open = QAction("S&earch for file to open", self)
@@ -163,12 +181,16 @@ class MainWindow(QMainWindow):
         Cheshire Cheese
         Snekland
         Australia
-        """
-                                         )
+        """)
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    app.setApplicationName("Crocpad++")
+    def set_light_theme(self):
+        self.app.setStyleSheet(crocpad.stylesheets.light)
 
-    window = MainWindow()
-    app.exec_()
+    def set_dark_theme(self):
+        self.app.setStyleSheet(crocpad.stylesheets.dark)
+
+    def set_hotdogstand_theme(self):
+        self.app.setStyleSheet(crocpad.stylesheets.hotdogstand)
+
+    def set_quitedark_theme(self):
+        self.app.setStyleSheet(crocpad.stylesheets.quitedark)
