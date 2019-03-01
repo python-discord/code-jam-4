@@ -292,7 +292,7 @@ class UserInterface(tk.Frame):
             self.keyboard_section.add_key(unlocked_key)
 
         LootBoxUnlockWindow(new_keys=unlocked_keys, rarities=rarities)
-        play_sound('pop')
+        play_sound('decision4')
 
     def on_word_complete(self, last_word: str):
         if last_word is not None:
@@ -641,7 +641,7 @@ def exit_program():
 
 if __name__ == '__main__':
     ROOT = tk.Tk()
-    ROOT.title('User Friendly Text Editor (change name)')
+    ROOT.title('High Tech Text (HTT) Editor')
     ROOT.iconbitmap(IMAGE_PATH / 'window_icon.ico')
     UI = UserInterface(ROOT)
     UI.pack()
