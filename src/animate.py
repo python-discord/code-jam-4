@@ -255,7 +255,7 @@ class Window(widget.PrimaryCanvas):
 
     def change_view(self, view: tk.Widget, direction: Direction):
         if not isinstance(direction, Direction):
-            direction = Direction[direction]  # Cast string for convenience
+            direction = Direction[direction.upper()]  # Cast string for convenience
 
         if direction in (Direction.UP, Direction.DOWN):
             edge = self.winfo_screenheight()
