@@ -263,7 +263,6 @@ class Window(widget.PrimaryCanvas):
             return self.__set_widget(view, coord)
 
     def set_view(self, view: tk.Widget, viewtype='image'):
-        print(self.origin)
         self._current = self.__set(view, self.origin, viewtype)
 
     def change_view(self, view: tk.Widget, direction: Direction, viewtype='image'):
