@@ -23,7 +23,14 @@
   1.0,
   1.0
  ],
- "used_words": [
- ],
- "xp":0
+ "used_words": [],
+ "xp": 0,
+ "tutorials": [
+  "start",
+  "grow",
+  "xpgain",
+  "darkmode",
+  "lootbox",
+  "fakeword"
+ ]
 }

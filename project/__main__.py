@@ -19,6 +19,7 @@ KEY_DESCRIPTION_PATH = SCRIPT_DIR / Path('key_descriptions.json')
 SAVE_DATA_PATH = SCRIPT_DIR / Path('save_data.json')
 WORDS_PATH = SCRIPT_DIR / Path('words.json')
 DEFAULT_SAVE_PATH = SCRIPT_DIR / Path('default_save.json')
+TUTORIALS_PATH = SCRIPT_DIR / Path('tutorials.json')
 IMAGE_PATH = SCRIPT_DIR.parent / Path('img/')
 AUDIO_PATH = SCRIPT_DIR.parent / Path('audio/')
 DEFAULT_DOC_PATH = SCRIPT_DIR.parent / Path('documents/')
@@ -100,10 +101,16 @@ class UserInterface(tk.Frame):
             save_data = json.load(save_data_file)
             save_data_file.close()
 
+        with open(TUTORIALS_PATH, 'r') as tutorials_file:
+            all_tutorials = json.load(tutorials_file)
+
         self.window_name = 'Typing Program'
 
         saved_keys = save_data['keys']
         saved_scales = save_data['scales']
+        self.tutorials = {trigger: data for trigger, data
+                          in all_tutorials.items() if trigger
+                          in save_data['tutorials']}
         self.used_words = set(save_data['used_words'])
 
         if 'working_directory' in save_data.keys():
@@ -126,11 +133,35 @@ class UserInterface(tk.Frame):
         self.keyboard_section = KeyboardSection(self,
                                                 saved_keys=saved_keys,
                                                 saved_scales=saved_scales)
-        self.command_section.grid(row=0, column=0, sticky='nwse')
-        self.text_entry_section.grid(row=1, column=0)
-        self.keyboard_section.grid(row=2, column=0, ipadx=5,
-                                   ipady=5, sticky='nwse'
-                                   )
+        self.command_section.pack(side='top',fill='x')
+        self.text_entry_section.pack(side='top',fill='x')
+        self.keyboard_section.pack(side='top',ipadx=5,ipady=5)
+
+        self.icons = {}
+
+        image_data = Image.open(IMAGE_PATH / Path("new_icon.png"))
+        self.icons['new'] = ImageTk.PhotoImage(image_data)
+
+        image_data = Image.open(IMAGE_PATH / Path("save_icon.png"))
+        self.icons['save'] = ImageTk.PhotoImage(image_data)
+
+        image_data = Image.open(IMAGE_PATH / Path("open_icon.png"))
+        self.icons['open'] = ImageTk.PhotoImage(image_data)
+
+        self.new_button = tk.Button(self.command_section,
+                                    image=self.icons['new'],
+                                    command=self.new_file,
+                                    ).pack(side='left')
+
+        self.save_button = tk.Button(self.command_section,
+                                     image=self.icons['save'],
+                                     command=self.save_file,
+                                     ).pack(side='left')
+
+        self.open_button = tk.Button(self.command_section,
+                                     image=self.icons['open'],
+                                     command=self.load_file,
+                                     ).pack(side='left')
 
         self.is_darkmode = tk.IntVar()
         tk.Checkbutton(self.command_section, text='Low-Contrast Darkmode',
@@ -150,7 +181,7 @@ class UserInterface(tk.Frame):
                                 for rarity_level
                                 in range(len(LOOTBOX_RARITIES))]
 
-        self.config(padx=40, pady=32)
+        self.config(padx=40, pady=16)
 
         self.menu = tk.Menu(self.master)
         self.master.config(menu=self.menu)
@@ -164,6 +195,13 @@ class UserInterface(tk.Frame):
         file_menu.add_command(label='Save As', command=self.save_file_as)
         file_menu.add_command(label='Load', command=self.load_file)
         file_menu.add_command(label='Quit', command=exit_program)
+
+        self.tutorial_trigger('start')
+
+    def tutorial_trigger(self, trigger):
+        if trigger in self.tutorials:
+            tutorial_data = self.tutorials.pop(trigger)
+            TutorialWindow(self, tutorial_data['text'], tutorial_data['smirk'])
 
     def new_file(self):
         self.working_file = None
@@ -225,6 +263,7 @@ class UserInterface(tk.Frame):
 
         if load_complete:
             self.text_entry_section.set_text(doc_text)
+            self.text_entry_section.backspace()
             self.working_file = str(filepath)
 
     def add_xp(self, xp_increase):
@@ -236,14 +275,17 @@ class UserInterface(tk.Frame):
         self.xp_frame.set_xp(self.xp,
                              self.prev_xp_milestone,
                              self.next_xp_milestone)
+        self.tutorial_trigger('xpgain')
 
     def set_darkmode(self):
         self.text_entry_section.set_darkmode(self.is_darkmode.get())
         self.keyboard_section.set_darkmode(self.is_darkmode.get())
+        self.tutorial_trigger('darkmode')
 
     def receive_key(self, char):
         play_sound('tap')
         self.text_entry_section.receive_key(char)
+        self.tutorial_trigger('grow')
 
     def backspace(self):
         play_sound('tap')
@@ -263,7 +305,8 @@ class UserInterface(tk.Frame):
             self.keyboard_section.add_key(unlocked_key)
 
         LootBoxUnlockWindow(new_keys=unlocked_keys, rarities=rarities)
-        play_sound('pop')
+        self.tutorial_trigger('lootbox')
+        play_sound('decision4')
 
     def on_word_complete(self, last_word: str):
         if last_word is not None:
@@ -275,6 +318,8 @@ class UserInterface(tk.Frame):
                 self.used_words.add(last_word)
                 word_value = calculate_xp(last_word)
                 self.add_xp(word_value)
+            else:
+                self.tutorial_trigger('fakeword')
 
 
 class TextEntrySection(tk.Frame):
@@ -290,7 +335,7 @@ class TextEntrySection(tk.Frame):
     def __init__(self, master: UserInterface, *args, **kwargs):
         tk.Frame.__init__(self, master, *args, **kwargs)
         self.textbox = tk.Text(self, wrap='word', state='disabled')
-        self.textbox.grid(row=0, column=0)
+        self.textbox.pack(fill='x')#(row=0, column=0)
 
     def receive_key(self, char):
         self.textbox.configure(state='normal')
@@ -373,6 +418,7 @@ class KeyboardSection(tk.Frame):
             'scales': [button.scale for button in self.buttons],
             'used_words': list(self.master.used_words),
             'xp': self.master.xp,
+            'tutorials': list(self.master.tutorials.keys()),
             'working_directory': str(self.master.working_directory)
         }
         json_data = json.dumps(json_compatible_data, indent=1)
@@ -599,6 +645,29 @@ class XPFrame(tk.Frame):
         self.xp_progressbar['value'] = xp - prev_xp_milestone
 
 
+class TutorialWindow(tk.Toplevel):
+    previous_tutorial_window = None
+
+    def __init__(self, master, message=None, smirk=False, *args, **kwargs):
+        tk.Toplevel.__init__(self)
+
+        if TutorialWindow.previous_tutorial_window:
+            TutorialWindow.previous_tutorial_window.destroy()
+        TutorialWindow.previous_tutorial_window = self
+
+        self.master = master
+        self.title('Tutorial')
+        self.attributes('-topmost', True)
+        self.message_label = tk.Label(self, text=message, font=('comic',12))
+        image_path = IMAGE_PATH / Path('tutorial_smirk.png' if smirk else
+                                       'tutorial_neutral.png')
+        self.tutorial_image = ImageTk.PhotoImage(Image.open(image_path))
+        self.image_label = tk.Label(self, image=self.tutorial_image)
+        self.message_label.pack(side='left')
+        self.image_label.pack(side='right')
+        tk.Button(self, text="Close", command=self.destroy).pack(side='bottom')
+
+
 def exit_program():
     '''
     Save the keyboard before the user closes the window.
@@ -612,7 +681,7 @@ def exit_program():
 
 if __name__ == '__main__':
     ROOT = tk.Tk()
-    ROOT.title('User Friendly Text Editor (change name)')
+    ROOT.title('High Tech Text (HTT) Editor')
     ROOT.iconbitmap(IMAGE_PATH / 'window_icon.ico')
     UI = UserInterface(ROOT)
     UI.pack()
