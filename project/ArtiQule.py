@@ -318,7 +318,7 @@ class PaintBoard(QMainWindow):
                 Pen.setColor(self.currentTool.color)
                 self.painter.setPen(Pen)
                 # self.painter.drawLine(0, 0, 1000, 500)
-                self.painter.drawEllipse(event.pos(), 100, 150)
+                self.painter.drawLine(0, 0, 100, 150)
             self.lastPoint = event.pos()
             self.update()
 

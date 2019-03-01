@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b3fadb6e-a4f7-45b3-8f6e-9b28d34a2c00" name="Default Changelist" comment="&lt;NEW: -Added a class for the colors Pallettes&#10;- revivied the Tool Window but instead for holding colors&#10;&gt;&#10;&lt;ERRORS: - colorBox doesn't display the buttons with colors&gt;">
-      <change beforePath="$PROJECT_DIR$/.idea/code-jam-4.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/code-jam-4.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/ArtiQule.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/ArtiQule.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/project/ArtiQule.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
-              <caret line="361" column="14" selection-start-line="361" selection-start-column="14" selection-end-line="361" selection-end-column="14" />
+            <state relative-caret-position="308">
+              <caret line="320" column="43" selection-start-line="320" selection-start-column="43" selection-end-line="320" selection-end-column="43" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -325,8 +322,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/project/ArtiQule.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="361" column="14" selection-start-line="361" selection-start-column="14" selection-end-line="361" selection-end-column="14" />
+        <state relative-caret-position="308">
+          <caret line="320" column="43" selection-start-line="320" selection-start-column="43" selection-end-line="320" selection-end-column="43" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
