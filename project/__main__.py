@@ -3,6 +3,7 @@ from tkinter.ttk import *
 from project.contact import Contact
 import pickle
 from project.WheelSpinner.WheelSpinner import WheelSpinner
+from project.PhoneNumber.AddPhoneNumberInter import AddPhoneNumberInter
 
 """
 TODO:
@@ -47,6 +48,11 @@ class Controller(Tk):
             self.notebook.add(frame, text=frame.page_name)
             self.frames[frame.page_name] = frame
 
+    def hide(self):
+        self.withdraw()
+
+    def show(self):
+        self.deiconify()
 
 class ContactsPage(Frame):
     """
@@ -62,6 +68,7 @@ class ContactsPage(Frame):
 
     contacts_list: Dictionary of contacts, each contact is a Contact class instance,
                     each key is the name of the contact
+    current_contact: Contains the contact that was selected the last time we clicked on show info.
 
     scroll_bar: Scroll bar that controls what is viewable in the contacts list;
                 won't scroll if nothing is in the list, or everything is already
@@ -71,6 +78,7 @@ class ContactsPage(Frame):
                     contact they're looking for
     show_info: Button that updates the info_field with the information of the
                 currently selected contact
+    wheel_spin: WheelSpinner object for the Show Contact Button.
     delete: Button that deletes the selected contact
     info_field: Listbox that contains the information of the currently selected contact
     info_scroll: Scrollbar that controls what is viewable in the info_field; won't
@@ -125,14 +133,15 @@ class ContactsPage(Frame):
             yscrollcommand=self.info_scroll.set
         )
         self.info_scroll.config(command=self.info_field.yview)
-        #self.info_field.grid(row=3, column=0, columnspan=5, sticky=N+S+E+W)
-        #self.info_scroll.grid(row=3, column=5, sticky=N+S+E+W)
+        # self.info_field.grid(row=3, column=0, columnspan=5, sticky=N+S+E+W)
+        # self.info_scroll.grid(row=3, column=5, sticky=N+S+E+W)
 
         self.delete = Button(self, text="Delete", command=lambda: self.delete_contact())
         self.delete.grid(row=2, column=3, columnspan=3, sticky=N+S+E+W)
 
         self.show_info = Button(self, text="Show Info", command=lambda: self.show_contact_info())
         self.show_info.grid(row=2, column=0, columnspan=3, sticky=N+S+E+W)
+
         wheel_spin_options = ['Name', 'Home Phone Numbers', 'Work Phone Numbers',
                               'Personal Phone Numbers', 'Emails', 'Home Addresses', 'Notes']
         self.wheel_spin = WheelSpinner(self, wheel_spin_options, width=50, height=200, radius=60)
@@ -221,6 +230,11 @@ class ContactsPage(Frame):
         self.contacts_field.insert(END, contact)
 
     def show_contact_info(self) -> None:
+        """
+        This method shows the spinning wheel if a contact is selected and if the wheel isn't already rotating
+        It is called on the Show Contact Info button.
+        :return: None
+        """
         if len(self.contacts_field.curselection()) == 0 or self.wheel_spin.is_rotating:
             return
 
@@ -261,7 +275,13 @@ class ContactsPage(Frame):
                 self.info_field.insert(END, "   " + elem)
         """
 
-    def show_winning_info(self, event):
+    def show_winning_info(self, event) -> None:
+        """
+        This method is called when the event <<Finish Spinning Wheel>> is invoked. It displays the current contact
+        information that was selected by the spinning wheel.
+        :param event:
+        :return: None
+        """
         winner = self.wheel_spin.winner
         label = self.wheel_spin.display_label
         text0 = self.current_contact.name + "'s " + winner.lower() + ':\n'
@@ -441,7 +461,8 @@ class AddContactPage(Frame):
         self.enter_email_button.grid(row=4, column=4, columnspan=2, sticky=N+S+E+W)
 
         # PLACEHOLDER FOR ACTUAL PHONE NUMBER ENTRY
-        self.enter_phone_num = Entry(self)
+        self.enter_phone_num = Label(self, text="###-###-####", relief="sunken")
+        self.enter_phone_num.bind("<Button-1>", self.input_phone_number)
         self.enter_phone_num_label = Label(self, text="Phone:")
         phone_type_var = StringVar()
         self.phone_type_home = Radiobutton(self, text="Home", variable=phone_type_var, value="Home")
@@ -498,6 +519,27 @@ class AddContactPage(Frame):
     def add_notes(self, note):
         self.contact_new.add_note(note)
         self.refresh_field()
+
+    def input_phone_number(self, event):
+        new_window = Toplevel(self)
+        new_window.geometry("300x400")
+        new_window.configure(background='#00536a')
+
+        self.controller.withdraw()
+        def quit_phone_input():
+            self.controller.show()
+            new_window.destroy()
+        def send_phone_input(event):
+            self.controller.show()
+            self.enter_phone_num['text'] = phone.get_complete_phone_number()
+            new_window.destroy()
+        new_window.bind("<<Phone Number Complete>>", send_phone_input)
+        new_window.wm_protocol("WM_DELETE_WINDOW", quit_phone_input)
+
+        phone = AddPhoneNumberInter(new_window, bg='#00536a')
+
+
+
 
     def refresh_field(self) -> None:
         self.preview.delete(0, END)

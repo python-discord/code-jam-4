@@ -19,9 +19,10 @@ class AddPhoneNumberInter(tk.Frame):
         add_phone_number_to_entry: This method adds one number to the self.phone_number_label text
     """
 
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, *args, **kwargs, ):
         super().__init__(master, *args, **kwargs)
         self.master = master
+        self.page_name = 'Add Phone Number'
         self.text_label = tk.Label(self, font=('Calibri', 10), fg='#63FF20', bg='#00536a', borderwidth=2,
                                    text="Please enter the phone number you which\n to add with the rotary phone below.")
 
@@ -32,16 +33,16 @@ class AddPhoneNumberInter(tk.Frame):
         self.button = tk.Button(self.label_frame, text='Clear', bg='#00536a', font=('Calibri', 14), height=1,
                                 command=self.phone_number_label.clear_phone_number)
 
-        self.text_label.pack(side=tk.TOP)
-        self.phone_number_label.pack(side=tk.LEFT, )
-        self.button.pack(side=tk.LEFT)
-        self.label_frame.pack(side=tk.TOP)
+        self.text_label.grid(row=0, column=0)
+        self.phone_number_label.grid(row=0, column=0)
+        self.button.grid(row=0, column=1)
+        self.label_frame.grid(row=1, column=0)
 
         self.phone_canvas = PhoneCanvas(self)
-        self.phone_canvas.pack(side=tk.TOP)
-        self.pack()
+        self.phone_canvas.grid(row=2, column=0)
+        self.grid(row=0, column=0)
 
-        self.master.bind("<<Send_Phone_Number>>", self.__get_phone_number)
+        self.master.bind("<<Send_Phone_Number>>", self.__get_dialed_number)
 
     def add_phone_number_to_entry(self, num: int) -> None:
         """
@@ -51,7 +52,13 @@ class AddPhoneNumberInter(tk.Frame):
         """
         self.phone_number_label.add_phone_number(num)
 
-    def __get_phone_number(self, event) -> None:
+    def get_complete_phone_number(self):
+        if len(self.phone_number_label['text']) == 12:
+            return self.phone_number_label['text']
+        else:
+            return ""
+
+    def __get_dialed_number(self, event) -> None:
         """
         This method gets the phone number from the PhoneCanvas, it is called by the <<Send_Phone_Number>> event.
         :param event:
@@ -60,6 +67,9 @@ class AddPhoneNumberInter(tk.Frame):
         number = self.phone_canvas.send_output_number()
         if number is not None:
             self.add_phone_number_to_entry(number)
+            if len(self.phone_number_label['text']) == 12:
+                self.master.event_generate("<<Phone Number Complete>>")
+
 
 
 class PhoneNumberLabel(tk.Label):
@@ -86,8 +96,6 @@ class PhoneNumberLabel(tk.Label):
         """
         current_text = self['text']
         current_length = len(current_text)
-        if current_length == 12:
-            return
         if current_length == 3 or current_length == 7:
             self['text'] = self['text'] + '-'
         self['text'] = self['text'] + num
@@ -101,7 +109,8 @@ class PhoneNumberLabel(tk.Label):
 
 if __name__ == '__main__':
     root = tk.Tk()
-    root.geometry("300x375")
+    root.geometry("300x400")
+    root.configure(background='#00536a')
     root.resizable(False, False)
     AddPhoneNumberInter(root, bg='#00536a')
     root.mainloop()
