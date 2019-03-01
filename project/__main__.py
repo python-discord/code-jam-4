@@ -121,16 +121,44 @@ class UserInterface(tk.Frame):
             self.prev_xp_milestone = self.next_xp_milestone
             self.next_xp_milestone = next(self.xp_milestones)
 
+        self.command_button_row = tk.Frame(self)
         self.command_section = tk.Frame(self)
         self.text_entry_section = TextEntrySection(self)
         self.keyboard_section = KeyboardSection(self,
                                                 saved_keys=saved_keys,
                                                 saved_scales=saved_scales)
-        self.command_section.grid(row=0, column=0, sticky='nwse')
-        self.text_entry_section.grid(row=1, column=0)
-        self.keyboard_section.grid(row=2, column=0, ipadx=5,
+        self.command_button_row.grid(row=0, column=0, sticky='nwse')
+        self.command_section.grid(row=1, column=0, sticky='nwse')
+        self.text_entry_section.grid(row=2, column=0)
+        self.keyboard_section.grid(row=3, column=0, ipadx=5,
                                    ipady=5, sticky='nwse'
                                    )
+
+        self.icons = {}
+
+        image_data = Image.open(IMAGE_PATH / Path("new_icon.png"))
+        self.icons['new'] = ImageTk.PhotoImage(image_data)
+
+        image_data = Image.open(IMAGE_PATH / Path("save_icon.png"))
+        self.icons['save'] = ImageTk.PhotoImage(image_data)
+
+        image_data = Image.open(IMAGE_PATH / Path("open_icon.png"))
+        self.icons['open'] = ImageTk.PhotoImage(image_data)
+
+        self.new_button = tk.Button(self.command_button_row,
+                                    image=self.icons['new'],
+                                    command=self.new_file,
+                                    ).pack(side='left')
+
+        self.save_button = tk.Button(self.command_button_row,
+                                     image=self.icons['save'],
+                                     command=self.save_file,
+                                     ).pack(side='left')
+
+        self.open_button = tk.Button(self.command_button_row,
+                                     image=self.icons['open'],
+                                     command=self.load_file,
+                                     ).pack(side='left')
 
         self.is_darkmode = tk.IntVar()
         tk.Checkbutton(self.command_section, text='Low-Contrast Darkmode',
@@ -225,6 +253,7 @@ class UserInterface(tk.Frame):
 
         if load_complete:
             self.text_entry_section.set_text(doc_text)
+            self.text_entry_section.backspace()
             self.working_file = str(filepath)
 
     def add_xp(self, xp_increase):
