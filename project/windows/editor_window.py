@@ -203,21 +203,18 @@ class EditorWindow(tk.Toplevel):
 
         # Correct indexes with regards to leading and trailing apostrophes.
         start_offset = 0
+        end_offset = 0
+
         for character in word:
             if character == "'":
                 start_offset += 1
             else:
                 break
 
-        word = word[start_offset:]
-        start += start_offset
-
-        end_offset = 0
-
-        for character, next_character in pairwise(reversed(word.lower())):
+        for character, next_character in pairwise(reversed(word)):
             if character == "'":
                 if next_character:
-                    if next_character != 's':
+                    if next_character.lower() != 's':
                         end_offset -= 1
                 else:
                     end_offset -= 1
@@ -225,9 +222,12 @@ class EditorWindow(tk.Toplevel):
             else:
                 break
 
+        start += start_offset
+        word = word[start_offset:]
+
         if end_offset:
-            word = word[:end_offset]
             end += end_offset
+            word = word[:end_offset]
 
         start = f'{line}.{start}'
         end = f'{line}.{end}'
@@ -280,7 +280,7 @@ class EditorWindow(tk.Toplevel):
             event.char and
             not event.char.isalpha() and
             event.char != "'" and
-            event.char != '\x08'
+            event.char != '\x08'  # backspace
         ):
             for flag in Constants.forbidden_flags:
                 if event.state & flag:
