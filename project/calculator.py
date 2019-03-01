@@ -119,14 +119,9 @@ btndec = Button(cal,  text=("."), padx=16, bd=8, font=('arial', 20, 'bold'),
                 fg="purple", bg="pink",
                 command=lambda: btnClick(".")).grid(row=5, column=2)
 
-btndpi = Button(cal,  text=("pie"), padx=16, bd=8, font=('arial', 20, 'bold'),
+btndpi = Button(cal,  text=("\u03C4"), padx=16, bd=8, font=('cambria', 20, 'bold'),
                 fg="purple", bg="pink",
                 command=lambda: btnPi()).grid(row=4, column=2)
-
-# space here for one more button maybe we should add pi you know like in case
-# the user gets a bit hungry, this app may ultimately hate the users but we
-# have to lure them in at the start with nice things maybe a nice cherry pi
-# will do just fine
 
 btnadd = Button(cal,  text=("+"), padx=16, bd=8, font=('arial', 20, 'bold'),
                 fg="purple", bg="pink",
