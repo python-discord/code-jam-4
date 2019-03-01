@@ -1,10 +1,26 @@
 from tkinter import Button, Entry, StringVar, Tk
 import random
+import math
 
 
 def btnClick(numbers):
     global operator
     operator = operator + str(numbers)
+    text_Input.set(operator)
+
+
+def btnPi():
+    global operator
+    c = random.randint(0, 101)
+
+    if c <= 20:
+        k = math.pi
+    elif c <= 80:
+        k = 2*math.pi
+    else:
+        k = math.floor(c/100)
+
+    operator = operator + str(k)
     text_Input.set(operator)
 
 
@@ -103,11 +119,9 @@ btndec = Button(cal,  text=("."), padx=16, bd=8, font=('arial', 20, 'bold'),
                 fg="purple", bg="pink",
                 command=lambda: btnClick(".")).grid(row=5, column=2)
 
-# Clearly, this calculator is intended for use with physicists, who reduce
-# mathematics to its simplest form. Therefore pi is rounded down to 3.
 btndpi = Button(cal,  text=("pie"), padx=16, bd=8, font=('arial', 20, 'bold'),
                 fg="purple", bg="pink",
-                command=lambda: btnClick("3")).grid(row=4, column=2)
+                command=lambda: btnPi()).grid(row=4, column=2)
 
 # space here for one more button maybe we should add pi you know like in case
 # the user gets a bit hungry, this app may ultimately hate the users but we
