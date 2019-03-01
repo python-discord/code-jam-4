@@ -11,22 +11,25 @@ class WheelSpinner(tk.Frame):
 
         self.master = master
         self.radius = radius
-        self.display_label = tk.Label(self)
+        self.display_label = tk.Label(self, height=2)
         self.wheel_options = wheel_options
         self.size = radius*2.1
         self.canvas = tk.Canvas(self, width=self.size, height=self.size)
         self.drawn_arc = []
         self.count = None
         self.angle_increment = None
+        self.winner = None
+        self.is_rotating = False
 
         self.frame = 0
         self.speed = 400
         #self.draw()
-        self.display_label.pack()
-        self.canvas.pack()
+        self.display_label.grid(row=0, column=0)
+        self.canvas.grid(row=1, column=0)
 
         self.canvas.bind("<Button-1>", lambda event: self.verify_click_position(event))
         self.canvas.bind("<ButtonRelease-1>", lambda event: self.on_mouse_release(event))
+
 
         self.__drawn = False
         self.__rotation_speed_list = []
@@ -34,13 +37,14 @@ class WheelSpinner(tk.Frame):
         self.__init_drag_pos = None
         self.__current_time = None
         self.__delta_time = None
-        self.__is_rotating = False
+
         self.__mouse_controller = MouseController(self.canvas)
 
         self.update()
-        self.pack()
+        #self.grid(row=0, column=0)
 
     def draw(self):
+        self.display_label['text'] = "Spin the wheel to find out \nwhat information you'll see!"
         self.count = len(self.wheel_options)
         angle = 0
         self.angle_increment = 360/self.count
@@ -78,7 +82,7 @@ class WheelSpinner(tk.Frame):
         else:
             self.__delta_time = time.time() - self.__current_time
 
-        if self.__is_rotating:
+        if self.is_rotating:
             self.rotate_all_with_speed()
             self.calculate_new_speed()
             self.display_current_winner()
@@ -90,12 +94,7 @@ class WheelSpinner(tk.Frame):
         self.after(33, self.update)
 
     def verify_click_position(self, event):
-        if self.__is_dragging or self.__is_rotating:
-            return
-
-        if not self.__drawn:
-            self.draw()
-            self.__drawn = True
+        if self.__is_dragging or self.is_rotating or not self.__drawn:
             return
 
         x, y = event.x, event.y
@@ -119,10 +118,18 @@ class WheelSpinner(tk.Frame):
         if self.__is_dragging:
             self.__is_dragging = False
             self.__calculate_initial_speed()
-            self.__is_rotating = True
 
     def __calculate_initial_speed(self):
+        if len(self.__rotation_speed_list)<=1:
+            self.display_label['text'] = "SPIN HARDER!"
+            return
+
         self.speed = -self.__rotation_speed_list[-1]
+        if abs(self.speed) < 300:
+            self.display_label['text'] = "SPIN HARDER!"
+        else:
+            self.is_rotating = True
+
 
     def rotate_all(self, degree):
         for arc in self.drawn_arc:
@@ -158,9 +165,12 @@ class WheelSpinner(tk.Frame):
         print(acceleration)
 
     def finish_rotation(self):
-        self.__is_rotating = False
+        self.winner = self.display_label['text']
+        self.is_rotating = False
         self.erase()
         self.__drawn = False
+        self.master.event_generate("<<Finish Spinning Wheel>>", when="tail")
+        self.master.show_winning_info
 
     def __get_elapsed_time(self):
         """
@@ -224,6 +234,7 @@ class RotatingArc:
 
 if __name__ == '__main__':
     root = tk.Tk()
-    options = ['Name', 'Home Phone Number', 'Work Phone Number', 'Personal Phone Number', 'Email', 'Home Address', 'Notes']
+    options = ['Name', 'Home Phone Numbers', 'Work Phone Numbers', 'Personal Phone Numbers',
+               'Emails', 'Home Addresses', 'Notes']
     WheelSpinner(root, options, width=300, height=500, radius=150)
     root.mainloop()

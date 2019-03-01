@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter.ttk import *
 from project.contact import Contact
 import pickle
-from project.WheelSpinner import WheelSpinner
+from project.WheelSpinner.WheelSpinner import WheelSpinner
 
 """
 TODO:
@@ -99,6 +99,7 @@ class ContactsPage(Frame):
 
         # Initialize object names
         self.contacts_list = {}
+        self.current_contact = None
 
         self.scroll_bar = None
         self.contacts_field = None
@@ -108,6 +109,8 @@ class ContactsPage(Frame):
         self.delete = None
         self.info_field = None
         self.info_scroll = None
+
+        self.bind("<<Finish Spinning Wheel>>", self.show_winning_info)
 
         self.load = None
         self.save = None
@@ -122,14 +125,18 @@ class ContactsPage(Frame):
             yscrollcommand=self.info_scroll.set
         )
         self.info_scroll.config(command=self.info_field.yview)
-        self.info_field.grid(row=3, column=0, columnspan=5, sticky=N+S+E+W)
-        self.info_scroll.grid(row=3, column=5, sticky=N+S+E+W)
+        #self.info_field.grid(row=3, column=0, columnspan=5, sticky=N+S+E+W)
+        #self.info_scroll.grid(row=3, column=5, sticky=N+S+E+W)
 
         self.delete = Button(self, text="Delete", command=lambda: self.delete_contact())
         self.delete.grid(row=2, column=3, columnspan=3, sticky=N+S+E+W)
 
         self.show_info = Button(self, text="Show Info", command=lambda: self.show_contact_info())
         self.show_info.grid(row=2, column=0, columnspan=3, sticky=N+S+E+W)
+        wheel_spin_options = ['Name', 'Home Phone Numbers', 'Work Phone Numbers',
+                              'Personal Phone Numbers', 'Emails', 'Home Addresses', 'Notes']
+        self.wheel_spin = WheelSpinner(self, wheel_spin_options, width=50, height=200, radius=60)
+        self.wheel_spin.grid(row=3, column=0, columnspan=5)
 
         self.scroll_bar = Scrollbar(self)
         self.contacts_field = Listbox(
@@ -214,6 +221,13 @@ class ContactsPage(Frame):
         self.contacts_field.insert(END, contact)
 
     def show_contact_info(self) -> None:
+        if len(self.contacts_field.curselection()) == 0 or self.wheel_spin.is_rotating:
+            return
+
+        name = self.contacts_field.get(self.contacts_field.curselection()[0])
+        self.current_contact = self.contacts_list[name]
+        self.wheel_spin.draw()
+        """
         name = self.contacts_field.get(self.contacts_field.curselection()[0])
         contact = self.contacts_list[name]
         home_phone_nums = contact.phone_numbers["Home"]
@@ -245,7 +259,35 @@ class ContactsPage(Frame):
             self.info_field.insert(END, "Notes:")
             for elem in notes:
                 self.info_field.insert(END, "   " + elem)
+        """
 
+    def show_winning_info(self, event):
+        winner = self.wheel_spin.winner
+        label = self.wheel_spin.display_label
+        text0 = self.current_contact.name + "'s " + winner.lower() + ':\n'
+        text1 = ''
+        if winner == 'Name':
+            text1 = self.current_contact.name
+        elif winner == 'Home Phone Numbers':
+            for elem in self.current_contact.phone_numbers["Home"]:
+                text1 = text1 + elem + ", "
+        elif winner == 'Work Phone Numbers':
+            for elem in self.current_contact.phone_numbers["Work"]:
+                text1 = text1 + elem + ', '
+        elif winner == 'Personal Phone Numbers':
+            for elem in self.current_contact.phone_numbers["Personal"]:
+                text1 = text1 + elem + ', '
+        elif winner == 'Emails':
+            for elem in self.current_contact.email_addresses:
+                text1 = text1 + elem + ', '
+        elif winner == 'Home Addresses':
+            for elem in self.current_contact.addresses:
+                text1 = text1 + elem + ', '
+        elif winner == 'Notes':
+
+            for elem in self.current_contact.notes:
+                text1 = text1 + elem + ', '
+        label['text'] = text0 + text1
 
 class AddContactPage(Frame):
     """
