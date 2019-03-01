@@ -1,8 +1,10 @@
 import logging
 
-from PySide2.QtCore import Qt
+from PySide2.QtCore import QPoint, Qt
 from PySide2.QtSql import QSqlTableModel
-from PySide2.QtWidgets import QAbstractItemView, QFileDialog, QMainWindow
+from PySide2.QtWidgets import (
+    QAbstractItemView, QAction, QFileDialog, QMainWindow, QMenu, QTableView
+)
 
 from project import media, ui
 from project.widgets.password_prompt import PasswordPrompt
@@ -47,16 +49,40 @@ class MainWindow(QMainWindow):
 
         return model
 
+    @staticmethod
+    def create_view_context_menu(view: QTableView, pos: QPoint) -> QMenu:
+        menu = QMenu()
+        remove_action = QAction("Remove", view)
+        menu.addAction(remove_action)
+
+        # row = view.rowAt(pos.y())
+        # remove_action.triggered.connect()
+
+        return menu
+
     def configure_view(self):
         """Configure the playlist table view."""
         self.ui.playlist_view.setModel(self.playlist_model)
         self.ui.playlist_view.setEditTriggers(QAbstractItemView.NoEditTriggers)  # Disable editing
         self.ui.playlist_view.setSortingEnabled(True)
+
         self.ui.playlist_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.ui.playlist_view.setSelectionMode(QAbstractItemView.SingleSelection)
+
+        self.ui.playlist_view.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.ui.playlist_view.customContextMenuRequested.connect(self.show_view_context_menu)
+
         self.ui.playlist_view.hideColumn(0)  # id
         self.ui.playlist_view.hideColumn(6)  # crc32
         self.ui.playlist_view.hideColumn(7)  # path
+
+    def show_view_context_menu(self, pos: QPoint):
+        """Display a context menu for the table view."""
+        menu = self.create_view_context_menu(self.ui.playlist_view, pos)
+        self.ui.playlist_view.context_menu = menu  # Prevents it from being GC'd
+
+        global_pos = self.ui.playlist_view.mapToGlobal(pos)
+        menu.popup(global_pos)
 
     def add_files(self, checked: bool = False):
         """Show a file dialogue and add selected files to the playlist."""
