@@ -37,6 +37,8 @@ class MainWindow(QMainWindow):
         """Create and return the model to use with the playlist table view."""
         model = QSqlTableModel()
         model.setTable("playlist")
+        model.setEditStrategy(QSqlTableModel.OnManualSubmit)
+
         model.setHeaderData(1, Qt.Horizontal, "Title", Qt.DisplayRole)
         model.setHeaderData(2, Qt.Horizontal, "Artist", Qt.DisplayRole)
         model.setHeaderData(3, Qt.Horizontal, "Album", Qt.DisplayRole)

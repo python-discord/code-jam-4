@@ -107,7 +107,22 @@ class Playlist(QMediaPlaylist):
         return self._current_media
 
     def addMedia(self, content: QMediaContent, row: int) -> bool:
-        log.debug(f"Adding media for row {row}: {content.canonicalUrl().fileName()}")
+        """Append the media `content` to the playlist.
+
+        Parameters
+        ----------
+        content: QMediaContent
+            The media to append.
+        row: int
+            The row in the model which corresponds to the media.
+
+        Returns
+        -------
+        bool
+            Always True.
+
+        """
+        log.debug(f"Adding media at row {row}: {content.canonicalUrl().fileName()}")
         success = super().addMedia(content)
 
         if success:
@@ -123,22 +138,24 @@ class Playlist(QMediaPlaylist):
     def moveMedia(self, *args, **kwargs):
         raise NotImplementedError
 
-    def removeMedia(self, index: int):
-        log.debug(f"Adding media for index {index}.")
-        success = super().removeMedia(index)
+    def removeMedia(self, row: int) -> bool:
+        """Remove the media at `row` from the playlist.
 
-        if success:
-            row = self._get_row(index)
+        Parameters
+        ----------
+        row: int
+            The row in the model which corresponds to the media.
 
-            # TODO: Handle partial removals better. Maybe re-add media to playlist?
-            if not self._model.removeRow(row):
-                log.error(
-                    f"Media was only partially removed: "
-                    f"failed to remove media at row {row} from model."
-                )
-                return False
+        Returns
+        -------
+        bool
+            Always True.
 
-        return success
+        """
+        log.debug(f"Removing media at row {row}.")
+        index = self._get_playlist_index(row)
+
+        return super().removeMedia(index)
 
     def nextIndex(self, steps: int = 1) -> int:
         if self.mediaCount() == 0:
