@@ -1,4 +1,4 @@
-from .mainwindow import Tinder
+from .mainwindow import App
 
 if __name__ == "__main__":
-    Tinder().start()
+    App().mainloop()

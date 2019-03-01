@@ -3,6 +3,7 @@ from __future__ import annotations
 import tkinter as tk
 import operator
 import time
+from . import widget
 from typing import NamedTuple, Callable, TypeVar, Generator, Tuple, Iterable
 from enum import Enum
 from dataclasses import dataclass
@@ -148,7 +149,6 @@ class Animater:
         if not isinstance(endpoints, Iterable):
             endpoints = (endpoints,)
 
-        endpoints = (Coord(*point) for point in endpoints)  # Reinforce type
         motion = Motion(self.canvas, id, endpoints, **kwargs)
         self.add(motion)
 
@@ -214,7 +214,6 @@ class Motion:
             for _ in range(count):
                 move(*increment)
                 self.canvas.master.update_idletasks()
-                # self.canvas.master.update()
 
         for end in self.endpoints:
             start = Coord(*self.canvas.coords(self.id)[:2])
@@ -236,3 +235,53 @@ class Motion:
 
     def __eq__(self):
         return isinstance(self, type(other)) and self.__key() == other.__key()
+
+
+class Window(widget.PrimaryCanvas):
+    origin = Coord(0, 0)
+    animation_speed = 2
+    current = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.animater = Animater(self)
+
+    def __coord(self, id):
+        return Coord(*self.coords(id)[:2])
+
+    def clear(self):
+        if self.current is not None:
+            self.delete(self.current)
+            self.update()
+
+    def set_view(self, view: tk.Widget):
+        self.clear()
+        self.current = self.create_window(self.origin, view)
+
+    def change_view(self, view: tk.Widget, direction: Direction):
+        if self.current is None:
+            self.set_view(view)
+            return
+
+        if not isinstance(direction, Direction):
+            direction = Direction[direction]  # Cast string for convenience
+
+        if direction in (Direction.UP, Direction.DOWN):
+            edge = self.winfo_screenheight()
+        elif direction in (Direction.LEFT, Direction.RIGHT):
+            edge = self.winfo_screenwidth()
+        else:
+            raise NotImplementedError
+
+        pos = self.__coord(self.current)
+        end = pos + edge
+        beg = pos - edge
+        wid = self.create_window(beg, view)
+
+        self.animater.clear()
+        self.animater.add_motion(self.current, end)
+        self.animater.add_motion(wid, self.origin)
+
+        self.animater.start()
+        self.current = wid

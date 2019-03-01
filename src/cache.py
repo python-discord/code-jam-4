@@ -23,7 +23,6 @@ class Cache:
         # get settings
         cp = configparser.ConfigParser()
         cp.read(str(SETTINGS))
-        cp.read('settings.ini')
 
         # for now, let's just look up the DEV settings
         # can change this later

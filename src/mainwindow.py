@@ -4,8 +4,39 @@ import asyncio
 from pygame import mixer
 from .cache import Cache
 from .animate import Animater, Coord
+from .front import Front
 
 from . import SETTINGS
+
+
+parser = configparser.ConfigParser()
+parser.read(SETTINGS)
+
+
+class App(tk.Tk):
+    appconfig = parser['APP']
+
+    def __init__(self, *args, **kwds):
+        title = self.appconfig.pop('title')
+        super().__init__(*args, **kwds)
+        self.title = title
+        mixer.init()
+
+        self.loop = asyncio.get_event_loop()
+        self.cache = Cache(self)
+
+        self.geometry = '400x500'
+        self.minsize(400, 500)
+        self.maxsize(400, 500)
+
+        self.front = Front(self)
+        self.front.pack(fill='both')
+
+        self.__cache()
+        self.front.cache = self.cache.cats
+
+    def __cache(self):
+        self.loop.run_until_complete(self.cache.refill())
 
 
 class Tinder:
@@ -44,13 +75,12 @@ class Tinder:
         self.jumpscare = False
         self.loop = asyncio.get_event_loop()
         self.cache = Cache(self.root)
+        self.window = Animater(self.root)
 
     def start(self):
         '''Starts the Tinder application'''
 
-        # getting a cache of cat info
-        self.loop.run_until_complete(self.cache.refill())
-
+        # getting a cache of cat inf
         # starting the program loop
         self.new_image()
 
@@ -89,7 +119,7 @@ class Tinder:
             item.pack_forget()
 
         # make a new Frame
-        self.frame = tk.Frame(self.root, bg="black")
+        self.frame = tk.Frame(self.window, bg="black")
 
         # if a dict wasn't passed to the function, get a dict from self.cats
         if not cat:
@@ -213,7 +243,7 @@ class Tinder:
                     command=back_to_photo).pack(side=tk.BOTTOM)
 
                 # packing the frame
-                self.bioid = self.window.create_window((0, 500), window=self.frame, anchor='nw')
+                self.bioid = self.window.create_window((0, 0), window=self.frame, anchor='nw')
                 end = Coord(0, 0)
                 self.window.add_motion(self.bioid, (end,), speed=3)
                 self.window.pack(fill='both', expand=True)
@@ -225,6 +255,7 @@ class Tinder:
                 command=get_bio).pack(side=tk.BOTTOM)
 
         # packing the frame
+        self.window.create_window((0, 0))
         self.frame.pack()
 
         # starting the main tkinter loop
