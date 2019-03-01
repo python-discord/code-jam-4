@@ -104,7 +104,6 @@ class MainWindow(QMainWindow):
     def show_tip(self):
         with open('crocpad\\tips.txt', 'r', encoding='utf8') as f:
             tips = f.readlines()
-        print(len(tips), tips)
         tip = random.choice(tips)
         dlg = QMessageBox(self)
         dlg.setWindowTitle("Tip of the Day")
