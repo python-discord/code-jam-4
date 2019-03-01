@@ -143,6 +143,7 @@ class Animater:
         for motion in self._motions:
             try:
                 next(motion)()
+                self.canvas.update()
             except StopIteration:
                 self._motions.remove(motion)
                 break
@@ -241,8 +242,8 @@ class Motion:
 
 class Window(widget.PrimaryCanvas):
     animation_speed = 4
-    _current = None
-    _views = {}
+    current = None
+    views = {}
 
     def init(self):
         self.animater = Animater(self)
@@ -265,12 +266,12 @@ class Window(widget.PrimaryCanvas):
             wid = self.__set_image(view, coord)
         else:
             wid = self.__set_widget(view, coord)
-        self._views[view] = wid
+        self.views[view] = wid
         return wid
 
     def set_view(self, view: tk.Widget, viewtype='image'):
-        self._current = view
-        self.__set(self._current, self.origin, viewtype)
+        self.current = view
+        self.__set(self.current, self.origin, viewtype)
 
     def move_view(self, wid, end):
         self.animater.add_motion(
@@ -285,22 +286,22 @@ class Window(widget.PrimaryCanvas):
         return wid
 
     def move_out(self, view, direction, viewtype='image'):
-        wid = self._views[view]
+        wid = self.views[view]
         distance = self.get_distance(direction)
         end = self.origin + distance
         self.move_view(wid, end)
-        del self._views[view]
+        del self.views[view]
 
     def change_view(self, view: tk.Widget, direction: Direction, viewtype='image'):
         if not isinstance(direction, Direction):
             direction = Direction[direction.upper()]  # Cast string for convenience
         self.animater.clear()
 
-        self.move_out(self._current, direction, viewtype=viewtype)
+        self.move_out(self.current, direction, viewtype=viewtype)
         self.move_in(view, direction.flip(), viewtype=viewtype)
 
         self.animater.start()
-        self._current = view
+        self.current = view
 
     def get_distance(self, direction: Direction):
         if not isinstance(direction, Direction):

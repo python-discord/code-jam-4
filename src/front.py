@@ -71,7 +71,12 @@ class Front(widget.PrimaryFrame):
         self.__change_image('RIGHT')
 
     def cmd_bio(self):
-        self.window.change_view(self.bio, 'UP', 'widget')
+        if self.bio in self.window.views:
+            self.window.move_out(self.bio, 'DOWN', viewtype='widget')
+        else:
+            self.window.move_in(self.bio, 'DOWN', viewtype='widget')
+
+        self.window.animater.start()
 
     @property
     def cache(self):
