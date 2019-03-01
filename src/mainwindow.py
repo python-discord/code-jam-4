@@ -2,8 +2,9 @@ import configparser
 import tkinter as tk
 import asyncio
 from pygame import mixer
-import os
-from cache import Cache
+from .cache import Cache
+
+from . import SETTINGS
 
 
 class Tinder:
@@ -14,9 +15,8 @@ class Tinder:
         mixer.init()
 
         # get settings
-        self.dir = os.path.dirname(os.path.realpath(__file__))
         cp = configparser.ConfigParser()
-        cp.read(os.path.join(self.dir, 'settings.ini'))
+        cp.read(SETTINGS)
 
         # for now, let's just look up the DEV settings
         # can change this later
@@ -139,10 +139,8 @@ class Tinder:
             self.root.geometry(f"{self.screen_x}x{self.screen_y}+0+0")
 
             # play a jumpscare sound
-            mixer.music.load(
-                os.path.join(
-                    self.dir, os.path.join(
-                        "res", os.path.join("sounds", "jumpscare.mp3"))))
+            soundpath = SOUNDS / "jumpscare.mp3"
+            mixer.music.load(str(soundpath))
             mixer.music.play()
 
             # make a button to allow the user to pass through the image
