@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'qt/passwordprompt.ui',
 # licensing of 'qt/passwordprompt.ui' applies.
 #
-# Created: Wed Feb 27 01:21:20 2019
+# Created: Thu Feb 28 21:34:32 2019
 #      by: pyside2-uic  running on PySide2 5.12.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -35,8 +35,15 @@ class Ui_PasswordPrompt(object):
         self.password_backwards.setEchoMode(QtWidgets.QLineEdit.Password)
         self.password_backwards.setObjectName("password_backwards")
         self.confirm_button = QtWidgets.QPushButton(PasswordPrompt)
-        self.confirm_button.setGeometry(QtCore.QRect(320, 270, 75, 23))
+        self.confirm_button.setGeometry(QtCore.QRect(240, 270, 75, 23))
         self.confirm_button.setObjectName("confirm_button")
+        self.cancel_button = QtWidgets.QPushButton(PasswordPrompt)
+        self.cancel_button.setGeometry(QtCore.QRect(320, 270, 75, 23))
+        self.cancel_button.setObjectName("cancel_button")
+        self.correct_label = QtWidgets.QLabel(PasswordPrompt)
+        self.correct_label.setGeometry(QtCore.QRect(10, 230, 381, 20))
+        self.correct_label.setText("")
+        self.correct_label.setObjectName("correct_label")
 
         self.retranslateUi(PasswordPrompt)
         QtCore.QMetaObject.connectSlotsByName(PasswordPrompt)
@@ -56,4 +63,5 @@ class Ui_PasswordPrompt(object):
         self.password_label.setText(QtWidgets.QApplication.translate("PasswordPrompt", "Password", None, -1))
         self.password_label_2.setText(QtWidgets.QApplication.translate("PasswordPrompt", "Password", None, -1))
         self.confirm_button.setText(QtWidgets.QApplication.translate("PasswordPrompt", "Confirm", None, -1))
+        self.cancel_button.setText(QtWidgets.QApplication.translate("PasswordPrompt", "Cancel", None, -1))
 
