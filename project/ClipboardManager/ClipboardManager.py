@@ -39,14 +39,14 @@ class ClipboardManager(QObject):
     @pyqtSlot()
     def _clipboard_changed(self):
         """"""
-        current_text = QApplication.clipboard().text()
+        current_text = Text.apply(QApplication.clipboard().text())
         current_image = QApplication.clipboard().pixmap()
 
         top_item = self.clipboard_stack.peek()
 
         # current_text = PT.apply(QApplication.clipboard().text()) # TODO: Chain plugins together
-        print("Current Text", QApplication.clipboard().text())
-        print("Current Image Info", QApplication.clipboard().pixmap())
+        print("Current Text:", QApplication.clipboard().text())
+        print("Current Image Info:", QApplication.clipboard().pixmap())
 
         if current_text and (self._last_text is None or current_text != self._last_text) and \
                 not (isinstance(top_item, TextClipboardObject) and top_item.text == current_text):

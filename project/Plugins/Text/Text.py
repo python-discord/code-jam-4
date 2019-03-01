@@ -1,15 +1,14 @@
-from random import randint, choice
 import string
+from random import randint, choice
+import requests
+from lxml import html
 from thesaurus import Word
 
-'''Use this function, not any other one. It as a 50/50 chance of applying each'''
-
-
 def apply(text):
-
+    """Use this function, not any other one. It as a 50/50 chance of applying each"""
 
     if randint(0, 1):
-        text = random_spelling_mistakes(text)
+        text = synonym(text)
         return text
     else:
         text = quotify(text)
@@ -37,9 +36,6 @@ def random_spelling_mistakes(text):
 
 
 def quotify(text):
-    from lxml import html
-    import requests
-
     try:
         page = requests.get('https://funnysentences.com/sentence-generator/')
         tree = html.fromstring(page.content)
@@ -48,13 +44,20 @@ def quotify(text):
     except requests.exceptions.ConnectionError:
         return "lol you don't have internet"
 
-def synonym(text):
-    try:
-        w = Word(text)
-        w.synonyms('all')
-        text = w.synonyms()[randint(0, len(w))]
-        return text
-    except:
-        return text
 
-print(synonym('osuidf'))
+def synonym(text):
+    print('Processing...')
+    text = text.split()
+    new_words = ''
+    for word in text:
+        print("Processing Word '", word, "'")
+        try:
+            w = Word(word)
+            w.synonyms('all')
+            text = w.synonyms()[randint(0, len(w))]
+            final = ''.join(text)
+            new_words = new_words + ' ' + final
+        except:
+            print('Error. Skipping word:', word)
+            new_words = new_words + ' ' + word
+    return new_words
