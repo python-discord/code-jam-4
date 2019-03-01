@@ -3,8 +3,6 @@ import tkinter as tk
 import tkinter.font as tkFont
 from tkinter import ttk
 import json
-import nltk
-from nltk.corpus import words
 import random
 from pathlib import Path
 from PIL import Image, ImageTk
@@ -12,15 +10,15 @@ from functools import reduce
 import pyaudio
 import wave
 
-nltk.download('words', quiet=True, raise_on_error=True)
 
 SCRIPT_DIR = Path(__file__).parent
 
-KEY_DESCRIPTION_PATH = SCRIPT_DIR / Path("key_descriptions.json")
-SAVE_DATA_PATH = SCRIPT_DIR / Path("save_data.json")
-DEFAULT_SAVE_PATH = SCRIPT_DIR / Path("default_save.json")
-IMAGE_PATH = SCRIPT_DIR.parent / Path("img/")
-AUDIO_PATH = SCRIPT_DIR.parent / Path("audio/")
+KEY_DESCRIPTION_PATH = SCRIPT_DIR / Path('key_descriptions.json')
+SAVE_DATA_PATH = SCRIPT_DIR / Path('save_data.json')
+WORDS_PATH = SCRIPT_DIR / Path('words.json')
+DEFAULT_SAVE_PATH = SCRIPT_DIR / Path('default_save.json')
+IMAGE_PATH = SCRIPT_DIR.parent / Path('img/')
+AUDIO_PATH = SCRIPT_DIR.parent / Path('audio/')
 
 
 audio_player = pyaudio.PyAudio()
@@ -42,9 +40,13 @@ def play_sound(soundcode='tap'):
                       stream_callback=audio_callback)
 
 
+with open(WORDS_PATH, 'r') as words_file:
+    real_words = set(json.load(words_file))
+
+
 def is_word(text):
     assert text.isalpha()
-    return text in words.words()
+    return text in real_words
 
 
 def calculate_xp(word):
@@ -52,12 +54,12 @@ def calculate_xp(word):
 
 
 LOOTBOX_RARITIES = [
-    "common",
-    "uncommon",
-    "rare",
-    "super rare",
-    "ultra rare",
-    "legendary",
+    'common',
+    'uncommon',
+    'rare',
+    'super rare',
+    'ultra rare',
+    'legendary',
 ]
 
 LOOTBOX_RATES = [0, 50, 70, 85, 90, 95]
@@ -109,7 +111,7 @@ class UserInterface(tk.Frame):
         self.command_section.grid(row=0, column=0, sticky='nwse')
         self.text_entry_section.grid(row=1, column=0)
         self.keyboard_section.grid(row=2, column=0, ipadx=5,
-                                   ipady=5, sticky="nwse"
+                                   ipady=5, sticky='nwse'
                                    )
 
         self.is_darkmode = tk.IntVar()
@@ -123,9 +125,9 @@ class UserInterface(tk.Frame):
         self.xp_frame.pack(side='right')
 
         key_descriptions = self.keyboard_section.key_descriptions
-        self.unlockable_keys = [[key_descriptions[key]["name"] for key
+        self.unlockable_keys = [[key_descriptions[key]['name'] for key
                                  in key_descriptions
-                                 if key_descriptions[key]["rarity"]
+                                 if key_descriptions[key]['rarity']
                                  == rarity_level]
                                 for rarity_level
                                 in range(len(LOOTBOX_RARITIES))]
@@ -152,7 +154,6 @@ class UserInterface(tk.Frame):
 
     def backspace(self):
         play_sound('tap')
-        print("Backspace")
         self.text_entry_section.backspace()
 
     def unlock_lootbox(self):
@@ -195,13 +196,13 @@ class TextEntrySection(tk.Frame):
     '''
     def __init__(self, master: UserInterface, *args, **kwargs):
         tk.Frame.__init__(self, master, *args, **kwargs)
-        self.textbox = tk.Text(self, wrap="word", state="disabled")
+        self.textbox = tk.Text(self, wrap='word', state='disabled')
         self.textbox.grid(row=0, column=0)
 
     def receive_key(self, char):
-        self.textbox.configure(state="normal")
+        self.textbox.configure(state='normal')
         self.textbox.insert('end', char)
-        self.textbox.configure(state="disabled")
+        self.textbox.configure(state='disabled')
         if len(char) != 1 or not char.isalpha():
             recent_text_in_box = self.textbox.get('end - 50 chars', 'end')
             # -50 chars for constant time complexity (for really long files)
@@ -209,9 +210,9 @@ class TextEntrySection(tk.Frame):
             self.master.on_word_complete(last_word)
 
     def backspace(self):
-        self.textbox.configure(state="normal")
+        self.textbox.configure(state='normal')
         self.textbox.delete('end - 2 chars', 'end')
-        self.textbox.configure(state="disabled")
+        self.textbox.configure(state='disabled')
 
     def set_darkmode(self, is_darkmode: bool):
         self.textbox['bg'] = 'black' if is_darkmode else 'white'
@@ -237,7 +238,7 @@ class KeyboardSection(tk.Frame):
             with open(KEY_DESCRIPTION_PATH, 'r') as descriptions_file:
                 self.key_descriptions = json.load(descriptions_file)
         except IOError:
-            print("Failed to load key_descriptions.json")
+            print('Failed to load key_descriptions.json')
 
         self.make_keys(saved_keys=saved_keys, saved_scales=saved_scales)
 
@@ -276,7 +277,7 @@ class KeyboardSection(tk.Frame):
             filepath.write_text(json_data)
             return True
         except IOError:
-            print("Warning: Failed to save keyboard to file.")
+            print('Warning: Failed to save keyboard to file.')
             return False
 
     def send_key(self, char):
@@ -302,12 +303,12 @@ class KeyboardSection(tk.Frame):
 
 
 class KeyboardKey(tk.Button):
-    """
+    '''
     Represents a key on the keyboard.  Stores relevant data for the key such
     as scale factor, displayed name and actual character value,
     and has methods that change the key in response to different
     user interactions.
-    """
+    '''
     KEY_SIZE = 32
 
     @classmethod
@@ -322,7 +323,7 @@ class KeyboardKey(tk.Button):
         tk.Button.__init__(self, master, *args, **kwargs)
         self.master = master
 
-        self.font = tkFont.Font(family="Helvetica", size=KeyboardKey.KEY_SIZE)
+        self.font = tkFont.Font(family='Helvetica', size=KeyboardKey.KEY_SIZE)
 
         # Letter displayed on the key
         self.name = tk.StringVar()
@@ -350,9 +351,9 @@ class KeyboardKey(tk.Button):
         self.clicks = 0
         self.shift_on = False
 
-        if name == "shift":
+        if name == 'shift':
             button_action = self.send_shift
-        elif name == "backspace":
+        elif name == 'backspace':
             button_action = self.send_backspace
         else:
             button_action = self.send_key
@@ -402,17 +403,17 @@ class KeyboardKey(tk.Button):
 class LootBoxUnlockWindow(tk.Toplevel):
     def __init__(self, new_keys=[], rarities=[], *args, **kwargs):
         tk.Toplevel.__init__(self)
-        self.iconbitmap(IMAGE_PATH / Path("capsule_small.ico"))
-        self.title("Lootbox unlocked!")
+        self.iconbitmap(IMAGE_PATH / Path('capsule_small.ico'))
+        self.title('Lootbox unlocked!')
 
-        self.attributes("-topmost", True)
+        self.attributes('-topmost', True)
 
         self.new_keys = new_keys
         self.rarities = rarities
 
         self.lootbox_display = LootBoxUnlockFrame(self)
 
-        tk.Button(self, text="Close", command=self.destroy).pack()
+        tk.Button(self, text='Close', command=self.destroy).pack()
 
         self.minsize(400, 700)
 
@@ -424,15 +425,15 @@ class LootBoxUnlockFrame(tk.Frame):
 
         self.font = tkFont.Font(size=64)
 
-        image_data1 = Image.open(IMAGE_PATH / Path("capsule1.png"))
-        image_data2 = Image.open(IMAGE_PATH / Path("capsule2.png"))
+        image_data1 = Image.open(IMAGE_PATH / Path('capsule1.png'))
+        image_data2 = Image.open(IMAGE_PATH / Path('capsule2.png'))
         self.img_capsule = [
             ImageTk.PhotoImage(image_data1),
             ImageTk.PhotoImage(image_data2)
         ]
 
         self.lootbox_text = tk.StringVar()
-        self.lootbox_text.set("Lootbox get!")
+        self.lootbox_text.set('Lootbox get!')
 
         self.text_label = tk.Label(self, textvar=self.lootbox_text,
                                    font=self.font
@@ -443,7 +444,7 @@ class LootBoxUnlockFrame(tk.Frame):
         self.image_label.image = self.img_capsule[0]
         self.image_label.pack()
 
-        self.message_label = tk.Label(self, text="", height=10, width=20,
+        self.message_label = tk.Label(self, text='', height=10, width=20,
                                       justify=tk.LEFT)
         self.message_label.pack()
 
@@ -453,16 +454,16 @@ class LootBoxUnlockFrame(tk.Frame):
 
     def open_lootbox(self):
         new_keys = [
-            "{} ({})".format(key, LOOTBOX_RARITIES[self.master.rarities[idx]])
+            '{} ({})'.format(key, LOOTBOX_RARITIES[self.master.rarities[idx]])
             for idx, key in enumerate(self.master.new_keys)
             ]
 
         new_keys_str = reduce(
-            lambda x, y: "{}\n{}".format(x, y), new_keys
+            lambda x, y: '{}\n{}'.format(x, y), new_keys
             )
         self.image_label.config(image=self.img_capsule[1])
         self.image_label.image = self.img_capsule[1]
-        self.message_label['text'] = "You got:\n {}".format(new_keys_str)
+        self.message_label['text'] = 'You got:\n {}'.format(new_keys_str)
 
 
 class XPFrame(tk.Frame):
@@ -470,7 +471,7 @@ class XPFrame(tk.Frame):
                  next_xp_milestone=0, *args, **kwargs):
         tk.Frame.__init__(self, master)
         self.prev_xp_label = tk.Label(self, text=prev_xp_milestone)
-        self.xp_label = tk.Label(self, text="XP:{}".format(xp),
+        self.xp_label = tk.Label(self, text='XP:{}'.format(xp),
                                  font=('Helvetica 18 bold'))
         self.next_xp_label = tk.Label(self, text=next_xp_milestone)
         self.xp_progressbar = ttk.Progressbar(self, orient='horizontal',
@@ -478,7 +479,7 @@ class XPFrame(tk.Frame):
                                               maximum=next_xp_milestone
                                               - prev_xp_milestone,
                                               value=xp-prev_xp_milestone)
-        lootbox_image_data = Image.open(IMAGE_PATH / Path("capsule_small.ico"))
+        lootbox_image_data = Image.open(IMAGE_PATH / Path('capsule_small.ico'))
         self.lootbox_image = ImageTk.PhotoImage(lootbox_image_data)
         self.lootbox_image_label = tk.Label(self, image=self.lootbox_image)
         self.xp_label.pack(side='left')
@@ -488,7 +489,7 @@ class XPFrame(tk.Frame):
         self.lootbox_image_label.pack(side='left')
 
     def set_xp(self, xp, prev_xp_milestone, next_xp_milestone):
-        self.xp_label['text'] = "XP:{}".format(xp)
+        self.xp_label['text'] = 'XP:{}'.format(xp)
         self.prev_xp_label['text'] = prev_xp_milestone
         self.next_xp_label['text'] = next_xp_milestone
         self.xp_progressbar['maximum'] = next_xp_milestone - prev_xp_milestone
@@ -496,12 +497,12 @@ class XPFrame(tk.Frame):
 
 
 def exit_program():
-    """
+    '''
     Save the keyboard before the user closes the window.
-    """
+    '''
     save_successful = UI.keyboard_section.save_keys()
     if not save_successful:
-        print("Exiting program, failed to save.")
+        print('Exiting program, failed to save.')
     audio_player.terminate()
     ROOT.destroy()
 
@@ -509,8 +510,8 @@ def exit_program():
 if __name__ == '__main__':
     ROOT = tk.Tk()
     ROOT.title('User Friendly Text Editor (change name)')
-    ROOT.iconbitmap(IMAGE_PATH / "window_icon.ico")
+    ROOT.iconbitmap(IMAGE_PATH / 'window_icon.ico')
     UI = UserInterface(ROOT)
     UI.pack()
-    ROOT.protocol("WM_DELETE_WINDOW", exit_program)
+    ROOT.protocol('WM_DELETE_WINDOW', exit_program)
     ROOT.mainloop()
