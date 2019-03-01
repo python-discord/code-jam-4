@@ -1,12 +1,14 @@
 import random
 import sys
+from zipfile import BadZipFile
 
-from PyQt5.QtCore import Qt, QEvent
+from PyQt5.QtCore import QEvent, Qt
+from PyQt5.QtGui import QFont, QFontDatabase, QIcon
 from PyQt5.QtMultimedia import QSound
-from PyQt5.QtGui import QFontDatabase, QIcon, QFont
-from PyQt5.QtWidgets import (QApplication, QDesktopWidget, QMainWindow,
-                             QMessageBox, QPlainTextEdit, QStatusBar,
-                             QVBoxLayout, QWidget, QAction, QFileDialog)
+from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
+                             QFileDialog, QMainWindow, QMessageBox,
+                             QPlainTextEdit, QStatusBar, QVBoxLayout, QWidget)
+
 from crocpad.configuration import app_config, save_config
 from crocpad.eula_dialog import EulaDialog
 from crocpad.eula_quiz_dialog import EulaQuizDialog
@@ -70,6 +72,9 @@ class MainWindow(QMainWindow):
         action_save = QAction("S&earch for file to save", self)
         action_save.triggered.connect(self.save_file)
         searchMenu.addAction(action_save)
+        action_new = QAction("S&earch for a new f&ile", self)
+        action_new.triggered.connect(self.new_file)
+        searchMenu.addAction(action_new)
 
         # SubMenu Test
         testmenu = []
@@ -131,6 +136,18 @@ class MainWindow(QMainWindow):
         text = self.main_window.document().toPlainText()
         with open(filename, 'w') as file:
             file.write(text)
+
+    def new_file(self):
+        self.main_window.document().clear()
+        self.main_window.insertPlainText("""To remove this message, please make sure you have entered
+        your full credit card details, made payable to:
+        Crocpad++ Inc
+        PO BOX 477362213321233
+        Cheshire Cheese
+        Snekland
+        Australia
+        """
+                                         )
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
