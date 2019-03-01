@@ -254,10 +254,6 @@ class Window(widget.PrimaryCanvas):
         self._current = self.create_window(self.origin, window=view)
 
     def change_view(self, view: tk.Widget, direction: Direction):
-        if self._current is None:
-            self.set_view(view)
-            return
-
         if not isinstance(direction, Direction):
             direction = Direction[direction]  # Cast string for convenience
 
