@@ -41,6 +41,8 @@ class MainWindow(QMainWindow):
         self.ui.playlist_view.hideColumn(6)  # crc32
         self.ui.playlist_view.hideColumn(7)  # path
 
+        # Default is a descending sort, which leads to an inconsistency given media is appended
+        self.playlist_model.setSort(0, Qt.AscendingOrder)
         self.playlist_model.select()  # Force-update the view
 
         # Playlist
