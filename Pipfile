@@ -5,8 +5,13 @@ verify_ssl = true
 
 [dev-packages]
 flake8 = "*"
+yapf = "*"
+vim-vint = "*"
+pycodestyle = "*"
+neovim = "*"
 
 [packages]
+pygame = "*"
 
 [requires]
 python_version = "3.7"
