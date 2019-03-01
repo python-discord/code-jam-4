@@ -35,27 +35,29 @@ class LetterGuesser:
         :param answer: string that should be either "Yes" or "No"; the program will  not respond to anything else
         :return: None
         """
-        if answer == "Yes":
-            self.remove_possible_words(requested_word)
         self.remove_possible_letters(requested_word, answer)
+        self.remove_possible_words(requested_word, answer)
 
     def request_word(self) -> str:
         return random.choice(list(self.dictionary))
 
-    def remove_possible_letters(self, word, yes_no) -> None:
+    def remove_possible_letters(self, word, answer) -> None:
         characters_to_delete = []
         for character in self.possible_characters:
-            if character not in word and yes_no == "Yes":
+            if character not in word and answer == "Yes":
                 characters_to_delete.append(character)
-            elif character in word and yes_no == "No":
+            elif character in word and answer == "No":
                 characters_to_delete.append(character)
         for character in characters_to_delete:
             self.possible_characters.remove(character)
 
-    def remove_possible_words(self, word) -> None:
+    def remove_possible_words(self, word, answer) -> None:
         words_to_delete = []
         for elem in self.dictionary:
-            if self.contains_none_letters(elem, word):
+            if self.contains_none_letters(elem, word) and answer == "Yes":
+                words_to_delete.append(elem)
+            # if a word contains none of the possible letters, remove it
+            elif self.contains_none_letters(elem, self.possible_characters) and answer == "No":
                 words_to_delete.append(elem)
         for elem in words_to_delete:
             del self.dictionary[elem]
@@ -73,14 +75,19 @@ if __name__ == '__main__':
     This is a simple demo showing how the letter guesser should be implemented
     """
     guesser = LetterGuesser()
-    print('Pick a letter, any letter; keep it in mind as you answer these questions!\n')
+    question_num = 1
+    print('Pick a character, any character; keep it in mind as you answer these questions!\n')
     while True:
         word = guesser.request_word()
-        yes_no = input('Is your letter in the word/phrase:\n{}\n(Yes/No):'.format(word))
+        yes_no = input('Question #{0}:\nIs your character in the word/phrase:\n{1}\n(Yes/No):'.format(question_num, word))
+        if yes_no == "Quit":
+            break
+        question_num += 1
         guesser.answer(word, yes_no)
         print(guesser.possible_characters)
+        print(len(list(guesser.dictionary)))
         if len(guesser.possible_characters) == 1:
-            print('The letter you want is \'{0}\''.format(guesser.possible_characters[0]))
+            print('The character you want is \'{0}\''.format(guesser.possible_characters[0]))
             break
         if len(guesser.possible_characters) < 1:
             print('A mistake has been made; try again')
