@@ -1,0 +1,10 @@
+{
+    "start": {
+        "text": "Hey, start message",
+        "smirk": false
+    },
+    "grow": {
+        "text": "Growing",
+        "smirk": true
+    }
+}

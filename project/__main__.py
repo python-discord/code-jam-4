@@ -19,6 +19,7 @@ KEY_DESCRIPTION_PATH = SCRIPT_DIR / Path('key_descriptions.json')
 SAVE_DATA_PATH = SCRIPT_DIR / Path('save_data.json')
 WORDS_PATH = SCRIPT_DIR / Path('words.json')
 DEFAULT_SAVE_PATH = SCRIPT_DIR / Path('default_save.json')
+TUTORIALS_PATH = SCRIPT_DIR / Path('tutorials.json')
 IMAGE_PATH = SCRIPT_DIR.parent / Path('img/')
 AUDIO_PATH = SCRIPT_DIR.parent / Path('audio/')
 DEFAULT_DOC_PATH = SCRIPT_DIR.parent / Path('documents/')
@@ -100,10 +101,16 @@ class UserInterface(tk.Frame):
             save_data = json.load(save_data_file)
             save_data_file.close()
 
+        with open(TUTORIALS_PATH, 'r') as tutorials_file:
+            all_tutorials = json.load(tutorials_file)
+
         self.window_name = 'Typing Program'
 
         saved_keys = save_data['keys']
         saved_scales = save_data['scales']
+        self.tutorials = {trigger: data for trigger, data
+                          in all_tutorials.items() if trigger
+                          in save_data['tutorials']}
         self.used_words = set(save_data['used_words'])
 
         if 'working_directory' in save_data.keys():
@@ -164,6 +171,13 @@ class UserInterface(tk.Frame):
         file_menu.add_command(label='Save As', command=self.save_file_as)
         file_menu.add_command(label='Load', command=self.load_file)
         file_menu.add_command(label='Quit', command=exit_program)
+
+        self.tutorial_trigger('start')
+
+    def tutorial_trigger(self, trigger):
+        if trigger in self.tutorials:
+            tutorial_data = self.tutorials.pop(trigger)
+            TutorialWindow(self, tutorial_data['text'], tutorial_data['smirk'])
 
     def new_file(self):
         self.working_file = None
@@ -242,6 +256,7 @@ class UserInterface(tk.Frame):
         self.keyboard_section.set_darkmode(self.is_darkmode.get())
 
     def receive_key(self, char):
+        TutorialWindow(self,"Test message")
         play_sound('tap')
         self.text_entry_section.receive_key(char)
 
@@ -373,6 +388,7 @@ class KeyboardSection(tk.Frame):
             'scales': [button.scale for button in self.buttons],
             'used_words': list(self.master.used_words),
             'xp': self.master.xp,
+            'tutorials': list(self.master.tutorials.keys()),
             'working_directory': str(self.master.working_directory)
         }
         json_data = json.dumps(json_compatible_data, indent=1)
@@ -599,18 +615,20 @@ class XPFrame(tk.Frame):
         self.xp_progressbar['value'] = xp - prev_xp_milestone
 
 
-tutorial_images = {expression: ImageTk.PhotoImage(
-                   Image.open(IMAGE_PATH / 'tutorial_{}.png'.format(expression)))
-                   for expression in ['neutral', 'smirk']}
-
-
 class TutorialWindow(tk.Toplevel):
-    def __init__(self, message=None, smirk=False, *args, **kwargs):
+    def __init__(self, master, message=None, smirk=False, *args, **kwargs):
         tk.Toplevel.__init__(self)
+        self.master = master
         self.title('Tutorial')
         self.attributes('-topmost', True)
-        self.message_label = tk.Label
-        #self.image_label = tk.Label(
+        self.message_label = tk.Label(self, text=message)
+        image_path = IMAGE_PATH / Path('tutorial_smirk.png' if smirk else
+                                       'tutorial_neutral.png')
+        self.tutorial_image = ImageTk.PhotoImage(Image.open(image_path))
+        self.image_label = tk.Label(self, image=self.tutorial_image)
+        self.message_label.pack(side='left')
+        self.image_label.pack(side='right')
+        tk.Button(self,text="Close",command=self.destroy).pack(side='bottom')
 
 
 def exit_program():

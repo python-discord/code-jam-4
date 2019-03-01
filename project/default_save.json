@@ -25,5 +25,9 @@
  ],
  "used_words": [
  ],
- "xp":0
+ "xp":0,
+ "tutorials": {
+     "start": ["Hi there start",0],
+     "grow": ["Growing",1]
+ }
 }
