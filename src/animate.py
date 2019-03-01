@@ -146,6 +146,9 @@ class Animater(tk.Canvas):
         motion = Motion(self, id, endpoints, **kwargs)
         self.add(motion)
 
+    def clear(self):
+        self.motions.clear()
+
 
 @dataclass
 class Motion:

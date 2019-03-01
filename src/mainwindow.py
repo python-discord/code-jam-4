@@ -3,7 +3,7 @@ import tkinter as tk
 import asyncio
 from pygame import mixer
 from .cache import Cache
-from .animate import Animater, Motion, Direction
+from .animate import Animater, Coord
 
 from . import SETTINGS
 
@@ -34,7 +34,7 @@ class Tinder:
         self.root.minsize(400, 500)
         self.root.maxsize(400, 500)
         self.root.configure(background=self.config['main.background'])
-        #self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+        # self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         # getting screen width and height for use with teleporting window/jumpscare
         self.screen_x = self.root.winfo_screenwidth()
@@ -166,6 +166,9 @@ class Tinder:
                 goes to bio and clicks back'''
 
                 # calls the new image function and passes the current cat dict
+                self.window.clear()
+                self.window.add_motion(self.bioid, (Coord(0, 500),), speed=3)
+                self.window.start()
                 self.new_image(cat)
 
             def get_bio():
@@ -210,13 +213,11 @@ class Tinder:
                     command=back_to_photo).pack(side=tk.BOTTOM)
 
                 # packing the frame
-                wid = self.window.create_window((0, 0), window=self.frame, anchor='nw')
-                end = Direction.DOWN * 100
-                motion = Motion(self.window, wid, (end,))
-                self.window.add_motion(motion)
+                self.bioid = self.window.create_window((0, 500), window=self.frame, anchor='nw')
+                end = Coord(0, 0)
+                self.window.add_motion(self.bioid, (end,), speed=3)
                 self.window.pack(fill='both', expand=True)
-                self.root.after(1, self.window.run)
-
+                self.window.start()
 
             # making and packing the Bio button for users to look at the cat's bio
             tk.Button(
