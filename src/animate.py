@@ -235,7 +235,7 @@ class Motion:
 
 
 class Window(widget.PrimaryCanvas):
-    animation_speed = 2
+    animation_speed = 3
     _current = None
 
     def init(self):
@@ -249,25 +249,29 @@ class Window(widget.PrimaryCanvas):
             self.delete(self._current)
             self.update()
 
+    def __set(self, view: tk.Widget, coord: Coord):
+        return self.create_window(
+            coord, window=view, anchor='nw'
+        )
+
     def set_view(self, view: tk.Widget):
         self.clear()
-        self._current = self.create_window(self.origin, window=view)
+        self._current = self.__set(view, self.origin)
 
     def change_view(self, view: tk.Widget, direction: Direction):
         if not isinstance(direction, Direction):
             direction = Direction[direction.upper()]  # Cast string for convenience
 
         if direction in (Direction.UP, Direction.DOWN):
-            edge = self.winfo_screenheight()
+            dist = self.winfo_height()
         elif direction in (Direction.LEFT, Direction.RIGHT):
-            edge = self.winfo_screenwidth()
+            dist = self.winfo_width()
         else:
             raise NotImplementedError
-
-        pos = self.__coord(self._current)
-        end = pos + edge
-        beg = pos - edge
-        wid = self.create_window(beg, window=view)
+        edge = direction * dist
+        end = self.origin + edge
+        beg = self.origin - edge
+        wid = self.__set(view, beg)
 
         self.animater.clear()
         self.animater.add_motion(self._current, end, speed=self.animation_speed)
@@ -278,4 +282,4 @@ class Window(widget.PrimaryCanvas):
 
     @property
     def origin(self):
-        return Coord(0, 0)
+        return Coord(self.winfo_x(), self.winfo_y())

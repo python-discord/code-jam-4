@@ -73,7 +73,9 @@ class PrimaryButton(tk.Button):
 
 
 class PrimaryLabel(tk.Label):
-    DEFAULT = {}
+    DEFAULT = {
+        'font': ('Courier', 17)
+    }
 
     def __init__(self, *args, **kwds):
         self.DEFAULT.update(kwds)
@@ -83,7 +85,9 @@ class PrimaryLabel(tk.Label):
 
 
 class PrimaryCanvas(tk.Canvas):
-    DEFAULT = {}
+    DEFAULT = {
+        'bg': 'black'
+    }
 
     def __init__(self, *args, **kwds):
         self.DEFAULT.update(kwds)

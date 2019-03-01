@@ -22,21 +22,13 @@ class App(tk.Tk):
         self.title = title
         mixer.init()
 
-        self.loop = asyncio.get_event_loop()
-        self.cache = Cache(self)
-
         self.geometry = '400x500'
         self.minsize(400, 500)
         self.maxsize(400, 500)
 
         self.front = Front(self)
+
         self.front.pack(fill='both', expand=True)
-
-        self.__cache()
-        self.front.cache = self.cache.cats
-
-    def __cache(self):
-        self.loop.run_until_complete(self.cache.refill())
 
 
 class Tinder:
@@ -62,8 +54,8 @@ class Tinder:
         self.root = tk.Tk()
         self.root.title(self.config['main.title'])
         self.root.geometry(self.config['main.geometry'])
-        self.root.minsize(400, 500)
-        self.root.maxsize(400, 500)
+        self.root.minsize(1000, 1000)
+        self.root.maxsize(1000, 1000)
         self.root.configure(background=self.config['main.background'])
         # self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 

@@ -1,15 +1,21 @@
+import asyncio
+
 from . import widget
 from .animate import Window, Direction
+from .cache import Cache
 
 
 class Front(widget.PrimaryFrame):
 
-    _cache: list = None
+    cachesize = 10
 
     def __next(self):
         data: dict = self.cache.pop()
         data.pop('jumpscare')  # not using it for now
-        name = data.pop('name')
+        if 'name' in data:  # TODO Fix
+            name = data.pop('name')
+        else:
+            name = 'None'
         image = data.pop('image')
         self.__load(name, image, data)
 
@@ -49,6 +55,9 @@ class Front(widget.PrimaryFrame):
         self.btn_dislike.pack(side='left')
         self.btn_like.pack(side='right')
 
+        self._loop = asyncio.get_event_loop()
+        self.cache = Cache(self.window)
+
     def cmd_dislike(self):
         self.__change_image('LEFT')
 
@@ -60,9 +69,9 @@ class Front(widget.PrimaryFrame):
 
     @property
     def cache(self):
-        if self._cache is None:
-            return AttributeError('cache has not been set.')
-        return self._cache
+        if len(self._cache.cats) < self.cachesize:
+            self._loop.run_until_complete(self._cache.refill())
+        return self._cache.cats
 
     @cache.setter
     def cache(self, data: list):
