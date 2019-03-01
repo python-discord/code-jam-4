@@ -235,29 +235,26 @@ class Motion:
 
 
 class Window(widget.PrimaryCanvas):
-    origin = Coord(0, 0)
     animation_speed = 2
-    current = None
+    _current = None
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
+    def init(self):
         self.animater = Animater(self)
 
     def __coord(self, id):
         return Coord(*self.coords(id)[:2])
 
     def clear(self):
-        if self.current is not None:
-            self.delete(self.current)
+        if self._current is not None:
+            self.delete(self._current)
             self.update()
 
     def set_view(self, view: tk.Widget):
         self.clear()
-        self.current = self.create_window(self.origin, window=view)
+        self._current = self.create_window(self.origin, window=view)
 
     def change_view(self, view: tk.Widget, direction: Direction):
-        if self.current is None:
+        if self._current is None:
             self.set_view(view)
             return
 
@@ -271,14 +268,18 @@ class Window(widget.PrimaryCanvas):
         else:
             raise NotImplementedError
 
-        pos = self.__coord(self.current)
+        pos = self.__coord(self._current)
         end = pos + edge
         beg = pos - edge
         wid = self.create_window(beg, window=view)
 
         self.animater.clear()
-        self.animater.add_motion(self.current, end, speed=self.animation_speed)
+        self.animater.add_motion(self._current, end, speed=self.animation_speed)
         self.animater.add_motion(wid, self.origin, speed=self.animation_speed)
 
         self.animater.start()
-        self.current = wid
+        self._current = wid
+
+    @property
+    def origin(self):
+        return Coord(0, 0)
