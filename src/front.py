@@ -41,13 +41,13 @@ class Front(widget.PrimaryFrame):
         self.btn_like = widget.PrimaryButton(
             self.commandbar, text='Yep', bg='green', command=self.cmd_like
         )
-        self.title.pack()
-        self.window.pack()
-        self.commandbar.pack()
+        self.title.pack(fill='x')
+        self.window.pack(fill='both')
+        self.commandbar.pack(side='bottom', fill='x')
 
+        self.btn_bio.pack()
         self.btn_dislike.pack(side='left')
-        self.btn_bio.pack(side='left')
-        self.btn_like.pack(side='left')
+        self.btn_like.pack(side='right')
 
     def cmd_dislike(self):
         self.__change_image('LEFT')

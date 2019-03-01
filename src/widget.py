@@ -1,94 +1,92 @@
 import tkinter as tk
 from configparser import ConfigParser
-
 from . import THEME
 
 parser = ConfigParser()
 parser.read(THEME)
 
 
-class MetaWidget(type):
-    DEFAULTS = {}
+class SecondaryFrame(tk.Frame):
+    DEFAULT = {}
 
-    def __new__(cls, name, bases, namespace, **kwds):
-        for base in (cls,) + bases:
-            if hasattr(base, 'THEME'):
-                theme = parser[base.THEME]
-                kwds.update(theme)
-                break
-
-        kwds.update(cls.DEFAULTS)
-        return super().__new__(cls, name, bases, namespace, **kwds)
-
-
-class Base(metaclass=MetaWidget):
-    THEME = 'base'
-
-    def __init__(self, cls, *args, **kwds):
-        cls.__init__(*args, **kwds)
+    def __init__(self, *args, **kwds):
+        self.DEFAULT.update(kwds)
+        super().__init__(*args, **self.DEFAULT)
         if hasattr(self, 'init'):
             self.init()
 
 
-class Secondary(Base):
-    THEME = 'secondary'
+class SecondaryButton(tk.Button):
+    DEFAULT = {
+        'height': 1,
+        'width': 10
+    }
 
-
-class Primary(Base):
-    THEME = 'primary'
-
-
-class SecondaryFrame(tk.Frame, Secondary):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *args, **kwds):
+        self.DEFAULT.update(kwds)
+        super().__init__(*args, **self.DEFAULT)
         if hasattr(self, 'init'):
             self.init()
 
 
-class SecondaryButton(tk.Button, Secondary):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class SecondaryLabel(tk.Label):
+    DEFAULT = {}
+
+    def __init__(self, *args, **kwds):
+        self.DEFAULT.update(kwds)
+        super().__init__(*args, **self.DEFAULT)
         if hasattr(self, 'init'):
             self.init()
 
 
-class SecondaryLabel(tk.Label, Secondary):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class SecondaryCanvas(tk.Canvas):
+    DEFAULT = {}
+
+    def __init__(self, *args, **kwds):
+        self.DEFAULT.update(kwds)
+        super().__init__(*args, **self.DEFAULT)
         if hasattr(self, 'init'):
             self.init()
 
 
-class SecondaryCanvas(tk.Canvas, Secondary):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class PrimaryFrame(tk.Frame):
+    DEFAULT = {}
+
+    def __init__(self, *args, **kwds):
+        self.DEFAULT.update(kwds)
+        super().__init__(*args, **self.DEFAULT)
         if hasattr(self, 'init'):
             self.init()
 
 
-class PrimaryFrame(tk.Frame, Primary):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class PrimaryButton(tk.Button):
+    DEFAULT = {
+        'height': 2,
+        'width': 10
+    }
+
+    def __init__(self, *args, **kwds):
+        self.DEFAULT.update(kwds)
+        super().__init__(*args, **self.DEFAULT)
         if hasattr(self, 'init'):
             self.init()
 
 
-class PrimaryButton(tk.Button, Primary):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class PrimaryLabel(tk.Label):
+    DEFAULT = {}
+
+    def __init__(self, *args, **kwds):
+        self.DEFAULT.update(kwds)
+        super().__init__(*args, **self.DEFAULT)
         if hasattr(self, 'init'):
             self.init()
 
 
-class PrimaryLabel(tk.Label, Primary):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if hasattr(self, 'init'):
-            self.init()
+class PrimaryCanvas(tk.Canvas):
+    DEFAULT = {}
 
-
-class PrimaryCanvas(tk.Canvas, Primary):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *args, **kwds):
+        self.DEFAULT.update(kwds)
+        super().__init__(*args, **self.DEFAULT)
         if hasattr(self, 'init'):
             self.init()

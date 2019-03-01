@@ -30,7 +30,7 @@ class App(tk.Tk):
         self.maxsize(400, 500)
 
         self.front = Front(self)
-        self.front.pack(fill='both')
+        self.front.pack(fill='both', expand=True)
 
         self.__cache()
         self.front.cache = self.cache.cats
