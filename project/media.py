@@ -3,13 +3,20 @@ import json
 import logging
 import subprocess
 from pathlib import Path
+from typing import Any, Dict, Iterable
+
+from PySide2.QtCore import QAbstractItemModel, QUrl
+from PySide2.QtMultimedia import QMediaContent, QMediaPlayer
+from PySide2.QtSql import QSqlRecord
+
+from project.playlist import Playlist
 
 log = logging.getLogger(__name__)
 
 TAG_WHITELIST = ("title", "artist", "album", "date", "genre")
 
 
-def compute_crc32(path: str) -> int:
+def _compute_crc32(path: str) -> int:
     """Compute and return the CRC-32 of a file at `path`.
 
     Parameters
@@ -28,7 +35,7 @@ def compute_crc32(path: str) -> int:
         return binascii.crc32(data)
 
 
-def parse_media(path: str):
+def _parse_media(path: str):
     """Parse the metadata of a media file and return it as a dictionary.
 
     Parameters
@@ -68,10 +75,90 @@ def parse_media(path: str):
     tags = {k.lower(): v for k, v in tags.items() if k.lower() in TAG_WHITELIST}
 
     tags["path"] = path
-    tags["crc32"] = compute_crc32(path)
+    tags["crc32"] = _compute_crc32(path)
 
     # Use the file name as the title if one doesn't exist.
     if not tags.get("title"):
         tags["title"] = Path(path).stem
 
     return tags
+
+
+class Player(QMediaPlayer):
+    def __init__(self, model: QAbstractItemModel, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self._model = model
+
+        playlist = Playlist(self._model)
+        playlist.setPlaybackMode(Playlist.Loop)
+        playlist.currentIndexChanged.connect(self.playlist_index_changed)
+
+        self.error.connect(self.handle_error)
+        self.mediaStatusChanged.connect(self.media_status_changed)
+        self.stateChanged.connect(self.state_changed)
+        self.setPlaylist(playlist)
+
+    def _create_record(self, metadata: Dict[str, Any]) -> QSqlRecord:
+        """Create and return a library record from media `metadata`.
+
+        Parameters
+        ----------
+        metadata: Dict[str, Any]
+            The media's metadata.
+
+        Returns
+        -------
+        QSqlRecord
+            The created record.
+
+        """
+        record = self._model.record()
+        record.remove(record.indexOf("id"))  # id field is auto-incremented so it can be removed.
+
+        for k, v in metadata.items():
+            record.setValue(k, v)
+
+        return record
+
+    def add_media(self, paths: Iterable[str]):
+        """Add media from `paths` to the playlist.
+
+        Parameters
+        ----------
+        paths: Iterable[str]
+            The paths to the media files to add.
+
+        """
+        for path in paths:
+            log.debug(f"Adding record for {path}")
+
+            metadata = _parse_media(path)
+            record = self._create_record(metadata)
+
+            if not self._model.insertRecord(-1, record):  # -1 will append
+                log.error(f"Failed to insert record for {path}: {self._model.lastError()}")
+                # TODO: Does a rollback need to happen in case of failure?
+                continue
+
+            media = QMediaContent(QUrl.fromLocalFile(path))
+            if not self.playlist().addMedia(media, self._model.rowCount() - 1):
+                log.error(f"Failed to add media to playlist for {path}")
+                # TODO: revertAll/rollback
+
+        self._model.submitAll()
+
+    @staticmethod
+    def state_changed(state):
+        log.debug(f"State changed: {state}")
+
+    @staticmethod
+    def media_status_changed(status):
+        log.debug(f"Status changed: {status}")
+
+    def playlist_index_changed(self, index: int):
+        name = self.playlist().currentMedia().canonicalUrl().fileName()
+        log.debug(f"Index changed: [{index:03d}] {name}")
+
+    def handle_error(self, error):
+        log.error(f"{error}: {self.player.errorString()}")

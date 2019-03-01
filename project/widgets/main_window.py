@@ -1,13 +1,10 @@
 import logging
-from typing import Any, Dict
 
-from PySide2.QtCore import QUrl, Qt
-from PySide2.QtMultimedia import QMediaContent, QMediaPlayer
-from PySide2.QtSql import QSqlRecord, QSqlTableModel
+from PySide2.QtCore import Qt
+from PySide2.QtSql import QSqlTableModel
 from PySide2.QtWidgets import QAbstractItemView, QFileDialog, QMainWindow
 
-from project import media as media_utils, ui
-from project.playlist import Playlist
+from project import media, ui
 from project.widgets.password_prompt import PasswordPrompt
 
 log = logging.getLogger(__name__)
@@ -45,79 +42,15 @@ class MainWindow(QMainWindow):
         self.playlist_model.setSort(0, Qt.AscendingOrder)
         self.playlist_model.select()  # Force-update the view
 
-        # Playlist
-        self.playlist = Playlist(self.playlist_model)
-        self.playlist.setPlaybackMode(Playlist.Loop)
-        self.playlist.currentIndexChanged.connect(self.playlist_index_changed)
-
-        # Player
-        self.player = QMediaPlayer()
-        self.player.error.connect(self.player_error)
-        self.player.mediaStatusChanged.connect(self.player_media_status_changed)
-        self.player.stateChanged.connect(self.player_state_changed)
-        self.player.setPlaylist(self.playlist)
+        self.player = media.Player(self.playlist_model)
 
         # Widget signals
         self.ui.play_button.pressed.connect(self.player.play)
-        self.ui.previous_button.pressed.connect(self.playlist.previous)
-        self.ui.next_button.pressed.connect(self.playlist.next)
-        self.ui.add_files_action.triggered.connect(self.add_media)
+        self.ui.previous_button.pressed.connect(self.player.playlist().previous)
+        self.ui.next_button.pressed.connect(self.player.playlist().next)
+        self.ui.add_files_action.triggered.connect(self.add_files)
 
-    def create_record(self, metadata: Dict[str, Any]) -> QSqlRecord:
-        """Create and return a library record from media `metadata`.
-
-        Parameters
-        ----------
-        metadata: Dict[str, Any]
-            The media's metadata.
-
-        Returns
-        -------
-        QSqlRecord
-            The created record.
-
-        """
-        record = self.playlist_model.record()
-        record.remove(record.indexOf("id"))  # id field is auto-incremented so it can be removed.
-
-        for k, v in metadata.items():
-            record.setValue(k, v)
-
-        return record
-
-    def add_media(self):
-        """Add media files selected from a file dialogue to the playlist."""
+    def add_files(self, checked: bool = False):
+        """Show a file dialogue and add selected files to the playlist."""
         paths, _ = QFileDialog.getOpenFileNames(self, "Add files", "", "")
-
-        for path in paths:
-            log.debug(f"Adding record for {path}")
-
-            metadata = media_utils.parse_media(path)
-            record = self.create_record(metadata)
-
-            if not self.playlist_model.insertRecord(-1, record):  # -1 will append
-                log.error(f"Failed to insert record for {path}: {self.playlist_model.lastError()}")
-                # TODO: Does a rollback need to happen in case of failure?
-                continue
-
-            media = QMediaContent(QUrl.fromLocalFile(path))
-            if not self.playlist.addMedia(media, self.playlist_model.rowCount() - 1):
-                log.error(f"Failed to add media to playlist for {path}")
-                # TODO: revertAll/rollback
-
-        self.playlist_model.submitAll()
-
-    @staticmethod
-    def player_state_changed(state):
-        log.debug(f"State changed: {state}")
-
-    @staticmethod
-    def player_media_status_changed(status):
-        log.debug(f"Status changed: {status}")
-
-    def playlist_index_changed(self, index: int):
-        name = self.playlist.currentMedia().canonicalUrl().fileName()
-        log.debug(f"Index changed: [{index:03d}] {name}")
-
-    def player_error(self, error):
-        log.error(f"{error}: {self.player.errorString()}")
+        self.player.add_media(paths)
