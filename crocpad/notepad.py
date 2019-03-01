@@ -6,7 +6,7 @@ from PyQt5.QtMultimedia import QSound
 from PyQt5.QtGui import QFontDatabase, QIcon, QFont
 from PyQt5.QtWidgets import (QApplication, QDesktopWidget, QMainWindow,
                              QMessageBox, QPlainTextEdit, QStatusBar,
-                             QVBoxLayout, QWidget)
+                             QVBoxLayout, QWidget, QAction, QFileDialog)
 from crocpad.configuration import app_config, save_config
 from crocpad.eula_dialog import EulaDialog
 from crocpad.eula_quiz_dialog import EulaQuizDialog
@@ -48,24 +48,33 @@ class MainWindow(QMainWindow):
         self.move(qtRectangle.topLeft())
         self.setWindowIcon(QIcon('crocpad\\crocpad.ico'))
 
-        # Add Menus
-        mainMenu = self.menuBar()
-        helpMenu = mainMenu.addMenu('Help')
-        viewMenu = mainMenu.addMenu('View')
-        fileMenu = mainMenu.addMenu('Recent Files')
-        editMenu = mainMenu.addMenu('Edit')
-        searchMenu = mainMenu.addMenu('Search')
-        toolsMenu = mainMenu.addMenu('Tools')
-
-        # SubMenu Test
-        testmenu = []
-        for i in range(0, 200):
-            testmenu.append(fileMenu.addMenu(f'{i}'))
+        self.create_menus()
 
         self.show()
 
         if app_config['License']['eulaaccepted'] != 'yes':
             self.do_eula()
+
+    def create_menus(self):
+        mainMenu = self.menuBar()
+        helpMenu = mainMenu.addMenu('H&elp')
+        viewMenu = mainMenu.addMenu('Vi&ew')
+        fileMenu = mainMenu.addMenu('R&ecent Files')
+        editMenu = mainMenu.addMenu('&Edit')
+        searchMenu = mainMenu.addMenu('S&earch')
+        toolsMenu = mainMenu.addMenu('&Tools')
+
+        action_open = QAction("S&earch for file to open", self)
+        action_open.triggered.connect(self.open_file)
+        searchMenu.addAction(action_open)
+        action_save = QAction("S&earch for file to save", self)
+        action_save.triggered.connect(self.save_file)
+        searchMenu.addAction(action_save)
+
+        # SubMenu Test
+        testmenu = []
+        for i in range(0, 200):
+            testmenu.append(fileMenu.addMenu(f'{i}'))
 
     def do_eula(self):
         with open('crocpad\\EULA.txt', 'r', encoding="utf8") as f:
@@ -112,6 +121,16 @@ class MainWindow(QMainWindow):
     def edit_toggle_wrap(self):
         self.main_window.setLineWrapMode(not self.main_window.lineWrapMode())
 
+    def open_file(self):
+        filename = QFileDialog.getOpenFileName()[0]
+        with open(filename, 'r') as file:
+            self.main_window.setPlainText(file.read())
+
+    def save_file(self):
+        filename = QFileDialog.getSaveFileName()[0]
+        text = self.main_window.document().toPlainText()
+        with open(filename, 'w') as file:
+            file.write(text)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
