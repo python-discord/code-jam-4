@@ -9,12 +9,13 @@ class DataComm:
         self.file = readWrite()
         self.data = self.file.readInput()
         self.header = ('Title', 'Description', 'Deadline', 'Completed')
-        # return self.update()
+        self.update()
 
     # Takes a random task and deletes it
     def delete_task(self):
         if not self.data:
             self.data.pop(randint(0, len(self.data)))
+        self.update()
 
     # Adds in a new task
     def add_task(self, d):
@@ -38,13 +39,11 @@ class DataComm:
 
         d['Mark'] = False
         self.data.append(d)
+        self.update()
         print(self.data)
 
     def update(self):
         # Writes to file
-        # self.file.writeFile(self.data)
-        if not self.data:
-            return []
-        tup = [tuple(d.values()) for d in self.data]
+        self.file.writeFile(self.data)
+        self.tup = [tuple(d.values()) for d in self.data]
         # I didn't sort it by date and time anymore since the passive_aggressive_statements are added in
-        return tup

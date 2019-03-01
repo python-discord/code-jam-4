@@ -22,7 +22,7 @@ class MainApplication(QMainWindow, Ui_MainApplication):
         self.windows = []
         self.datacomm = DataComm()
         self.tabel_model = TableModel(
-            self, self.datacomm.data, self.datacomm.header
+            self, self.datacomm.tup, self.datacomm.header
         )
         self.update_table()
 
