@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter.ttk import *
 from project.contact import Contact
 import pickle
+from project.WheelSpinner import WheelSpinner
 
 """
 TODO:
@@ -103,6 +104,7 @@ class ContactsPage(Frame):
         self.contacts_field = None
         self.letters_field = None
         self.show_info = None
+        self.wheel_spin = None
         self.delete = None
         self.info_field = None
         self.info_scroll = None

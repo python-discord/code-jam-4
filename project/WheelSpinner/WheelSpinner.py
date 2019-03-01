@@ -21,12 +21,14 @@ class WheelSpinner(tk.Frame):
 
         self.frame = 0
         self.speed = 400
-        self.draw()
+        #self.draw()
         self.display_label.pack()
         self.canvas.pack()
+
         self.canvas.bind("<Button-1>", lambda event: self.verify_click_position(event))
         self.canvas.bind("<ButtonRelease-1>", lambda event: self.on_mouse_release(event))
 
+        self.__drawn = False
         self.__rotation_speed_list = []
         self.__is_dragging = False
         self.__init_drag_pos = None
@@ -53,6 +55,11 @@ class WheelSpinner(tk.Frame):
                                                   fill=self.generate_random_color(), width=3))
             angle = angle + self.angle_increment
 
+        self.__drawn = True
+
+    def erase(self):
+        self.canvas.delete('all')
+
     def display_current_winner(self):
         winner = None
         for arc in self.drawn_arc:
@@ -63,6 +70,9 @@ class WheelSpinner(tk.Frame):
             self.display_label['text'] = winner
 
     def update(self):
+        if not self.__drawn:
+            self.after(33, self.update)
+            return
         if self.__current_time is None:
             self.__delta_time = 1 / 30
         else:
@@ -74,6 +84,7 @@ class WheelSpinner(tk.Frame):
             self.display_current_winner()
 
         if self.__is_dragging:
+            print('drag')
             self.drag()
 
         self.after(33, self.update)
@@ -82,7 +93,13 @@ class WheelSpinner(tk.Frame):
         if self.__is_dragging or self.__is_rotating:
             return
 
+        if not self.__drawn:
+            self.draw()
+            self.__drawn = True
+            return
+
         x, y = event.x, event.y
+
         #self.is_rotating = True
 
         if math.sqrt(math.pow(self.size/2 - x, 2) + math.pow(self.size/2 - y, 2)) <= self.radius:
@@ -134,14 +151,16 @@ class WheelSpinner(tk.Frame):
 
         if math.copysign(1, self.speed) != math.copysign(1, self.speed + acceleration*self.__delta_time):
             self.speed = 0
-            self.__is_rotating = False
+            self.finish_rotation()
         else:
             self.speed = self.speed + acceleration*self.__delta_time
         print('speed = ' + str(self.speed))
         print(acceleration)
 
-
-
+    def finish_rotation(self):
+        self.__is_rotating = False
+        self.erase()
+        self.__drawn = False
 
     def __get_elapsed_time(self):
         """
