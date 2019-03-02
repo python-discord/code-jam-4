@@ -92,6 +92,18 @@ class Playlist(QMediaPlaylist):
                     f"{path} does not exist or isn't a file."
                 )
 
+    def setCurrentRow(self, row: int):
+        """Sets the playlist to the media at `row`.
+
+        Parameters
+        ----------
+        row: int
+            The row at which the media is.
+
+        """
+        index = self._get_playlist_index(row)
+        self.setCurrentIndex(index)
+
     def currentIndex(self) -> int:
         return self._current_index
 

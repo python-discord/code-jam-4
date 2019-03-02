@@ -194,8 +194,9 @@ class Player(QMediaPlayer):
     def play(self):
         super().play()
 
+        # Workaround for current index not being set initially.
         if self.playlist().currentIndex() == -1:
-            self.playlist().setCurrentIndex(0)
+            self.playlist().setCurrentRow(0)
 
     @staticmethod
     def state_changed(state):
