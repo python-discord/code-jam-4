@@ -64,8 +64,8 @@ class PrimaryFrame(tk.Frame):
 
 class PrimaryButton(tk.Button):
     DEFAULT = {
-        'height': 2,
-        'width': 10
+        'height': 3,
+        'width': 15
     }
 
     def __init__(self, *args, **kwds):
@@ -77,7 +77,9 @@ class PrimaryButton(tk.Button):
 
 class PrimaryLabel(tk.Label):
     DEFAULT = {
-        'font': ('Courier', 17)
+        'font': ('Courier', 25),
+        'bg': 'black',
+        'fg': 'gray'
     }
 
     def __init__(self, *args, **kwds):
