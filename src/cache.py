@@ -1,123 +1,70 @@
-import aiohttp
+
+import requests
+import time
+# import configparser
+
 from random import randint, choice, sample
-from PIL import Image, ImageTk
-import io
-import configparser
+from multiprocessing import Process, Queue
 
-from . import SETTINGS, IMAGES
+# from . import SETTINGS, IMAGES
 
 
-class Cache:
-    '''Class used for caching images and data about the cats'''
+class ImageCache:
+    '''Class used for caching images'''
+    image_api = 'https://api.thecatapi.com/v1/images/search'
+    profile_api = "https://www.pawclub.com.au/assets/js/namesTemp.json"
+    hobbies_api = (
+        "https://gist.githubusercontent.com/mbejda/453fdb77ef8d4d3b3a67/raw/"
+        "e8334f09109dc212892406e25fdee03efdc23f56/hobbies.txt"
+    )
+    ratelimit = 0.1
 
-    def __init__(self, root):
-        # setting root
-        self.root = root
-        self.screen_x = self.root.winfo_screenwidth()
-        self.screen_y = self.root.winfo_screenheight()
+    def __init__(self, size):
+        self.queue = Queue(size)
+        self.worker = None
 
-        # setting class variables for use later
-        self.cats = list()
-        self.session = None
+    def __del__(self):
+        self.stop()
 
-        # get settings
-        cp = configparser.ConfigParser()
-        cp.read(str(SETTINGS))
+    def get_image(self):
+        res = requests.get(self.image_api, stream=True)
+        data = res.json()
+        url = data[0]['url']
+        res = requests.get(url)
+        return res.content
 
-        # for now, let's just look up the DEV settings
-        # can change this later
-        # configparser will use values from DEFAULT section if none provided elsewhere
-        if 'DEV' in cp.sections():
-            self.config = cp['DEV']
-        else:
-            self.config = cp['DEFAULT']
+    def get_hobbies(self):
+        res = requests.get(self.hobbies_api)
+        all_hobbies = res.text.split("\n")
+        return sample(all_hobbies, 5)
 
-        # getting the directory folder for use later when opening files
+    def get_profile(self):
+        res = requests.get(self.profile_api)
+        data = res.json()
+        letter = choice('acdefghijklmnopqrstuvwxyz')
+        data = choice(data[letter])
+        return {
+            'name': data['name'],
+            'gender': data['gender'],
+            'age': randint(1, 42),
+            'location': f'{randint(1, 9999)} miles away',
+            'image': self.get_image(),
+            'hobbies': self.get_hobbies()
+        }
 
-    async def refill(self):
-        '''Gets a cache of cat data and adds it to the self.cats list'''
+    def next(self):
+        return self.queue.get()
 
-        # if we haven't created a session yet, do so
-        if not self.session:
-            self.session = aiohttp.ClientSession()
+    def mainloop(self, queue):
+        while True:
+            queue.put(self.get_profile())
+            time.sleep(self.ratelimit)
 
-        cachesize = int(self.config['cachesize'])
+    def start(self):
+        if self.worker is not None and self.worker.is_alive():
+            self.stop()
+        self.worker = Process(target=self.mainloop, args=(self.queue,))
+        self.worker.start()
 
-        # Run 10 times to get 10 cats
-        for i in range(cachesize):
-            # initialize a dict of cat data
-            cat_data = dict()
-
-            # randomly make jumpscares happen, but not on the first image
-            if randint(1, 10) == 5 and i:
-                # get a random number for an image
-                image_number = randint(1, 10)
-                # open and resize the image using Pillow
-                imagepath = IMAGES / f"{image_number}.jpg"
-                im = Image.open(imagepath)
-                im = im.resize((self.screen_x, self.screen_y - 150), Image.NEAREST)
-                # make the image a tkinter image
-                image = ImageTk.PhotoImage(im)
-                # update the cat data dict
-                cat_data.update({"image": image})
-                cat_data.update({"jumpscare": True})
-            else:
-                # set jumpscare to False because it isnt a jumpscare image
-                cat_data.update({"jumpscare": False})
-
-                # get a url from The Cat API
-                async with self.session.get('https://api.thecatapi.com/v1/images/search') as res:
-                    data = await res.json()
-                    url = data[0]['url']
-                # get image data from that url
-                async with self.session.get(url) as res:
-                    image_bytes = await res.read()
-                    # open and the image in pillow
-                    im = Image.open(io.BytesIO(image_bytes))
-                    im = im.resize((400, 280), Image.NEAREST)
-                    # make the image a tkinter image
-                    image = ImageTk.PhotoImage(im)
-                    # update the cat data dict
-                    cat_data.update({"image": image})
-
-                # get a random name
-                async with self.session.get(
-                        "https://www.pawclub.com.au/assets/js/namesTemp.json") as res:
-                    data = await res.json()
-                    # get a random letter for the name
-                    # Note: website doesn't have any b names which is why it is left out here
-                    letter = choice(list('acdefghijklmnopqrstuvwxyz'))
-                    # randomly choose a name from the json with that letter
-                    cat = choice(data[letter])
-                    # update the cat data dict
-                    cat_data.update({"name": cat["name"]})
-                    cat_data.update({"gender": cat["gender"]})
-
-                # get 5 random hobbies
-                async with self.session.get(
-                    "https://gist.githubusercontent.com/mbejda/" +
-                    "453fdb77ef8d4d3b3a67/raw/e8334f09109dc212892406e25fdee03efdc23f56/" +
-                    "hobbies.txt"
-                ) as res:
-                    text = await res.text()
-                    # split the raw text of hobbies into a list
-                    all_hobbies = text.split("\n")
-                    # get 5 of those hobbies
-                    hobby_list = sample(all_hobbies, 5)
-                    # join those 5 hobbies into a bulleted list (string)
-                    list_of_hobbies = "\n •".join(hobby_list)
-                    hobbies = f"Hobbies:\n •{list_of_hobbies}"
-                    # update the cat_data dict
-                    cat_data.update({"hobbies": hobbies})
-
-                # get a random age between 1 and 15 (avg lifespan of a cat)
-                age = str(randint(1, 15))
-                # update the cat data dict
-                cat_data.update({"age": age})
-
-                # get a random number of miles away between 1 and 5
-                miles = randint(1, 5)
-                location = f"{miles} miles away"
-                # update the cat data dict
-                cat_data.update({"location": location})
-            self.cats.append(cat_data)
+    def stop(self):
+        self.worker.terminate()

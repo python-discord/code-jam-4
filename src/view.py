@@ -1,10 +1,10 @@
 import tkinter as tk
 from typing import TypeVar
 from enum import Enum
+from PIL import ImageTk
 
 from . import widget
 from .animate import Coord, Animater, Direction
-from .cache import ImageTk
 
 
 class ViewType(Enum):
