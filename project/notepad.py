@@ -127,8 +127,9 @@ class Notepad:
             self.__thisTextArea.delete(1.0, END)
 
             file = open(self.__file, "r")
+            reversed_file = file.read()[::-1]
 
-            self.__thisTextArea.insert(1.0, file.read())
+            self.__thisTextArea.insert(1.0, reversed_file)
 
             file.close()
 
