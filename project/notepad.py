@@ -17,6 +17,8 @@ from tkinter.filedialog import (
     TclError,
 )
 
+from reverse_writer import WordReverser
+
 
 
 
@@ -74,7 +76,8 @@ class Notepad:
 
         # Add controls (widget)
         self.__thisTextArea.grid(sticky=N + E + S + W)
-
+        wr = WordReverser()
+        self.__thisTextArea.bind("<KeyRelease>", wr.reverse_word_only)
         # To open new file
         self.__thisFileMenu.add_command(label="New", command=self.__new_file)
 
