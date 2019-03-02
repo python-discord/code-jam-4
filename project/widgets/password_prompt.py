@@ -3,34 +3,12 @@ from random import choice
 
 from project import ui
 
-words = """
-salty
-fish
-lackadaisical
-lax
-llama
-lukewarm
-leisurely
-enthusiastic
-fantastic
-flying
-alphabetical
-gamma
-terrier
-excitable
-green
-purple
-superb
-stressed
-machine
-hunter
-""".split('\n')[1:-1]
-
 
 class PasswordPrompt(QWidget):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, password, *args, **kwargs):
         super(PasswordPrompt, self).__init__(*args, **kwargs)
 
+        self.password = password
         self.ui = ui.PasswordPrompt()
         self.ui.setupUi(self)
 
@@ -38,20 +16,19 @@ class PasswordPrompt(QWidget):
         self.ui.confirm_button.pressed.connect(self.check)
         self.success = False
 
+    def change_password(self, new_password):
+        self.password = new_password
+
     def display(self):
         self.success = False
-        self.passphrase = [choice(words), choice(words), choice(words)]
-        self.ui.generated_passphrase.setText(
-            f"Your generated passphrase is <b>{' '.join(self.passphrase)}</b>."
-        )
         self.show()
 
     def check(self):
         """Check if entered passphrase is correct."""
         field_one = self.ui.password_regular.text()
         field_two = self.ui.password_backwards.text()
-        if (field_one == ' '.join(sorted(self.passphrase))) and \
-           (field_two == sorted(self.passphrase)[0][::-1]):
+        if (field_one == self.password)) and \
+           (field_two == sorted(self.password)):
             self.success = True
             self.close()
         else:

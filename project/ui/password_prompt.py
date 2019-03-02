@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'qt/passwordprompt.ui',
 # licensing of 'qt/passwordprompt.ui' applies.
 #
-# Created: Sat Mar  2 13:02:35 2019
+# Created: Sat Mar  2 14:23:18 2019
 #      by: pyside2-uic  running on PySide2 5.12.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -44,10 +44,6 @@ class Ui_PasswordPrompt(object):
         self.correct_label.setGeometry(QtCore.QRect(10, 230, 381, 20))
         self.correct_label.setText("")
         self.correct_label.setObjectName("correct_label")
-        self.generated_passphrase = QtWidgets.QLabel(PasswordPrompt)
-        self.generated_passphrase.setGeometry(QtCore.QRect(10, 20, 381, 20))
-        self.generated_passphrase.setText("")
-        self.generated_passphrase.setObjectName("generated_passphrase")
 
         self.retranslateUi(PasswordPrompt)
         QtCore.QMetaObject.connectSlotsByName(PasswordPrompt)
@@ -58,12 +54,12 @@ class Ui_PasswordPrompt(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Please reorder the passphrase into alphabetical order.</p></body></html>", None, -1))
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Please enter the password.</p></body></html>", None, -1))
         self.instructions_backwards.setHtml(QtWidgets.QApplication.translate("PasswordPrompt", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Enter the alphabetically foremost word of the passphrase, but backwards.</p></body></html>", None, -1))
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Please reorder the password into alphabetical order.</p></body></html>", None, -1))
         self.password_label.setText(QtWidgets.QApplication.translate("PasswordPrompt", "Password", None, -1))
         self.password_label_2.setText(QtWidgets.QApplication.translate("PasswordPrompt", "Password", None, -1))
         self.confirm_button.setText(QtWidgets.QApplication.translate("PasswordPrompt", "Confirm", None, -1))
