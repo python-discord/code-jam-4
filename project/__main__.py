@@ -69,7 +69,7 @@ class Framed(tk.AsyncTk):
         self._setupMenu()
 
         self.canvas = Canvas(
-            self, height=400, width=400
+            self, height=600, width=600
         )  # Temporary - will make them settable
         self.entry = EntrySection(self)
 
@@ -176,7 +176,8 @@ class Framed(tk.AsyncTk):
     async def file_select(self, *, new_file: bool = True):
         """File select dialogue"""
         manager = tk.AsyncToplevel(self)
-        manager.title(self.cur_locale.menu.fileselect.saveas if new_file else self.cur_locale.menu.fileselect.open)
+        manager.title(self.cur_locale.menu.fileselect.saveas
+                      if new_file else self.cur_locale.menu.fileselect.open)
         manager.protocol("WM_DELETE_WINDOW", lambda: asyncio.ensure_future(manager.destroy()))
         dir = pathlib.Path()
         dirbox = tk.AsyncEntry(manager)

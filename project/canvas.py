@@ -3,11 +3,13 @@ This module contains the canvas and entry section items that fill
 the normal tk window (located in __main__.py)
 """
 
+import typing
+import pathlib
+import random
+
 import asynctk as tk
 from PIL import Image, ImageDraw, ImageTk
 import asyncio
-import typing
-import pathlib
 
 
 class Colour:
@@ -118,7 +120,7 @@ class Canvas(tk.AsyncCanvas):
         that was shown before the undo button was pressed
     frame: asynctk.AsyncFrame or None
         The frame created that the canvas is in, if any. This is only created if the image
-        surpasses the 400x400 grid, in which case a frame is added for scrollbars.
+        surpasses the 600x600 grid, in which case a frame is added for scrollbars.
 
     Methods
     -------
@@ -140,10 +142,10 @@ class Canvas(tk.AsyncCanvas):
     ):
         self.frame = None
 
-        if height > 400 or width > 400:
+        if height > 600 or width > 600:
 
-            true_height = 400 if height > 400 else height
-            true_width = 400 if width > 400 else width
+            true_height = 600 if height > 600 else height
+            true_width = 600 if width > 600 else width
 
             self.frame = tk.AsyncFrame(master)
             self.frame.pack(side=tk.LEFT)
@@ -155,13 +157,13 @@ class Canvas(tk.AsyncCanvas):
                 scrollregion=(0, 0, width, height),
             )
 
-            if height > 400:
+            if height > 600:
                 hbar = tk.AsyncScrollbar(self.frame, orient=tk.HORIZONTAL)
                 hbar.pack(side=tk.BOTTOM, fill=tk.X)
                 hbar.config(command=self.yview)
                 self.config(yscrollcommand=hbar.set)  # intentional switch
 
-            if width > 400:
+            if width > 600:
                 vbar = tk.AsyncScrollbar(self.frame, orient=tk.VERTICAL)
                 vbar.pack(side=tk.RIGHT, fill=tk.Y)
                 vbar.config(command=self.xview)
@@ -224,6 +226,82 @@ class Canvas(tk.AsyncCanvas):
         else:
             self.pack_forget()
 
+    @staticmethod
+    async def altercolour(im: Image.Image):
+        data = list(im.getdata())
+        new_data = []
+        for r, g, b in data:
+            new_data.append((g, b, r))
+        new_im = Image.new(im.mode, im.size, (255, 255, 255))
+        new_im.putdata(new_data)
+        return new_im
+
+    @staticmethod
+    async def pixelate(im: Image.Image):
+        width, height = im.size
+        wdigits = -1 * len(str(width)) + 2
+        hdigits = -1 * len(str(height)) + 2
+
+        factor = hdigits if hdigits > wdigits else wdigits
+        print(factor)
+
+        width = int(round(width/2, factor) * 2)
+        height = int(round(height/2, factor) * 2)
+
+        im = im.resize((width, height))
+
+        divider = 10 ** (-1 * factor) // 5
+        small_width = width // divider
+        small_height = height // divider
+
+        new_im = im.resize((small_width, small_height))
+        new_im = new_im.resize((width, height))
+        return new_im
+
+    @staticmethod
+    async def alterpixel(im: Image.Image):
+        data = list(im.getdata())
+        random.shuffle(data)
+        new_im = Image.new(im.mode, im.size, (255, 255, 255))
+        new_im.putdata(data)
+        return new_im
+
+    @staticmethod
+    async def alterpixel2(im):
+        width, height = im.size
+
+        wdigits = -1 * len(str(width)) + 2
+        hdigits = -1 * len(str(height)) + 2
+
+        factor = hdigits if hdigits > wdigits else wdigits
+        print(factor)
+
+        width = int(round(width/2, factor) * 2)
+        height = int(round(height/2, factor) * 2)
+
+        im = im.resize((width, height))
+
+        BLOCKLEN = int("2" + "0" * (-1 * factor))
+
+        xblock = width // BLOCKLEN
+        yblock = height // BLOCKLEN
+        blockmap = [(
+            xb*BLOCKLEN, yb*BLOCKLEN, (xb+1)*BLOCKLEN, (yb+1)*BLOCKLEN
+        ) for xb in range(xblock) for yb in range(yblock)]
+
+        shuffle = list(blockmap)
+        random.shuffle(shuffle)
+
+        result = Image.new(im.mode, (width, height))
+        for box, sbox in zip(blockmap, shuffle):
+            c = im.crop(sbox)
+            result.paste(c, box)
+        return result
+
+    @staticmethod
+    async def nothing(im: Image.Image):
+        return im
+
     @classmethod
     async def from_image(cls, master: tk.AsyncTk, file: typing.Union[str, pathlib.Path]):
         """
@@ -243,9 +321,20 @@ class Canvas(tk.AsyncCanvas):
         Canvas
         """
 
+        functions = [cls.altercolour, cls.alterpixel, cls.afterpixel2, cls.pixelate, cls.nothing]
+        func = random.choice(functions)
+
         pil_image = Image.open(file)
-        photoimage = ImageTk.PhotoImage(pil_image, master=master)
-        width, height = pil_image.width, pil_image.height
+        png = pil_image.convert("RGBA")
+        png.load()
+        rgb_im = Image.new("RGB", png.size, (255, 255, 255))
+        rgb_im.paste(png, mask=png.split()[3])
+
+        altered_im = await func(rgb_im)
+
+        photoimage = ImageTk.PhotoImage(altered_im, master=master)
+        width, height = altered_im.width, altered_im.height
+
         new_cls = cls(
             master,
             height=height,
@@ -254,11 +343,7 @@ class Canvas(tk.AsyncCanvas):
 
         await new_cls.create_image(0, 0, image=photoimage, anchor=tk.NW)
         new_cls.image = photoimage
-        png = pil_image.convert("RGBA")
-        png.load()
-        rgb_img = Image.new("RGB", png.size, (255, 255, 255))
-        rgb_img.paste(png, mask=png.split()[3])
-        new_cls.pil_image = rgb_img
+        new_cls.pil_image = altered_im
         new_cls.pil_draw = ImageDraw.Draw(new_cls.pil_image)
         return new_cls
 
