@@ -71,7 +71,6 @@ class AddPhoneNumberInter(tk.Frame):
                 self.master.event_generate("<<Phone Number Complete>>")
 
 
-
 class PhoneNumberLabel(tk.Label):
     """
     PhoneNumberLabel is a simple class inherited from tk.Label. It allows the user to add one number at the time and
@@ -106,6 +105,7 @@ class PhoneNumberLabel(tk.Label):
         :return: None
         """
         self['text'] = ''
+
 
 if __name__ == '__main__':
     root = tk.Tk()
