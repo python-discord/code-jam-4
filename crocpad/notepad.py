@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
 from crocpad.configuration import app_config, save_config
 from crocpad.eula_dialog import EulaDialog
 from crocpad.eula_quiz_dialog import EulaQuizDialog
+from crocpad.insert_emoji_dialog import EmojiPicker
 import crocpad.stylesheets
 
 
@@ -75,20 +76,26 @@ class MainWindow(QMainWindow):
         helpMenu.addAction(action_tip)
 
         # View menu
-        themeMenu = viewMenu.addMenu("Themes")
+        themeMenu = viewMenu.addMenu("Th&emes")
         action_light_theme = QAction("Light mod&e", self)
         action_light_theme.triggered.connect(self.set_light_theme)
         themeMenu.addAction(action_light_theme)
         action_dark_theme = QAction("Dark mod&e", self)
         action_dark_theme.triggered.connect(self.set_dark_theme)
         themeMenu.addAction(action_dark_theme)
-        accessibilityMenu = viewMenu.addMenu("Accessibility")
+        accessibilityMenu = viewMenu.addMenu("Acc&essibility")
         action_hotdogstand_theme = QAction("High visibility th&eme", self)
         action_hotdogstand_theme.triggered.connect(self.set_hotdogstand_theme)
         accessibilityMenu.addAction(action_hotdogstand_theme)
         action_quitedark_theme = QAction("Th&eme for blind users", self)
         action_quitedark_theme.triggered.connect(self.set_quitedark_theme)
         accessibilityMenu.addAction(action_quitedark_theme)
+
+
+        # Edit menu
+        action_insert_symbol = QAction("Ins&ert symbol", self)
+        action_insert_symbol.triggered.connect(self.insert_emoji)
+        editMenu.addAction(action_insert_symbol)
 
         # Search menu
         action_open = QAction("S&earch for file to open", self)
@@ -194,3 +201,8 @@ class MainWindow(QMainWindow):
 
     def set_quitedark_theme(self):
         self.app.setStyleSheet(crocpad.stylesheets.quitedark)
+
+    def insert_emoji(self):
+        """Open a modal EmojiPicker dialog which can insert arbitrary symbols at the cursor."""
+        picker = EmojiPicker(self.main_window.textCursor())
+        picker.exec_()
