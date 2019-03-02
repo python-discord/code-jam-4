@@ -1,9 +1,16 @@
-import asyncio
+import io
+from PIL import Image, ImageTk
 
 from . import widget
 from .animate import Direction
 from .view import Window, View
-from .cache import Cache
+from .cache import ImageCache
+
+
+def process_image(image: bytes, width: int, height: int):
+    im = Image.open(io.BytesIO(image))
+    im = im.resize((height, width), Image.NEAREST)
+    return ImageTk.PhotoImage(im)
 
 
 class Front(widget.PrimaryFrame):
@@ -16,13 +23,9 @@ class Front(widget.PrimaryFrame):
     _last = None
 
     def __next(self):
-        data: dict = self.cache.pop()
-        data.pop('jumpscare')  # not using it for now
-        if 'name' in data:  # TODO Fix
-            name = data.pop('name')
-        else:
-            name = 'None'
-        image = data.pop('image')
+        data: dict = self.cache.next()
+        image = process_image(data.pop('image'), 400, 280)
+        name = data.pop('name')
         self.__load(name, image, data)
 
     def __load(self, name, image, data):
@@ -61,9 +64,7 @@ class Front(widget.PrimaryFrame):
         self.btn_dislike.pack(side='left')
         self.btn_like.pack(side='right')
 
-        self._loop = asyncio.get_event_loop()
-        self.cache = Cache(self.window)
-        self.cache
+        self.cache = ImageCache(self.window, self.cachesize)
 
     def cmd_dislike(self):
         self.__change_image('right')
@@ -79,13 +80,12 @@ class Front(widget.PrimaryFrame):
 
     @property
     def cache(self):
-        if len(self._cache.cats) < self.cachesize:
-            self._loop.run_until_complete(self._cache.refill())
-        return self._cache.cats
+        return self._cache
 
     @cache.setter
-    def cache(self, data: list):
-        self._cache = data
+    def cache(self, imagecache: ImageCache):
+        self._cache = imagecache
+        self._cache.start()
         # Prime the pump
         self.__next()
         self.window.set_view(self.image)
