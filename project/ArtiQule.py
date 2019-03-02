@@ -134,9 +134,6 @@ class PalletteButton:
                 ("Pointy Pen", "Pointy Pen Broken", "Eraser"):
             return None
 
-        print("------------------")
-        print(tool.color.red(), tool.color.green(), tool.color.blue())
-        print(self.r, self.g, self.b)
         # TODO: pointy pen & no tool crashes upon clicking here with it
         if tool.toolName in ["A bucket", "Straggly Paintbrush",
                              "Solid Brush"]:
@@ -148,15 +145,26 @@ class PalletteButton:
                 ]
             )
 
-            if (not(colorSum) and tool.color.alpha() and self.alpha):
+            if ( colorSum and tool.color.alpha() and self.alpha):
                 # self.alpha so that color pallette is not empty
-                tool.color = QColor(self.r, self.g, self.b, 255)
+                self.r = (self.r + tool.color.red()) // 2
+                self.g = (self.g + tool.color.green()) // 2
+                self.b = (self.b + tool.color.blue()) // 2
             elif tool.toolName == "A bucket filled":
-                self.r = (self.r + tool.color.red()) // 4
+                # TODO: bucket has to be able to
+                # overflow other color pallette
+                self.r = (self.r + tool.color.red()) // 4  #
                 self.g = (self.g + tool.color.green()) // 4
-                # TODO:this if malfunctions after first activation
                 self.b = (self.b + tool.color.blue()) // 4
-            elif tool.toolName == "A bucket":
+            elif not sum((self.r, self.g, self.b, self.alpha)): pass
+
+            self.palletteColor = (self.r, self.g, self.b, self.alpha)
+            tool.color = QColor(self.r, self.g, self.b, self.alpha)
+
+            if tool.toolName in ["Straggly Paintbrush",
+                                 "Solid Brush"]:
+                tool.isDipped = True
+            elif "A bucket" in tool.toolName and self.alpha:
                 """The pallette gets emptied """
                 self.r = 0
                 self.g = 0
@@ -164,27 +172,13 @@ class PalletteButton:
                 self.alpha = 0
                 self.palletteColor = (self.r, self.g,
                                       self.b, self.alpha)
-            elif not sum((self.r, self.g, self.b, self.alpha)):
-                pass  # might not need this if
-            else:
-                self.r = (self.r + tool.color.red()) // 2
-                self.g = (self.g + tool.color.green()) // 2
-                self.b = (self.b + tool.color.blue()) // 2
-
-            self.palletteColor = (self.r, self.g, self.b, self.alpha)
-            tool.color = QColor(self.r, self.g, self.b, self.alpha)
-            if tool.toolName in ["Straggly Paintbrush",
-                                 "Solid Brush"]:
-                tool.isDipped = True
-            elif tool.toolName == "A bucket":
                 tool.toolName = "A bucket filled"
                 tool.PaintBoard.connectTool(tool)
             tool.duration = tool.constDuration
 
-        self.parentBtn.setStyleSheet("background-color: rgba{0}".format(
+        self.parentBtn.setStyleSheet(
+            "background-color: rgba{0}; border-radius:20px".format(
             self.palletteColor))
-
-        print(self.r, self.g, self.b)
 
 
 class PaintBoard(QMainWindow):
@@ -325,27 +319,27 @@ class PaintBoard(QMainWindow):
         c5 = PalletteButton(p5)
         c6 = PalletteButton(p6)
 
-        p1.setStyleSheet("background-color: rgba{0}; border-radius:50px"
+        p1.setStyleSheet("background-color: rgba{0}; border-radius:20px"
                          .format(c1.palletteColor))
         p1.clicked.connect(lambda: c1.mixColor(self.currentTool))
         self.colorBox.addPallette(p1)
-        p2.setStyleSheet("background-color: rgba{0}"
+        p2.setStyleSheet("background-color: rgba{0}; border-radius:20px"
                          .format(c2.palletteColor))
         p2.clicked.connect(lambda: c2.mixColor(self.currentTool))
         self.colorBox.addPallette(p2)
-        p3.setStyleSheet("background-color: rgba{0}"
+        p3.setStyleSheet("background-color: rgba{0}; border-radius:20px"
                          .format(c3.palletteColor))
         p3.clicked.connect(lambda: c3.mixColor(self.currentTool))
         self.colorBox.addPallette(p3)
-        p4.setStyleSheet("background-color: rgba{0};"
+        p4.setStyleSheet("background-color: rgba{0}; border-radius:20px;"
                          .format(c4.palletteColor))
         p4.clicked.connect(lambda: c4.mixColor(self.currentTool))
         self.colorBox.addPallette(p4)
-        p5.setStyleSheet("background-color: rgba{0}"
+        p5.setStyleSheet("background-color: rgba{0}; border-radius:20px"
                          .format(c5.palletteColor))
         p5.clicked.connect(lambda: c5.mixColor(self.currentTool))
         self.colorBox.addPallette(p5)
-        p6.setStyleSheet("background-color: rgba{0}"
+        p6.setStyleSheet("background-color: rgba{0}; border-radius:20px"
                          .format(c6.palletteColor))
         p6.clicked.connect(lambda: c6.mixColor(self.currentTool))
         self.colorBox.addPallette(p6)
@@ -366,12 +360,12 @@ class PaintBoard(QMainWindow):
                 self.painter.drawEllipse(event.pos(), 100, 150)
                 self.currentTool.duration -= 1
                 self.currentTool.toolName = "A bucket"
+                self.currentTool.color = QColor(0,0,0,0)
                 self.connectTool(self.currentTool)
             self.lastPoint = event.pos()
             self.update()
         else:
-            return None  # TODO: app still crashes
-            # when moving with NoneType cusor
+            return None
 
     def mouseMoveEvent(self, event):
         if (event.buttons() and Qt.LeftButton) and \
@@ -383,6 +377,8 @@ class PaintBoard(QMainWindow):
                     Pen.setDashPattern([0, 0, 0, 0])
                     self.drawing = False
                 else:
+                    #while self.currentTool.duration:
+                    #    self.currentTool.color.alpha()
                     self.currentTool.duration -= 0.1
 
             if self.currentTool.toolName == "Pointy Pen":
