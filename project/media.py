@@ -188,6 +188,12 @@ class Player(QMediaPlayer):
 
             return False
 
+    def play(self):
+        super().play()
+
+        if self.playlist().currentIndex() == -1:
+            self.playlist().setCurrentIndex(0)
+
     @staticmethod
     def state_changed(state):
         log.debug(f"State changed: {state}")
