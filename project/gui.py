@@ -173,6 +173,7 @@ class Minesweeper(QtWidgets.QWidget):
         self.controller.mines_number = mines
         self.flag_count = mines
         self.too_fast_modal = None
+        self.game_over_modal = None
 
     def setup_gui(self):
         '''Setup the GUI for the minesweeper widget'''
@@ -264,8 +265,23 @@ class Minesweeper(QtWidgets.QWidget):
         self.too_fast_modal.raise_()
         self.game_frame.setDisabled(True)
 
+    def show_game_over_modal(self):
+        '''Shows a game over modal in the center of the screen which takes you
+        back to the main menu if you click ok'''
+
+        if self.game_over_modal is None:
+            self.game_over_modal = MinesweeperModal('GAME OVER', self)
+            self.game_over_modal.close_button.clicked.connect(self.modal_closed)
+            self.game_over_modal.move(self.rect().center() - self.game_over_modal.rect().center())
+
+        self.beep_sound.play()
+        self.game_over_modal.setHidden(False)
+        self.game_over_modal.raise_()
+        self.game_frame.setDisabled(True)
+
     def modal_closed(self):
         '''This action is called when a modal is closed'''
+        self.game_over_modal.setHidden(True)
         self.too_fast_modal.setHidden(True)
         self.game_frame.setDisabled(False)
 
@@ -342,6 +358,7 @@ class Minesweeper(QtWidgets.QWidget):
         self.explode_all_mines_thread.finished.connect(self.game_over.emit)
         self.explode_all_mines_thread.explode.connect(self.explode)
         self.explode_all_mines_thread.start()
+        self.show_game_over_modal()
 
     def button_health_update(self, row, column):
         '''Updates the button whenever the health has changed'''
