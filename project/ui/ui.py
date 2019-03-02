@@ -1,10 +1,6 @@
 from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import (QAbstractItemView, QDesktopWidget, QHeaderView,
                                QMainWindow, qApp)
-import random
-import sys
-from PySide2 import QtCore, QtWidgets, QtGui
-
 from .add_task import AddTask
 from .datacomm import DataComm
 from .table_model import TableModel
