@@ -12,7 +12,6 @@ flake8-tidy-imports = "*"
 
 [packages]
 pyside2 = "*"
-bidict = "*"
 
 [requires]
 python_version = "3.7"

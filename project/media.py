@@ -90,14 +90,14 @@ class Player(QMediaPlayer):
 
         self._model = model
 
-        playlist = Playlist(self._model)
-        playlist.setPlaybackMode(Playlist.Loop)
-        playlist.currentIndexChanged.connect(self.playlist_index_changed)
+        self._playlist = Playlist(self._model)
+        self._playlist.setPlaybackMode(Playlist.Loop)
+        self._playlist.currentIndexChanged.connect(self.playlist_index_changed)
 
         self.error.connect(self.handle_error)
         self.mediaStatusChanged.connect(self.media_status_changed)
         self.stateChanged.connect(self.state_changed)
-        self.setPlaylist(playlist)
+        self.setPlaylist(self._playlist)
 
     def _create_record(self, metadata: Dict[str, Any]) -> QSqlRecord:
         """Create and return a library record from media `metadata`.
@@ -186,17 +186,18 @@ class Player(QMediaPlayer):
 
             # Re-add the media. It should still be in the model if it was correctly reverted.
             path = self._model.index(row, 7).data()
+            media_id = self.model.index(row, 0).data()
             media = QMediaContent(QUrl.fromLocalFile(path))
-            self.playlist().addMedia(media, row)
+            self.playlist().addMedia(media, media_id)
 
             return False
 
     def play(self):
-        super().play()
-
         # Workaround for current index not being set initially.
         if self.playlist().currentIndex() == -1:
-            self.playlist().setCurrentRow(0)
+            self.playlist().setCurrentIndex(0)
+
+        super().play()
 
     @staticmethod
     def state_changed(state):

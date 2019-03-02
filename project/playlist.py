@@ -1,8 +1,8 @@
 import logging
 import sqlite3
 from pathlib import Path
+from typing import Dict
 
-from bidict import bidict
 from PySide2.QtCore import QAbstractItemModel, QUrl, Qt
 from PySide2.QtMultimedia import QMediaContent, QMediaPlaylist
 from PySide2.QtSql import QSqlDatabase
@@ -30,29 +30,20 @@ class Playlist(QMediaPlaylist):
         super().__init__(*args, **kwargs)
 
         self._model = model
-        self._indices = bidict()  # media_id: playlist_index
-        self._current_media = QMediaContent()
-        self._current_index = -1
+        self._media: Dict[int, QMediaContent] = {}
+        self._current_media = -1
 
         self._populate()
 
-    def _get_playlist_index(self, row: int) -> int:
-        """Return the playlist index which corresponds to the `row`."""
-        if row == -1:
+    def _get_media_id(self, row: int) -> int:
+        """Return the media ID corresponding to the `row`."""
+        return self._model.index(row, 0).data()
+
+    def _get_row(self, media_id: int) -> int:
+        """Return the row index which corresponds to the `media_id`."""
+        if media_id == -1:
             return -1
 
-        media_id = self._model.index(row, 0).data()
-        return self._indices[media_id]
-
-    def _get_row(self, playlist_index: int) -> int:
-        """Return the row index which corresponds to the `playlist_index`."""
-        if playlist_index == -1:
-            return -1
-
-        # The data of each item in the model just contains the value of the table's "id" field.
-        # This searches the data of each item in the model for the media_id. Once the index
-        # is obtained from the search results, the row index can easily be retrieved.
-        media_id = self._indices.inverse[playlist_index]
         start_index = self._model.index(0, 0)
         matches = self._model.match(start_index, Qt.DisplayRole, media_id, flags=Qt.MatchExactly)
 
@@ -65,17 +56,16 @@ class Playlist(QMediaPlaylist):
             index = -1
 
         if index != -1:
-            self._current_media = self.media(index)
+            self._current_media = self._get_media_id(index)
         else:
-            self._current_media = QMediaContent()
+            self._current_media = -1
 
         if index != self.currentIndex():
-            self._current_index = index
-            self.currentIndexChanged.emit(self._current_index)
+            self.currentIndexChanged.emit(index)
             # self.surroundingItemsChanged.emit()
 
         # This should be equivalent to QMediaPlaylistNavigator's "activate" signal
-        self.currentMediaChanged.emit(self._current_media)
+        self.currentMediaChanged.emit(self.currentMedia())
 
     def _populate(self):
         """Populate the playlist with existing media in the model."""
@@ -83,7 +73,7 @@ class Playlist(QMediaPlaylist):
             path = self._model.index(row, 7).data()
             if Path(path).is_file():
                 media = QMediaContent(QUrl.fromLocalFile(path))
-                media_id = self._model.index(row, 0).data()
+                media_id = self._get_media_id(row)
                 self.addMedia(media, media_id)
             else:
                 # TODO: Prompt user to remove from model on failure
@@ -92,27 +82,18 @@ class Playlist(QMediaPlaylist):
                     f"{path} does not exist or isn't a file."
                 )
 
-    def setCurrentRow(self, row: int):
-        """Sets the playlist to the media at `row`.
-
-        Parameters
-        ----------
-        row: int
-            The row at which the media is.
-
-        """
-        index = self._get_playlist_index(row)
-        self.setCurrentIndex(index)
-
     def currentIndex(self) -> int:
-        return self._current_index
+        return self._get_row(self._current_media)
 
     def setCurrentIndex(self, index: int):
         log.debug(f"Setting index to {index}")
         self._jump(index)
 
     def currentMedia(self) -> QMediaContent:
-        return self._current_media
+        if self._current_media == -1:
+            return QMediaContent()
+
+        return self._media[self._current_media]
 
     def addMedia(self, content: QMediaContent, media_id: int) -> bool:
         """Append the media `content` to the playlist.
@@ -130,25 +111,26 @@ class Playlist(QMediaPlaylist):
             Always True.
 
         """
-        super().addMedia(content)
-        index = self.mediaCount() - 1
-        self._indices[media_id] = index
+        row = self._get_row(media_id)
 
-        log.debug(
-            f"Added media with ID {media_id} at index {index}: {content.canonicalUrl().fileName()}"
-        )
+        self.mediaAboutToBeInserted.emit(row, row)
+        self._media[media_id] = content
+        self.mediaInserted.emit(row, row)
+
+        file_name = content.canonicalUrl().fileName()
+        log.debug(f"Added media with ID {media_id}: {file_name}")
 
         return True
 
     def moveMedia(self, *args, **kwargs):
         raise NotImplementedError
 
-    def removeMedia(self, row: int) -> bool:
+    def removeMedia(self, index: int) -> bool:
         """Remove the media at `row` from the playlist.
 
         Parameters
         ----------
-        row: int
+        index: int
             The row in the model which corresponds to the media.
 
         Returns
@@ -157,15 +139,19 @@ class Playlist(QMediaPlaylist):
             Always True.
 
         """
-        index = self._get_playlist_index(row)
-        log.debug(f"Removing media at row {row}, index {index}.")
-        del self._indices.inverse[index]
+        media_id = self._get_media_id(index)
+
+        self.mediaAboutToBeRemoved.emit(index, index)
+        del self._media[media_id]
+        self.mediaRemoved.emit(index, index)
+
+        log.debug(f"Removed media at row {index}, media_id {media_id}.")
 
         if index == self.currentIndex():
             # Effectively stops the playlist if the current media is removed.
             self.setCurrentIndex(-1)
 
-        return super().removeMedia(index)
+        return True
 
     def nextIndex(self, steps: int = 1) -> int:
         if self.mediaCount() == 0:
@@ -174,8 +160,6 @@ class Playlist(QMediaPlaylist):
         if steps == 0:
             return self.currentIndex()
 
-        next_row = -1
-        current_row = self._get_row(self.currentIndex())
         mode = self.playbackMode()
 
         if mode == self.CurrentItemOnce:
@@ -183,14 +167,12 @@ class Playlist(QMediaPlaylist):
         elif mode == self.CurrentItemInLoop:
             return self.currentIndex()
         elif mode == self.Sequential:
-            next_pos = current_row + steps
-            next_row = next_pos if next_pos < self.mediaCount() else -1
+            next_pos = self.currentIndex() + steps
+            return next_pos if next_pos < self.mediaCount() else -1
         elif mode == self.Loop:
-            next_row = (current_row + steps) % self.mediaCount()
+            return (self.currentIndex() + steps) % self.mediaCount()
         elif mode == self.Random:
             raise NotImplementedError  # TODO: Support Random mode
-
-        return self._get_playlist_index(next_row)
 
     def previousIndex(self, steps: int = 1) -> int:
         if self.mediaCount() == 0:
@@ -199,8 +181,6 @@ class Playlist(QMediaPlaylist):
         if steps == 0:
             return self.currentIndex()
 
-        prev_row = -1
-        current_row = self._get_row(self.currentIndex())
         mode = self.playbackMode()
 
         if mode == self.CurrentItemOnce:
@@ -208,25 +188,37 @@ class Playlist(QMediaPlaylist):
         elif mode == self.CurrentItemInLoop:
             return self.currentIndex()
         elif mode == self.Sequential:
-            prev_pos = self.mediaCount() - steps if current_row == -1 else current_row - 1
-            prev_row = prev_pos if prev_pos >= 0 else -1
+            if self.currentIndex() == -1:
+                prev_pos = self.mediaCount() - steps
+            else:
+                prev_pos = self.currentIndex() - 1
+
+            return prev_pos if prev_pos >= 0 else -1
         elif mode == self.Loop:
-            prev_pos = current_row - steps
+            prev_pos = self.currentIndex() - steps
 
             while prev_pos < 0:
                 prev_pos += self.mediaCount()
 
-            prev_row = prev_pos
+            return prev_pos
         elif mode == self.Random:
             raise NotImplementedError  # TODO: Support Random mode
-
-        return self._get_playlist_index(prev_row)
 
     def next(self):
         self._jump(self.nextIndex())
 
     def previous(self):
         self._jump(self.previousIndex())
+
+    def media(self, index: int) -> QMediaContent:
+        if index == -1:
+            return QMediaContent()
+
+        media_id = self._get_media_id(index)
+        return self._media[media_id]
+
+    def mediaCount(self) -> int:
+        return len(self._media)
 
     def clear(self):
         raise NotImplementedError
