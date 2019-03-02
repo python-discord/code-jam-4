@@ -321,7 +321,7 @@ class Canvas(tk.AsyncCanvas):
         Canvas
         """
 
-        functions = [cls.altercolour, cls.alterpixel, cls.afterpixel2, cls.pixelate, cls.nothing]
+        functions = [cls.altercolour, cls.alterpixel, cls.alterpixel2, cls.pixelate, cls.nothing]
         func = random.choice(functions)
 
         pil_image = Image.open(file)
