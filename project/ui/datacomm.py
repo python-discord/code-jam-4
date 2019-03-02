@@ -1,7 +1,7 @@
 
 import datetime
 from .read_write.rw import ReadWrite
-from random import randint
+from random import choice, randint
 
 
 class DataComm:
@@ -13,34 +13,42 @@ class DataComm:
 
     # Takes a random task and deletes it
     def delete_task(self):
-        if not self.data:
-            self.data.pop(randint(0, len(self.data)))
+        if self.data:
+            self.data.pop(randint(0, len(self.data) - 1))
         self.update()
 
     # Adds in a new task
     def add_task(self, d):
-        if "Description" not in d:
-            passive_aggressive_statement = [
-                "What?", "You can't even describe your task?", "Elaborate it somehow...", "Now, this is just plain lazy"
-            ]
-            d['Description'] = passive_aggressive_statement[randint(0, 3)]
-
-        if "Deadline" not in d:
-            passive_aggressive_statement = [
-                "I guess deadlines just aren't real to you", "So your task is probably just a dream",
-                "You miss the deadlines just like how storm trooper misses Jedi", "Did you know that the ultimate inspiration is the deadline?"
-            ]
-            d['Deadline'] = passive_aggressive_statement[randint(0, 3)]
-
-        elif isinstance(d["Deadline"], int):
-            d['Deadline'] = str(
-                datetime.datetime.utcfromtimestamp(int(d['Deadline']))
+        task = dict()
+        passive_agressive_titles = [
+            "A task with no title? Seriously?",
+            "Do you even have a task?",
+            "Dude, tasks without a title?"
+        ]
+        passive_agressive_descriptions = [
+            "What?",
+            "You can't even describe your task?",
+            "Elaborate it somehow...",
+            "Now, this is just plain lazy"
+        ]
+        passive_agressive_deadlines = [
+            "I guess deadlines just aren't real to you",
+            "So your task is probably just a dream",
+            "You miss the deadlines just like how storm trooper misses Jedi",
+            "Did you know that the ultimate inspiration is the deadline?"
+        ]
+        task["Title"] = d.get("Title", choice(passive_agressive_titles))
+        task["Description"] = d.get("Description", choice(
+            passive_agressive_descriptions))
+        task["Deadline"] = d.get(
+            "Deadline", choice(passive_agressive_deadlines))
+        if isinstance(task["Deadline"], int):
+            task['Deadline'] = str(
+                datetime.datetime.utcfromtimestamp(int(task['Deadline']))
             )
-
-        d['Mark'] = False
-        self.data.append(d)
+        task['Completed'] = False
+        self.data.append(task)
         self.update()
-        print(self.data)
 
     def update(self, table_model=None):
         # Writes to file
