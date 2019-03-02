@@ -11,6 +11,7 @@ from PIL import Image, ImageTk
 from functools import reduce
 import pyaudio
 import wave
+import asyncio
 
 
 SCRIPT_DIR = Path(__file__).parent
@@ -24,11 +25,36 @@ IMAGE_PATH = SCRIPT_DIR.parent / Path('img/')
 AUDIO_PATH = SCRIPT_DIR.parent / Path('audio/')
 DEFAULT_DOC_PATH = SCRIPT_DIR.parent / Path('documents/')
 
+IMAGE_PATHS = {'new_icon': IMAGE_PATH / 'new_icon.png',
+               'open_icon': IMAGE_PATH / 'open_icon.png',
+               'save_icon': IMAGE_PATH / 'save_icon.png',
+               'capsule_small': IMAGE_PATH / 'capsule_small.ico',
+               'capsule1': IMAGE_PATH / 'capsule1.png',
+               'capsule2': IMAGE_PATH / 'capsule2.png',
+               'tutorial_smirk': IMAGE_PATH / 'tutorial_smirk.png',
+               'tutorial_neutral': IMAGE_PATH / 'tutorial_neutral.png',
+               'window_icon': IMAGE_PATH / 'window_icon.ico'
+               }
+
 
 audio_player = pyaudio.PyAudio()
 
 
+async def mainloop_coro(root):
+    try:
+        while True:
+            root.update()
+            root.update_idletasks()
+            await asyncio.sleep(0)
+    except tk.TclError:
+        return
+
+
 def play_sound(soundcode='tap'):
+    asyncio.get_event_loop().create_task(schedule_sound(soundcode))
+
+
+async def schedule_sound(soundcode):
     sound_file = open((AUDIO_PATH / '{}.wav'.format(soundcode)), 'rb')
     sound = wave.open(sound_file, 'rb')
 
@@ -37,11 +63,16 @@ def play_sound(soundcode='tap'):
         return (data, pyaudio.paContinue)
 
     sound_format = audio_player.get_format_from_width(sound.getsampwidth())
-    audio_player.open(format=sound_format,
-                      channels=sound.getnchannels(),
-                      rate=sound.getframerate(),
-                      output=True,
-                      stream_callback=audio_callback)
+    stream = audio_player.open(format=sound_format,
+                               channels=sound.getnchannels(),
+                               rate=sound.getframerate(),
+                               output=True,
+                               stream_callback=audio_callback)
+
+    while stream.is_active():
+        await asyncio.sleep(1)
+    stream.close()
+    sound.close()
 
 
 with open(WORDS_PATH, 'r') as words_file:
@@ -133,19 +164,19 @@ class UserInterface(tk.Frame):
         self.keyboard_section = KeyboardSection(self,
                                                 saved_keys=saved_keys,
                                                 saved_scales=saved_scales)
-        self.command_section.pack(side='top',fill='x')
-        self.text_entry_section.pack(side='top',fill='x')
-        self.keyboard_section.pack(side='top',ipadx=5,ipady=5)
+        self.command_section.pack(side='top', fill='x')
+        self.text_entry_section.pack(side='top', fill='x')
+        self.keyboard_section.pack(side='top', ipadx=5, ipady=5)
 
         self.icons = {}
 
-        image_data = Image.open(IMAGE_PATH / Path("new_icon.png"))
+        image_data = Image.open(IMAGE_PATHS['new_icon'])
         self.icons['new'] = ImageTk.PhotoImage(image_data)
 
-        image_data = Image.open(IMAGE_PATH / Path("save_icon.png"))
+        image_data = Image.open(IMAGE_PATHS['save_icon'])
         self.icons['save'] = ImageTk.PhotoImage(image_data)
 
-        image_data = Image.open(IMAGE_PATH / Path("open_icon.png"))
+        image_data = Image.open(IMAGE_PATHS['open_icon'])
         self.icons['open'] = ImageTk.PhotoImage(image_data)
 
         self.new_button = tk.Button(self.command_section,
@@ -198,6 +229,10 @@ class UserInterface(tk.Frame):
 
         self.tutorial_trigger('start')
 
+    async def frequent_update(self):
+        while True:
+            await asyncio.sleep(0.01)
+
     def tutorial_trigger(self, trigger):
         if trigger in self.tutorials:
             tutorial_data = self.tutorials.pop(trigger)
@@ -226,7 +261,6 @@ class UserInterface(tk.Frame):
         # User hit cancel
         if filepath == '':
             return
-        print(filepath)
         self.working_file = filepath
         self.write_file(filepath)
 
@@ -335,7 +369,7 @@ class TextEntrySection(tk.Frame):
     def __init__(self, master: UserInterface, *args, **kwargs):
         tk.Frame.__init__(self, master, *args, **kwargs)
         self.textbox = tk.Text(self, wrap='word', state='disabled')
-        self.textbox.pack(fill='x')#(row=0, column=0)
+        self.textbox.pack(fill='x')
 
     def receive_key(self, char):
         self.textbox.configure(state='normal')
@@ -552,7 +586,7 @@ class KeyboardKey(tk.Button):
 class LootBoxUnlockWindow(tk.Toplevel):
     def __init__(self, new_keys=[], rarities=[], *args, **kwargs):
         tk.Toplevel.__init__(self)
-        self.iconbitmap(IMAGE_PATH / Path('capsule_small.ico'))
+        self.iconbitmap(IMAGE_PATHS['capsule_small'])
         self.title('Lootbox unlocked!')
 
         self.attributes('-topmost', True)
@@ -574,8 +608,8 @@ class LootBoxUnlockFrame(tk.Frame):
 
         self.font = tkFont.Font(size=64)
 
-        image_data1 = Image.open(IMAGE_PATH / Path('capsule1.png'))
-        image_data2 = Image.open(IMAGE_PATH / Path('capsule2.png'))
+        image_data1 = Image.open(IMAGE_PATHS['capsule1'])
+        image_data2 = Image.open(IMAGE_PATHS['capsule2'])
         self.img_capsule = [
             ImageTk.PhotoImage(image_data1),
             ImageTk.PhotoImage(image_data2)
@@ -628,7 +662,7 @@ class XPFrame(tk.Frame):
                                               maximum=next_xp_milestone
                                               - prev_xp_milestone,
                                               value=xp-prev_xp_milestone)
-        lootbox_image_data = Image.open(IMAGE_PATH / Path('capsule_small.ico'))
+        lootbox_image_data = Image.open(IMAGE_PATHS['capsule_small'])
         self.lootbox_image = ImageTk.PhotoImage(lootbox_image_data)
         self.lootbox_image_label = tk.Label(self, image=self.lootbox_image)
         self.xp_label.pack(side='left')
@@ -658,9 +692,9 @@ class TutorialWindow(tk.Toplevel):
         self.master = master
         self.title('Tutorial')
         self.attributes('-topmost', True)
-        self.message_label = tk.Label(self, text=message, font=('comic',12))
-        image_path = IMAGE_PATH / Path('tutorial_smirk.png' if smirk else
-                                       'tutorial_neutral.png')
+        self.message_label = tk.Label(self, text=message, font=('comic', 12))
+        image_path = IMAGE_PATHS['tutorial_smirk' if smirk
+                                 else 'tutorial_neutral']
         self.tutorial_image = ImageTk.PhotoImage(Image.open(image_path))
         self.image_label = tk.Label(self, image=self.tutorial_image)
         self.message_label.pack(side='left')
@@ -682,8 +716,10 @@ def exit_program():
 if __name__ == '__main__':
     ROOT = tk.Tk()
     ROOT.title('High Tech Text (HTT) Editor')
-    ROOT.iconbitmap(IMAGE_PATH / 'window_icon.ico')
+    ROOT.iconbitmap(IMAGE_PATHS['window_icon'])
     UI = UserInterface(ROOT)
     UI.pack()
     ROOT.protocol('WM_DELETE_WINDOW', exit_program)
-    ROOT.mainloop()
+    loop = asyncio.get_event_loop()
+    loop.create_task(UI.frequent_update())
+    loop.run_until_complete(mainloop_coro(ROOT))
