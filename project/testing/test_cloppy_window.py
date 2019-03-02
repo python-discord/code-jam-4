@@ -3,7 +3,7 @@
 
 import tkinter as tk
 from project.windows.editor_window import EditorWindow
-from project.windows.cloppy_window import CloppyButtonWindow, CloppyInputWindow
+from project.windows.cloppy_window import CloppyButtonWindow, CloppyTextInputWindow
 from project.windows.editor_window_events import NewWordEventData
 from project.windows.cloppy_window_events import CloppyChoiceMadeEventData
 
@@ -47,7 +47,10 @@ class TestEditorWindow(EditorWindow):
             # new_window.add_choice('test_choice 3')
             # new_window.add_choice('test_choice 4')
 
-            new_window = CloppyInputWindow(self)
+            from project.functionality.constants import Constants
+
+            new_window = CloppyTextInputWindow(self)
+            # new_window.set_message(Constants.cloppy_greeting)
 
             def show_choice(data: CloppyChoiceMadeEventData):
                 print(data.message, data.choice)
@@ -55,7 +58,7 @@ class TestEditorWindow(EditorWindow):
 
             new_window.show()
 
-        self.bind('<k>', show_cloppy)
+        # self.bind('<k>', show_cloppy)
 
     def on_left_click(self, event: tk.Event):
         start, end, word = self.get_word_under_mouse()
