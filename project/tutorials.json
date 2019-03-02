@@ -1,26 +1,26 @@
 {
     "start": {
-        "text": "Heya! Let me stop you right there. \nDid you know that the first keyboard was invented in 1868? \nHere at Adorable Laboratories, we believe that it needs to be modernized. \nTherefore, we are proud to introduce the first personalized onscreen keyboard text editor! \nGo ahead, press a button!",
+        "text": "Hello there! Thank you for installing the High Tech Text Editor. Did you know that the first keyboard was invented in 1868? That was a long time ago!\n\nHere at Adorable Laboratories, we don't live in 1868 anymore, so we believe in giving our users more modern features than they could ever need. And when you think of modern, accessible, and afforadable, what first comes to mind?  Why lootboxes, of course!\n\nTherefore, we are proud to introduce the first high-tech, personalized onscreen keyboard text editor with a built-in progression system! Go ahead, try typing a word!\n(P.s.: remember to add a space or punctation at the end so our hyper-intelligent AI can detect it as a word).",
         "smirk": false
     },
     "grow": {
-        "text": "See that? The key that you pressed just grew! \nIn order to personalize every user's keyboard, we use artificial intelligence and machine learning \nto recognize your most used keys, and enlarge those keys so that you can tap them easier in the future!",
+        "text": "See that? The key that you pressed just grew! \n\nIn order to personalize every user's keyboard, we use artificial intelligence and machine learning to recognize your most used keys, and enlarge those keys so that you can tap them easier in the future!",
         "smirk": true
     },
     "xpgain": {
-        "text": "Heyyy, you completed a word and gained some XP! \nWhat's XP stand for, you ask? \nWell, it stands for execu- wait no it doesn't.",
+        "text": "Nice, you completed a word and gained some XP!\nWhat's XP stand for, you ask? \nWell, it stands for execu- wait no it doesn't.",
         "smirk": false
     },
     "darkmode": {
-        "text": "I see you're using our accessibility features! \nWe here at Adorable Laboratories understand that some of our users experience discomfort when using light theme text editors, \nor when the contrast between the text and the background is too high. \nSo, you're welcome!",
+        "text": "I see you're using one of our delightful accessibility features!\n\nHere at Adorable Laboratories, we understand that some of our users experience discomfort when using light themed text editors, or when the contrast between the text and the background is too high. \n\nSo, we've added this exciting new feature that takes out all of the contrast, removing any and all traces of eye strain while reading!  You're welcome!",
         "smirk": true
     },
     "lootbox": {
-        "text": "Oh hey, you gained enough XP to unlock a lootbox! Nice going! \nLootboxes contain 5 keys, each of which have a certain rarity. \nCommon keys are easy to find, but good luck finding an X or a Q! \nIf you'd like to unlock more keys, please send a donation to Adorable Laboratories with your username and date of birth.",
+        "text": "I see you've gained enough XP to unlock a lootbox! Nice going! n\nEach lootbox contains five keys, and each key can be one of various rarities ranging from Common to Legendary. \n\nCommon keys are easy to find, but good luck finding an X or a Q! \n\nIf you'd like to unlock keys faster and without achieving pride and accomplishment, please send a donation to Adorable Laboratories with your username and date of birth.\n\nDon't worry, we only sell your information to the highest bidder.",
         "smirk": false
     },
     "fakeword": {
-        "text": "Great word you just completed! That'll get you... hmm. Zero XP. \nThat's not a real word; who do you think you're fooling? \nAre you seriously so dependent on technology that you can't form proper English without more keyboard keys? \nPathetic.",
+        "text": "Great word you just completed! That'll get you... hmm. Zero XP.\nThat's not a real word -  who do you think you're fooling?! \nAre you seriously so dependent on technology that you can't even form proper English words without more keyboard keys? \nPathetic.",
         "smirk": true
     }
 }

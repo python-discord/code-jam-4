@@ -51,10 +51,6 @@ async def mainloop_coro(root):
 
 
 def play_sound(soundcode='tap'):
-    asyncio.get_event_loop().create_task(schedule_sound(soundcode))
-
-
-async def schedule_sound(soundcode):
     sound_file = open((AUDIO_PATH / '{}.wav'.format(soundcode)), 'rb')
     sound = wave.open(sound_file, 'rb')
 
@@ -69,10 +65,12 @@ async def schedule_sound(soundcode):
                                output=True,
                                stream_callback=audio_callback)
 
-    while stream.is_active():
-        await asyncio.sleep(1)
-    stream.close()
-    sound.close()
+    async def wait_and_close(stream, sound):
+        while stream.is_active():
+            await asyncio.sleep(1)
+        stream.close()
+        sound.close()
+    asyncio.get_event_loop().create_task(wait_and_close(stream, sound))
 
 
 with open(WORDS_PATH, 'r') as words_file:
@@ -228,10 +226,6 @@ class UserInterface(tk.Frame):
         file_menu.add_command(label='Quit', command=exit_program)
 
         self.tutorial_trigger('start')
-
-    async def frequent_update(self):
-        while True:
-            await asyncio.sleep(0.01)
 
     def tutorial_trigger(self, trigger):
         if trigger in self.tutorials:
@@ -636,6 +630,7 @@ class LootBoxUnlockFrame(tk.Frame):
         self.after(1000, self.open_lootbox)
 
     def open_lootbox(self):
+        play_sound('pop')
         new_keys = [
             '{} ({})'.format(key, LOOTBOX_RARITIES[self.master.rarities[idx]])
             for idx, key in enumerate(self.master.new_keys)
@@ -692,14 +687,24 @@ class TutorialWindow(tk.Toplevel):
         self.master = master
         self.title('Tutorial')
         self.attributes('-topmost', True)
-        self.message_label = tk.Label(self, text=message, font=('comic', 12))
-        image_path = IMAGE_PATHS['tutorial_smirk' if smirk
-                                 else 'tutorial_neutral']
+
+        self.message_label = tk.Text(self,
+                                     font=('comic', 12),
+                                     width=60,
+                                     height=20,
+                                     wrap=tk.WORD,
+                                     )
+        self.message_label.insert(1.0, message)
+        self.message_label.config(state='disabled')
+        image_path = IMAGE_PATH / Path('tutorial_smirk.png' if smirk else
+                                       'tutorial_neutral.png')
         self.tutorial_image = ImageTk.PhotoImage(Image.open(image_path))
         self.image_label = tk.Label(self, image=self.tutorial_image)
         self.message_label.pack(side='left')
         self.image_label.pack(side='right')
         tk.Button(self, text="Close", command=self.destroy).pack(side='bottom')
+
+        self.config(padx=20, pady=20)
 
 
 def exit_program():
@@ -721,5 +726,4 @@ if __name__ == '__main__':
     UI.pack()
     ROOT.protocol('WM_DELETE_WINDOW', exit_program)
     loop = asyncio.get_event_loop()
-    loop.create_task(UI.frequent_update())
     loop.run_until_complete(mainloop_coro(ROOT))
