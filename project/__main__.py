@@ -602,6 +602,7 @@ class LootBoxUnlockFrame(tk.Frame):
         self.after(1000, self.open_lootbox)
 
     def open_lootbox(self):
+        play_sound('pop')
         new_keys = [
             '{} ({})'.format(key, LOOTBOX_RARITIES[self.master.rarities[idx]])
             for idx, key in enumerate(self.master.new_keys)
@@ -658,7 +659,14 @@ class TutorialWindow(tk.Toplevel):
         self.master = master
         self.title('Tutorial')
         self.attributes('-topmost', True)
-        self.message_label = tk.Label(self, text=message, font=('comic',12))
+        self.message_label = tk.Text(self,
+                                      font=('comic',12),
+                                      width=60,
+                                      height=20,
+                                      wrap=tk.WORD,
+                                      )
+        self.message_label.insert(1.0, message)
+        self.message_label.config(state='disabled')
         image_path = IMAGE_PATH / Path('tutorial_smirk.png' if smirk else
                                        'tutorial_neutral.png')
         self.tutorial_image = ImageTk.PhotoImage(Image.open(image_path))
@@ -666,6 +674,8 @@ class TutorialWindow(tk.Toplevel):
         self.message_label.pack(side='left')
         self.image_label.pack(side='right')
         tk.Button(self, text="Close", command=self.destroy).pack(side='bottom')
+
+        self.config(padx=20, pady=20)
 
 
 def exit_program():
