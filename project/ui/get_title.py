@@ -17,6 +17,9 @@ class AddTitle(QWidget, Ui_title_form):
                 "Deadline": 9999999991,
             }
         label_text (list of str): The list of characters in the title to be added.
+        available_text (list of str): The list of characters corresponding to the
+            current slider position.
+        buttons (list of object): The QPushButton objects in the window.
     """
 
     def __init__(self, task):
@@ -32,7 +35,8 @@ class AddTitle(QWidget, Ui_title_form):
             "!@#$(),./?:\"'"
         ))
 
-        self.buttons = [i for i in vars(self) if i.endswith("button")]
+        self.buttons = [getattr(self, i)
+                        for i in vars(self) if i.endswith("button")]
         self.bind_buttons()
         self.update()
 
@@ -54,15 +58,14 @@ class AddTitle(QWidget, Ui_title_form):
         """
         Binds each button to their respective functions.
         """
-        for txt in self.buttons:
+        for button in self.buttons:
             func_dict = {
                 "add_button": self.add,
                 "delete_button": self.delete,
                 "done_button": self.done,
             }
-            button = getattr(self, txt)
-            button.clicked.connect(func_dict[txt])
-            if txt != "done_button":
+            button.clicked.connect(func_dict[button.objectName()])
+            if button.objectName() != "done_button":
                 button.clicked.connect(self.update)
 
     def add(self):

@@ -1,6 +1,7 @@
 from random import shuffle
 
 from PySide2.QtWidgets import QWidget
+
 from .ui_files.ui_add_deadline import Ui_deadline_form
 
 
@@ -11,6 +12,13 @@ class AddDeadline(QWidget, Ui_deadline_form):
     Attributes:
         width (int): Width of the window
         height (int): Height of the window
+        task (dict): The task to load the title into.
+            Format: {
+                "Title": "Eat water",
+                "Description": "Eat chunky water",
+                "Deadline": 9999999991,
+            }
+        options (list of str): The equation form of the numbers 0-9 in order.
         comboboxes (list of str): Names of the comboboxes in the window.
     """
 
@@ -23,7 +31,8 @@ class AddDeadline(QWidget, Ui_deadline_form):
             "4-5+1", "0!", "23%3", "7//2", "58%6", "31.5/6.3", "50//8", "15-8", "2^3", "√81"
         ]
         self.init_UI()
-        self.comboboxes = [i for i in vars(self) if i.startswith("comboBox")]
+        self.comboboxes = [getattr(self, i)
+                           for i in vars(self) if i.startswith("comboBox")]
         self.setup_combobox()
 
         self.done_button.clicked.connect(self.done)
@@ -41,21 +50,26 @@ class AddDeadline(QWidget, Ui_deadline_form):
         Adds a random ordering of numbers to each combobox in the window.
         """
         cur_options = self.options.copy()
-        for txt in self.comboboxes:
+        for combobox in self.comboboxes:
             shuffle(cur_options)
             for option in cur_options:
-                combobox = getattr(self, txt)
                 combobox.addItem(option)
 
-    def get_input(self):
+    def get_selected(self):
+        """
+        Get the currently selected deadline by stringing the selected values
+        in each of the comboboxes.
+
+        Returns:
+            str: The string representation of the deadline in Unix format
+        """
         deadline = []
-        for txt in sorted(
+        for combobox in sorted(
             self.comboboxes,
             key=lambda item: int(
-                "".join(char for char in item if char.isdigit())
+                "".join(char for char in item.objectName() if char.isdigit())
             )
         ):
-            combobox = getattr(self, txt)
             deadline.append(self.options.index(combobox.currentText()))
         return "".join([str(i) for i in deadline])
 
@@ -63,6 +77,6 @@ class AddDeadline(QWidget, Ui_deadline_form):
         """
         Sets the deadline of Task to the string in the label. Closes Window.
         """
-        deadline_as_str = self.get_input()
+        deadline_as_str = self.get_selected()
         self.task["Deadline"] = int(deadline_as_str)
         self.close()

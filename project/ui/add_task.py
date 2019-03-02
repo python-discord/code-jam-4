@@ -1,12 +1,12 @@
-from random import randint, shuffle
 from collections import namedtuple
+from random import randint, shuffle
 
 from PySide2.QtWidgets import QWidget
 
-from .ui_files.ui_add_task import Ui_task_form
-from .get_title import AddTitle
-from .get_desc import AddDesc
 from .get_deadline import AddDeadline
+from .get_desc import AddDesc
+from .get_title import AddTitle
+from .ui_files.ui_add_task import Ui_task_form
 
 
 class AddTask(QWidget, Ui_task_form):
@@ -24,6 +24,8 @@ class AddTask(QWidget, Ui_task_form):
                 "Description": "Eat chunky water",
                 "Deadline": 9999999991,
             }
+        datacomm (object): The Data Communication object used to update the table
+            model and communicate with the file writing class.
     """
 
     def __init__(self, datacomm):
@@ -111,26 +113,21 @@ class AddTask(QWidget, Ui_task_form):
 
     def button_pressed(self):
         func_dict = {
-            "form_title_button": self.get_title,
-            "form_desc_button": self.get_desc,
-            "form_date_button": self.get_date,
+            "form_title_button": AddTitle,
+            "form_desc_button": AddDesc,
+            "form_date_button": AddDeadline,
             "form_done_button": self.done,
         }
         button_name = self.sender().objectName()
-        func_dict[button_name]()
-
-    def get_title(self):
-        form = AddTitle(self.task)
-        self.windows.append(form)
-
-    def get_desc(self):
-        form = AddDesc(self.task)
-        self.windows.append(form)
-
-    def get_date(self):
-        form = AddDeadline(self.task)
-        self.windows.append(form)
+        if button_name != "form_done_button":
+            form = func_dict[button_name](self.task)
+            self.windows.append(form)
+        else:
+            func_dict[button_name]()
 
     def done(self):
+        """
+        Adds task to through the data communication and closes the window.
+        """
         self.datacomm.add_task(self.task)
         self.close()

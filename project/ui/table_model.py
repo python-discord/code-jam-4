@@ -1,8 +1,20 @@
 import operator
-from PySide2.QtCore import QAbstractTableModel, Qt, SIGNAL
+
+from PySide2.QtCore import SIGNAL, QAbstractTableModel, Qt
 
 
 class TableModel(QAbstractTableModel):
+    """
+    Class containing the Table Model to be loaded into the QTableView
+
+    Attributes:
+        table_data (list of tuple of str): Data to populate the table.
+            Each tuple is a row, with each item in the tuple being a column in
+            that row.
+        header (tuple of str): The header items Title, Description, Deadline and
+            Completed.
+    """
+
     def __init__(self, parent, table_data, header, *args):
         QAbstractTableModel.__init__(self, parent, *args)
         self.table_data = table_data
