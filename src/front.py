@@ -15,7 +15,7 @@ def process_image(image: bytes, width: int, height: int):
 
 class Front(widget.PrimaryFrame):
 
-    cachesize = 10
+    cachesize = 20
 
     # Quick fix to keep a reference count on the
     # last image, making sure the garbage collector

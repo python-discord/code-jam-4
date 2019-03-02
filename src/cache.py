@@ -57,8 +57,7 @@ class ImageCache:
 
     def mainloop(self, queue):
         while True:
-            if not queue.full():
-                queue.put(self.get_profile())
+            queue.put(self.get_profile())
             time.sleep(self.ratelimit)
 
     def start(self):
