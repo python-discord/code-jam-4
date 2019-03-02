@@ -29,7 +29,7 @@ def wrap_progress(determinate=True, title=""):
 
             async def _coro(*args, **kwargs):
                 nonlocal title
-                root = tk.AsyncTk()
+                root = tk.AsyncToplevel(coro_iter.__self__.master)
                 root.title(title)
                 first = True
                 _val = None
@@ -44,16 +44,6 @@ def wrap_progress(determinate=True, title=""):
                             maximum=i + 1,
                         )
                         root.bar.pack()
-
-                        async def runme():
-                            while True:
-                                try:
-                                    await root.tick()
-                                except:
-                                    return
-                                await asyncio.sleep(0.01)
-
-                        asyncio.get_event_loop().create_task(runme())
                     else:
                         _val = i
                         root.bar["value"] += 1
@@ -81,22 +71,12 @@ def wrap_progress(determinate=True, title=""):
 
             async def _coro(*args, **kwargs):
                 nonlocal title
-                root = tk.AsyncTk()
+                root = tk.AsyncToplevel(coro.__self__.master)
                 root.title(title)
                 root.bar = Progressbar(
                     root, orient="horizontal", length=400, mode="indeterminate"
                 )
                 root.bar.pack()
-
-                async def runme():
-                    while True:
-                        try:
-                            await root.tick()
-                        except:
-                            return
-                        await asyncio.sleep(0.01)
-
-                asyncio.get_event_loop().create_task(runme())
                 rv = await coro(*args, **kwargs)
                 try:
                     await root.destroy()
