@@ -14,7 +14,6 @@ import wave
 import asyncio
 import os
 import threading
-import time
 
 
 SCRIPT_DIR = Path(__file__).parent
@@ -42,35 +41,17 @@ IMAGE_PATHS = {'new_icon': IMAGE_PATH / 'new_icon.png',
 
 audio_player = pyaudio.PyAudio()
 
+CHUNK = 1024
+
 
 async def mainloop_coro(root):
     try:
         while True:
             root.update()
             root.update_idletasks()
-            play_sound('tap')
             await asyncio.sleep(0)
     except tk.TclError:
         return
-
-
-def get_stream(soundcode):
-    sound_file = open((AUDIO_PATH / '{}.wav'.format(soundcode)), 'rb')
-    sound = wave.open(sound_file, 'rb')
-
-    def audio_callback(in_data, frame_count, time_info, status):
-        data = sound.readframes(frame_count)
-        return (data, pyaudio.paContinue)
-
-    sound_format = audio_player.get_format_from_width(sound.getsampwidth())
-    stream = audio_player.open(format=sound_format,
-                               channels=sound.getnchannels(),
-                               rate=sound.getframerate(),
-                               output=True,
-                               start=False,
-                               stream_callback=audio_callback)
-    sound.close()
-    return stream
 
 
 valid_soundcodes = [filename.replace('.wav', '')
@@ -78,20 +59,37 @@ valid_soundcodes = [filename.replace('.wav', '')
                     if filename.endswith('.wav')]
 
 
-sound_streams = {soundcode: get_stream(soundcode)
+def get_sound_data(soundcode):
+    sound_file = open((AUDIO_PATH / '{}.wav'.format(soundcode)), 'rb')
+    sound = wave.open(sound_file, 'rb')
+    sound_format = audio_player.get_format_from_width(sound.getsampwidth())
+    stream = audio_player.open(format=sound_format,
+                               channels=sound.getnchannels(),
+                               rate=sound.getframerate(),
+                               output=True)
+    return stream, sound, sound_file
+
+
+sound_streams = {soundcode: [get_sound_data(soundcode) for i in range(10)]
                  for soundcode in valid_soundcodes}
 
 
 def prepare_sound(soundcode):
-    while sound_streams[soundcode].is_active():
-        time.sleep(0.1)
-    sound_streams[soundcode].close()
-    sound_streams[soundcode] = get_stream(soundcode)
+    sound_streams[soundcode].append(get_sound_data(soundcode))
 
 
 def play_sound(soundcode='tap'):
-    sound_streams[soundcode].start_stream()
-    threading.Thread(target=prepare_sound, args=(soundcode,)).run()
+    def play_and_close():
+        stream, wave_file, path_file = sound_streams[soundcode].pop()
+        data = wave_file.readframes(CHUNK)
+        while data:
+            stream.write(data)
+            data = wave_file.readframes(CHUNK)
+        stream.stop_stream()
+        for sound_datum_to_close in stream, wave_file, path_file:
+            sound_datum_to_close.close()
+    threading.Thread(target=play_and_close).start()
+    threading.Thread(target=prepare_sound, args=(soundcode,)).start()
 
 
 with open(WORDS_PATH, 'r') as words_file:
