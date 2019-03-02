@@ -132,7 +132,6 @@ class Player(QMediaPlayer):
         """
         # TODO: Let's just hope the commits and rollbacks always succeed for now...
         self._model.database().transaction()
-        start_row = self._model.rowCount()
         paths_added = []
 
         for path in paths:
@@ -141,7 +140,7 @@ class Player(QMediaPlayer):
             metadata = _parse_media(path)
             record = self._create_record(metadata)
 
-            if not self._model.insertRecord(-1, record):  # -1 will append
+            if not self._model.insertRecord(-1, record):
                 log.error(f"Failed to add media for {path}: {self._model.lastError()}")
                 # Assuming the model wasn't ever modified if this failed; no revert needed.
             else:
@@ -156,9 +155,14 @@ class Player(QMediaPlayer):
 
         self._model.database().commit()
 
-        for row, path in enumerate(paths, start_row):
+        # It's safer to get the last inserted ID right after committing as opposed to getting it
+        # before inserting anything.
+        last_id = self._model.query().lastInsertId()
+
+        # Populate the playlist.
+        for media_id, path in enumerate(paths_added, last_id - len(paths_added) + 1):
             media = QMediaContent(QUrl.fromLocalFile(path))
-            self.playlist().addMedia(media, row)
+            self.playlist().addMedia(media, media_id)
 
     def remove_media(self, row: int) -> bool:
         # TODO: Let's just hope the commits and rollbacks always succeed for now...

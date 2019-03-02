@@ -83,12 +83,8 @@ class Playlist(QMediaPlaylist):
             path = self._model.index(row, 7).data()
             if Path(path).is_file():
                 media = QMediaContent(QUrl.fromLocalFile(path))
-                if not self.addMedia(media, row):
-                    # TODO: Prompt user to remove from model on failure
-                    log.warning(
-                        f"Could not populate playlist for row {row}: "
-                        f"adding media for {path} failed."
-                    )
+                media_id = self._model.index(row, 0).data()
+                self.addMedia(media, media_id)
             else:
                 # TODO: Prompt user to remove from model on failure
                 log.warning(
@@ -106,15 +102,15 @@ class Playlist(QMediaPlaylist):
     def currentMedia(self) -> QMediaContent:
         return self._current_media
 
-    def addMedia(self, content: QMediaContent, row: int) -> bool:
+    def addMedia(self, content: QMediaContent, media_id: int) -> bool:
         """Append the media `content` to the playlist.
 
         Parameters
         ----------
         content: QMediaContent
             The media to append.
-        row: int
-            The row in the model which corresponds to the media.
+        media_id: int
+            The ID of the media in the model.
 
         Returns
         -------
@@ -122,18 +118,15 @@ class Playlist(QMediaPlaylist):
             Always True.
 
         """
-        log.debug(f"Adding media at row {row}: {content.canonicalUrl().fileName()}")
-        success = super().addMedia(content)
+        super().addMedia(content)
+        index = self.mediaCount() - 1
+        self._indices[media_id] = index
 
-        if success:
-            media_id = self._model.index(row, 0).data()
-            self._indices[media_id] = self.mediaCount() - 1
-            log.debug(
-                f"Successfully added media: media id {media_id}; "
-                f"playlist index {self._indices[media_id]}"
-            )
+        log.debug(
+            f"Added media with ID {media_id} at index {index}: {content.canonicalUrl().fileName()}"
+        )
 
-        return success
+        return True
 
     def moveMedia(self, *args, **kwargs):
         raise NotImplementedError
