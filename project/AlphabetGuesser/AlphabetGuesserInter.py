@@ -9,7 +9,6 @@ class AlphabetGuesserInter(tk.Frame):
     def __init__(self, master, current_entry, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.master = master
-        self.frame = tk.Frame()
         self.letter_guesser = LetterGuesser()
 
         self.current_entry = current_entry
@@ -29,32 +28,32 @@ class AlphabetGuesserInter(tk.Frame):
         self.create()
 
     def create(self):
-        self.header = tk.Label(self.frame, text="EntryBot 3000", font="Calibri 20")
-        self.description = tk.Label(self.frame, text="The latest in typing technology since 700 B.C\n\n",
+        self.header = tk.Label(self, text="EntryBot 3000", font="Calibri 20")
+        self.description = tk.Label(self, text="The latest in typing technology since 700 B.C\n\n",
                                     font="Calibri 10")
 
-        self.title_label = tk.Label(self.frame,
+        self.title_label = tk.Label(self,
                                     text="You are entering {} {}:\nAnswer the questions below to fill out the entry\n"
                                          "".format(self.get_prefix(self.current_entry), self.current_entry),
                                     font="Calibri 11")
-        self.question_label = tk.Label(self.frame,
+        self.question_label = tk.Label(self,
                                        text="Is your {} character contained in the phrase :"
                                             "".format(self.complete_number(self.current_letter_id)),
                                        font="Calibri 11")
 
-        self.current_word = tk.Label(self.frame, font="Calibri 18", relief="sunken")
+        self.current_word = tk.Label(self, font="Calibri 18", relief="sunken")
         self.update_current_asked_word()
 
-        self.button_1 = tk.Button(self.frame, command=lambda: self.send_answer(self.button_1['text']))
-        self.button_2 = tk.Button(self.frame, command=lambda: self.send_answer(self.button_2['text']))
+        self.button_1 = tk.Button(self, command=lambda: self.send_answer(self.button_1['text']))
+        self.button_2 = tk.Button(self, command=lambda: self.send_answer(self.button_2['text']))
         self.button_1.config(font="Calibri 15")
         self.button_2.config(font="Calibri 15")
         self.randomize_buttons()
 
         self.current_entry_label = tk.Label(self, text=self.current_entry + " :", font="Calibri 10")
-        self.letters_input = tk.Label(self, text="")
+        self.letters_input = tk.Label(self)
 
-        self.frame.grid(row=0, column=0, sticky=N + S + E + W)
+        #self.frame.grid(row=0, column=0, sticky=N + S + E + W)
         self.header.grid(row=0, column=0, columnspan=2, sticky=N + S + E + W)
         self.description.grid(row=1, column=0, columnspan=2, sticky=N + S + E + W)
 
@@ -66,8 +65,8 @@ class AlphabetGuesserInter(tk.Frame):
         self.button_2.grid(column=1, row=5, sticky=N + S + E + W)
 
         # Having issues with these labels showing up in the window
-        self.current_entry_label.grid(column=0, row=6, columnspan=2, sticky=N + S + E + W)
-        self.letters_input.grid(column=0, row=6, columnspan=2, sticky=N + S + E + W)
+        self.current_entry_label.grid(column=0, row=6, sticky=N + S + E + W)
+        self.letters_input.grid(column=1, row=6, sticky=N + S + E + W)
 
     def update_current_asked_word(self):
         self.current_word['text'] = '"' + self.letter_guesser.request_word() + '"'
