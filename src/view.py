@@ -1,7 +1,6 @@
 import tkinter as tk
 from typing import TypeVar
 from enum import Enum
-from dataclasses import dataclass
 
 from . import widget
 from .animate import Coord, Animater, Direction
