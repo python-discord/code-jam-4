@@ -69,6 +69,7 @@ def get_stream(soundcode):
                                output=True,
                                start=False,
                                stream_callback=audio_callback)
+    sound.close()
     return stream
 
 
