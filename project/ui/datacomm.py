@@ -21,21 +21,27 @@ class DataComm:
     def add_task(self, d):
         task = dict()
         passive_agressive_titles = [
+            "You misclicked, right? Of course you did.",
             "A task with no title? Seriously?",
             "Do you even have a task?",
-            "Dude, tasks without a title?"
+            "Dude, tasks without a title?",
+            "Wow, no goals? Or have you simply forgotten?",
+            "Dang, never knew task titles were optional.."
         ]
         passive_agressive_descriptions = [
             "What?",
             "You can't even describe your task?",
             "Elaborate it somehow...",
-            "Now, this is just plain lazy"
+            "Now, this is just plain lazy",
+            "Not sure why you left this blank, hm?",
         ]
         passive_agressive_deadlines = [
             "I guess deadlines just aren't real to you",
             "So your task is probably just a dream",
             "You miss the deadlines just like how storm trooper misses Jedi",
-            "Did you know that the ultimate inspiration is the deadline?"
+            "Did you know that the ultimate inspiration is the deadline?",
+            "Oh, I didn't know you don't like having deadlines.. Explains a lot",
+            "Not saying you're unproductive, but...",
         ]
         task["Title"] = d.get("Title", choice(passive_agressive_titles))
         task["Description"] = d.get("Description", choice(
@@ -51,8 +57,6 @@ class DataComm:
         self.update()
 
     def update(self, table_model=None):
-        # Writes to file
         self.file.write_file(self.data)
         self.tup = [tuple(d.values()) for d in self.data]
         return self.tup
-        # I didn't sort it by date and time anymore since the passive_aggressive_statements are added in
