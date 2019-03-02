@@ -2,7 +2,7 @@ import asyncio
 
 from . import widget
 from .animate import Direction
-from .view import Window
+from .view import Window, View
 from .cache import Cache
 
 
@@ -27,21 +27,21 @@ class Front(widget.PrimaryFrame):
 
     def __load(self, name, image, data):
         self.title.config(text=name)
-        self.bio.load(data)
+        self.bio.data.load(data)
         self._last = self.image
-        self.image = image
+        self.image = View(image, 'image')
         self.update()
 
     def __change_image(self, direction: Direction):
         self.__next()
-        self.window.change_view(self.image, direction, viewtype='image')
+        self.window.change_view(self.image, direction)
 
     def init(self):
         self.title = widget.PrimaryLabel(self)
         self.window = Window(self)
         self.commandbar = widget.SecondaryFrame(self)
 
-        self.bio = Bio(self.window)
+        self.bio = View(Bio(self.window), 'widget')
         self.image = None
 
         self.btn_dislike = widget.PrimaryButton(
@@ -66,14 +66,16 @@ class Front(widget.PrimaryFrame):
         self.cache
 
     def cmd_dislike(self):
-        self.__change_image('LEFT')
+        self.__change_image('right')
 
     def cmd_like(self):
-        self.__change_image('RIGHT')
+        self.__change_image('left')
 
     def cmd_bio(self):
-        self.window.move_out(self.image, 'UP', 'image')
-        self.window.move
+        if self.window.current != self.bio:
+            self.window.change_view(self.bio, 'up')
+        else:
+            self.window.change_view(self.image, 'down')
 
     @property
     def cache(self):
@@ -106,6 +108,7 @@ class Bio(widget.PrimaryFrame):
         return item
 
     def load(self, data: dict):
+        print(data)
         for name, val in data.items():
             item = self.__make_item(name, val)
             item.pack()

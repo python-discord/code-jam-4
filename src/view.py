@@ -16,10 +16,13 @@ class ViewType(Enum):
 T = TypeVar('T', ImageTk.PhotoImage, tk.Widget)
 
 
-@dataclass
 class View:
-    data: T
-    viewtype: ViewType
+
+    def __init__(self, data: T, viewtype: ViewType):
+        self.data = data
+        if not isinstance(viewtype, ViewType):
+            viewtype = ViewType(viewtype.upper())  # Breaks if not string
+        self.viewtype = viewtype
 
 
 class Window(widget.PrimaryCanvas):
@@ -35,12 +38,12 @@ class Window(widget.PrimaryCanvas):
 
     def __set_image(self, image: ImageTk.PhotoImage, coord: Coord):
         return self.create_image(
-            coord, image=view, anchor='nw'
+            coord, image=image, anchor='nw'
         )
 
     def __set_widget(self, widget: tk.Widget, coord: Coord):
         return self.create_window(
-            coord, window=view, anchor='nw'
+            coord, window=widget, anchor='nw'
         )
 
     def __set(self, view: View, coord: Coord):
@@ -66,7 +69,7 @@ class Window(widget.PrimaryCanvas):
     def move_in(self, view: View, direction: Direction):
         distance = self.get_distance(direction)
         start = self.origin + distance
-        wid = self.__set(view, start, viewtype)
+        wid = self.__set(view, start)
         self.move_view(view, self.origin)
         return wid
 
