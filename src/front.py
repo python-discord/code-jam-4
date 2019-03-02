@@ -62,21 +62,21 @@ class Front(widget.PrimaryFrame):
         self.btn_like = widget.PrimaryButton(
             self.commandbar, text='Yep', bg='green', command=self.cmd_like
         )
-        self.title.pack(fill='x')
-        self.window.pack(fill='both')
-        self.commandbar.pack(side='bottom', fill='x')
+        self.title.pack(fill='x', expand=True)
+        self.window.pack(fill='both', expand=True)
+        self.commandbar.pack(side='bottom', fill='x', expand=True)
 
-        self.btn_bio.pack()
         self.btn_dislike.pack(side='left')
-        self.btn_like.pack(side='right')
+        self.btn_bio.pack(side='left')
+        self.btn_like.pack(side='left')
 
         self.cache = ImageCache(self.cachesize)
 
     def cmd_dislike(self):
-        self.__change_image('right')
+        self.__change_image('left')
 
     def cmd_like(self):
-        self.__change_image('left')
+        self.__change_image('right')
 
     def cmd_bio(self):
         if self.window.current != self.bio:

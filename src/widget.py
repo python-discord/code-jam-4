@@ -53,7 +53,9 @@ class SecondaryCanvas(tk.Canvas):
 
 
 class PrimaryFrame(tk.Frame):
-    DEFAULT = {}
+    DEFAULT = {
+        'bg': 'black'
+    }
 
     def __init__(self, *args, **kwds):
         self.DEFAULT.update(kwds)
