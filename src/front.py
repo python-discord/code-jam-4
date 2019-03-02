@@ -24,15 +24,20 @@ class Front(widget.PrimaryFrame):
 
     def __next(self):
         data: dict = self.cache.next()
-        image = process_image(data.pop('image'), 400, 280)
+        image = process_image(
+            data.pop('image'),
+            self.window.winfo_width(),
+            self.window.winfo_height()
+        )
         name = data.pop('name')
         self.__load(name, image, data)
 
     def __load(self, name, image, data):
         self.title.config(text=name)
-        self.bio.data.load(data)
         self._last = self.image
         self.image = View(image, 'image')
+        self.bio = View(Bio(self.window), 'widget')
+        self.bio.data.load(data)
         self.update()
 
     def __change_image(self, direction: Direction):
@@ -44,7 +49,7 @@ class Front(widget.PrimaryFrame):
         self.window = Window(self)
         self.commandbar = widget.SecondaryFrame(self)
 
-        self.bio = View(Bio(self.window), 'widget')
+        self.bio = None
         self.image = None
 
         self.btn_dislike = widget.PrimaryButton(
