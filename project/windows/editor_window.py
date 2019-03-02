@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import messagebox
 from typing import Tuple
 
 from project.windows.editor_window_events import NewWordEvent
@@ -551,8 +552,11 @@ class EditorHelpMenu(EditorMenu):
         Called when the 'About' action is selected from the Help menu.
         """
 
-        # TODO: Implement About dialog.
-        pass
+        messagebox.showinfo(
+            'About',
+            f'{Constants.program_name}\n'
+            f'By LargeKnome, Hanyuone, and Meta\n'
+        )
 
 
 class EditorContextMenu(tk.Menu):
