@@ -109,6 +109,9 @@ class WheelSpinner(tk.Frame):
         x0, y0 = self.__init_drag_pos
         x, y = self.__mouse_controller.get_absolute_position()
         angle_to_rotate = math.atan2(y - self.size/2, x - self.size/2) - math.atan2(y0 - self.size/2, x0 - self.size/2)
+        if abs(angle_to_rotate) > math.pi:
+            angle_to_rotate = -math.copysign(1, angle_to_rotate)*2*math.pi + angle_to_rotate
+        print(angle_to_rotate)
         self.rotate_all(-angle_to_rotate/math.pi*180)
         self.__rotation_speed_list.append((angle_to_rotate/math.pi*180/self.__delta_time))
         self.__init_drag_pos = x, y
@@ -139,17 +142,18 @@ class WheelSpinner(tk.Frame):
             arc.rotate(self.speed * self.__delta_time)
 
     def calculate_new_speed(self):
+        print(self.speed)
         speed_pos = abs(self.speed)
         if speed_pos >= 2000:
-            acceleration = 600 * -math.copysign(1, self.speed)
+            acceleration = 1200 * -math.copysign(1, self.speed)
         elif speed_pos >= 1000:
-            acceleration = 250 * -math.copysign(1, self.speed)
+            acceleration = 500 * -math.copysign(1, self.speed)
         elif speed_pos >= 600:
-            acceleration = 120 * -math.copysign(1, self.speed)
+            acceleration = 250 * -math.copysign(1, self.speed)
         elif speed_pos >= 350:
-            acceleration = 60 * -math.copysign(1, self.speed)
+            acceleration = 120 * -math.copysign(1, self.speed)
         elif speed_pos >= 200:
-            acceleration = 30 * -math.copysign(1, self.speed)
+            acceleration = 50 * -math.copysign(1, self.speed)
         elif speed_pos >= 100:
             acceleration = 20 * -math.copysign(1, self.speed)
         else:
@@ -160,6 +164,7 @@ class WheelSpinner(tk.Frame):
             self.finish_rotation()
         else:
             self.speed = self.speed + acceleration*self.__delta_time
+        print(self.speed)
 
     def finish_rotation(self):
         self.winner = self.display_label['text']

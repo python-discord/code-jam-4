@@ -124,12 +124,15 @@ class ContactsPage(Frame):
         self.info_scroll = None
 
         self.bind("<<Finish Spinning Wheel>>", self.show_winning_info)
+        self.bind("<Visibility>", self.on_visibility)
 
         self.load = None
         self.save = None
 
+
         # Create objects
         self.create()
+
 
     def create(self) -> None:
         self.info_scroll = Scrollbar(self, orient=VERTICAL)
@@ -193,19 +196,17 @@ class ContactsPage(Frame):
             self.grid_columnconfigure(i, weight=1)
 
     def scroll_to_letter(self, event):
-        id = 0
-        for contact in sorted(self.contacts_list):
 
+        id = 0
+        for contact in self.order_contact():
             if contact[0] == self.letters_field.get(self.letters_field.curselection()[0]):
-                print(contact)
                 self.contacts_field.see(id)
                 self.contacts_field.selection_clear(0, END)
                 self.contacts_field.selection_set(id)
-                #self.contacts_field.see(id+8)
+                self.letters_field.selection_clear(0, END)
                 return
             id = id + 1
-
-        print('test')
+        self.letters_field.selection_clear(0, END)
 
     def on_mouse_wheel(self, event) -> str:
         self.contacts_field.yview("scroll", int(-event.delta/80), "units")
@@ -233,15 +234,14 @@ class ContactsPage(Frame):
     def refresh_fields(self) -> None:
         self.clear_fields()
         letter = ''
-        for contact in sorted(self.contacts_list):
-            if contact[0] != letter:
-                letter = contact[0]
-                self.letters_field.insert(END, letter)
-            else:
-                self.letters_field.insert(END, '')
+        for contact in self.order_contact():
             self.contacts_field.insert(END, contact)
 
+        for letter in self.alphabetical_order:
+            self.letters_field.insert(END, letter.upper())
+
     def load_contacts(self) -> None:
+        self.randomize_alphabetical_order()
         with open("contacts_pickle", 'rb') as infile:
             self.contacts_list = pickle.load(infile)
             self.refresh_fields()
@@ -299,12 +299,14 @@ class ContactsPage(Frame):
                 self.info_field.insert(END, "   " + elem)
         """
 
-    def show_winning_info(self) -> None:
+    def show_winning_info(self, event) -> None:
         """
         This method is called when the event <<Finish Spinning Wheel>> is invoked. It displays the current contact
         information that was selected by the spinning wheel.
         :return: None
         """
+        self.randomize_alphabetical_order()
+        self.refresh_fields()
         winner = self.wheel_spin.winner
         label = self.wheel_spin.display_label
         text0 = self.current_contact.name + "'s " + winner.lower() + ':\n'
@@ -336,7 +338,39 @@ class ContactsPage(Frame):
         random.shuffle(self.alphabetical_order)
 
     def order_contact(self):
-        pass
+        i = 0
+        order = self.alphabetical_order
+        contacts = list(self.contacts_list)
+        ordered_list = []
+        while i < len(self.contacts_list):
+            current_next_contact = None
+            for contact in contacts:
+                first_name = contact[0:contact.index(" ")]
+                if current_next_contact == None:
+                    current_next_contact = contact
+                    continue
+                if order.index(contact[0].lower()) < order.index(current_next_contact[0].lower()):
+                    current_next_contact = contact
+                    continue
+
+                # If the first character is the same, we loop through the other character to find which on should be
+                # added first.
+                if order.index(contact[0].lower()) == order.index(current_next_contact[0].lower()):
+                    for current_character in range(1, min(len(contact), len(current_next_contact))):
+
+                        if order.index(contact[current_character].lower()) < order.index(current_next_contact[current_character].lower()):
+                            current_next_contact = contact
+                            break
+                        if order.index(contact[current_character].lower()) > order.index(current_next_contact[current_character].lower()):
+                            break
+            contacts.remove(current_next_contact)
+            ordered_list.append(current_next_contact)
+            i += 1
+        return ordered_list
+
+    def on_visibility(self, event):
+        self.randomize_alphabetical_order()
+        self.refresh_fields()
 
 class AddContactPage(Frame):
     """
