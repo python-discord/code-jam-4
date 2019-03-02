@@ -40,7 +40,7 @@ class ConfigManager:
 
     @persist_clipboard.setter
     def persist_clipboard(self, value: bool):
-        self._config['settings']["persist_clipboard"] = value
+        self._config['settings']["persist_clipboard"] = 'true' if value else 'false'
 
     @property
     def delete_after_paste(self):
@@ -48,7 +48,7 @@ class ConfigManager:
 
     @delete_after_paste.setter
     def delete_after_paste(self, value: bool):
-        self._config['settings']["delete_after_paste"] = value
+        self._config['settings']["delete_after_paste"] = 'true' if value else 'false'
 
     @property
     def auto_load_top(self):
@@ -56,8 +56,8 @@ class ConfigManager:
 
     @auto_load_top.setter
     def auto_load_top(self, value: bool):
-        self._config["auto_load_top"] = value
+        self._config['settings']["auto_load_top"] = 'true' if value else 'false'
 
     def save(self):
-        with open(CONSTANTS['CONFIG_FILE_LOCATION'], 'w+') as file:
+        with open(CONSTANTS['CONFIG_FILE_LOCATION'], 'w') as file:
             self._config.write(file)
