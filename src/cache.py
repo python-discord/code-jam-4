@@ -1,63 +1,69 @@
-
+import json
 import requests
 import time
-# import configparser
-
+import multiprocessing as mp
 from random import randint, choice, sample
-from multiprocessing import Process, Queue
 
-# from . import SETTINGS, IMAGES
+from . import API
 
 
 class ImageCache:
     '''Class used for caching images'''
-    image_api = 'https://api.thecatapi.com/v1/images/search'
-    profile_api = "https://www.pawclub.com.au/assets/js/namesTemp.json"
-    hobbies_api = (
-        "https://gist.githubusercontent.com/mbejda/453fdb77ef8d4d3b3a67/raw/"
-        "e8334f09109dc212892406e25fdee03efdc23f56/hobbies.txt"
-    )
-    ratelimit = 0.1
+
+    ratelimit = 0.05
+    api = json.load(API)
 
     def __init__(self, size):
-        self.queue = Queue(size)
+        self.queue = mp.Queue(size)
         self.worker = None
 
     def __del__(self):
         self.stop()
 
-    def get_image(self):
-        res = requests.get(self.image_api, stream=True)
-        data = res.json()
+    def __get(self, url, **kwargs):
+        try:
+            return requests.get(url, **kwargs)
+        except ConnectionError as e:
+            return e
+
+    def __parse_image(self, response):
+        data = response.json()
         url = data[0]['url']
-        res = requests.get(url)
-        return res.content
+        response = self.__get(url)
+        return {'image': response.content}
 
-    def get_hobbies(self):
-        res = requests.get(self.hobbies_api)
-        all_hobbies = res.text.split("\n")
-        return sample(all_hobbies, 5)
+    def __parse_hobbies(self, response):
+        all_hobbies = response.text.split("\n")
+        return {'hobbies': sample(all_hobbies, 5)}
 
-    def get_profile(self):
-        res = requests.get(self.profile_api)
-        data = res.json()
+    def __parse_info(self, response):
+        data = response.json()
         letter = choice('acdefghijklmnopqrstuvwxyz')
         data = choice(data[letter])
         return {
-            'name': data['name'],
-            'gender': data['gender'],
-            'age': randint(1, 42),
-            'location': f'{randint(1, 9999)} miles away',
-            'image': self.get_image(),
-            'hobbies': self.get_hobbies()
+            'info': {
+                'name': data['name'],
+                'gender': data['gender'],
+                'age': randint(1, 42),
+                'location': f'{randint(1, 9999)} miles away'
+            }
         }
+
+    def get_profile(self):
+        poolsize = len(self.api)
+        with mp.Pool(poolsize) as pool:
+            responses = pool.map(self.__get, self.api.values())
+        if ConnectionError not in responses:  # TODO Record connection errors
+            return dict(*responses)
 
     def next(self):
         return self.queue.get()
 
     def mainloop(self, queue):
         while True:
-            queue.put(self.get_profile())
+            profile = self.get_profile()
+            if profile is not None:
+                queue.put(profile)
             time.sleep(self.ratelimit)
 
     def start(self):
@@ -67,4 +73,5 @@ class ImageCache:
         self.worker.start()
 
     def stop(self):
-        self.worker.terminate()
+        for worker in mp.active_children():
+            worker.terminate()

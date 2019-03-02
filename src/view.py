@@ -60,10 +60,11 @@ class Window(widget.PrimaryCanvas):
         self.__set(self.current, self.origin)
 
     def move_view(self, view: View, end: Coord):
-        wid = self.views[view]
-        self.animater.add_motion(
-            wid, end, speed=self.animation_speed
-        )
+        wid = self.views.get(view)
+        if wid is not None:
+            self.animater.add_motion(
+                wid, end, speed=self.animation_speed
+            )
 
     def move_in(self, view: View, direction: Direction):
         distance = self.get_distance(direction)

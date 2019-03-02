@@ -117,7 +117,7 @@ class Bio(widget.PrimaryFrame):
         return item
 
     def load(self, data: dict):
-        print(data)
+        # print(data)
         for name, val in data.items():
             item = self.__make_item(name, val)
             item.pack(expand=True, fill='x')
