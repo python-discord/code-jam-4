@@ -3,6 +3,7 @@ import tkinter as tk
 from pygame import mixer
 
 from .front import Front
+from .view import Window, View
 from . import SETTINGS
 
 
@@ -23,6 +24,8 @@ class App(tk.Tk):
         self.minsize(400, 500)
         self.maxsize(400, 500)
 
-        self.front = Front(self)
+        self.window = Window(self)
+        self.front = View(Front(self.window), 'widget')
 
-        self.front.pack(fill='both', expand=True)
+        self.window.pack(fill='both', expand=True)
+        self.window.set_view(self.front)

@@ -34,9 +34,10 @@ class Front(widget.PrimaryFrame):
 
     def __load(self, name, image, data):
         self.title.config(text=name)
-        self._last = self.image
         self.image = View(image, 'image')
         self.bio = View(Bio(self.window), 'widget')
+
+        self._last = self.image
         self.bio.data.load(data)
         self.update()
 
@@ -98,11 +99,11 @@ class Front(widget.PrimaryFrame):
 
 class Bio(widget.PrimaryFrame):
 
-    # def init(self):
-    #     width = self.master.winfo_width()
-    #     height = self.master.winfo_height()
-    #     self.config(height=height, width=width)
-    #     #self.pack_propagate(0)
+    def init(self):
+        width = self.master.winfo_width()
+        height = self.master.winfo_height()
+        self.config(height=height, width=width)
+        self.pack_propagate(0)
 
     def __make_item(self, name, value):
         item = widget.SecondaryFrame(self)
