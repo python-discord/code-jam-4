@@ -1,9 +1,11 @@
+import random
 from tkinter import *
 from tkinter.ttk import *
 from project.contact import Contact
 import pickle
 from project.WheelSpinner.WheelSpinner import WheelSpinner
 from project.PhoneNumber.AddPhoneNumberInter import AddPhoneNumberInter
+
 
 """
 TODO:
@@ -109,6 +111,8 @@ class ContactsPage(Frame):
         # Initialize object names
         self.contacts_list = {}
         self.current_contact = None
+        self.alphabetical_order = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+                                   'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
         self.scroll_bar = None
         self.contacts_field = None
@@ -133,9 +137,7 @@ class ContactsPage(Frame):
             self,
             yscrollcommand=self.info_scroll.set
         )
-        self.info_scroll.config(command=self.info_field.yview)
-        # self.info_field.grid(row=3, column=0, columnspan=5, sticky=N+S+E+W)
-        # self.info_scroll.grid(row=3, column=5, sticky=N+S+E+W)
+
 
         self.delete = Button(self, text="Delete", command=lambda: self.delete_contact())
         self.delete.grid(row=2, column=3, columnspan=3, sticky=N+S+E+W)
@@ -152,20 +154,23 @@ class ContactsPage(Frame):
         self.contacts_field = Listbox(
             self,
             yscrollcommand=self.scroll_bar.set,
-            selectmode=SINGLE
+            selectmode=SINGLE,
+            exportselection=0
         )
         self.letters_field = Listbox(
             self,
             width=2,
-            yscrollcommand=self.scroll_bar.set,
-            selectmode=SINGLE
+            selectmode=NONE,
+            exportselection=0
         )
+        #self.letters_field.bindtags((self.letters_field, self.master, "all"))
+        self.letters_field.bind('<<ListboxSelect>>', self.scroll_to_letter)
         self.contacts_field.grid(row=1, column=0, columnspan=5, sticky=N+S+E+W)
         self.letters_field.grid(row=1, column=4, sticky=N+S+E+W)
         self.scroll_bar.grid(row=1, column=5, sticky=N+S+E+W)
         self.scroll_bar.config(command=self.yview)
         self.contacts_field.bind("<MouseWheel>", self.on_mouse_wheel)
-        self.letters_field.bind("<MouseWheel>", self.on_mouse_wheel)
+        self.letters_field.bind("<MouseWheel>", self.on_letter_mouse_wheel)
 
         self.save = Button(
             self,
@@ -187,9 +192,27 @@ class ContactsPage(Frame):
         for i in range(4):
             self.grid_columnconfigure(i, weight=1)
 
+    def scroll_to_letter(self, event):
+        id = 0
+        for contact in sorted(self.contacts_list):
+
+            if contact[0] == self.letters_field.get(self.letters_field.curselection()[0]):
+                print(contact)
+                self.contacts_field.see(id)
+                self.contacts_field.selection_clear(0, END)
+                self.contacts_field.selection_set(id)
+                #self.contacts_field.see(id+8)
+                return
+            id = id + 1
+
+        print('test')
+
     def on_mouse_wheel(self, event) -> str:
         self.contacts_field.yview("scroll", int(-event.delta/80), "units")
-        self.letters_field.yview("scroll", int(-event.delta/80), "units")
+        return "break"
+
+    def on_letter_mouse_wheel(self, event) -> str:
+        self.letters_field.yview("scroll", int(-event.delta / 80), "units")
         return "break"
 
     def yview(self, *args) -> None:
@@ -309,6 +332,11 @@ class ContactsPage(Frame):
                 text1 = text1 + elem + ', '
         label['text'] = text0 + text1
 
+    def randomize_alphabetical_order(self):
+        random.shuffle(self.alphabetical_order)
+
+    def order_contact(self):
+        pass
 
 class AddContactPage(Frame):
     """
