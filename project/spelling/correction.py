@@ -1,78 +1,87 @@
-import base64
-import string
-import zlib
+import project
 
 
-with open("./data/frequency_list.txt", "rb") as file:
-    contents = zlib.decompress(base64.b64decode(file.read())).decode("utf-8")
-    words = {}
-
-    for tup in contents.split(";"):
-        tup = tup.split(":")
-        key, value = tup[0], int(tup[1])
-
-        words[key] = value
+words = project.spelling.frequency_list()
 
 
-def distance1(word: str) -> [str]:
-    letters = string.ascii_lowercase
-    dist1_words = []
-
-    # Deletion
-    for i in range(len(word)):
-        dist1_words.append(word[:i] + word[i + 1:])
-
-    for letter in letters:
-        for j in range(len(word)):
-            char = word[j]
-
-            # Insertion
-            dist1_words.append(word[:j] + letter + word[j:])
-
-            # Substitution
-            if letter != char:
-                dist1_words.append(word[:j] + letter + word[j + 1:])
-
-        dist1_words.append(word + letter)
-
-    return dist1_words
+def distance1(word):
+    """All edits that are one edit away from `word`."""
+    letters = "abcdefghijklmnopqrstuvwxyz'"
+    splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
+    deletes = [L + R[1:] for L, R in splits if R]
+    transposes = [L + R[1] + R[0] + R[2:] for L, R in splits if len(R) > 1]
+    replaces = [L + c + R[1:] for L, R in splits if R for c in letters]
+    inserts = [L + c + R for L, R in splits for c in letters]
+    return set(deletes + transposes + replaces + inserts)
 
 
-def correction(word: str):
-    coefficient = 20
+def score(word):
+    """
+    Calculates the "score", an indicator of whether this word should be corrected,
+    :param word:
+    :return:
+    """
+
+    apostrophe = 50
 
     if word in words.keys():
-        return word
+        if "'" in word:
+            return words[word] * apostrophe
 
-    dist1_words = distance1(word)
+        return words[word]
+    else:
+        return 0
 
-    top_dist1_word = sorted(
-        dist1_words,
-        key=lambda w: words[w] if w in words.keys() else 0
-    )[-1]
-    
-    top_dist1_freq = words[top_dist1_word]
 
-    top_dist2_word = ""
-    top_dist2_freq = 0
+def correction(word):
+    """Given a word, offers a correction to that word"""
+    short_coeff = 50
+    long_coeff = 10
 
-    for w in dist1_words:
-        dist2_words = [x for x in distance1(w) if x in words.keys() and x not in dist1_words]
+    if word in words.keys():
+        dist0_freq = words[word]
+    else:
+        dist0_freq = 0
 
-        if not dist2_words:
+    dist1 = distance1(word)
+    dist1_word = sorted(dist1, key=lambda w: score(w))[-1]
+
+    if dist1_word in words.keys():
+        dist1_freq = score(dist1_word)
+    else:
+        dist1_freq = 0
+
+    dist2_word = ""
+    dist2_freq = 0
+
+    for w in dist1:
+        dist2 = [x for x in distance1(w) if x in words.keys() and x not in dist1]
+
+        if not dist2:
             continue
 
-        current_word = sorted(dist2_words, key=lambda x: words[x])[-1]
+        current_word = sorted(dist2, key=lambda x: words[x])[-1]
         current_freq = words[current_word]
 
-        if current_freq > top_dist2_freq:
-            top_dist2_word = current_word
-            top_dist2_freq = current_freq
+        if current_freq > dist2_freq:
+            dist2_word = current_word
+            dist2_freq = current_freq
 
-    if top_dist1_freq >= top_dist2_freq * coefficient:
-        return top_dist1_word
+    if len(word) < 6:
+        if dist2_freq >= dist1_freq * short_coeff:
+            return dist2_word
+        elif dist1_freq >= dist0_freq * short_coeff:
+            return dist1_word
+        else:
+            return word
     else:
-        return top_dist2_word
+        if dist2_freq >= dist1_freq * long_coeff:
+            return dist2_word
+        elif dist1_freq >= dist0_freq * long_coeff:
+            return dist1_word
+        else:
+            return word
 
 
-print(correction("therfe"))
+print([correction(w) for w in
+       "It deosn't mttaer in waht oredr the ltteers in a wrod are, the olny iprmoetnt tihng is taht the frist and lsat ltteer be at the rghit pclae.".split()])

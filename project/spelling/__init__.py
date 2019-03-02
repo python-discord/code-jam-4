@@ -1,2 +1,1 @@
-from project.spelling.correction import correction
-from project.spelling.misspell import misspell
+from project.spelling.data import arpabet, frequency_list
