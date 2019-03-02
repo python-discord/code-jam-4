@@ -76,9 +76,9 @@ class MenuWidget(QtWidgets.QWidget):
         self.start_button = QtWidgets.QPushButton('Start')
 
         form_layout.addRow(width_label, self.set_width_input)
-        form_layout.setFormAlignment(QtCore.Qt.AlignCenter)
         form_layout.addRow(height_label, self.set_height_input)
         form_layout.addRow(mines_label, self.set_mines_input)
+        form_layout.setFormAlignment(QtCore.Qt.AlignCenter)
 
         layout.addWidget(title_label)
         layout.setAlignment(title_label, QtCore.Qt.AlignCenter)
@@ -114,6 +114,12 @@ class Tile(QtWidgets.QPushButton):
             self.health_decreased.emit()
         else:
             super().mousePressEvent(event)
+
+    def __str__(self):
+        return f'[{self.health_percent()}]'
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class MinesweeperModal(QtWidgets.QFrame):
@@ -167,7 +173,6 @@ class Minesweeper(QtWidgets.QWidget):
         self.controller.mines_number = mines
         self.flag_count = mines
         self.too_fast_modal = None
-        self.button_grid = []
 
     def setup_gui(self):
         '''Setup the GUI for the minesweeper widget'''
@@ -225,13 +230,15 @@ class Minesweeper(QtWidgets.QWidget):
         self.grid_layout.addItem(vertical_spacer, self.grid_height+1, 1, columnSpan=self.grid_width)
 
         # generating the grid of tiles
+        # need a placeholder value to set offset so it matches with the grid layout, hence the None
+        self.button_grid = [[None]]
         for row in range(1, self.grid_height+1):
-            row_array = []
+            row_array = [None]
             for column in range(1, self.grid_width+1):
                 button = Tile(random.randint(50, 100))
-                button.clicked.connect(partial(self.button_clicked, row-1, column-1))
-                button.right_clicked.connect(partial(self.place_flag, row-1, column-1))
-                button.health_decreased.connect(partial(self.button_health_update, row-1, column-1))
+                button.clicked.connect(partial(self.button_clicked, row, column))
+                button.right_clicked.connect(partial(self.place_flag, row, column))
+                button.health_decreased.connect(partial(self.button_health_update, row, column))
                 button.setFixedSize(*self.tile_size)
                 self.grid_layout.addWidget(button, row, column)
                 row_array.append(button)
@@ -273,7 +280,7 @@ class Minesweeper(QtWidgets.QWidget):
         for y, row in enumerate(self.controller.grid):
             for x, tile in enumerate(row):
                 if tile == self.controller.DISCOVERED:
-                    self.button_grid[y][x].hide()
+                    self.button_grid[y+1][x+1].hide()
                     number = self.controller.get_tile_number(x, y)
                     label = QtWidgets.QLabel()
                     label.setFixedSize(*self.tile_size)
@@ -291,7 +298,7 @@ class Minesweeper(QtWidgets.QWidget):
                         label.setStyleSheet('color: ' + colours[str(number)].name())
                         label.setFont(font)
                         label.setAlignment(QtCore.Qt.AlignCenter)
-                    self.grid_layout.addWidget(label, y, x)
+                    self.grid_layout.addWidget(label, y+1, x+1)
 
     def place_flag(self, row, column):
         '''Toggles the flag showing feature on a tile'''
@@ -354,7 +361,7 @@ class Minesweeper(QtWidgets.QWidget):
 
     def button_clicked(self, row, column):
         '''This is called when a button is clicked at the position (row, column)'''
-        mine = self.controller.click_tile(x=column, y=row)
+        mine = self.controller.click_tile(x=column-1, y=row-1)
         if not mine:
             self.refresh_gui()
             self.break_sound.play()
