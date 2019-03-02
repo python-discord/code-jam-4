@@ -132,6 +132,10 @@ class CloppyWindow(tk.Toplevel):
 
 
 class CloppyButtonWindow(CloppyWindow):
+    """
+    A sub-child of CloppyWindow that takes input from the user using a list of
+    buttons.
+    """
     def __init__(self, master):
         super().__init__(master)
 
@@ -159,8 +163,6 @@ class CloppyButtonWindow(CloppyWindow):
             command=lambda: self.make_choice(choice)
         )
 
-        # choice_button.bind('<Up>', self.on_up_key)
-
         row = len(self.choice_buttons)
 
         choice_button.grid(
@@ -174,12 +176,20 @@ class CloppyButtonWindow(CloppyWindow):
     def show(self):
         super().show()
 
+        # Set focus to the first button in the list.
         if len(self.choice_buttons):
             self.choice_buttons[0].focus_set()
 
     def set_highlighted_choice(self, choice):
+        """
+        Set focus to the button at a given index in the list of choices.
+
+        :param choice: The index of the choice to be focused on.
+        """
+
         if choice < 0:
             choice = len(self.choice_buttons)-1
+
         elif choice >= len(self.choice_buttons):
             choice = 0
 
@@ -197,27 +207,45 @@ class CloppyButtonWindow(CloppyWindow):
 
 
 class CloppyTextInputWindow(CloppyWindow):
+    """
+    A sub-child of CloppyWindow that takes input from the user using a text
+    entry.
+    """
     def __init__(self, master, password=False, submit_button_text='Ok'):
+        """
+        :param password: If set to True, then input in the box will be masked
+                         as if it's a password.
+
+        :param submit_button_text: The text shown in the button at the bottom.
+                                    When clicked, this button will submit the
+                                    user's input as a choice.
+        """
         super().__init__(master)
 
+        # Setting up the text entry box.
         if password:
             self.input_box = tk.Entry(self.input_frame, show='*')
         else:
             self.input_box = tk.Entry(self.input_frame)
 
+        self.input_box.grid(row=0, column=0, sticky=tk.NSEW)
+
+        self.input_box.bind(
+            '<Return>',
+            lambda e: self.make_choice(self.input_box.get())
+        )
+
+        # Setting up the submit button.
         self.submit_button = tk.Button(
             self.input_frame,
             text=submit_button_text,
             command=lambda: self.make_choice(self.input_box.get())
         )
 
-        self.input_box.grid(row=0, column=0, sticky=tk.NSEW)
         self.submit_button.grid(row=1, column=0, sticky=tk.NSEW)
-        self.input_box.bind(
-            '<Return>',
-            lambda e: self.make_choice(self.input_box.get())
-        )
 
     def show(self):
         super().show()
+
+        # Direct focus to the input box.
         self.input_box.focus_set()
