@@ -22,13 +22,13 @@ class menu:
         saveas = "セイヴ アズ…"  # se i vu   a zu … | Save As...
 
         class button:
-            default = "セイヴ ヒル"  # se i vu   hi ru | Save Here
-            special = "セイヴ ヒル\n【ファイルナム カッノト ビー エムプテイー オル ア スペシアル パス】"
-            # se i vu   hi ru \n [fa i ru na mu   ka nno to   bi-   e mu pu te i-   o ru   a
+            default = "セイヴ ヒール"  # se i vu   hi- ru | Save Here
+            special = "セイヴ ヒール\n【ファイルナム カッノト ビー エムプテイー オル ア スペシアル パス】"
+            # se i vu   hi- ru \n [fa i ru na mu   ka nno to   bi-   e mu pu te i-   o ru   a
             # su pe shi a ru   pa su]
             # Save Here [Filename cannot be empty or a special path]
-            invalid = 'セイヴ ヒル\n【ファイルナム カッノト コンテイヌ エニー オヴ: \\/:*?"<>|】'
-            # se i vu   hi ru \n [fa i ru na mu   ka nno to   ko n te i nu   e ni-   o vu:
+            invalid = 'セイヴ ヒール\n【ファイルナム カッノト コンテイヌ エニー オヴ: \\/:*?"<>|】'
+            # se i vu   hi- ru \n [fa i ru na mu   ka nno to   ko n te i nu   e ni-   o vu:
             # \/:*?"<>|]
             # Save Here [Filename cannot contain any of: \/:*?"<>|]
             cancel = "カンセル"  # ka n se ru | Cancel
@@ -36,10 +36,10 @@ class menu:
     class entry:
         x = "エクズ"  # e ku zu | X
         y = "ワイ"  # wa i | Y
-        colour = "コロー"  # ko ro- | Colour
+        colour = "コラー"  # ko ra- | Colour
         confirm = "コンファーム"  # ko n fa- mu | Confirm
-        colour_error = "コロー ムスト ビー ベトイーン 0 アンド 16777215"
-        # ko ro-   mu su to   bi-   be to i- n   0   a n do   16777215
+        colour_error = "コラー ムスト ビー ベトイーン 0 アンド 16777215"
+        # ko ra-   mu su to   bi-   be to i- n   0   a n do   16777215
         # Colour must be between 0 and 16777215
         x_error = "エクズ ムスト ビー ベトイーン 1 アンド {}"
         # e ku zu   mu su to   bi-   be to i- n   1   a n do   {}
