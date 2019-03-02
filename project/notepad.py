@@ -1,4 +1,5 @@
 import os
+from tkinter.messagebox import showerror
 from tkinter.filedialog import (
     Text,
     Menu,
@@ -13,7 +14,10 @@ from tkinter.filedialog import (
     asksaveasfilename,
     RIGHT,
     END,
+    TclError,
 )
+
+
 
 
 class Notepad:
@@ -178,13 +182,14 @@ class Notepad:
         self.__thisTextArea.event_generate("<<Paste>>")
 
     def __reverse(self):
-        self.__thisTextArea.delete(1.0, END)
-
-        file = open(self.__file, "r")
-        self.__thisTextArea.insert(1.0, file.read())
-
-        file.close()
-
+        try:
+            text = self.__thisTextArea.get('sel.first', 'sel.last')
+        except TclError:
+            showerror(title="Error", message="Please select text to reverse")
+            return
+        reversed_text = text[::-1]
+        self.__thisTextArea.insert('sel.first', reversed_text)
+        self.__thisTextArea.delete('sel.first', 'sel.last')
 
     def run(self):
         self.__root.mainloop()
