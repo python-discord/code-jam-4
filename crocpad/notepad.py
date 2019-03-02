@@ -1,19 +1,18 @@
 import random
-import sys
-from zipfile import BadZipFile
 
 from PyQt5.QtCore import QEvent, Qt
 from PyQt5.QtGui import QFont, QFontDatabase, QIcon
 from PyQt5.QtMultimedia import QSound
-from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
-                             QFileDialog, QMainWindow, QMessageBox,
-                             QPlainTextEdit, QStatusBar, QVBoxLayout, QWidget, QFontDialog)
+from PyQt5.QtWidgets import (QAction, QDesktopWidget,
+                             QFileDialog, QFontDialog, QMainWindow,
+                             QMessageBox, QPlainTextEdit, QStatusBar,
+                             QVBoxLayout, QWidget)
 
+import crocpad.stylesheets
 from crocpad.configuration import app_config, save_config
 from crocpad.eula_dialog import EulaDialog
 from crocpad.eula_quiz_dialog import EulaQuizDialog
 from crocpad.insert_emoji_dialog import EmojiPicker
-import crocpad.stylesheets
 
 
 class MainWindow(QMainWindow):
@@ -145,8 +144,7 @@ class MainWindow(QMainWindow):
         # Do the users REEEEEALY need to change font :D
         font, ok = QFontDialog.getFont()
         if ok:
-            print(font.toString())        
-
+            print(font.toString())
 
     def eventFilter(self, source, event):
         if event.type() == QEvent.KeyPress:
@@ -185,7 +183,7 @@ class MainWindow(QMainWindow):
         with open(filename, 'r') as file:
             self.main_window.setPlainText(file.read())
         self.filename = filename
-        self.update_title()             
+        self.update_title()
 
     def save_file(self):
         filename = QFileDialog.getSaveFileName()[0]
@@ -193,7 +191,7 @@ class MainWindow(QMainWindow):
         with open(filename, 'w') as file:
             file.write(text)
         self.filename = filename
-        self.update_title()            
+        self.update_title()
 
     def new_file(self):
         self.filename = "** Untitled **"
