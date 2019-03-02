@@ -9,7 +9,7 @@ flake8 = "*"
 [packages]
 flake8 = "*"
 pillow = "*"
-pyaudio = "*"
+pyaudio = {path = "./PyAudio-0.2.11-cp37-cp37m-win32.whl"}
 
 [requires]
 python_version = "3.7"
