@@ -22,7 +22,7 @@ class Front(widget.PrimaryFrame):
     # doesn't delete it before the animation ends
     _last = None
 
-    def __next(self):
+    def __next(self, direction: Direction = None):
         data: dict = self.cache.next()
         image = process_image(
             data.pop('image'),
@@ -31,6 +31,10 @@ class Front(widget.PrimaryFrame):
         )
         name = data.pop('name')
         self.__load(name, image, data)
+        if direction is None:
+            self.window.set_view(self.image)
+        else:
+            self.window.change_view(self.image, direction)
 
     def __load(self, name, image, data):
         self.title.config(text=name)
@@ -40,10 +44,6 @@ class Front(widget.PrimaryFrame):
         self._last = self.image
         self.bio.data.load(data)
         self.update()
-
-    def __change_image(self, direction: Direction):
-        self.__next()
-        self.window.change_view(self.image, direction)
 
     def init(self):
         self.title = widget.PrimaryLabel(self)
@@ -71,12 +71,15 @@ class Front(widget.PrimaryFrame):
         self.btn_like.pack(side='left')
 
         self.cache = ImageCache(self.cachesize)
+        self.cache.start()
+        # Prime the pump
+        self.after_idle(self.__next)
 
     def cmd_dislike(self):
-        self.__change_image('left')
+        self.__next('left')
 
     def cmd_like(self):
-        self.__change_image('right')
+        self.__next('right')
 
     def cmd_bio(self):
         if self.window.current != self.bio:
@@ -84,20 +87,8 @@ class Front(widget.PrimaryFrame):
         else:
             self.window.change_view(self.image, 'down')
 
-    @property
-    def cache(self):
-        return self._cache
-
-    @cache.setter
-    def cache(self, imagecache: ImageCache):
-        self._cache = imagecache
-        self._cache.start()
-        # Prime the pump
-        self.__next()
-        self.window.set_view(self.image)
-
     def cleanup(self):
-        self._cache.stop()
+        self.cache.stop()
 
 
 class Bio(widget.PrimaryFrame):

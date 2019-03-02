@@ -2,25 +2,28 @@ import json
 import requests
 import time
 import multiprocessing as mp
+
+from typing import List, Text
 from random import randint, choice, sample
 
 from . import API
 
 
 class ImageCache:
-    '''Class used for caching images'''
+    """Class used for caching images"""
 
     ratelimit = 0.05
     with API.open() as fp:
         api = json.load(fp)
 
-    def __init__(self, size):
-        self.manager = mp.Manager()
-        self.queue = self.manager.Queue(size)
-        self.worker = None
+    api_cache = {
+        'info': None,
+        'hobbies': None
+    }
 
-        self.infocache = None
-        self.hobbycache = None
+    def __init__(self, size):
+        self.queue = mp.Queue(size)
+        self.worker = None
 
     def __del__(self):
         self.stop()
@@ -31,23 +34,20 @@ class ImageCache:
         except ConnectionError as e:
             return e
 
-    def __parse_image(self, data: dict):
-        data = response.json()
+    def __parse_image(self, data: List[dict]) -> dict:
         url = data[0]['url']
         response = self.__get(url)
         return {'image': response.content}
 
-    def __parse_hobbies(self, response):
-        all_hobbies = response.text.split("\n")
-        return {'hobbies': sample(all_hobbies, 5)}
+    def __parse_hobbies(self, data: Text):
+        return {'hobbies': sample(data, 5)}
 
-    def __parse_info(self, response):
-        data = response.json()
+    def __parse_info(self, data: dict):
         letter = choice('acdefghijklmnopqrstuvwxyz')
         data = choice(data[letter])
         return {
+            'name': data['name'],
             'info': {
-                'name': data['name'],
                 'gender': data['gender'],
                 'age': randint(1, 42),
                 'location': f'{randint(1, 9999)} miles away'
@@ -55,22 +55,17 @@ class ImageCache:
         }
 
     def get_profile(self):
-        api = [self.api['image']]
-        if self.infocache is None:
-            api.append(self.api['info'])
-        if self.
-
-        with mp.Pool(poolsize) as pool:
-            response = pool.map(self.__get, self.api.values())
-        if ConnectionError not in responses:  # TODO Record connection errors
+        response = {k: self.__get(v) for k, v in self.api.items() if self.api_cache.get(k) is None}
+        if ConnectionError not in response:  # TODO Record connection errors
+            if 'info' in response:
+                self.api_cache['info'] = response['info'].json()
+            if 'hobbies' in response:
+                self.api_cache['hobbies'] = response['hobbies'].text.split('\n')
             return {
-                **self.__parse_info(response['info']),
-                **self.__parse_image(response['image']),
-                **self.__parse_hobbies(response['hobbies'])
+                **self.__parse_info(self.api_cache['info']),
+                **self.__parse_hobbies(self.api_cache['hobbies']),
+                **self.__parse_image(response['image'].json())
             }
-
-    def next(self):
-        return self.queue.get()
 
     def mainloop(self, queue):
         while True:
@@ -79,6 +74,9 @@ class ImageCache:
                 queue.put(profile)
             time.sleep(self.ratelimit)
 
+    def next(self):
+        return self.queue.get()
+
     def start(self):
         if self.worker is not None and self.worker.is_alive():
             self.stop()
@@ -86,5 +84,4 @@ class ImageCache:
         self.worker.start()
 
     def stop(self):
-        for worker in mp.active_children():
-            worker.terminate()
+        self.worker.terminate()
