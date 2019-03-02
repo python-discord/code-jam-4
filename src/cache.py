@@ -19,14 +19,8 @@ class ImageCache:
     )
     ratelimit = 0.1
 
-    def __init__(self, master, cachesize):
-        self.master = master
-        self.cachesize = cachesize
-        self.screen_x = self.master.winfo_screenwidth()
-        self.screen_y = self.master.winfo_screenheight()
-
-        self.queue = Queue(self.cachesize)
-        self.active = False
+    def __init__(self, size):
+        self.queue = Queue(size)
         self.worker = None
 
     def __del__(self):
@@ -65,15 +59,13 @@ class ImageCache:
         while True:
             if not queue.full():
                 queue.put(self.get_profile())
-        time.sleep(self.ratelimit)
+            time.sleep(self.ratelimit)
 
     def start(self):
         if self.worker is not None and self.worker.is_alive():
             self.stop()
-        self.active = True
         self.worker = Process(target=self.mainloop, args=(self.queue,))
         self.worker.start()
 
     def stop(self):
-        self.active = False
-        self.worker.join()
+        self.worker.terminate()

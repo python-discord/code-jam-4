@@ -9,7 +9,7 @@ from .cache import ImageCache
 
 def process_image(image: bytes, width: int, height: int):
     im = Image.open(io.BytesIO(image))
-    im = im.resize((height, width), Image.NEAREST)
+    im = im.resize((width, height), Image.NEAREST)
     return ImageTk.PhotoImage(im)
 
 
@@ -64,7 +64,7 @@ class Front(widget.PrimaryFrame):
         self.btn_dislike.pack(side='left')
         self.btn_like.pack(side='right')
 
-        self.cache = ImageCache(self.window, self.cachesize)
+        self.cache = ImageCache(self.cachesize)
 
     def cmd_dislike(self):
         self.__change_image('right')
