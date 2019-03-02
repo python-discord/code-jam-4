@@ -235,4 +235,3 @@ class Motion:
 
     def __eq__(self):
         return isinstance(self, type(other)) and self.__key() == other.__key()
-
