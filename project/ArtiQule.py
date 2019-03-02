@@ -36,7 +36,7 @@ class ColorBox(QMainWindow):
         self.setWindowTitle('Colorbox')
         self.setFixedSize(150, 300)
 
-    def addPallette(self, pallet):
+    def addPallette(self, pallet):  #TODO EXTRA: make this into one vertical line of colors
         pallet.setGeometry(self.toolsX, self.toolsY, 40, 40)
         self.layout().addWidget(pallet)
         self.toolsX += 50
@@ -103,7 +103,8 @@ class Tool:
 
 class PalletteButton:
     """Class for color pallete; allows for mixing color"""
-    def __init__(self):
+    def __init__(self, parentBtn):
+        self.parentBtn = parentBtn
         self.r = randint(0, 255)
         self.g = randint(0, 255)
         self.b = randint(0, 255)
@@ -155,6 +156,11 @@ class PalletteButton:
                 tool.toolName = "A bucket filled"
                 tool.PaintBoard.connectTool(tool)
             tool.duration = tool.constDuration
+
+
+        self.parentBtn.setStyleSheet("background-color: rgba{0}".format(
+            self.palletteColor))
+
         print(self.r, self.g, self.b)
 
 
@@ -267,8 +273,8 @@ class PaintBoard(QMainWindow):
         self.setCursor(QCursor(
             QPixmap("Design/icons/{}.png".format(self.currentTool.toolName
                                                  if self.currentTool
-                                                 else None
-                                                 ))))
+                                                 else None )
+                    )))
 
     # TODO: make a variable self.currentTool
     #  that'll hold the current selected tool, i fixed the class
@@ -283,12 +289,12 @@ class PaintBoard(QMainWindow):
 
         p1, p2, p3, p4, p5, p6 = (QPushButton() for _ in range(6))
 
-        c1 = PalletteButton()
-        c2 = PalletteButton()
-        c3 = PalletteButton()
-        c4 = PalletteButton()
-        c5 = PalletteButton()
-        c6 = PalletteButton()
+        c1 = PalletteButton(p1)
+        c2 = PalletteButton(p2)
+        c3 = PalletteButton(p3)
+        c4 = PalletteButton(p4)
+        c5 = PalletteButton(p5)
+        c6 = PalletteButton(p6)
 
         p1.setStyleSheet("background-color: rgba{0}; border-radius:50px"
                          .format(c1.palletteColor))
