@@ -25,7 +25,13 @@ class App(tk.Tk):
         self.maxsize(400, 500)
 
         self.window = Window(self)
-        self.front = View(Front(self.window), 'widget')
-
+        self.front = View(
+            Front(
+                self.window,
+                width=self.window.winfo_width(),
+                height=self.window.winfo_height()
+            ),
+            'widget'
+        )
         self.window.pack(fill='both', expand=True)
         self.window.set_view(self.front)

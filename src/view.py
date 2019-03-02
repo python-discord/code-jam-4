@@ -102,4 +102,4 @@ class Window(widget.PrimaryCanvas):
 
     @property
     def origin(self):
-        return Coord(0, 0)
+        return Coord(self.canvasx(0), self.canvasy(0))
