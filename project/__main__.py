@@ -32,6 +32,10 @@ class Framed(tk.AsyncTk):
         The canvas containing the current painting (subclass of asynctk.AsyncCanvas)
     entry: .canvas.EntrySection
         The frame containing the buttons to add a pixel (subclass of asynctk.AsyncFrame)
+    cur_locale: .locale.eng or .locale.kata
+        The current locale that is used around the window
+    konami_code: int
+        Position in the Konami Code (to allow the translation into English)
 
     Methods
     -------
@@ -46,12 +50,19 @@ class Framed(tk.AsyncTk):
         Creates a new canvas based on a given width and height
     open_new: coroutine
         Creates the Top Level for the new file button
+    set_en: method
+        Translates the entire window into English
+    set_konami: coroutine
+        Furthers along the position in the Konami key
+    check_konami: coroutine
+        Checks to see if the konami has reached the end
     """
 
     def __init__(self):
         super().__init__()
 
         self.cur_locale = locale.kata
+        self.konami_code = 0
 
         self.wm_title(self.cur_locale.general.title)
 
@@ -70,7 +81,35 @@ class Framed(tk.AsyncTk):
         self.bind("<Control-Z>", lambda i: asyncio.ensure_future(self.canvas.undo()))
         self.bind("<Control-y>", lambda i: asyncio.ensure_future(self.canvas.undo()))
 
-    def set_en(self, i):
+        self._konami_bind(self)
+
+    def _konami_bind(self, item):
+        item.bind("<Up>", lambda i: asyncio.ensure_future(self.set_konami(1, 2)))
+        item.bind("<Down>", lambda i: asyncio.ensure_future(self.set_konami(3, 4)))
+        item.bind("<Left>", lambda i: asyncio.ensure_future(self.set_konami(5, 7)))
+        item.bind("<Right>", lambda i: asyncio.ensure_future(self.set_konami(6, 8)))
+        item.bind("b", lambda i: asyncio.ensure_future(self.set_konami(9)))
+        item.bind("a", lambda i: asyncio.ensure_future(self.set_konami(10)))
+        item.bind("<Return>", lambda i: asyncio.ensure_future(self.check_konami()))
+
+    async def set_konami(self, *numbers):
+        print([n-1 for n in numbers])
+        if self.konami_code in [n-1 for n in numbers]:
+            self.konami_code += 1
+            print(self.konami_code)
+            new_num = self.konami_code
+            await asyncio.sleep(1)
+            if self.konami_code == new_num:
+                self.konami_code = 0
+        else:
+            self.konami_code = 0
+            print(self.konami_code)
+
+    async def check_konami(self):
+        if self.konami_code == 10:
+            self.set_en()
+
+    def set_en(self):
         self.cur_locale = locale.eng
         self.wm_title(self.cur_locale.general.title)
         self._setupMenu()

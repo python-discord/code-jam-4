@@ -299,6 +299,7 @@ class EntrySection(tk.AsyncFrame):
 
         self.pack(side=tk.RIGHT)
         self._setupFields()
+        self.master._konami_bind(self)
 
     def reset(self, remember_values: bool = False):
         """Resets the EntrySection by deleting slaves and recreating them to the new dimensions"""
