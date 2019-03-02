@@ -44,15 +44,14 @@ class MenuWidget(QtWidgets.QWidget):
 
     def setup_gui(self):
         layout = QtWidgets.QVBoxLayout()
-        layout.setAlignment(QtCore.Qt.AlignCenter)
-        width_field = QtWidgets.QHBoxLayout()
-        height_field = QtWidgets.QHBoxLayout()
-        mines_field = QtWidgets.QHBoxLayout()
+        layout.setAlignment(QtCore.Qt.AlignHCenter)
+        form_layout = QtWidgets.QFormLayout()
 
         font = QtGui.QFont('Consolas')
         font.setPointSize(14)
         title_label = QtWidgets.QLabel('Minesweeper Game')
         title_label.setFont(font)
+        font.setPointSize(10)
         width_label = QtWidgets.QLabel('Grid Width: ')
         width_label.setFont(font)
         height_label = QtWidgets.QLabel('Grid Height: ')
@@ -62,32 +61,30 @@ class MenuWidget(QtWidgets.QWidget):
 
         self.onlyInt = QtGui.QIntValidator()
 
-        self.set_width = QtWidgets.QLineEdit()
-        self.set_width.setMaxLength(2)
-        self.set_width.setFixedWidth(30)
-        self.set_width.setValidator(self.onlyInt)
-        self.set_height = QtWidgets.QLineEdit()
-        self.set_height.setMaxLength(2)
-        self.set_height.setFixedWidth(30)
-        self.set_height.setValidator(self.onlyInt)
-        self.set_mines = QtWidgets.QLineEdit()
-        self.set_mines.setMaxLength(2)
-        self.set_mines.setFixedWidth(30)
-        self.set_mines.setValidator(self.onlyInt)
+        self.set_width_input = QtWidgets.QLineEdit('24')
+        self.set_width_input.setMaxLength(2)
+        self.set_width_input.setFixedWidth(30)
+        self.set_width_input.setValidator(self.onlyInt)
+        self.set_height_input = QtWidgets.QLineEdit('24')
+        self.set_height_input.setMaxLength(2)
+        self.set_height_input.setFixedWidth(30)
+        self.set_height_input.setValidator(self.onlyInt)
+        self.set_mines_input = QtWidgets.QLineEdit('99')
+        self.set_mines_input.setMaxLength(2)
+        self.set_mines_input.setFixedWidth(30)
+        self.set_mines_input.setValidator(self.onlyInt)
         self.start_button = QtWidgets.QPushButton('Start')
 
+        form_layout.addRow(width_label, self.set_width_input)
+        form_layout.setFormAlignment(QtCore.Qt.AlignCenter)
+        form_layout.addRow(height_label, self.set_height_input)
+        form_layout.addRow(mines_label, self.set_mines_input)
 
         layout.addWidget(title_label)
-        layout.addLayout(width_field)
-        layout.addLayout(height_field)
-        layout.addLayout(mines_field)
-        width_field.addWidget(width_label)
-        height_field.addWidget(height_label)
-        mines_field.addWidget(mines_label)
-        width_field.addWidget(self.set_width)
-        height_field.addWidget(self.set_height)
-        mines_field.addWidget(self.set_mines)
+        layout.setAlignment(title_label, QtCore.Qt.AlignCenter)
+        layout.addLayout(form_layout)
         layout.addWidget(self.start_button)
+        layout.setAlignment(self.start_button, QtCore.Qt.AlignCenter)
         self.setLayout(layout)
 
 
@@ -213,18 +210,28 @@ class Minesweeper(QtWidgets.QWidget):
         # -- GAME PANEL
         self.game_frame = QtWidgets.QFrame(self)
         self.game_frame.setObjectName('game')
-        self.grid_layout = QtWidgets.QGridLayout(self.game_frame)
-        self.grid_layout.setContentsMargins(16, 16, 16, 16)
+        self.grid_layout = QtWidgets.QGridLayout()
+        self.grid_layout.setContentsMargins(48, 48, 48, 48)
         self.grid_layout.setSpacing(1)
 
+        # Adding spacers around the grid so it doesn't spread out when resized
+        horizontal_spacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Fixed)
+        vertical_spacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Fixed,
+                                            QtWidgets.QSizePolicy.Expanding)
+        self.grid_layout.addItem(horizontal_spacer, 1, 0, rowSpan=self.grid_height)
+        self.grid_layout.addItem(horizontal_spacer, 1, self.grid_width+1, rowSpan=self.grid_width)
+        self.grid_layout.addItem(vertical_spacer, 0, 1, columnSpan=self.grid_height)
+        self.grid_layout.addItem(vertical_spacer, self.grid_height+1, 1, columnSpan=self.grid_width)
+
         # generating the grid of tiles
-        for row in range(self.grid_height):
+        for row in range(1, self.grid_height+1):
             row_array = []
-            for column in range(self.grid_width):
+            for column in range(1, self.grid_width+1):
                 button = Tile(random.randint(50, 100))
-                button.clicked.connect(partial(self.button_clicked, row, column))
-                button.right_clicked.connect(partial(self.place_flag, row, column))
-                button.health_decreased.connect(partial(self.button_health_update, row, column))
+                button.clicked.connect(partial(self.button_clicked, row-1, column-1))
+                button.right_clicked.connect(partial(self.place_flag, row-1, column-1))
+                button.health_decreased.connect(partial(self.button_health_update, row-1, column-1))
                 button.setFixedSize(*self.tile_size)
                 self.grid_layout.addWidget(button, row, column)
                 row_array.append(button)
