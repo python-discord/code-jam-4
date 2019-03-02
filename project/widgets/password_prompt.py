@@ -1,5 +1,4 @@
 from PySide2.QtWidgets import QWidget
-from random import choice
 
 from project import ui
 
@@ -27,7 +26,7 @@ class PasswordPrompt(QWidget):
         """Check if entered passphrase is correct."""
         field_one = self.ui.password_regular.text()
         field_two = self.ui.password_backwards.text()
-        if (field_one == self.password)) and \
+        if (field_one == self.password) and \
            (field_two == sorted(self.password)):
             self.success = True
             self.close()

@@ -9,8 +9,6 @@ from PySide2.QtSql import QSqlDatabase
 
 log = logging.getLogger(__name__)
 
-DB_NAME = "library.sqlite"
-
 
 class Playlist(QMediaPlaylist):
     """A wrapper for :class:`QMediaPlaylist` which navigates using a :class:`QAbstractItemModel`.

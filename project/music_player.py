@@ -1,10 +1,14 @@
 import sys
 
+import sqlite3
+
 from PySide2.QtWidgets import QApplication
+from PySide2.QtSql import QSqlDatabase
 
 from project import playlist
 from project.widgets import MainWindow
 
+DB_NAME = "library.sqlite"
 
 def create_db():
     """Create the playlist's database file and table if they don't exist.
@@ -39,7 +43,7 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName("Music Player")
 
-    playlist.create_db()
+    create_db()
 
     window = MainWindow()
     window.setWindowTitle("Music Player")
