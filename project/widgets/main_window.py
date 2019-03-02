@@ -32,6 +32,12 @@ class MainWindow(QMainWindow):
         self.ui.next_button.pressed.connect(self.player.playlist().next)
         self.ui.add_files_action.triggered.connect(self.add_files)
 
+        self.prompt = PasswordPrompt()
+
+    def await_password():
+        self.prompt.display()
+        return self.prompt.success
+
     @staticmethod
     def create_model() -> QSqlTableModel:
         """Create and return the model to use with the playlist table view."""
