@@ -30,8 +30,8 @@ class ClipboardManager(QObject):
 
     @pyqtSlot(Stack)
     def _stack_changed(self):
-        """Slot to be called when the state of the stack changes (usually on add, move, delete, or moving items
-        around """
+        """Slot to be called when the state of the stack changes (usually on
+        add, move, delete, or moving items around """
         # copy the top of the stack into the clipboard if the stack is not empty.
         if self.clipboard_stack.items_count():
             if isinstance(self.clipboard_stack.peek(), TextClipboardObject):
@@ -41,7 +41,8 @@ class ClipboardManager(QObject):
 
     @pyqtSlot()
     def _clipboard_changed(self):
-        """Slot to be called when the state of the system's clipboard changes (mostly after copying)"""
+        """Slot to be called when the state of the system's clipboard changes
+        (mostly after copying)"""
         # current_text = Text.apply(QApplication.clipboard().text())
         current_text = QApplication.clipboard().text()
         current_image = QApplication.clipboard().pixmap()

@@ -3,7 +3,6 @@ from random import randint, choice
 import requests
 from lxml import html
 import thesaurus
-import time
 
 
 def apply(text):
@@ -46,7 +45,6 @@ def quotify(text):
 
 def synonym(text):
     skip_word = False
-    start = time.time()
     text = text.split()
     new_words = ''
     for word in text:
@@ -54,7 +52,6 @@ def synonym(text):
             new_words = new_words + ' ' + word
             skip_word = False
         else:
-            start_ = time.time()
             skip_word = True
             try:
                 w = thesaurus.Word(word)
@@ -68,6 +65,4 @@ def synonym(text):
                 new_words = new_words + ' ' + word
             except TypeError:
                 new_words = new_words + ' ' + word
-            end_ = time.time()
-    end = time.time()
     return new_words
