@@ -26,3 +26,7 @@ class App(tk.Tk):
         self.front = Front(self)
 
         self.front.pack(fill='both', expand=True)
+
+    def cleanup(self):
+        self.front.cleanup()
+        self.destroy()
