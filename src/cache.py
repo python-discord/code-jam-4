@@ -11,11 +11,16 @@ class ImageCache:
     '''Class used for caching images'''
 
     ratelimit = 0.05
-    api = json.load(API)
+    with API.open() as fp:
+        api = json.load(fp)
 
     def __init__(self, size):
-        self.queue = mp.Queue(size)
+        self.manager = mp.Manager()
+        self.queue = self.manager.Queue(size)
         self.worker = None
+
+        self.infocache = None
+        self.hobbycache = None
 
     def __del__(self):
         self.stop()
@@ -26,7 +31,7 @@ class ImageCache:
         except ConnectionError as e:
             return e
 
-    def __parse_image(self, response):
+    def __parse_image(self, data: dict):
         data = response.json()
         url = data[0]['url']
         response = self.__get(url)
@@ -50,11 +55,19 @@ class ImageCache:
         }
 
     def get_profile(self):
-        poolsize = len(self.api)
+        api = [self.api['image']]
+        if self.infocache is None:
+            api.append(self.api['info'])
+        if self.
+
         with mp.Pool(poolsize) as pool:
-            responses = pool.map(self.__get, self.api.values())
+            response = pool.map(self.__get, self.api.values())
         if ConnectionError not in responses:  # TODO Record connection errors
-            return dict(*responses)
+            return {
+                **self.__parse_info(response['info']),
+                **self.__parse_image(response['image']),
+                **self.__parse_hobbies(response['hobbies'])
+            }
 
     def next(self):
         return self.queue.get()
@@ -69,7 +82,7 @@ class ImageCache:
     def start(self):
         if self.worker is not None and self.worker.is_alive():
             self.stop()
-        self.worker = Process(target=self.mainloop, args=(self.queue,))
+        self.worker = mp.Process(target=self.mainloop, args=(self.queue,))
         self.worker.start()
 
     def stop(self):
