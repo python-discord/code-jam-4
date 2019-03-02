@@ -38,11 +38,15 @@ class menu:
         y = "ワイ"  # wa i | Y
         colour = "コロー"  # ko ro- | Colour
         confirm = "コンファーム"  # ko n fa- mu | Confirm
-        colour_error = "コロー ムスト ビー ベトイーン 0 アンヅ 16777215"
-        # ko ro-   mu su to   bi-   be to i- n   0   a n du   16777215
+        colour_error = "コロー ムスト ビー ベトイーン 0 アンド 16777215"
+        # ko ro-   mu su to   bi-   be to i- n   0   a n do   16777215
         # Colour must be between 0 and 16777215
-        x_error = "X must be between 1 and {}"
-        y_error = "Y must be between 1 and {}"
+        x_error = "エクズ ムスト ビー ベトイーン 1 アンド {}"
+        # e ku zu   mu su to   bi-   be to i- n   1   a n do   {}
+        # X must be between 1 and {}
+        y_error = "ワイ ムスト ビー ベトイーン 1 アンド {}"
+        # wa i   mu su to   bi-   be to i- n   1   a n do   {}
+        # Y must be between 1 and {}
 
 
 class general:
