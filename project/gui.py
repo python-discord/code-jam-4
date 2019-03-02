@@ -235,7 +235,7 @@ class Minesweeper(QtWidgets.QWidget):
         for row in range(1, self.grid_height+1):
             row_array = [None]
             for column in range(1, self.grid_width+1):
-                button = Tile(random.randint(50, 100))
+                button = Tile(random.randint(1, 1))
                 button.clicked.connect(partial(self.button_clicked, row, column))
                 button.right_clicked.connect(partial(self.place_flag, row, column))
                 button.health_decreased.connect(partial(self.button_health_update, row, column))
@@ -316,7 +316,7 @@ class Minesweeper(QtWidgets.QWidget):
 
     def explode(self, row, column):
         '''Explodes the specified tile, with a sound effect and a GIF'''
-        self.button_grid[row][column].hide()
+        self.button_grid[row+1][column+1].hide()
         explode_label = QtWidgets.QLabel()
         explosion = QtGui.QMovie(':/images/explosion.gif')
         explosion.setScaledSize(QtCore.QSize(*self.tile_size))
@@ -325,7 +325,7 @@ class Minesweeper(QtWidgets.QWidget):
                                                explosion.frameCount()))
         explode_label.setMovie(explosion)
         explode_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.grid_layout.addWidget(explode_label, row, column)
+        self.grid_layout.addWidget(explode_label, row+1, column+1)
         self.explosion_sound.play()
 
     def explode_frame_count(self, label, max_frames, current_frame):
@@ -338,7 +338,7 @@ class Minesweeper(QtWidgets.QWidget):
 
     def explode_all_mines(self, row, column):
         '''Call this function to explode all mines'''
-        self.explode_all_mines_thread = DelayMineExplosionThread(self, first=(column, row))
+        self.explode_all_mines_thread = DelayMineExplosionThread(self, first=(column-1, row-1))
         self.explode_all_mines_thread.finished.connect(self.game_over.emit)
         self.explode_all_mines_thread.explode.connect(self.explode)
         self.explode_all_mines_thread.start()
@@ -396,6 +396,7 @@ class DelayMineExplosionThread(QtCore.QThread):
     def run(self):
         '''Shuffles and emits the signals for exploding'''
         random.shuffle(self.positions)
+        print(self.positions)
         self.positions.remove(self.first)
         self.positions.insert(0, self.first)
         bomb_number = len(self.positions)
