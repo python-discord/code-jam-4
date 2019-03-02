@@ -6,6 +6,9 @@ from project.windows.editor_window_events import NewWordEvent
 from project.functionality.constants import Constants
 from project.functionality.utility import pairwise
 
+from project.windows.cloppy_window import CloppyButtonWindow
+from project.windows.cloppy_window_events import CloppyChoiceMadeEventData
+
 # TODO: Fix docstring inconsistencies. Some have param docs, some don't etc.
 
 
@@ -58,8 +61,12 @@ class EditorWindow(tk.Toplevel):
         self.text_box.bind('<Control-X>', self.menu_bar.edit_menu.on_cut)
         self.text_box.bind('<Control-V>', self.menu_bar.edit_menu.on_paste)
 
+        # Setting up backspace/delete key event binding.
+        self.text_box.bind('<BackSpace>', self.on_backspace)
+        self.text_box.bind('<Delete>', self.on_backspace)
+
         # Set window title.
-        self.wm_title('Editor')
+        self.wm_title(Constants.program_name)
 
     def get_text(self, start='1.0', end=tk.END) -> str:
         """
@@ -262,6 +269,23 @@ class EditorWindow(tk.Toplevel):
             self.text_box.index(tk.CURRENT)
         )
 
+    def delete_selected_text(self, backspace=True):
+        """
+        Deletes any selected text.
+        If nothing is selected, and backspace is set to True, then delete's the
+        character behind the cursor.
+
+        :param backspace: If true, when no text is selected, the character
+                          behind the cursor is deleted instead.
+        """
+        selected_start, selection_end = self.get_selection_indexes()
+        if selected_start and selection_end:
+            self.set_selected_text('', False)
+
+        elif backspace:
+            if self.text_box.index(tk.INSERT) != '1.0':
+                self.set_text('', f'{tk.INSERT}-1c', None)
+
     def on_key_press(self, event):
         """
         Called every time the user presses a key while focused on the editor
@@ -294,6 +318,26 @@ class EditorWindow(tk.Toplevel):
 
                     self.new_word(start, end, word)
 
+    def on_backspace(self, event):
+        dialog = CloppyButtonWindow(self)
+        dialog.set_message(
+            "It looks like you're trying to erase some text.\n"
+            "The text you're erasing could be very important.\n"
+            "So it behooves me to ask:\n"
+            "Are you sure you want to do that?"
+        )
+        dialog.add_choice('Yes')
+        dialog.add_choice('No')
+
+        def delete_text(choice_data: CloppyChoiceMadeEventData):
+            if choice_data.choice == 'Yes':
+                self.delete_selected_text()
+
+        dialog.choice_made.add_callback(delete_text)
+        dialog.show()
+
+        return 'break'
+
     def on_right_click(self, event):
         """
         Called when the user right clicks over the editor window's text box.
@@ -323,6 +367,7 @@ class EditorWindow(tk.Toplevel):
         )
 
         context_menu.show()
+        return 'break'
 
 
 class EditorMenuBar(tk.Menu):
@@ -455,6 +500,8 @@ class EditorEditMenu(EditorMenu):
         )
         self.master.editor_window.set_selected_text('')
 
+        return 'break'
+
     def on_copy(self):
         """
         Called when the 'Copy' action is selected from the Edit menu.
@@ -465,6 +512,8 @@ class EditorEditMenu(EditorMenu):
         root.clipboard_append(
             self.master.editor_window.get_selected_text()
         )
+
+        return 'break'
 
     def on_paste(self):
         """
@@ -480,6 +529,8 @@ class EditorEditMenu(EditorMenu):
 
         except tk.TclError:
             pass
+
+        return 'break'
 
 
 class EditorHelpMenu(EditorMenu):

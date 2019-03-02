@@ -15,7 +15,7 @@ class Constants:
         0x20000  # Alt
     )
 
-    # The path to the picture of CLoppy used in CloppyWindow
+    # The path to the picture of Cloppy used in CloppyWindow
     cloppy_picture_path = '../resources/cloppy.png'
 
     # Cloppy's greeting to the user shown in CloppyWindow
