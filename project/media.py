@@ -133,7 +133,7 @@ class Player(QMediaPlayer):
         # TODO: Let's just hope the commits and rollbacks always succeed for now...
         self._model.database().transaction()
         start_row = self._model.rowCount()
-        count_added = 0
+        paths_added = []
 
         for path in paths:
             log.debug(f"Adding media for {path}")
@@ -144,22 +144,21 @@ class Player(QMediaPlayer):
             if not self._model.insertRecord(-1, record):  # -1 will append
                 log.error(f"Failed to add media for {path}: {self._model.lastError()}")
                 # Assuming the model wasn't ever modified if this failed; no revert needed.
-                continue
+            else:
+                paths_added.append(path)
 
-            media = QMediaContent(QUrl.fromLocalFile(path))
-            self.playlist().addMedia(media, self._model.rowCount() - 1)
-            count_added += 1
-
-        if self._model.submitAll():
-            self._model.database().commit()
-        else:
+        if not self._model.submitAll():
             log.error(f"Failed to add media: could not submit changes.")
             self._model.revertAll()
             self._model.database().rollback()
 
-            # Remove the media from the playlist.
-            for row in range(start_row, start_row + count_added):
-                self.playlist().removeMedia(row)
+            return
+
+        self._model.database().commit()
+
+        for row, path in enumerate(paths, start_row):
+            media = QMediaContent(QUrl.fromLocalFile(path))
+            self.playlist().addMedia(media, row)
 
     def remove_media(self, row: int) -> bool:
         # TODO: Let's just hope the commits and rollbacks always succeed for now...
