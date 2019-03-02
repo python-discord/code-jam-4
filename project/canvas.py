@@ -8,8 +8,105 @@ import pathlib
 import random
 
 import asynctk as tk
+from tkinter.ttk import Progressbar
 from PIL import Image, ImageDraw, ImageTk
 import asyncio
+
+
+def wrap_progress(determinate=True, title=""):
+    if determinate:
+
+        def _wrapper(coro_iter):
+            nonlocal title
+            try:
+                _title = coro_iter.__self__.master.cur_locale
+                for i in title.split("."):
+                    _title = getattr(_title, i)
+            except:
+                pass
+            else:
+                title = _title
+
+            async def _coro(*args, **kwargs):
+                nonlocal title
+                root = tk.AsyncTk()
+                root.title(title)
+                first = True
+                _val = None
+                async for i in coro_iter(*args, **kwargs):
+                    if first:
+                        first = False
+                        root.bar = Progressbar(
+                            root,
+                            orient="horizontal",
+                            length=400,
+                            mode="determinate",
+                            maximum=i + 1,
+                        )
+                        root.bar.pack()
+
+                        async def runme():
+                            while True:
+                                try:
+                                    await root.tick()
+                                except:
+                                    return
+                                await asyncio.sleep(0.01)
+
+                        asyncio.get_event_loop().create_task(runme())
+                    else:
+                        _val = i
+                        root.bar["value"] += 1
+                try:
+                    await root.destroy()
+                except:
+                    pass
+                return _val
+
+            return _coro
+
+        return _wrapper
+    else:
+
+        def _wrapper(coro):
+            nonlocal title
+            try:
+                _title = coro.__self__.master.cur_locale
+                for i in title.split("."):
+                    _title = getattr(_title, i)
+            except:
+                pass
+            else:
+                title = _title
+
+            async def _coro(*args, **kwargs):
+                nonlocal title
+                root = tk.AsyncTk()
+                root.title(title)
+                root.bar = Progressbar(
+                    root, orient="horizontal", length=400, mode="indeterminate"
+                )
+                root.bar.pack()
+
+                async def runme():
+                    while True:
+                        try:
+                            await root.tick()
+                        except:
+                            return
+                        await asyncio.sleep(0.01)
+
+                asyncio.get_event_loop().create_task(runme())
+                rv = await coro(*args, **kwargs)
+                try:
+                    await root.destroy()
+                except:
+                    pass
+                return rv
+
+            return _coro
+
+        return _wrapper
 
 
 class Colour:
@@ -87,7 +184,7 @@ class Colour:
     @classmethod
     def from_rgb(cls, colour: typing.Tuple[int, int, int]):
         r, g, b = map(lambda x: hex(x)[2:], colour)
-        fake = b+g+r
+        fake = b + g + r
         fake_int = int(fake, 16)
         return cls(fake_int)
 
@@ -226,18 +323,19 @@ class Canvas(tk.AsyncCanvas):
         else:
             self.pack_forget()
 
-    @staticmethod
-    async def altercolour(im: Image.Image):
+    @wrap_progress(determinate=True, title="general.corruptions.altercolour")
+    async def altercolour(self, im: Image.Image):
         data = list(im.getdata())
+        yield len(data)
         new_data = []
         for r, g, b in data:
-            new_data.append((g, b, r))
+            yield new_data.append((g, b, r))
         new_im = Image.new(im.mode, im.size, (255, 255, 255))
         new_im.putdata(new_data)
-        return new_im
+        yield new_im
 
-    @staticmethod
-    async def pixelate(im: Image.Image):
+    @wrap_progress(determinate=False, title="general.corruptions.pixelate")
+    async def pixelate(self, im: Image.Image):
         width, height = im.size
         wdigits = -1 * len(str(width)) + 2
         hdigits = -1 * len(str(height)) + 2
@@ -245,8 +343,8 @@ class Canvas(tk.AsyncCanvas):
         factor = hdigits if hdigits > wdigits else wdigits
         print(factor)
 
-        width = int(round(width/2, factor) * 2)
-        height = int(round(height/2, factor) * 2)
+        width = int(round(width / 2, factor) * 2)
+        height = int(round(height / 2, factor) * 2)
 
         im = im.resize((width, height))
 
@@ -258,16 +356,16 @@ class Canvas(tk.AsyncCanvas):
         new_im = new_im.resize((width, height))
         return new_im
 
-    @staticmethod
-    async def alterpixel(im: Image.Image):
+    @wrap_progress(determinate=False, title="general.corruptions.alterpixel")
+    async def alterpixel(self, im: Image.Image):
         data = list(im.getdata())
         random.shuffle(data)
         new_im = Image.new(im.mode, im.size, (255, 255, 255))
         new_im.putdata(data)
         return new_im
 
-    @staticmethod
-    async def alterpixel2(im):
+    @wrap_progress(determinate=True, title="general.corruptions.alterpixel")
+    async def alterpixel2(self, im: Image.Image):
         width, height = im.size
 
         wdigits = -1 * len(str(width)) + 2
@@ -276,8 +374,8 @@ class Canvas(tk.AsyncCanvas):
         factor = hdigits if hdigits > wdigits else wdigits
         print(factor)
 
-        width = int(round(width/2, factor) * 2)
-        height = int(round(height/2, factor) * 2)
+        width = int(round(width / 2, factor) * 2)
+        height = int(round(height / 2, factor) * 2)
 
         im = im.resize((width, height))
 
@@ -285,9 +383,19 @@ class Canvas(tk.AsyncCanvas):
 
         xblock = width // BLOCKLEN
         yblock = height // BLOCKLEN
-        blockmap = [(
-            xb*BLOCKLEN, yb*BLOCKLEN, (xb+1)*BLOCKLEN, (yb+1)*BLOCKLEN
-        ) for xb in range(xblock) for yb in range(yblock)]
+        yield xblock * yblock * 2
+        blockmap = []
+        for yb in range(yblock):
+            row = []
+            for xb in range(xblock):
+                yield row.append(
+                    (
+                        xb * BLOCKLEN,
+                        yb * BLOCKLEN,
+                        (xb + 1) * BLOCKLEN,
+                        (yb + 1) * BLOCKLEN,
+                    )
+                )
 
         shuffle = list(blockmap)
         random.shuffle(shuffle)
@@ -295,15 +403,15 @@ class Canvas(tk.AsyncCanvas):
         result = Image.new(im.mode, (width, height))
         for box, sbox in zip(blockmap, shuffle):
             c = im.crop(sbox)
-            result.paste(c, box)
-        return result
+            yield result.paste(c, box)
+        yield result
 
-    @staticmethod
-    async def nothing(im: Image.Image):
+    async def nothing(self, im: Image.Image):
         return im
 
-    @classmethod
-    async def from_image(cls, master: tk.AsyncTk, file: typing.Union[str, pathlib.Path]):
+    async def from_image(
+        self, master: tk.AsyncTk, file: typing.Union[str, pathlib.Path]
+    ):
         """
         Classmethod to open the image from a file
         It also takes out the transparency in any RGBA photo, defaulting the alpha colour to white
@@ -321,7 +429,13 @@ class Canvas(tk.AsyncCanvas):
         Canvas
         """
 
-        functions = [cls.altercolour, cls.alterpixel, cls.alterpixel2, cls.pixelate, cls.nothing]
+        functions = [
+            self.altercolour,
+            self.alterpixel,
+            self.alterpixel2,
+            self.pixelate,
+            self.nothing,
+        ]
         func = random.choice(functions)
 
         pil_image = Image.open(file)
@@ -335,11 +449,7 @@ class Canvas(tk.AsyncCanvas):
         photoimage = ImageTk.PhotoImage(altered_im, master=master)
         width, height = altered_im.width, altered_im.height
 
-        new_cls = cls(
-            master,
-            height=height,
-            width=width,
-        )
+        new_cls = self.__class__(master, height=height, width=width)
 
         await new_cls.create_image(0, 0, image=photoimage, anchor=tk.NW)
         new_cls.image = photoimage
@@ -422,7 +532,9 @@ class EntrySection(tk.AsyncFrame):
         self.colour.pack()
 
         tk.AsyncButton(
-            self, callback=self.setupPixel, text=self.master.cur_locale.menu.entry.confirm
+            self,
+            callback=self.setupPixel,
+            text=self.master.cur_locale.menu.entry.confirm,
         ).pack()
 
         self.error_label = tk.AsyncLabel(self, text="", fg="red")

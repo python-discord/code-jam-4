@@ -63,6 +63,14 @@ class kata:
     class general:
         title = "フレイムド"  # fu re i mu do | Framed
 
+        class corruptions:
+            altercolour = "シュッフリング コラース…"  # shu ffu ri n gu   ko ra- su …
+            # Shuffling Colours...
+            pixelate = "ピクゼレイチング イマジュ…"  # pi ku ze re i chi n gu   i ma ju …
+            # Pixelating Image...
+            alterpixel = "シュッフリング ピクズルス…"  # shu ffu ri n gu   pi ku zu ru su…
+            # Shuffling Pixels...
+
 
 class eng:
     class menu:
@@ -109,3 +117,8 @@ class eng:
 
     class general:
         title = "Framed"
+
+        class corruptions:
+            altercolour = "Shuffling Colours..."
+            pixelate = "Pixelating Image..."
+            alterpixel = "Shuffling Pixels..."

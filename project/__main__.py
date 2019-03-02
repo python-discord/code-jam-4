@@ -93,8 +93,8 @@ class Framed(tk.AsyncTk):
         item.bind("<Return>", lambda i: asyncio.ensure_future(self.check_konami()))
 
     async def set_konami(self, *numbers):
-        print([n-1 for n in numbers])
-        if self.konami_code in [n-1 for n in numbers]:
+        print([n - 1 for n in numbers])
+        if self.konami_code in [n - 1 for n in numbers]:
             self.konami_code += 1
             print(self.konami_code)
             new_num = self.konami_code
@@ -131,8 +131,7 @@ class Framed(tk.AsyncTk):
         file = await self.file_select(new_file=False)
         if file:
             self.canvas.forget()
-            del self.canvas
-            self.canvas = await Canvas.from_image(self, file)
+            self.canvas = await self.canvas.from_image(self, file)
             self.entry.reset()
 
     def _setupMenu(self):
@@ -142,9 +141,11 @@ class Framed(tk.AsyncTk):
         file_menu = tk.AsyncMenu(menu)
         file_menu.add_command(
             label=self.cur_locale.menu.new.name,
-            command=lambda: asyncio.ensure_future(self.open_new())
+            command=lambda: asyncio.ensure_future(self.open_new()),
         )
-        file_menu.add_command(label=self.cur_locale.menu.unhelpful.nothing, command=nothing)
+        file_menu.add_command(
+            label=self.cur_locale.menu.unhelpful.nothing, command=nothing
+        )
         file_menu.add_command(
             label=self.cur_locale.menu.unhelpful.save,
             command=lambda: asyncio.ensure_future(self.destroy()),
@@ -159,11 +160,15 @@ class Framed(tk.AsyncTk):
 
         edit_menu.add_command(
             label=self.cur_locale.menu.edit.undo,
-            command=lambda: asyncio.ensure_future(self.canvas.redo()),  # intentionally switched
+            command=lambda: asyncio.ensure_future(
+                self.canvas.redo()
+            ),  # intentionally switched
         )
         edit_menu.add_command(
             label=self.cur_locale.menu.edit.redo,
-            command=lambda: asyncio.ensure_future(self.canvas.undo()),  # intentionally switched
+            command=lambda: asyncio.ensure_future(
+                self.canvas.undo()
+            ),  # intentionally switched
         )
 
         menu.add_cascade(label=self.cur_locale.menu.unhelpful.name, menu=file_menu)
@@ -176,9 +181,14 @@ class Framed(tk.AsyncTk):
     async def file_select(self, *, new_file: bool = True):
         """File select dialogue"""
         manager = tk.AsyncToplevel(self)
-        manager.title(self.cur_locale.menu.fileselect.saveas
-                      if new_file else self.cur_locale.menu.fileselect.open)
-        manager.protocol("WM_DELETE_WINDOW", lambda: asyncio.ensure_future(manager.destroy()))
+        manager.title(
+            self.cur_locale.menu.fileselect.saveas
+            if new_file
+            else self.cur_locale.menu.fileselect.open
+        )
+        manager.protocol(
+            "WM_DELETE_WINDOW", lambda: asyncio.ensure_future(manager.destroy())
+        )
         dir = pathlib.Path()
         dirbox = tk.AsyncEntry(manager)
         dirbox.grid(row=0, column=0)
@@ -199,7 +209,9 @@ class Framed(tk.AsyncTk):
                         await manager.destroy()
 
                     tk.AsyncButton(
-                        foldermap, text=f"{i} {self.cur_locale.menu.fileselect.file}", callback=cb
+                        foldermap,
+                        text=f"{i} {self.cur_locale.menu.fileselect.file}",
+                        callback=cb,
                     ).pack(fill=tk.X)
                 elif (dir / i).is_dir():
 
@@ -227,17 +239,23 @@ class Framed(tk.AsyncTk):
                     if filename.get() != len(filename.get()) * ".":
                         for i in r'\/:*?"<>|':
                             if i in filename.get():
-                                button.config(text=self.cur_locale.menu.fileselect.button.invalid)
+                                button.config(
+                                    text=self.cur_locale.menu.fileselect.button.invalid
+                                )
                                 break
                         else:
                             manager.file = manager.dir / filename.get()
                             await manager.destroy()
                     else:
-                        button.config(text=self.cur_locale.menu.fileselect.button.special)
+                        button.config(
+                            text=self.cur_locale.menu.fileselect.button.special
+                        )
 
                 # Confirm button
                 button = tk.AsyncButton(
-                    dialogue, text=self.cur_locale.menu.fileselect.button.default, callback=cb
+                    dialogue,
+                    text=self.cur_locale.menu.fileselect.button.default,
+                    callback=cb,
                 )
                 button.pack(fill=tk.X)
 
