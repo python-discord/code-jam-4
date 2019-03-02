@@ -1,5 +1,7 @@
-from PySide2.QtWidgets import QDesktopWidget, QMainWindow, qApp
-from PySide2.QtCore import QTimer
+from PySide2.QtWidgets import (
+    QAbstractItemView, QDesktopWidget, QHeaderView, QMainWindow, qApp
+)
+from PySide2.QtCore import Qt, QTimer
 
 from .ui_files.ui_main import Ui_MainApplication
 from .add_task import AddTask
@@ -37,7 +39,8 @@ class MainApplication(QMainWindow, Ui_MainApplication):
         self.setupUi(self)
         self.resize(1200, 600)
 
-        self.task_table.horizontalHeader().setStretchLastSection(True)
+        self.task_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.task_table.setSelectionBehavior(QAbstractItemView.SelectRows)
 
         self.center()
         self.show()
@@ -55,6 +58,7 @@ class MainApplication(QMainWindow, Ui_MainApplication):
         self.create_task_button.clicked.connect(self.add_task)
         self.remove_task_button.clicked.connect(self.remove_task)
         self.edit_task_button.clicked.connect(self.edit_task)
+        self.completed_button.clicked.connect(self.mark_as_done)
 
     def add_task(self):
         """
@@ -68,13 +72,21 @@ class MainApplication(QMainWindow, Ui_MainApplication):
 
     def edit_task(self):
         pass
-        #edit_task_button.setText("Press Me")
+
+    def mark_as_done(self):
+        indices = self.task_table.selectionModel().selectedRows()
+        for i in indices:
+            data = self.table_model.table_data[i.row()]
+            for task in self.datacomm.data:
+                if all(i == j for i, j in zip(task.values(), data)):
+                    task["Completed"] = True
+        self.update_table()
 
     def update_table(self):
         self.table_model.table_data = self.datacomm.update()
-        self.task_table.setModel(self.table_model)
         self.task_table.setSortingEnabled(True)
-        self.task_table.resizeColumnsToContents()
+        self.task_table.setModel(self.table_model)
+        self.task_table.resizeRowsToContents()
 
     def closeEvent(self, event):
         """

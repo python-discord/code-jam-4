@@ -7,7 +7,6 @@ class TableModel(QAbstractTableModel):
         QAbstractTableModel.__init__(self, parent, *args)
         self.table_data = table_data
         self.header = header
-        print(f"{self.table_data} and {self.header}")
 
     def rowCount(self, parent):
         return len(self.table_data)

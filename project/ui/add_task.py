@@ -132,6 +132,5 @@ class AddTask(QWidget, Ui_task_form):
         self.windows.append(form)
 
     def done(self):
-        # print(self.task)
         self.datacomm.add_task(self.task)
         self.close()
