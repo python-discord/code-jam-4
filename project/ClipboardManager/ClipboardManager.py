@@ -3,12 +3,10 @@ from PyQt5.Qt import QApplication, QClipboard  # noqa: F401
 from PyQt5.QtCore import pyqtSignal, QObject, pyqtSlot
 
 from project.ClipboardManager.ClipboardObject import TextClipboardObject, ImageClipboardObject
+from project.PluginManager import PluginManager
 from project.Stack import Stack
 
-
-# from project.Plugins.Text import Text
-
-# import logging
+import logging
 
 
 # https://stackoverflow.com/questions/36522809/
@@ -19,6 +17,9 @@ class ClipboardManager(QObject):
 
     def __init__(self):
         super().__init__()
+        self._logger = logging.getLogger(self.__class__.__qualname__)
+
+        self._plugin_manager = PluginManager()
         self._clipboard_state_callback = None
         self._last_text = None
         self._last_image = None
@@ -48,12 +49,15 @@ class ClipboardManager(QObject):
         top_item = self.clipboard_stack.peek()
 
         # current_text = PT.apply(QApplication.clipboard().text()) # TODO: Chain plugins together
-        print("Current Text:", QApplication.clipboard().text())
-        print("Current Image Info:", QApplication.clipboard().pixmap())
+        self._logger.info("Current Text:", QApplication.clipboard().text())
+        self._logger.info("Current Image Info:", QApplication.clipboard().pixmap())
 
         if current_text and (self._last_text is None or current_text != self._last_text) and \
                 not (isinstance(top_item, TextClipboardObject) and top_item.text == current_text):
-            self.clipboard_stack.push_item(TextClipboardObject(current_text))
+
+            # self.clipboard_stack.push_item(TextClipboardObject(current_text))
+            self._plugin_manager.on_copy_text(current_text, self.clipboard_stack)
+
             self.clipboard_changed_signal.emit(self.clipboard_stack)
 
         if not current_image.toImage().isNull() \

@@ -14,7 +14,6 @@ class SettingsScreen(QMainWindow):
     def _delete_after_paste_checkbox_clicked(self):
         _config_mgr = ConfigManager.get_instance()
         _config_mgr.delete_after_paste = not _config_mgr.delete_after_paste
-        print(_config_mgr.delete_after_paste)
         self._dirty = True
         self._save_btn.setDisabled(False)
 
@@ -41,9 +40,12 @@ class SettingsScreen(QMainWindow):
         self._central_widget = QWidget(self)
 
         # Checkboxes begin here
-        self._persist_clipboard_checkbox = QCheckBox("Persist clipboard upon app quit", self)
-        self._delete_after_paste_checkbox = QCheckBox("Delete selected clipboard item after paste", self)
-        self._auto_load_top_checkbox = QCheckBox("Automatically load top item into clipboard", self)
+        self._persist_clipboard_checkbox = \
+            QCheckBox("Persist clipboard upon app quit", self)
+        self._delete_after_paste_checkbox = \
+            QCheckBox("Delete selected clipboard item after paste", self)
+        self._auto_load_top_checkbox = \
+            QCheckBox("Automatically load top item into clipboard", self)
 
         self._persist_clipboard_checkbox.setChecked(_config_mgr.persist_clipboard)
         self._delete_after_paste_checkbox.setChecked(_config_mgr.delete_after_paste)

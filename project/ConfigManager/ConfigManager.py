@@ -22,16 +22,20 @@ class ConfigManager:
         ConfigManager.__instance = self
         self._config = configparser.ConfigParser()
         self._config.read(CONSTANTS['CONFIG_FILE_LOCATION'])
-        print(self._config)
         if not self._config.has_section('settings'):
             self._init_config()
 
     def _init_config(self):
         """Populates the config block with some default values."""
         self._config.add_section('settings')
+        self._config.add_section('plugin_settings')
+
         self._config.set('settings', 'persist_clipboard', 'true')
         self._config.set('settings', 'delete_after_paste', 'true')
         self._config.set('settings', 'auto_load_top', 'true')
+
+        self._config.set('plugin_settings', 'chain_all_plugins', 'true')
+
         self.save()
 
     @property
@@ -57,6 +61,14 @@ class ConfigManager:
     @auto_load_top.setter
     def auto_load_top(self, value: bool):
         self._config['settings']["auto_load_top"] = 'true' if value else 'false'
+
+    @property
+    def chain_all_plugins(self):
+        return self._config.getboolean('plugin_settings', 'chain_all_plugins')
+
+    @chain_all_plugins.setter
+    def chain_all_plugins(self, value: bool):
+        self._config['plugin_settings']['chain_all_plugins'] = 'true' if value else 'false'
 
     def save(self):
         with open(CONSTANTS['CONFIG_FILE_LOCATION'], 'w') as file:
