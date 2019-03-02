@@ -125,15 +125,12 @@ class ContactsPage(Frame):
         self.info_scroll = None
 
         self.bind("<<Finish Spinning Wheel>>", self.show_winning_info)
-        self.bind("<Visibility>", self.on_visibility)
+        self.bind("<Visibility>", self.__on_visibility)
 
         self.load = None
         self.save = None
 
-
-        # Create objects
         self.create()
-
 
     def create(self) -> None:
         self.info_scroll = Scrollbar(self, orient=VERTICAL)
@@ -141,7 +138,6 @@ class ContactsPage(Frame):
             self,
             yscrollcommand=self.info_scroll.set
         )
-
 
         self.delete = Button(self, text="Delete", command=lambda: self.delete_contact())
         self.delete.grid(row=2, column=3, columnspan=3, sticky=N+S+E+W)
@@ -167,7 +163,7 @@ class ContactsPage(Frame):
             selectmode=NONE,
             exportselection=0
         )
-        #self.letters_field.bindtags((self.letters_field, self.master, "all"))
+
         self.letters_field.bind('<<ListboxSelect>>', self.scroll_to_letter)
         self.contacts_field.grid(row=1, column=0, columnspan=5, sticky=N+S+E+W)
         self.letters_field.grid(row=1, column=4, sticky=N+S+E+W)
@@ -197,7 +193,6 @@ class ContactsPage(Frame):
             self.grid_columnconfigure(i, weight=1)
 
     def scroll_to_letter(self, event):
-
         id = 0
         for contact in self.order_contact():
             if contact[0] == self.letters_field.get(self.letters_field.curselection()[0]):
@@ -266,39 +261,6 @@ class ContactsPage(Frame):
         name = self.contacts_field.get(self.contacts_field.curselection()[0])
         self.current_contact = self.contacts_list[name]
         self.wheel_spin.draw()
-        """
-        name = self.contacts_field.get(self.contacts_field.curselection()[0])
-        contact = self.contacts_list[name]
-        home_phone_nums = contact.phone_numbers["Home"]
-        work_phone_nums = contact.phone_numbers["Work"]
-        personal_phone_nums = contact.phone_numbers["Personal"]
-        emails = contact.email_addresses
-        addresses = contact.addresses
-        notes = contact.notes
-        self.info_field.delete(0, END)
-        self.info_field.insert(END, name)
-        self.info_field.insert(END, "")
-        if len(home_phone_nums) or len(work_phone_nums) or len(personal_phone_nums) > 0:
-            self.info_field.insert(END, "Phone:")
-            for elem in home_phone_nums:
-                self.info_field.insert(END, "   Home: " + elem)
-            for elem in work_phone_nums:
-                self.info_field.insert(END, "   Work: " + elem)
-            for elem in personal_phone_nums:
-                self.info_field.insert(END, "   Personal: " + elem)
-        if len(emails) > 0:
-            self.info_field.insert(END, "Emails:")
-            for elem in emails:
-                self.info_field.insert(END, "   " + elem)
-        if len(addresses) > 0:
-            self.info_field.insert(END, "Addresses:")
-            for elem in addresses:
-                self.info_field.insert(END, "   " + elem)
-        if len(notes) > 0:
-            self.info_field.insert(END, "Notes:")
-            for elem in notes:
-                self.info_field.insert(END, "   " + elem)
-        """
 
     def show_winning_info(self, event) -> None:
         """
@@ -312,6 +274,7 @@ class ContactsPage(Frame):
         label = self.wheel_spin.display_label
         text0 = self.current_contact.name + "'s " + winner.lower() + ':\n'
         text1 = ''
+
         if winner == 'Name':
             text1 = self.current_contact.name
         elif winner == 'Home Phone Numbers':
@@ -330,26 +293,32 @@ class ContactsPage(Frame):
             for elem in self.current_contact.addresses:
                 text1 = text1 + elem + ', '
         elif winner == 'Notes':
-
             for elem in self.current_contact.notes:
                 text1 = text1 + elem + ', '
+
         label['text'] = text0 + text1
 
     def randomize_alphabetical_order(self):
         random.shuffle(self.alphabetical_order)
 
-    def order_contact(self):
+    def order_contact(self) -> list:
+        """
+        This function takes all the contacts and order them in the order stored in self.alphabetical_order
+        :return: The ordered list
+        """
         i = 0
         order = self.alphabetical_order
         contacts = list(self.contacts_list)
         ordered_list = []
+
+        # We loop until we have all the contact ordered.
         while i < len(self.contacts_list):
             current_next_contact = None
             for contact in contacts:
-                first_name = contact[0:contact.index(" ")]
-                if current_next_contact == None:
+                if current_next_contact is None:
                     current_next_contact = contact
                     continue
+                # If the first letter is higher in the order than the current next contact, we change the contact.
                 if order.index(contact[0].lower()) < order.index(current_next_contact[0].lower()):
                     current_next_contact = contact
                     continue
@@ -358,18 +327,23 @@ class ContactsPage(Frame):
                 # added first.
                 if order.index(contact[0].lower()) == order.index(current_next_contact[0].lower()):
                     for current_character in range(1, min(len(contact), len(current_next_contact))):
-
                         if order.index(contact[current_character].lower()) < order.index(current_next_contact[current_character].lower()):
                             current_next_contact = contact
                             break
                         if order.index(contact[current_character].lower()) > order.index(current_next_contact[current_character].lower()):
                             break
+            # we append the contact to the list and remove it from the remaining contact to order.
             contacts.remove(current_next_contact)
             ordered_list.append(current_next_contact)
             i += 1
         return ordered_list
 
-    def on_visibility(self, event):
+    def __on_visibility(self, event) -> None:
+        """
+        This function is called when the user click on the contact tab. It randomizes the alphabetical order
+        :param event:
+        :return: None
+        """
         self.randomize_alphabetical_order()
         self.refresh_fields()
 
