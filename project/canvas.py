@@ -9,8 +9,6 @@ import asyncio
 import typing
 import pathlib
 
-from . import locale as kata
-
 
 class Colour:
 
@@ -85,7 +83,7 @@ class Colour:
         return (int(self.r, 16), int(self.g, 16), int(self.b, 16))
 
     @classmethod
-    def from_rgb(cls, colour):
+    def from_rgb(cls, colour: typing.Tuple[int, int, int]):
         r, g, b = map(lambda x: hex(x)[2:], colour)
         fake = b+g+r
         fake_int = int(fake, 16)
@@ -230,7 +228,7 @@ class Canvas(tk.AsyncCanvas):
     async def from_image(cls, master: tk.AsyncTk, file: typing.Union[str, pathlib.Path]):
         """
         Classmethod to open the image from a file
-        It also takes out the transparency in any RGBA photo, defaulting the alpha color to white
+        It also takes out the transparency in any RGBA photo, defaulting the alpha colour to white
 
         Parameters
         ----------
@@ -291,6 +289,7 @@ class EntrySection(tk.AsyncFrame):
     Methods
     -------
     setupPixel: coroutine
+    reset: coroutine
     """
 
     def __init__(self, master: typing.Union[tk.AsyncTk, tk.AsyncFrame]):
@@ -301,33 +300,49 @@ class EntrySection(tk.AsyncFrame):
         self.pack(side=tk.RIGHT)
         self._setupFields()
 
-    def reset(self):
+    def reset(self, remember_values: bool = False):
+        """Resets the EntrySection by deleting slaves and recreating them to the new dimensions"""
+
+        x = self.x.get()
+        y = self.y.get()
+        colour = self.colour.get()
+
         for item in self.pack_slaves():
             item.pack_forget()
         self.canvas = self.master.canvas
         self._setupFields()
 
+        if remember_values:
+
+            self.x.delete(0, tk.END)
+            self.x.insert(0, x)
+
+            self.y.delete(0, tk.END)
+            self.y.insert(0, y)
+
+            self.colour.insert(0, colour)
+
     def _setupFields(self):
-        tk.AsyncLabel(self, text=kata.menu.entry.x).pack()
+        tk.AsyncLabel(self, text=self.master.cur_locale.menu.entry.x).pack()
         self.x = tk.AsyncSpinbox(self, from_=1, to=self.canvas.width)
         self.x.pack()
 
-        tk.AsyncLabel(self, text=kata.menu.entry.y).pack()
+        tk.AsyncLabel(self, text=self.master.cur_locale.menu.entry.y).pack()
         self.y = tk.AsyncSpinbox(self, from_=1, to=self.canvas.height)
         self.y.pack()
 
-        tk.AsyncLabel(self, text=kata.menu.entry.colour).pack()
+        tk.AsyncLabel(self, text=self.master.cur_locale.menu.entry.colour).pack()
         self.colour = tk.AsyncEntry(self)
         self.colour.pack()
 
         tk.AsyncButton(
-            self, callback=self.setupPixel, text=kata.menu.entry.confirm
+            self, callback=self.setupPixel, text=self.master.cur_locale.menu.entry.confirm
         ).pack()
 
         self.error_label = tk.AsyncLabel(self, text="", fg="red")
         self.error_label.pack()
 
-    async def _add_error(self, error):
+    async def _add_error(self, error: str):
         """This private method adds an error to the label for 5 seconds before removing it"""
         self.error_label["text"] = error
         await asyncio.sleep(5)
@@ -345,7 +360,9 @@ class EntrySection(tk.AsyncFrame):
             if x not in range(1, self.canvas.width):
                 raise ValueError
         except ValueError:
-            await self._add_error(kata.menu.entry.x_error.format(self.canvas.width))
+            await self._add_error(
+                self.master.cur_locale.menu.entry.x_error.format(self.canvas.width)
+            )
             return
 
         try:
@@ -353,13 +370,15 @@ class EntrySection(tk.AsyncFrame):
             if y not in range(1, self.canvas.height):
                 raise ValueError
         except ValueError:
-            await self._add_error(kata.menu.entry.y_error.format(self.canvas.height))
+            await self._add_error(
+                self.master.cur_locale.menu.entry.y_error.format(self.canvas.height)
+            )
             return
 
         try:
             colour = Colour(colour)
         except (ValueError, TypeError):
-            await self._add_error(kata.menu.entry.colour_error)
+            await self._add_error(self.master.cur_locale.menu.entry.colour_error)
             return
 
         old_colour = self.canvas.pil_image.getpixel((x, y))
@@ -371,27 +390,50 @@ class EntrySection(tk.AsyncFrame):
 
 class FileToplevel(tk.AsyncToplevel):
 
-    def __init__(self, master):
+    """
+    The "popup" used to create a new drawing (based on height and width), which is subclassed from
+    asynck.AsyncToplevel
+
+    Parameters
+    ----------
+    master: asynctk.AsyncTk
+
+    Attributes
+    ----------
+    width: asynctk.AsyncEntry
+        the Entry widget to type in the width requested
+
+    height: asycntk.AsyncEntry
+        the Entry widget to type in the height requested
+
+    Methods
+    -------
+    checknew: coroutine
+        checks the width and height to see if they are populated
+        and sends a request to the master to create the new canvas
+    """
+
+    def __init__(self, master: typing.Union[tk.AsyncTk, tk.AsyncFrame]):
         super().__init__(master)
         self.master = master
-        self.title(kata.menu.new.name)
+        self.title(self.master.cur_locale.menu.new.name)
         self.protocol("WM_DELETE_WINDOW", lambda: asyncio.ensure_future(self.destroy()))
 
         self._setupFields()
 
     def _setupFields(self):
-        tk.AsyncLabel(self, text=kata.menu.new.height).pack()
+        tk.AsyncLabel(self, text=self.master.cur_locale.menu.new.height).pack()
         self.width = tk.AsyncEntry(self)
         self.width.pack()
         self.width.bind("<Return>", lambda i: asyncio.ensure_future(self.checknew()))
 
-        tk.AsyncLabel(self, text=kata.menu.new.width).pack()
+        tk.AsyncLabel(self, text=self.master.cur_locale.menu.new.width).pack()
         self.height = tk.AsyncEntry(self)
         self.height.pack()
         self.height.bind("<Return>", lambda i: asyncio.ensure_future(self.checknew()))
 
         tk.AsyncButton(
-            self, callback=self.checknew, text=kata.menu.new.create
+            self, callback=self.checknew, text=self.master.cur_locale.menu.new.create
         ).pack()
 
     async def checknew(self):

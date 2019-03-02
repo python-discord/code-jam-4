@@ -12,7 +12,7 @@ with the Tk window
 """
 
 
-from . import locale as kata
+from . import locale
 from .canvas import Canvas, EntrySection, FileToplevel
 
 
@@ -42,12 +42,18 @@ class Framed(tk.AsyncTk):
         Runs file_select and saves the current image to that file
     open_file: coroutine
         Runs file_select and recreates the canvas with the new image
-
+    new_file: coroutine
+        Creates a new canvas based on a given width and height
+    open_new: coroutine
+        Creates the Top Level for the new file button
     """
 
     def __init__(self):
         super().__init__()
-        self.wm_title(kata.general.title)
+
+        self.cur_locale = locale.kata
+
+        self.wm_title(self.cur_locale.general.title)
 
         self._setupMenu()
 
@@ -64,12 +70,19 @@ class Framed(tk.AsyncTk):
         self.bind("<Control-Z>", lambda i: asyncio.ensure_future(self.canvas.undo()))
         self.bind("<Control-y>", lambda i: asyncio.ensure_future(self.canvas.undo()))
 
+    def set_en(self, i):
+        self.cur_locale = locale.eng
+        self.wm_title(self.cur_locale.general.title)
+        self._setupMenu()
+        self.entry.reset(remember_values=True)
+
     async def save(self):
         file = await self.file_select()
         if file:
             await self.canvas.save(file)
 
     async def new_file(self, height: int, width: int):
+        """Creates new canvas based on height and width"""
         self.canvas.forget()
         del self.canvas
         self.canvas = Canvas(self, height=height, width=width)
@@ -89,43 +102,42 @@ class Framed(tk.AsyncTk):
 
         file_menu = tk.AsyncMenu(menu)
         file_menu.add_command(
-            label=kata.menu.new.name,
+            label=self.cur_locale.menu.new.name,
             command=lambda: asyncio.ensure_future(self.open_new())
         )
-        file_menu.add_command(label=kata.menu.unhelpful.nothing, command=nothing)
+        file_menu.add_command(label=self.cur_locale.menu.unhelpful.nothing, command=nothing)
         file_menu.add_command(
-            label=kata.menu.unhelpful.save,
+            label=self.cur_locale.menu.unhelpful.save,
             command=lambda: asyncio.ensure_future(self.destroy()),
         )
         file_menu.add_separator()
         file_menu.add_command(
-            label=kata.menu.unhelpful.close,
+            label=self.cur_locale.menu.unhelpful.close,
             command=lambda: asyncio.ensure_future(self.open_file()),
         )
 
         edit_menu = tk.AsyncMenu(menu)
 
         edit_menu.add_command(
-            label=kata.menu.edit.undo,
+            label=self.cur_locale.menu.edit.undo,
             command=lambda: asyncio.ensure_future(self.canvas.redo()),  # intentionally switched
         )
         edit_menu.add_command(
-            label=kata.menu.edit.redo,
+            label=self.cur_locale.menu.edit.redo,
             command=lambda: asyncio.ensure_future(self.canvas.undo()),  # intentionally switched
         )
 
-        menu.add_cascade(label=kata.menu.unhelpful.name, menu=file_menu)
-        menu.add_cascade(label=kata.menu.edit.name, menu=edit_menu)
+        menu.add_cascade(label=self.cur_locale.menu.unhelpful.name, menu=file_menu)
+        menu.add_cascade(label=self.cur_locale.menu.edit.name, menu=edit_menu)
 
     async def open_new(self):
         """Toplevel for picking width & height"""
-        manager = FileToplevel(self)
-        await self.wait_window(manager)
+        FileToplevel(self)
 
     async def file_select(self, *, new_file: bool = True):
         """File select dialogue"""
         manager = tk.AsyncToplevel(self)
-        manager.title(kata.menu.fileselect.saveas)
+        manager.title(self.cur_locale.menu.fileselect.saveas)
         manager.protocol("WM_DELETE_WINDOW", lambda: asyncio.ensure_future(manager.destroy()))
         dir = pathlib.Path()
         dirbox = tk.AsyncEntry(manager)
@@ -147,7 +159,7 @@ class Framed(tk.AsyncTk):
                         await manager.destroy()
 
                     tk.AsyncButton(
-                        foldermap, text=f"{i} {kata.menu.fileselect.file}", callback=cb
+                        foldermap, text=f"{i} {self.cur_locale.menu.fileselect.file}", callback=cb
                     ).pack(fill=tk.X)
                 elif (dir / i).is_dir():
 
@@ -159,14 +171,14 @@ class Framed(tk.AsyncTk):
 
                     tk.AsyncButton(
                         foldermap,
-                        text=f"{i} {kata.menu.fileselect.folder}",
+                        text=f"{i} {self.cur_locale.menu.fileselect.folder}",
                         callback=cb,
                     ).pack(fill=tk.X)
 
             async def new():
                 """Internal coroutine used to create the new file dialogue."""
                 dialogue = tk.AsyncToplevel(manager)
-                dialogue.title(kata.menu.fileselect.new)
+                dialogue.title(self.cur_locale.menu.fileselect.new)
                 dialogue.protocol("WM_DELETE_WINDOW", nothing)
                 filename = tk.AsyncEntry(dialogue)
                 filename.pack()
@@ -175,33 +187,33 @@ class Framed(tk.AsyncTk):
                     if filename.get() != len(filename.get()) * ".":
                         for i in r'\/:*?"<>|':
                             if i in filename.get():
-                                button.config(text=kata.menu.fileselect.button.invalid)
+                                button.config(text=self.cur_locale.menu.fileselect.button.invalid)
                                 break
                         else:
                             manager.file = manager.dir / filename.get()
                             await manager.destroy()
                     else:
-                        button.config(text=kata.menu.fileselect.button.special)
+                        button.config(text=self.cur_locale.menu.fileselect.button.special)
 
                 # Confirm button
                 button = tk.AsyncButton(
-                    dialogue, text=kata.menu.fileselect.button.default, callback=cb
+                    dialogue, text=self.cur_locale.menu.fileselect.button.default, callback=cb
                 )
                 button.pack(fill=tk.X)
 
                 # Cancel button
                 tk.AsyncButton(
                     dialogue,
-                    text=kata.menu.fileselect.button.cancel,
+                    text=self.cur_locale.menu.fileselect.button.cancel,
                     callback=dialogue.destroy,
                 ).pack(fill=tk.X)
                 await manager.wait_window(dialogue)
 
             if new_file:
                 # New File button
-                tk.AsyncButton(foldermap, text=kata.menu.fileselect.new, callback=new).pack(
-                    fill=tk.X
-                )
+                tk.AsyncButton(
+                    foldermap, text=self.cur_locale.menu.fileselect.new, callback=new
+                ).pack(fill=tk.X)
 
         def boxcallback(*i):
             """Internal function called to change the directory to what is typed in dirbox."""
@@ -219,7 +231,7 @@ class Framed(tk.AsyncTk):
             # Cancel button
             tk.AsyncButton(
                 foldermap,
-                text=kata.menu.fileselect.button.cancel,
+                text=self.cur_locale.menu.fileselect.button.cancel,
                 callback=manager.destroy,
             ).pack(fill=tk.X)
 
