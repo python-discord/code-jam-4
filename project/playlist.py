@@ -152,8 +152,13 @@ class Playlist(QMediaPlaylist):
             Always True.
 
         """
-        log.debug(f"Removing media at row {row}.")
         index = self._get_playlist_index(row)
+        log.debug(f"Removing media at row {row}, index {index}.")
+        del self._indices.inverse[index]
+
+        if index == self.currentIndex():
+            # Effectively stops the playlist if the current media is removed.
+            self.setCurrentIndex(-1)
 
         return super().removeMedia(index)
 
