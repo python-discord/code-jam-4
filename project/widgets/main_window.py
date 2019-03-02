@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
         self.ui = ui.MainWindow()
         self.ui.setupUi(self)
 
-        self.password_prompt = PasswordPrompt()
+        self.password_prompt = PasswordPrompt('temporarypassword')
 
         self.playlist_model = self.create_model()
         self.configure_view()
@@ -31,12 +31,6 @@ class MainWindow(QMainWindow):
         self.ui.previous_button.pressed.connect(self.player.playlist().previous)
         self.ui.next_button.pressed.connect(self.player.playlist().next)
         self.ui.add_files_action.triggered.connect(self.add_files)
-
-        self.prompt = PasswordPrompt()
-
-    def await_password():
-        self.prompt.display()
-        return self.prompt.success
 
     @staticmethod
     def create_model() -> QSqlTableModel:
