@@ -96,6 +96,9 @@ class Front(widget.PrimaryFrame):
         self.__next()
         self.window.set_view(self.image)
 
+    def cleanup(self):
+        self._cache.stop()
+
 
 class Bio(widget.PrimaryFrame):
 
