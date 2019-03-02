@@ -1,9 +1,10 @@
 import tkinter as tk
 from typing import TypeVar
 from enum import Enum
+from dataclasses import dataclass
 
 from . import widget
-from .animate import Coord, Animater
+from .animate import Coord, Animater, Direction
 from .cache import ImageTk
 
 
@@ -32,54 +33,56 @@ class Window(widget.PrimaryCanvas):
     def __coord(self, id):
         return Coord(*self.coords(id)[:2])
 
-    def __set_image(self, view: ImageTk.PhotoImage, coord: Coord):
+    def __set_image(self, image: ImageTk.PhotoImage, coord: Coord):
         return self.create_image(
             coord, image=view, anchor='nw'
         )
 
-    def __set_widget(self, view: tk.Widget, coord: Coord):
+    def __set_widget(self, widget: tk.Widget, coord: Coord):
         return self.create_window(
             coord, window=view, anchor='nw'
         )
 
-    def __set(self, view, coord, viewtype):
-        if viewtype == 'image':
-            wid = self.__set_image(view, coord)
+    def __set(self, view: View, coord: Coord):
+        if view.viewtype == ViewType.IMAGE:
+            wid = self.__set_image(view.data, coord)
+        elif view.viewtype == ViewType.WIDGET:
+            wid = self.__set_widget(view.data, coord)
         else:
-            wid = self.__set_widget(view, coord)
+            raise NotImplementedError
         self.views[view] = wid
         return wid
 
-    def set_view(self, view: tk.Widget, viewtype='image'):
+    def set_view(self, view: View):
         self.current = view
-        self.__set(self.current, self.origin, viewtype)
+        self.__set(self.current, self.origin)
 
-    def move_view(self, wid, end):
+    def move_view(self, view: View, end: Coord):
+        wid = self.views[view]
         self.animater.add_motion(
             wid, end, speed=self.animation_speed
         )
 
-    def move_in(self, view, direction: Direction, viewtype='image'):
+    def move_in(self, view: View, direction: Direction):
         distance = self.get_distance(direction)
         start = self.origin + distance
         wid = self.__set(view, start, viewtype)
-        self.move_view(wid, self.origin)
+        self.move_view(view, self.origin)
         return wid
 
-    def move_out(self, view, direction, viewtype='image'):
-        wid = self.views[view]
+    def move_out(self, view: View, direction: Direction):
         distance = self.get_distance(direction)
         end = self.origin + distance
-        self.move_view(wid, end)
+        self.move_view(view, end)
         del self.views[view]
 
-    def change_view(self, view: tk.Widget, direction: Direction, viewtype='image'):
+    def change_view(self, view: View, direction: Direction):
         if not isinstance(direction, Direction):
             direction = Direction[direction.upper()]  # Cast string for convenience
         self.animater.clear()
 
-        self.move_out(self.current, direction, viewtype=viewtype)
-        self.move_in(view, direction.flip(), viewtype=viewtype)
+        self.move_out(self.current, direction)
+        self.move_in(view, direction.flip())
 
         self.animater.start()
         self.current = view
