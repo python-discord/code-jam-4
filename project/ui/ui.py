@@ -1,10 +1,14 @@
 from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import (QAbstractItemView, QDesktopWidget, QHeaderView,
                                QMainWindow, qApp)
+import random
+import sys
+from PySide2 import QtCore, QtWidgets, QtGui
 
 from .add_task import AddTask
 from .datacomm import DataComm
 from .table_model import TableModel
+from .edit_task import MyWidget
 from .ui_files.ui_main import Ui_MainApplication
 
 
@@ -84,8 +88,11 @@ class MainApplication(QMainWindow, Ui_MainApplication):
         self.datacomm.delete_task()
 
     def edit_task(self):
-        pass
-
+        self.myWidget = MyWidget()
+        self.myWidget.show()
+        self.edit_task_button.setEnabled(False)
+        self.edit_task_button.setDisabled(True)
+		
     def mark_as_done(self):
         """
         Marks a selected task as Completed.
