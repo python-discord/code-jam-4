@@ -8,19 +8,11 @@ from project.PhoneNumber.AddPhoneNumberInter import AddPhoneNumberInter
 from project.AlphabetGuesser.AlphabetGuesserInter import AlphabetGuesserInter
 
 
-"""
-TODO:
-Settings Page:
-- Change color schemes; all options are terrible color palettes
-- Change fonts; all options are terrible fonts
-"""
-
-
 class Controller(Tk):
     """
     Controller Class:
     - Serves as a hub for every page contained in the UI, allows for the flow of information between pages
-    - Acts as the container for ContactsPage, AddContactsPage, and SettingsPage by making use of ttk.Notebook
+    - Acts as the container for ContactsPage, and AddContactsPage by making use of ttk.Notebook
 
     === Public Attributes ===
     notebook: Widget containing tabs; each page is assigned a tab, and can be navigated to easily
@@ -36,7 +28,7 @@ class Controller(Tk):
         self.resizable(False, False)
         self.geometry("300x400")
         self.title("Contact Manager")
-        self.iconbitmap("project/src/Phone.ico")
+        self.iconbitmap("src/Phone.ico")
         for i in range(5):
             self.rowconfigure(i, weight=1)
             self.columnconfigure(i, weight=1)
@@ -46,7 +38,7 @@ class Controller(Tk):
         self.notebook = Notebook(self)
         self.notebook.grid(row=0, column=0, columnspan=5, rowspan=5, sticky=N+S+E+W)
 
-        for page in [ContactsPage, AddContactPage, SettingsPage]:
+        for page in [ContactsPage, AddContactPage]:
             frame = page(self.notebook, self)
             self.notebook.add(frame, text=frame.page_name)
             self.frames[frame.page_name] = frame
@@ -201,7 +193,7 @@ class ContactsPage(Frame):
                 self.contacts_field.selection_set(id)
                 self.letters_field.selection_clear(0, END)
                 return
-            id = id + 1
+            id += 1
         self.letters_field.selection_clear(0, END)
 
     def on_mouse_wheel(self, event) -> str:
@@ -229,7 +221,6 @@ class ContactsPage(Frame):
 
     def refresh_fields(self) -> None:
         self.clear_fields()
-        letter = ''
         for contact in self.order_contact():
             self.contacts_field.insert(END, contact)
 
@@ -238,7 +229,7 @@ class ContactsPage(Frame):
 
     def load_contacts(self) -> None:
         self.randomize_alphabetical_order()
-        with open("project/contacts_pickle", 'rb') as infile:
+        with open("contacts_pickle", 'rb') as infile:
             self.contacts_list = pickle.load(infile)
             self.refresh_fields()
 
@@ -346,6 +337,7 @@ class ContactsPage(Frame):
         """
         self.randomize_alphabetical_order()
         self.refresh_fields()
+
 
 class AddContactPage(Frame):
     """
@@ -468,21 +460,21 @@ class AddContactPage(Frame):
         self.enter_notes_button = Button(
             self,
             text="Add",
-            command=lambda: self.add_notes(self.enter_notes.get()),
+            command=lambda: self.add_notes(self.enter_notes['text']),
             width=5
         )
         self.enter_notes_button.grid(row=6, column=4, columnspan=2, sticky=N+S+E+W)
         self.enter_notes_label.grid(row=6, column=0, sticky=N+S+E+W)
         self.enter_notes.grid(row=6, column=1, columnspan=3, sticky=N+S+E+W)
 
-        self.enter_address = Label(self, text="Click here to add an adress.", relief="sunken")
+        self.enter_address = Label(self, text="Click here to add an address.", relief="sunken")
         self.enter_address.bind("<Button-1>",
                                 lambda event, arg=self.enter_address: self.input_text(event, arg, "Address"))
         self.enter_address_label = Label(self, text="Address")
         self.enter_address_button = Button(
             self,
             text="Add",
-            command=lambda: self.add_address(self.enter_address.get()),
+            command=lambda: self.add_address(self.enter_address['text']),
             width=5
         )
         self.enter_address_label.grid(row=5, column=0, sticky=N+S+E+W)
@@ -490,13 +482,12 @@ class AddContactPage(Frame):
         self.enter_address_button.grid(row=5, column=4, columnspan=2, sticky=N+S+E+W)
 
         self.enter_email = Label(self, text="Click here to add an email.", relief="sunken")
-        self.enter_email.bind("<Button-1>",
-                                lambda event, arg=self.enter_email: self.input_text(event, arg, "Email"))
+        self.enter_email.bind("<Button-1>", lambda event, arg=self.enter_email: self.input_text(event, arg, "Email"))
         self.enter_email_label = Label(self, text="Email:")
         self.enter_email_button = Button(
             self,
             text="Add",
-            command=lambda: self.add_email(self.enter_email.get()),
+            command=lambda: self.add_email(self.enter_email['text']),
             width=5
         )
         self.enter_email_label.grid(row=4, column=0, sticky=N+S+E+W)
@@ -525,13 +516,12 @@ class AddContactPage(Frame):
         self.enter_phone_num_button.grid(row=2, column=4, columnspan=2, sticky=N+S+E+W)
 
         self.enter_name = Label(self, text="Click here to add a name.", relief="sunken")
-        self.enter_name.bind("<Button-1>",
-                              lambda event, arg=self.enter_name: self.input_text(event, arg, "Name"))
+        self.enter_name.bind("<Button-1>", lambda event, arg=self.enter_name: self.input_text(event, arg, "Name"))
         self.enter_name_label = Label(self, text="Name:")
         self.enter_name_button = Button(
             self,
             text="Add",
-            command=lambda: self.add_name(self.enter_name.get()),
+            command=lambda: self.add_name(self.enter_name['text']),
             width=5
         )
         self.enter_name_button.grid(row=1, column=4, columnspan=2, sticky=N+S+E+W)
@@ -573,11 +563,11 @@ class AddContactPage(Frame):
         self.controller.withdraw()
 
         def quit_phone_input():
-            self.controller.show()
+            # self.controller.show()
             new_window.destroy()
 
         def send_phone_input(event):
-            self.controller.show()
+            # self.controller.show()
             self.enter_phone_num['text'] = phone.get_complete_phone_number()
             new_window.destroy()
         new_window.bind("<<Phone Number Complete>>", send_phone_input)
@@ -603,7 +593,6 @@ class AddContactPage(Frame):
         new_window.wm_protocol("WM_DELETE_WINDOW", quit_text_input)
 
         alpha = AlphabetGuesserInter(new_window, entry_text, width=300, height=500)
-
 
     def refresh_field(self) -> None:
         self.preview.delete(0, END)
@@ -642,14 +631,7 @@ class AddContactPage(Frame):
         name = self.contact_new.name
         contacts_list = self.controller.frames["View Contacts"].contacts_list
         if name != '':
-            if name not in contacts_list:
-                print("DEBUG: Creating new contact")
-                contacts_list[name] = self.contact_new
-            elif name in contacts_list:
-                print("DEBUG: Updating already existing contact")
-                contacts_list[name] = self.contact_new
-        else:
-            print("DEBUG: Entered empty name")
+            contacts_list[name] = self.contact_new
         self.controller.frames["View Contacts"].contacts_list = contacts_list
         self.controller.frames["View Contacts"].clear_fields()
         for contact in sorted(contacts_list):
@@ -660,33 +642,6 @@ class AddContactPage(Frame):
         for entry in [self.enter_name, self.enter_phone_num, self.enter_email, self.enter_address, self.enter_notes,
                       self.preview]:
             entry.delete(0, END)
-
-
-class SettingsPage(Frame):
-    """
-        Settings Page:
-
-        === Public Attributes ===
-        master: The frame containing all information on this page
-        controller: Reference to the Controller Class
-
-        === Methods ===
-        create: Initializes objects & places them on the page
-        """
-    def __init__(self, master, controller, **kw):
-        super().__init__(master, **kw)
-        self.master = master
-        self.controller = controller
-
-        self.page_name = "Settings"
-
-        # Initialize object names
-
-        # Create objects
-        self.create()
-
-    def create(self) -> None:
-        pass
 
 
 if __name__ == "__main__":

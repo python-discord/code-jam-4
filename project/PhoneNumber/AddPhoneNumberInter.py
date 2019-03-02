@@ -1,12 +1,11 @@
 import tkinter as tk
-from project.PhoneNumber.PhoneCanvas import PhoneCanvas, PhoneButton
+from project.PhoneNumber.PhoneCanvas import PhoneCanvas
 
 
 class AddPhoneNumberInter(tk.Frame):
     """
     This class is the frame that contains PhoneCanvas with the label that shows the phone number as the user
     dials them. It gives the option of erasing the whole phone number.
-    #TODO Send phone number to the contact interface when it's complete.
 
     === Public Attributes ===
         master: root of the frame
@@ -24,11 +23,11 @@ class AddPhoneNumberInter(tk.Frame):
         self.master = master
         self.page_name = 'Add Phone Number'
         self.text_label = tk.Label(self, font=('Calibri', 10), fg='#63FF20', bg='#00536a', borderwidth=2,
-                                   text="Please enter the phone number you which\n to add with the rotary phone below.")
+                                   text="Please enter the phone number you wish\n to add with the rotary phone below.")
 
         self.label_frame = tk.Frame(self, bg='#00536a')
-        self.phone_number_label = PhoneNumberLabel(self.label_frame, font=('Calibri', 20), fg='#63FF20', bg='#00536a', width=12,
-                                                   borderwidth=2, relief='sunken')
+        self.phone_number_label = PhoneNumberLabel(self.label_frame, font=('Calibri', 20), fg='#63FF20', bg='#00536a',
+                                                   width=12, borderwidth=2, relief='sunken')
 
         self.button = tk.Button(self.label_frame, text='Clear', bg='#00536a', font=('Calibri', 14), height=1,
                                 command=self.phone_number_label.clear_phone_number)
@@ -44,7 +43,7 @@ class AddPhoneNumberInter(tk.Frame):
 
         self.master.bind("<<Send_Phone_Number>>", self.__get_dialed_number)
 
-    def add_phone_number_to_entry(self, num: int) -> None:
+    def add_phone_number_to_entry(self, num: str) -> None:
         """
         This method adds one number to the phone number label.
         :param num: Number we which to add to the phone number label.

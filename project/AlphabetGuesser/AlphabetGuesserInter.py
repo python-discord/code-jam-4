@@ -148,6 +148,4 @@ if __name__ == '__main__':
     root.geometry("300x400")
     root.resizable(False, False)
     a = AlphabetGuesserInter(root, "Name", width=300, height=500)
-
-
     root.mainloop()
