@@ -1,12 +1,9 @@
 """Green Greenhouses Calendar Application."""
 import tkinter as tk
 from tkinter import messagebox
-
 from ..backend.DBHandler import DBHandler
-
 from .eventViewer import EventViewer
-
-
+import string
 class Application(tk.Tk):
     """Main Application class inheriting from tkinter.Tk."""
 
@@ -126,58 +123,59 @@ class AddEventPage(tk.Frame):
         self.title = tk.Label(self, text="Add an event", font=(30))
         self.title.grid(column=1)
         # Name
-        self.name = tk.Label(self, text="Name", font=(24))
+        self.name = tk.Label(self, text="Name ", font=(24))
         self.name.grid(row=1, sticky="E")
-        self.nameEntry = tk.Entry(self)
+        self.nameEntry = tk.Text(self, height=2, width=49)
         self.nameEntry.grid(row=1, column=1)
         # Location
-        self.location = tk.Label(self, text="Location", font=(24))
+        self.location = tk.Label(self, text="Location ", font=(24))
         self.location.grid(row=2, sticky="E")
-        self.locationEntry = tk.Entry(self)
+        self.locationEntry = tk.Text(self, height=2, width=49)
         self.locationEntry.grid(row=2, column=1)
         # Date
-        self.date = tk.Label(self, text="Date", font=(24))
+        self.date = tk.Label(self, text="Date ", font=(24))
         self.date.grid(row=3, sticky="E")
         self.dateSpinBoxs = tk.Frame(self)
         self.timeEntryD = tk.Spinbox(self.dateSpinBoxs,
-                                     width=4,
+                                     width=14,
                                      from_=1,
                                      to=31)
 
         self.timeEntryM = tk.Spinbox(self.dateSpinBoxs,
-                                     width=5,
+                                     width=15,
                                      from_=1,
                                      to=12)
 
         self.timeEntryY = tk.Spinbox(
-                                     self.dateSpinBoxs,
-                                     width=5,
-                                     from_=2019,
-                                     to=3000)
+            self.dateSpinBoxs,
+            width=14,
+            from_=2019,
+            to=3000)
         self.timeEntryD.grid(row=3, column=1)
         self.timeEntryM.grid(row=3, column=2)
         self.timeEntryY.grid(row=3, column=3)
         self.dateSpinBoxs.grid(row=3, column=1)
         # Description
-        self.description = tk.Label(self, text="Description", font=(24))
-        self.description.grid(row=4, sticky="E")
-        self.descriptionEntry = tk.Entry(self)
+        self.description = tk.Label(self, text="Description ", font=(24))
+        self.description.grid(row=4, sticky="N")
+        self.descriptionEntry = tk.Text(self, height=20, width=49)
         self.descriptionEntry.grid(row=4, column=1)
 
         # Submit Button
-
+        self.submitBack = tk.Frame(self)
         self.submitBtn = tk.Button(
-            self,
+            self.submitBack,
             text="Submit ✔",
             command=lambda: self.inputCheck())
-        self.submitBtn.grid()
+        self.submitBtn.grid(row=1, sticky="W")
         # back button
         self.back = tk.Button(
-                              self,
-                              text="Back",
-                              command=lambda:
-                              self.parent.change_page(CalendarPage))
-        self.back.grid(row=5, column=1, sticky="w")
+            self.submitBack,
+            text="Back",
+            command=lambda:
+            self.parent.change_page(CalendarPage))
+        self.back.grid(row=1, column=1, sticky="W")
+        self.submitBack.grid(column=1)
 
     def IsDaysCorrect(self, list):
         """"""
@@ -200,24 +198,30 @@ class AddEventPage(tk.Frame):
             self.timeEntryD.get(),
             self.timeEntryM.get(),
             self.timeEntryY.get()]
-        print(self.IsDaysCorrect(dateList))
 
         if (
-                self.nameEntry.get() and
-                self.locationEntry.get() and
+                any(
+                    letter.lower() in self.descriptionEntry.get("1.0", tk.END)
+                    for letter in string.ascii_lowercase) and
+                any(
+                    letter.lower() in self.locationEntry.get("1.0", tk.END)
+                    for letter in string.ascii_lowercase) and
                 self.IsDaysCorrect(dateList) and
-                self.descriptionEntry.get()):
+                any(
+                    letter.lower() in self.nameEntry.get("1.0", tk.END)
+                    for letter in string.ascii_lowercase)):
             self.parent.dbh.addEvent(
-                                     self.nameEntry.get(),
-                                     self.locationEntry.get(),
-                                     ".".join(dateList),
-                                     self.descriptionEntry.get())
+                self.nameEntry.get("1.0", tk.END),
+                self.locationEntry.get("1.0", tk.END),
+                ".".join(dateList),
+                self.descriptionEntry.get("1.0", tk.END))
         else:
             messagebox.showinfo(
                 "Missing arguments",
                 "It seems you didnt fill out all the info boxs \n" +
                 "Or you didnt fill the date correctly\n" +
                 "please fill them all correctly and try again.")
+        self.parent.pages[CalendarPage].create_widgets()
         self.parent.change_page(CalendarPage)
 
 
@@ -247,6 +251,11 @@ class CalendarPage(tk.Frame):
 
         self.create_widgets()
 
+        self.addEventBtn = tk.Button(self,
+                                     text="[+] Add event",
+                                     command=lambda: self.parent.change_page(
+                                         AddEventPage))
+
     def create_widgets(self):
         """
         Create the pages widgets.
@@ -257,10 +266,6 @@ class CalendarPage(tk.Frame):
             None
         """
         # Create an add event button
-        self.addEventBtn = tk.Button(self,
-                                     text="[+] Add event",
-                                     command=lambda: self.parent.change_page(
-                                         AddEventPage))
         self.addEventBtn.grid()
         # Fetch all events
         events = self.parent.dbh.fetchEvents()
