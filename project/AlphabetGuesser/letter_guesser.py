@@ -24,7 +24,7 @@ class LetterGuesser:
         self.possible_characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
                                     'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
                                     '8', '9', '@', '.', '-', ' ', '?', '!']
-        with open("words_pickle", "rb") as openfile:
+        with open("project/alphabetguesser/words_pickle", "rb") as openfile:
             self.dictionary = pickle.load(openfile)
             openfile.close()
 

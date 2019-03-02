@@ -5,6 +5,7 @@ from project.contact import Contact
 import pickle
 from project.WheelSpinner.WheelSpinner import WheelSpinner
 from project.PhoneNumber.AddPhoneNumberInter import AddPhoneNumberInter
+from project.AlphabetGuesser.AlphabetGuesserInter import AlphabetGuesserInter
 
 
 """
@@ -35,7 +36,7 @@ class Controller(Tk):
         self.resizable(False, False)
         self.geometry("300x400")
         self.title("Contact Manager")
-        self.iconbitmap("src/Phone.ico")
+        self.iconbitmap("project/src/Phone.ico")
         for i in range(5):
             self.rowconfigure(i, weight=1)
             self.columnconfigure(i, weight=1)
@@ -242,7 +243,7 @@ class ContactsPage(Frame):
 
     def load_contacts(self) -> None:
         self.randomize_alphabetical_order()
-        with open("contacts_pickle", 'rb') as infile:
+        with open("project/contacts_pickle", 'rb') as infile:
             self.contacts_list = pickle.load(infile)
             self.refresh_fields()
 
@@ -487,7 +488,8 @@ class AddContactPage(Frame):
         self.clear = Button(self, text="Clear All", command=lambda: self.clear_all())
         self.clear.grid(row=7, column=2, sticky=N+S+E+W)
 
-        self.enter_notes = Entry(self)
+        self.enter_notes = Label(self, text="Click here to add a note.", relief="sunken")
+        self.enter_notes.bind("<Button-1>", lambda event, arg=self.enter_notes: self.input_text(event, arg, "Notes"))
         self.enter_notes_label = Label(self, text="Notes:")
         self.enter_notes_button = Button(
             self,
@@ -499,7 +501,9 @@ class AddContactPage(Frame):
         self.enter_notes_label.grid(row=6, column=0, sticky=N+S+E+W)
         self.enter_notes.grid(row=6, column=1, columnspan=3, sticky=N+S+E+W)
 
-        self.enter_address = Entry(self)
+        self.enter_address = Label(self, text="Click here to add an adress.", relief="sunken")
+        self.enter_address.bind("<Button-1>",
+                                lambda event, arg=self.enter_address: self.input_text(event, arg, "Address"))
         self.enter_address_label = Label(self, text="Address")
         self.enter_address_button = Button(
             self,
@@ -511,7 +515,9 @@ class AddContactPage(Frame):
         self.enter_address.grid(row=5, column=1, columnspan=3, sticky=N+S+E+W)
         self.enter_address_button.grid(row=5, column=4, columnspan=2, sticky=N+S+E+W)
 
-        self.enter_email = Entry(self)
+        self.enter_email = Label(self, text="Click here to add an email.", relief="sunken")
+        self.enter_email.bind("<Button-1>",
+                                lambda event, arg=self.enter_email: self.input_text(event, arg, "Email"))
         self.enter_email_label = Label(self, text="Email:")
         self.enter_email_button = Button(
             self,
@@ -544,7 +550,9 @@ class AddContactPage(Frame):
         self.phone_type_personal.grid(row=3, column=2, sticky=N+S+E+W)
         self.enter_phone_num_button.grid(row=2, column=4, columnspan=2, sticky=N+S+E+W)
 
-        self.enter_name = Entry(self)
+        self.enter_name = Label(self, text="Click here to add a name.", relief="sunken")
+        self.enter_name.bind("<Button-1>",
+                              lambda event, arg=self.enter_name: self.input_text(event, arg, "Name"))
         self.enter_name_label = Label(self, text="Name:")
         self.enter_name_button = Button(
             self,
@@ -583,7 +591,7 @@ class AddContactPage(Frame):
         self.contact_new.add_note(note)
         self.refresh_field()
 
-    def input_phone_number(self):
+    def input_phone_number(self, event):
         new_window = Toplevel(self)
         new_window.geometry("300x400")
         new_window.configure(background='#00536a')
@@ -594,7 +602,7 @@ class AddContactPage(Frame):
             self.controller.show()
             new_window.destroy()
 
-        def send_phone_input():
+        def send_phone_input(event):
             self.controller.show()
             self.enter_phone_num['text'] = phone.get_complete_phone_number()
             new_window.destroy()
@@ -602,6 +610,26 @@ class AddContactPage(Frame):
         new_window.wm_protocol("WM_DELETE_WINDOW", quit_phone_input)
 
         phone = AddPhoneNumberInter(new_window, bg='#00536a')
+
+    def input_text(self, event, entry, entry_text):
+        new_window = Toplevel(self)
+        new_window.geometry("300x400")
+        self.controller.withdraw()
+
+        def quit_text_input():
+            self.controller.show()
+            new_window.destroy()
+
+        def send_text_input(event):
+            self.controller.show()
+            entry['text'] = alpha.get_answer()
+            new_window.destroy()
+
+        new_window.bind("<<Info Submitted>>", send_text_input)
+        new_window.wm_protocol("WM_DELETE_WINDOW", quit_text_input)
+
+        alpha = AlphabetGuesserInter(new_window, entry_text, width=300, height=500)
+
 
     def refresh_field(self) -> None:
         self.preview.delete(0, END)

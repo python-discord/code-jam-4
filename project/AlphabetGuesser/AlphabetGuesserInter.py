@@ -70,6 +70,8 @@ class AlphabetGuesserInter(tk.Frame):
         self.letters_input.grid(column=0, row=7, columnspan=2, padx=10, sticky=N + S + E + W)
         self.submit_button.grid(column=0, row=8, columnspan=2, padx=10, pady=10, sticky=N + S + E + W)
 
+        self.grid(row=0, column=0)
+
     def update_current_asked_word(self):
         self.current_word['text'] = '"' + self.letter_guesser.request_word() + '"'
 
@@ -111,7 +113,11 @@ class AlphabetGuesserInter(tk.Frame):
             self.button_1['text'] = 'No'
             self.button_2['text'] = 'Yes'
 
+    def get_answer(self):
+        return self.letters_input['text']
+
     def submit(self):
+        self.master.event_generate("<<Info Submitted>>")
         print("Submitted")
 
     @staticmethod
@@ -143,5 +149,5 @@ if __name__ == '__main__':
     root.resizable(False, False)
     a = AlphabetGuesserInter(root, "Name", width=300, height=500)
 
-    a.grid(row=0, column=0)
+
     root.mainloop()
