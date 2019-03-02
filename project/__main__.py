@@ -176,7 +176,7 @@ class Framed(tk.AsyncTk):
     async def file_select(self, *, new_file: bool = True):
         """File select dialogue"""
         manager = tk.AsyncToplevel(self)
-        manager.title(self.cur_locale.menu.fileselect.saveas)
+        manager.title(self.cur_locale.menu.fileselect.saveas if new_file else self.cur_locale.menu.fileselect.open)
         manager.protocol("WM_DELETE_WINDOW", lambda: asyncio.ensure_future(manager.destroy()))
         dir = pathlib.Path()
         dirbox = tk.AsyncEntry(manager)

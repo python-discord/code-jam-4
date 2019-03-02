@@ -29,6 +29,7 @@ class kata:
             folder = " 【フォルダー】"  # [fo ru da-] | [FOLDER]
             new = "ニュー ファイル"  # nyu-   fa i ru | New File
             saveas = "セイヴ アズ…"  # se i vu   a zu … | Save As...
+            open = "オーペヌ ファイル"  # o- pe nu   fa i ru | Open File
 
             class button:
                 default = "セイヴ ヒール"  # se i vu   hi- ru | Save Here
@@ -87,6 +88,7 @@ class eng:
             folder = " [FOLDER]"
             new = "New File"
             saveas = "Save As..."
+            open = "Open File"
 
             class button:
                 default = "Save Here"
