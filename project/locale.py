@@ -4,16 +4,24 @@ where Starwort then transcribes it into katakana."""
 
 class menu:
     class unhelpful:
-        name = "ウンヘルプフル メニュー"  # u n he ru pu fu ru   me nyu- | Unhelpful Menu
+        name = "ウンヘルプフル メニュー"
+        # u n he ru pu fu ru   me nyu- | Unhelpful Menu
         nothing = "ヅー ノシング"  # do-   no shi n gu | Do nothing
         save = "セイヴ プロセソル タイム"
         # se i vu   pu ro se so ru   ta i mu | Save Processor Time
-        close = "Close"
+        close = "クロス" # ku ro su | Close
+
+    class new:
+        name = "ニュー ファイル" # nyu-   fa i ru | New File
+        height = "ハイト" # ha i to | Height
+        width = "ウイヅ" # u i dzu | Width
+        create = "クリーエイト カンヴァス"
+        # ku ri- e i to   ka n va su | Create Canvas
 
     class edit:
-        name = "Edit"
-        undo = "Undo"
-        redo = "Redo"
+        name = "エッデト" # e dde to | Edit
+        undo = "ウンドウー" # u n do u- | Undo
+        redo = "リードブー" # ri- do u- | Redo
 
     class fileselect:
         file = " 【ファイル】"  # [fa i ru] | [FILE]
@@ -23,13 +31,15 @@ class menu:
 
         class button:
             default = "セイヴ ヒール"  # se i vu   hi- ru | Save Here
-            special = "セイヴ ヒール\n【ファイルナム カッノト ビー エムプテイー オル ア スペシアル パス】"
-            # se i vu   hi- ru \n [fa i ru na mu   ka nno to   bi-   e mu pu te i-   o ru   a
-            # su pe shi a ru   pa su]
+            special = "セイヴ ヒール\
+【ファイルナム カッノト ビー エムプテイー オル ア スペシアル パス】"
+            # se i vu   hi- ru \n [fa i ru na mu   ka nno to   bi-
+            # e mu pu te i-   o ru   a   su pe shi a ru   pa su]
             # Save Here [Filename cannot be empty or a special path]
-            invalid = 'セイヴ ヒール\n【ファイルナム カッノト コンテイヌ エニー オヴ: \\/:*?"<>|】'
-            # se i vu   hi- ru \n [fa i ru na mu   ka nno to   ko n te i nu   e ni-   o vu:
-            # \/:*?"<>|]
+            invalid = 'セイヴ ヒール\
+【ファイルナム カッノト コンテイヌ エニー オヴ: \\/:*?"<>|】'
+            # se i vu   hi- ru \n [fa i ru na mu   ka nno to
+            # ko n te i nu   e ni-   o vu: \/:*?"<>|]
             # Save Here [Filename cannot contain any of: \/:*?"<>|]
             cancel = "カンセル"  # ka n se ru | Cancel
 
