@@ -12,13 +12,6 @@ def apply(text):
     text = synonym(text)
     return text
 
-    # if randint(0, 1):
-    #     text = synonym(text)
-    #     return text
-    # else:
-    #     text = quotify(text)
-    #     return text
-
 
 def random_spelling_mistakes(text):
     text = text.split()
@@ -52,32 +45,29 @@ def quotify(text):
 
 
 def synonym(text):
+    skip_word = False
     start = time.time()
-
-    #if len(text) >
-    print('Processing...')
     text = text.split()
     new_words = ''
     for word in text:
-        print("Processing Word '", word, "'")
-        try:
-            w = thesaurus.Word(word)
-            w.synonyms('all')
-            text = w.synonyms()[randint(0, len(w))]
-            final = ''.join(text)
-            new_words = new_words + ' ' + final
-        except thesaurus.exceptions.MisspellingError:
-            print("Error. Skipping word: ' ", word, " '")
+        if skip_word:
             new_words = new_words + ' ' + word
-            new_words = new_words + ' ' + word
-        except thesaurus.exceptions.WordNotFoundError:
-            print("Error. Skipping word: ' ", word, " '")
-            new_words = new_words + ' ' + word
-            new_words = new_words + ' ' + word
-        except TypeError:
-            print("Error. Skipping word: ' ", word, " '")
-            new_words = new_words + ' ' + word
-            new_words = new_words + ' ' + word
+            skip_word = False
+        else:
+            start_ = time.time()
+            skip_word = True
+            try:
+                w = thesaurus.Word(word)
+                w.synonyms('all')
+                text = w.synonyms()[randint(0, len(w))]
+                final = ''.join(text)
+                new_words = new_words + ' ' + final
+            except thesaurus.exceptions.MisspellingError:
+                new_words = new_words + ' ' + word
+            except thesaurus.exceptions.WordNotFoundError:
+                new_words = new_words + ' ' + word
+            except TypeError:
+                new_words = new_words + ' ' + word
+            end_ = time.time()
     end = time.time()
-    print(end - start)
     return new_words
