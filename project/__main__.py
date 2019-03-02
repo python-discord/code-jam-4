@@ -12,6 +12,9 @@ from functools import reduce
 import pyaudio
 import wave
 import asyncio
+import os
+import threading
+import time
 
 
 SCRIPT_DIR = Path(__file__).parent
@@ -45,12 +48,13 @@ async def mainloop_coro(root):
         while True:
             root.update()
             root.update_idletasks()
+            play_sound('tap')
             await asyncio.sleep(0)
     except tk.TclError:
         return
 
 
-def play_sound(soundcode='tap'):
+def get_stream(soundcode):
     sound_file = open((AUDIO_PATH / '{}.wav'.format(soundcode)), 'rb')
     sound = wave.open(sound_file, 'rb')
 
@@ -63,14 +67,30 @@ def play_sound(soundcode='tap'):
                                channels=sound.getnchannels(),
                                rate=sound.getframerate(),
                                output=True,
+                               start=False,
                                stream_callback=audio_callback)
+    return stream
 
-    async def wait_and_close(stream, sound):
-        while stream.is_active():
-            await asyncio.sleep(1)
-        stream.close()
-        sound.close()
-    asyncio.get_event_loop().create_task(wait_and_close(stream, sound))
+
+valid_soundcodes = [filename.replace('.wav', '')
+                    for filename in os.listdir(AUDIO_PATH)
+                    if filename.endswith('.wav')]
+
+
+sound_streams = {soundcode: get_stream(soundcode)
+                 for soundcode in valid_soundcodes}
+
+
+def prepare_sound(soundcode):
+    while sound_streams[soundcode].is_active():
+        time.sleep(0.1)
+    sound_streams[soundcode].close()
+    sound_streams[soundcode] = get_stream(soundcode)
+
+
+def play_sound(soundcode='tap'):
+    sound_streams[soundcode].start_stream()
+    threading.Thread(target=prepare_sound, args=(soundcode,)).run()
 
 
 with open(WORDS_PATH, 'r') as words_file:
