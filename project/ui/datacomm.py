@@ -42,8 +42,9 @@ class DataComm:
         self.update()
         print(self.data)
 
-    def update(self):
+    def update(self, table_model=None):
         # Writes to file
         self.file.writeFile(self.data)
         self.tup = [tuple(d.values()) for d in self.data]
+        return self.tup
         # I didn't sort it by date and time anymore since the passive_aggressive_statements are added in

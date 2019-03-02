@@ -1,4 +1,5 @@
 from PySide2.QtWidgets import QDesktopWidget, QMainWindow, qApp
+from PySide2.QtCore import QTimer
 
 from .ui_files.ui_main import Ui_MainApplication
 from .add_task import AddTask
@@ -21,16 +22,20 @@ class MainApplication(QMainWindow, Ui_MainApplication):
         self.bind_buttons()
         self.windows = []
         self.datacomm = DataComm()
-        self.tabel_model = TableModel(
+        self.table_model = TableModel(
             self, self.datacomm.tup, self.datacomm.header
         )
         self.update_table()
+        timer = QTimer(self)
+        timer.timeout.connect(self.update_table)
+        timer.start()
 
     def init_UI(self):
         """
         Load the .ui-converted .py file, center the application and display it.
         """
         self.setupUi(self)
+        self.resize(1200, 600)
 
         self.task_table.horizontalHeader().setStretchLastSection(True)
 
@@ -66,7 +71,8 @@ class MainApplication(QMainWindow, Ui_MainApplication):
         #edit_task_button.setText("Press Me")
 
     def update_table(self):
-        self.task_table.setModel(self.tabel_model)
+        self.table_model.table_data = self.datacomm.update()
+        self.task_table.setModel(self.table_model)
         self.task_table.setSortingEnabled(True)
         self.task_table.resizeColumnsToContents()
 
