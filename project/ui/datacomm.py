@@ -1,13 +1,13 @@
 
 import datetime
-from .readWrite.rw import readWrite
+from .read_write.rw import ReadWrite
 from random import randint
 
 
 class DataComm:
     def __init__(self):
-        self.file = readWrite()
-        self.data = self.file.readInput()
+        self.file = ReadWrite()
+        self.data = self.file.read_input()
         self.header = ('Title', 'Description', 'Deadline', 'Completed')
         self.update()
 
@@ -44,7 +44,7 @@ class DataComm:
 
     def update(self, table_model=None):
         # Writes to file
-        self.file.writeFile(self.data)
+        self.file.write_file(self.data)
         self.tup = [tuple(d.values()) for d in self.data]
         return self.tup
         # I didn't sort it by date and time anymore since the passive_aggressive_statements are added in
