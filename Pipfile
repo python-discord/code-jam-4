@@ -12,6 +12,7 @@ flake8-tidy-imports = "*"
 
 [packages]
 pyside2 = "*"
+flake8 = "*"
 
 [requires]
 python_version = "3.7"
