@@ -8,6 +8,7 @@ from PySide2.QtWidgets import (
 
 from project import media, ui
 from project.widgets.password_prompt import PasswordPrompt
+from project.widgets.create_password import CreatePassword
 
 log = logging.getLogger(__name__)
 
