@@ -22,7 +22,7 @@ def wrap_progress(determinate=True, title=""):
                 _title = coro_iter.__self__.master.cur_locale
                 for i in title.split("."):
                     _title = getattr(_title, i)
-            except:
+            except Exception:
                 pass
             else:
                 title = _title
@@ -49,7 +49,7 @@ def wrap_progress(determinate=True, title=""):
                         root.bar["value"] += 1
                 try:
                     await root.destroy()
-                except:
+                except Exception:
                     pass
                 return _val
 
@@ -64,7 +64,7 @@ def wrap_progress(determinate=True, title=""):
                 _title = coro.__self__.master.cur_locale
                 for i in title.split("."):
                     _title = getattr(_title, i)
-            except:
+            except Exception:
                 pass
             else:
                 title = _title
@@ -80,7 +80,7 @@ def wrap_progress(determinate=True, title=""):
                 rv = await coro(*args, **kwargs)
                 try:
                     await root.destroy()
-                except:
+                except Exception:
                     pass
                 return rv
 
