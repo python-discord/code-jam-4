@@ -23,7 +23,6 @@ class Cache:
         # get settings
         cp = configparser.ConfigParser()
         cp.read(str(SETTINGS))
-        cp.read('settings.ini')
 
         # for now, let's just look up the DEV settings
         # can change this later
@@ -75,7 +74,7 @@ class Cache:
                     image_bytes = await res.read()
                     # open and the image in pillow
                     im = Image.open(io.BytesIO(image_bytes))
-                    im = im.resize((400, 440), Image.NEAREST)
+                    im = im.resize((400, 280), Image.NEAREST)
                     # make the image a tkinter image
                     image = ImageTk.PhotoImage(im)
                     # update the cat data dict
