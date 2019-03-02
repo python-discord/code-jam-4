@@ -28,7 +28,7 @@ class Controller(Tk):
         self.resizable(False, False)
         self.geometry("300x400")
         self.title("Contact Manager")
-        self.iconbitmap("src/Phone.ico")
+        self.iconbitmap("project/src/Phone.ico")
         for i in range(5):
             self.rowconfigure(i, weight=1)
             self.columnconfigure(i, weight=1)
@@ -229,12 +229,12 @@ class ContactsPage(Frame):
 
     def load_contacts(self) -> None:
         self.randomize_alphabetical_order()
-        with open("contacts_pickle", 'rb') as infile:
+        with open("project/contacts_pickle", 'rb') as infile:
             self.contacts_list = pickle.load(infile)
             self.refresh_fields()
 
     def save_contacts(self) -> None:
-        with open("contacts_pickle", 'wb') as outfile:
+        with open("project/contacts_pickle", 'wb') as outfile:
             pickle.dump(self.contacts_list, outfile)
 
     def insert_contact(self, contact) -> None:
