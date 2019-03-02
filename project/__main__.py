@@ -13,7 +13,7 @@ with the Tk window
 
 
 from . import locale as kata
-from .canvas import Canvas, EntrySection
+from .canvas import Canvas, EntrySection, FileToplevel
 
 
 def nothing(*i):
@@ -59,6 +59,7 @@ class Framed(tk.AsyncTk):
         self.protocol("WM_DELETE_WINDOW", lambda: asyncio.ensure_future(self.save()))
         self.bind("<Control-s>", lambda i: asyncio.ensure_future(self.destroy()))
         self.bind("<Control-S>", lambda i: asyncio.ensure_future(self.destroy()))
+        self.bind("<Control-n>", lambda i: asyncio.ensure_future(self.open_new()))
         self.bind("<Control-z>", lambda i: asyncio.ensure_future(self.canvas.redo()))
         self.bind("<Control-Z>", lambda i: asyncio.ensure_future(self.canvas.undo()))
         self.bind("<Control-y>", lambda i: asyncio.ensure_future(self.canvas.undo()))
@@ -67,6 +68,12 @@ class Framed(tk.AsyncTk):
         file = await self.file_select()
         if file:
             await self.canvas.save(file)
+
+    async def new_file(self, height: int, width: int):
+        self.canvas.forget()
+        del self.canvas
+        self.canvas = Canvas(self, height=height, width=width)
+        self.entry.reset()
 
     async def open_file(self):
         file = await self.file_select(new_file=False)
@@ -81,7 +88,10 @@ class Framed(tk.AsyncTk):
         self.config(menu=menu)
 
         file_menu = tk.AsyncMenu(menu)
-
+        file_menu.add_command(
+            label=kata.menu.new.name,
+            command=lambda: asyncio.ensure_future(self.open_new())
+        )
         file_menu.add_command(label=kata.menu.unhelpful.nothing, command=nothing)
         file_menu.add_command(
             label=kata.menu.unhelpful.save,
@@ -106,6 +116,11 @@ class Framed(tk.AsyncTk):
 
         menu.add_cascade(label=kata.menu.unhelpful.name, menu=file_menu)
         menu.add_cascade(label=kata.menu.edit.name, menu=edit_menu)
+
+    async def open_new(self):
+        """Toplevel for picking width & height"""
+        manager = FileToplevel(self)
+        await self.wait_window(manager)
 
     async def file_select(self, *, new_file: bool = True):
         """File select dialogue"""

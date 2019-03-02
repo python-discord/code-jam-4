@@ -9,19 +9,19 @@ class menu:
         nothing = "ヅー ノシング"  # do-   no shi n gu | Do nothing
         save = "セイヴ プロセソル タイム"
         # se i vu   pu ro se so ru   ta i mu | Save Processor Time
-        close = "クロス" # ku ro su | Close
+        close = "クロス"  # ku ro su | Close
 
     class new:
-        name = "ニュー ファイル" # nyu-   fa i ru | New File
-        height = "ハイト" # ha i to | Height
-        width = "ウイヅ" # u i dzu | Width
+        name = "ニュー ファイル"  # nyu-   fa i ru | New File
+        height = "ハイト"  # ha i to | Height
+        width = "ウイヅ"  # u i dzu | Width
         create = "クリーエイト カンヴァス"
         # ku ri- e i to   ka n va su | Create Canvas
 
     class edit:
-        name = "エッデト" # e dde to | Edit
-        undo = "ウンドウー" # u n do u- | Undo
-        redo = "リードブー" # ri- do u- | Redo
+        name = "エッデト"  # e dde to | Edit
+        undo = "ウンドウー"  # u n do u- | Undo
+        redo = "リードブー"  # ri- do u- | Redo
 
     class fileselect:
         file = " 【ファイル】"  # [fa i ru] | [FILE]

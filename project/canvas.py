@@ -367,3 +367,40 @@ class EntrySection(tk.AsyncFrame):
         self.canvas.redo_list = []
 
         await self.canvas.add_pixel(int(x), int(y), colour)
+
+
+class FileToplevel(tk.AsyncToplevel):
+
+    def __init__(self, master):
+        super().__init__(master)
+        self.master = master
+        self.title(kata.menu.new.name)
+        self.protocol("WM_DELETE_WINDOW", lambda: asyncio.ensure_future(self.destroy()))
+
+        self._setupFields()
+
+    def _setupFields(self):
+        tk.AsyncLabel(self, text=kata.menu.new.height).pack()
+        self.width = tk.AsyncEntry(self)
+        self.width.pack()
+        self.width.bind("<Return>", lambda i: asyncio.ensure_future(self.checknew()))
+
+        tk.AsyncLabel(self, text=kata.menu.new.width).pack()
+        self.height = tk.AsyncEntry(self)
+        self.height.pack()
+        self.height.bind("<Return>", lambda i: asyncio.ensure_future(self.checknew()))
+
+        tk.AsyncButton(
+            self, callback=self.checknew, text=kata.menu.new.create
+        ).pack()
+
+    async def checknew(self):
+        height = self.height.get()
+        width = self.width.get()
+        if not height or not width:
+            return
+
+        height, width = int(height), int(width)
+
+        await self.master.new_file(height, width)
+        await self.destroy()
