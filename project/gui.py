@@ -216,9 +216,9 @@ class Minesweeper(QtWidgets.QWidget):
 
         # Adding spacers around the grid so it doesn't spread out when resized
         horizontal_spacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding,
-                                            QtWidgets.QSizePolicy.Fixed)
+                                                  QtWidgets.QSizePolicy.Fixed)
         vertical_spacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Fixed,
-                                            QtWidgets.QSizePolicy.Expanding)
+                                                QtWidgets.QSizePolicy.Expanding)
         self.grid_layout.addItem(horizontal_spacer, 1, 0, rowSpan=self.grid_height)
         self.grid_layout.addItem(horizontal_spacer, 1, self.grid_width+1, rowSpan=self.grid_width)
         self.grid_layout.addItem(vertical_spacer, 0, 1, columnSpan=self.grid_height)
