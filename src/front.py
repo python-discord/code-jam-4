@@ -1,7 +1,8 @@
 import asyncio
 
 from . import widget
-from .animate import Window, Direction
+from .animate import Direction
+from .view import Window
 from .cache import Cache
 
 
@@ -71,12 +72,8 @@ class Front(widget.PrimaryFrame):
         self.__change_image('RIGHT')
 
     def cmd_bio(self):
-        if self.bio in self.window.views:
-            self.window.move_out(self.bio, 'DOWN', viewtype='widget')
-        else:
-            self.window.move_in(self.bio, 'DOWN', viewtype='widget')
-
-        self.window.animater.start()
+        self.window.move_out(self.image, 'UP', 'image')
+        self.window.move
 
     @property
     def cache(self):
@@ -94,12 +91,18 @@ class Front(widget.PrimaryFrame):
 
 class Bio(widget.PrimaryFrame):
 
+    # def init(self):
+    #     width = self.master.winfo_width()
+    #     height = self.master.winfo_height()
+    #     self.config(height=height, width=width)
+    #     #self.pack_propagate(0)
+
     def __make_item(self, name, value):
         item = widget.SecondaryFrame(self)
         name = widget.SecondaryLabel(item, text=name)
         value = widget.SecondaryLabel(item, text=value)
         name.pack(side='left')
-        value.pack(side='left')
+        value.pack(side='right')
         return item
 
     def load(self, data: dict):
