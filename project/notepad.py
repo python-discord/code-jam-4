@@ -95,6 +95,9 @@ class Notepad:
         # To give a feature of paste
         self.__thisEditMenu.add_command(label="Paste", command=self.__paste)
 
+        # to give a feature of reverse
+        self.__thisEditMenu.add_command(label="Reverse", command=self.__reverse)
+
         # To give a feature of editing
         self.__thisMenuBar.add_cascade(label="Edit", menu=self.__thisEditMenu)
 
@@ -173,6 +176,15 @@ class Notepad:
 
     def __paste(self):
         self.__thisTextArea.event_generate("<<Paste>>")
+
+    def __reverse(self):
+        self.__thisTextArea.delete(1.0, END)
+
+        file = open(self.__file, "r")
+        self.__thisTextArea.insert(1.0, file.read())
+
+        file.close()
+
 
     def run(self):
         self.__root.mainloop()
