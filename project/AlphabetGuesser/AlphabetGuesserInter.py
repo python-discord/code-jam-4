@@ -22,6 +22,7 @@ class AlphabetGuesserInter(tk.Frame):
         self.current_word = None
         self.button_1 = None
         self.button_2 = None
+        self.submit_button = None
 
         self.__letter_found = False
 
@@ -50,23 +51,24 @@ class AlphabetGuesserInter(tk.Frame):
         self.button_2.config(font="Calibri 15")
         self.randomize_buttons()
 
-        self.current_entry_label = tk.Label(self, text=self.current_entry + " :", font="Calibri 10")
-        self.letters_input = tk.Label(self)
+        self.current_entry_label = tk.Label(self, text=self.current_entry + " :", font="Calibri 12")
+        self.letters_input = tk.Label(self, relief="sunken", font="Calibri 15")
 
-        #self.frame.grid(row=0, column=0, sticky=N + S + E + W)
+        self.submit_button = tk.Button(self, text="Submit", font="Calibri 15", command=lambda: self.submit())
+
         self.header.grid(row=0, column=0, columnspan=2, sticky=N + S + E + W)
         self.description.grid(row=1, column=0, columnspan=2, sticky=N + S + E + W)
 
         self.title_label.grid(column=0, row=2, columnspan=2, sticky=N + S + E + W)
         self.question_label.grid(column=0, row=3, columnspan=2, sticky=N + S + E + W)
-        self.current_word.grid(column=0, row=4, columnspan=2, pady=10, sticky=N + S + E + W)
+        self.current_word.grid(column=0, row=4, columnspan=2, padx=10, pady=10, sticky=N + S + E + W)
 
         self.button_1.grid(column=0, row=5, sticky=N + S + E + W)
         self.button_2.grid(column=1, row=5, sticky=N + S + E + W)
 
-        # Having issues with these labels showing up in the window
-        self.current_entry_label.grid(column=0, row=6, sticky=N + S + E + W)
-        self.letters_input.grid(column=1, row=6, sticky=N + S + E + W)
+        self.current_entry_label.grid(column=0, row=6, columnspan=2, sticky=N + S + E + W)
+        self.letters_input.grid(column=0, row=7, columnspan=2, padx=10, sticky=N + S + E + W)
+        self.submit_button.grid(column=0, row=8, columnspan=2, padx=10, pady=10, sticky=N + S + E + W)
 
     def update_current_asked_word(self):
         self.current_word['text'] = '"' + self.letter_guesser.request_word() + '"'
@@ -81,6 +83,7 @@ class AlphabetGuesserInter(tk.Frame):
             return
         elif self.__letter_found and answer == "No":
             # Return the current output and go back to the main window
+            self.submit()
             return
         self.letter_guesser.answer(self.current_word['text'], answer)
         self.randomize_buttons()
@@ -107,6 +110,9 @@ class AlphabetGuesserInter(tk.Frame):
         else:
             self.button_1['text'] = 'No'
             self.button_2['text'] = 'Yes'
+
+    def submit(self):
+        print("Submitted")
 
     @staticmethod
     def get_prefix(word):
