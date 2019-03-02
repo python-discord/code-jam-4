@@ -7,7 +7,7 @@ from PyQt5.QtGui import QFont, QFontDatabase, QIcon
 from PyQt5.QtMultimedia import QSound
 from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
                              QFileDialog, QMainWindow, QMessageBox,
-                             QPlainTextEdit, QStatusBar, QVBoxLayout, QWidget)
+                             QPlainTextEdit, QStatusBar, QVBoxLayout, QWidget, QFontDialog)
 
 from crocpad.configuration import app_config, save_config
 from crocpad.eula_dialog import EulaDialog
@@ -69,7 +69,7 @@ class MainWindow(QMainWindow):
         fileMenu = mainMenu.addMenu('R&ecent Files')
         editMenu = mainMenu.addMenu('&Edit')
         searchMenu = mainMenu.addMenu('S&earch')
-        toolsMenu = mainMenu.addMenu('&Tools')
+        toolsMenu = mainMenu.addMenu('Sp&ecial Tools')
 
         # Help menu
         action_tip = QAction("Tip of th&e Day", self)
@@ -92,6 +92,10 @@ class MainWindow(QMainWindow):
         action_quitedark_theme.triggered.connect(self.set_quitedark_theme)
         accessibilityMenu.addAction(action_quitedark_theme)
 
+        # Special Tools menu
+        font_menu = QAction("Chang&e Font", self)
+        font_menu.triggered.connect(self.change_font)
+        toolsMenu.addAction(font_menu)
 
         # Edit menu
         action_insert_symbol = QAction("Ins&ert symbol", self)
@@ -105,7 +109,7 @@ class MainWindow(QMainWindow):
         action_save = QAction("S&earch for file to save", self)
         action_save.triggered.connect(self.save_file)
         searchMenu.addAction(action_save)
-        action_new = QAction("S&earch for a new f&ile", self)
+        action_new = QAction("S&earch for a new file", self)
         action_new.triggered.connect(self.new_file)
         searchMenu.addAction(action_new)
 
@@ -136,6 +140,13 @@ class MainWindow(QMainWindow):
         dlg.setText(tip.strip())
         dlg.setIcon(QMessageBox.Information)
         dlg.show()
+
+    def change_font(self):
+        # Do the users REEEEEALY need to change font :D
+        font, ok = QFontDialog.getFont()
+        if ok:
+            print(font.toString())        
+
 
     def eventFilter(self, source, event):
         if event.type() == QEvent.KeyPress:
