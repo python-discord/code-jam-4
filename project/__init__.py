@@ -9,5 +9,3 @@ logging.basicConfig(
     level=logging.DEBUG if DEBUG else logging.INFO,
     handlers=(logging.StreamHandler(stream=sys.stdout),)
 )
-
-password = 'rainbow'
