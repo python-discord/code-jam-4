@@ -36,10 +36,10 @@ class PasswordPrompt(QWidget):
 
         self.ui.cancel_button.pressed.connect(self.close)
         self.ui.confirm_button.pressed.connect(self.check)
-        self.success = -1
+        self.success = False
 
     def display(self):
-        self.success = -1
+        self.success = False
         self.passphrase = [choice(words), choice(words), choice(words)]
         self.ui.generated_passphrase.setText(
             f"Your generated passphrase is <b>{' '.join(self.passphrase)}</b>."
@@ -52,7 +52,7 @@ class PasswordPrompt(QWidget):
         field_two = self.ui.password_backwards.text()
         if (field_one == ' '.join(sorted(self.passphrase))) and \
            (field_two == sorted(self.passphrase)[0][::-1]):
-            self.success = 1
+            self.success = True
             self.close()
         else:
             self.ui.correct_label.setText(
