@@ -44,6 +44,7 @@ class MainWindow(QMainWindow):
         self.setStatusBar(self.status)
 
         # Update title and centre window
+        self.filename = "** Untitled **"
         self.update_title()
         self.setGeometry(50, 50, 800, 600)
         qtRectangle = self.frameGeometry()
@@ -163,7 +164,7 @@ class MainWindow(QMainWindow):
         dlg.show()
 
     def update_title(self):
-        self.setWindowTitle("Crocpad++")
+        self.setWindowTitle(f"Crocpad++ - {self.filename}")
 
     def edit_toggle_wrap(self):
         self.main_window.setLineWrapMode(not self.main_window.lineWrapMode())
@@ -172,14 +173,20 @@ class MainWindow(QMainWindow):
         filename = QFileDialog.getOpenFileName()[0]
         with open(filename, 'r') as file:
             self.main_window.setPlainText(file.read())
+        self.filename = filename
+        self.update_title()             
 
     def save_file(self):
         filename = QFileDialog.getSaveFileName()[0]
         text = self.main_window.document().toPlainText()
         with open(filename, 'w') as file:
             file.write(text)
+        self.filename = filename
+        self.update_title()            
 
     def new_file(self):
+        self.filename = "** Untitled **"
+        self.update_title()
         self.main_window.document().clear()
         self.main_window.insertPlainText("""To remove this message, please make sure you have entered
         your full credit card details, made payable to:
