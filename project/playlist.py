@@ -16,12 +16,11 @@ class Playlist(QMediaPlaylist):
     """A wrapper for :class:`QMediaPlaylist` which navigates using a :class:`QAbstractItemModel`.
 
     Rather than using the :class:`QMediaPlaylist`'s regular internal data structure for determining
-    the previous or next media, a :class:`QAbstractItemModel` is used. This means that
-    :meth:`Playlist.next()` and :meth:`Playlist.previous()` will account for the order of the items
+    the previous or next media, the rows of a :class:`QAbstractItemModel` are used. This means that
+    :meth:`Playlist.next()` and :meth:`Playlist.previous()` will account for the order of the rows
     in the model changing.
 
-    This works on the basic principle of using a dictionary to map media ids (the primary keys) to
-    indices in the playlist's internal data structure.
+    This works by fetching the media id (the primary key) from the model for a given row.
 
     The playback mode :attr:`QMediaPlaylist.Random` is currently unsupported.
 
@@ -122,11 +121,14 @@ class Playlist(QMediaPlaylist):
 
         return True
 
+    def insertMedia(self, *args, **kwargs):
+        raise NotImplementedError
+
     def moveMedia(self, *args, **kwargs):
         raise NotImplementedError
 
     def removeMedia(self, index: int) -> bool:
-        """Remove the media at `row` from the playlist.
+        """Remove the media at row `index` from the playlist.
 
         Parameters
         ----------
