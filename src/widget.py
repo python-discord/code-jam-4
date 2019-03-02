@@ -10,8 +10,7 @@ class SecondaryFrame(tk.Frame):
     DEFAULT = {}
 
     def __init__(self, *args, **kwds):
-        self.DEFAULT.update(kwds)
-        super().__init__(*args, **self.DEFAULT)
+        super().__init__(*args, **{**self.DEFAULT, **kwds})
         if hasattr(self, 'init'):
             self.init()
 
@@ -23,8 +22,7 @@ class SecondaryButton(tk.Button):
     }
 
     def __init__(self, *args, **kwds):
-        self.DEFAULT.update(kwds)
-        super().__init__(*args, **self.DEFAULT)
+        super().__init__(*args, **{**self.DEFAULT, **kwds})
         if hasattr(self, 'init'):
             self.init()
 
@@ -36,8 +34,7 @@ class SecondaryLabel(tk.Label):
     }
 
     def __init__(self, *args, **kwds):
-        self.DEFAULT.update(kwds)
-        super().__init__(*args, **self.DEFAULT)
+        super().__init__(*args, **{**self.DEFAULT, **kwds})
         if hasattr(self, 'init'):
             self.init()
 
@@ -46,8 +43,7 @@ class SecondaryCanvas(tk.Canvas):
     DEFAULT = {}
 
     def __init__(self, *args, **kwds):
-        self.DEFAULT.update(kwds)
-        super().__init__(*args, **self.DEFAULT)
+        super().__init__(*args, **{**self.DEFAULT, **kwds})
         if hasattr(self, 'init'):
             self.init()
 
@@ -58,8 +54,7 @@ class PrimaryFrame(tk.Frame):
     }
 
     def __init__(self, *args, **kwds):
-        self.DEFAULT.update(kwds)
-        super().__init__(*args, **self.DEFAULT)
+        super().__init__(*args, **{**self.DEFAULT, **kwds})
         if hasattr(self, 'init'):
             self.init()
 
@@ -71,8 +66,7 @@ class PrimaryButton(tk.Button):
     }
 
     def __init__(self, *args, **kwds):
-        self.DEFAULT.update(kwds)
-        super().__init__(*args, **self.DEFAULT)
+        super().__init__(*args, **{**self.DEFAULT, **kwds})
         if hasattr(self, 'init'):
             self.init()
 
@@ -85,8 +79,7 @@ class PrimaryLabel(tk.Label):
     }
 
     def __init__(self, *args, **kwds):
-        self.DEFAULT.update(kwds)
-        super().__init__(*args, **self.DEFAULT)
+        super().__init__(*args, **{**self.DEFAULT, **kwds})
         if hasattr(self, 'init'):
             self.init()
 
@@ -97,7 +90,6 @@ class PrimaryCanvas(tk.Canvas):
     }
 
     def __init__(self, *args, **kwds):
-        self.DEFAULT.update(kwds)
-        super().__init__(*args, **self.DEFAULT)
+        super().__init__(*args, **{**self.DEFAULT, **kwds})
         if hasattr(self, 'init'):
             self.init()

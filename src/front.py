@@ -56,7 +56,7 @@ class Front(widget.PrimaryFrame):
         self.btn_dislike = widget.PrimaryButton(
             self.commandbar, text='Nope', bg='red', command=self.cmd_dislike
         )
-        self.btn_bio = widget.SecondaryButton(
+        self.btn_bio = widget.PrimaryButton(
             self.commandbar, text='Bio', command=self.cmd_bio
         )
         self.btn_like = widget.PrimaryButton(
