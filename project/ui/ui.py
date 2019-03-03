@@ -88,7 +88,7 @@ class MainApplication(QMainWindow, Ui_MainApplication):
         self.myWidget.show()
         self.edit_task_button.setEnabled(False)
         self.edit_task_button.setDisabled(True)
-		
+
     def mark_as_done(self):
         """
         Marks a selected task as Completed.
