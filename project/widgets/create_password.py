@@ -15,7 +15,7 @@ class CreatePassword(QDialog):
 
     def display(self):
         self.new_password = ""
-        self.show()
+        self.exec()
 
     def closeEvent(self, event):
         if self.new_password == "":

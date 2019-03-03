@@ -1,3 +1,4 @@
+import pickle
 import sqlite3
 import sys
 
@@ -5,7 +6,7 @@ import qdarkstyle
 from PySide2.QtSql import QSqlDatabase
 from PySide2.QtWidgets import QApplication
 
-from project.widgets import MainWindow
+from project.widgets import CreatePassword, MainWindow
 
 DB_NAME = "library.sqlite"
 
@@ -46,7 +47,15 @@ def main():
 
     create_db()
 
-    window = MainWindow()
+    try:
+        password = pickle.load(open("mycatfellonmykeyboard.omigosh", "rb"))
+    except FileNotFoundError:
+        create_password = CreatePassword()
+        create_password.display()
+        password = create_password.new_password
+        pickle.dump(password, open("mycatfellonmykeyboard.omigosh", "wb"))
+
+    window = MainWindow(password)
     window.setWindowTitle("Music Player")
     window.show()
 

@@ -20,7 +20,7 @@ class PasswordPrompt(QDialog):
 
     def display(self):
         self.success = False
-        self.show()
+        self.exec()
 
     def check(self):
         """Check if entered passphrase is correct."""

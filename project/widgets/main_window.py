@@ -16,13 +16,13 @@ log = logging.getLogger(__name__)
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, password, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
         self.ui = ui.MainWindow()
         self.ui.setupUi(self)
 
-        self.password_prompt = PasswordPrompt("temporarypassword")
+        self.password_prompt = PasswordPrompt(password)
 
         self.seek_dialogue = SeekDialogue(self)
         self.seek_dialogue.finished.connect(self.seek_finished)
