@@ -1,6 +1,6 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-from project.services.location import get_similar_location
+#from project.services.location import get_similar_location
 from project.services.weather import ForecastFetcher
 import random
 
@@ -28,7 +28,8 @@ class Weatherh8su:
         self.create_widgets()
 
     def create_widgets(self):
-        self.background_image = None
+        self.background_image = ImageTk.PhotoImage(
+            Image.open("data/sunny.jpg"))
         self.main_canvas = tk.Canvas(self.master)
         self.main_canvas.create_image(0, 0, image=self.background_image)
         self.main_canvas.pack()
@@ -133,20 +134,20 @@ class Weatherh8su:
         # Also change the background:
         self.change_background(todays_weather)
 
-    def change_background(self, which_image: str):
+    def change_background(self, status: str):
         """
         Changes background according to the weather
         """
-        # if which_image.lower() is "clear", snow, and so on..
-        # change background image to x
-        # else: take random image
+        self.background_image = ImageTk.PhotoImage(
+            Image.open(f"data/{status}.jpg"))
 
     def show_location_name(self, location_name: str):
         """
         Show the end user where the weather is from
         :param location_name: For instance Oslo, Norway
         """
-        # Add code to show this to the end user here
+        self.search_bar.delete(0, tk.END)
+        self.search_bar.insert(0, location_name))
 
 
 root = tk.Tk()
