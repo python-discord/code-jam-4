@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>deadline_form</class>
+ <widget class="QWidget" name="deadline_form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>935</width>
+    <height>374</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Task Deadline</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="8">
+    <widget class="QComboBox" name="comboBox_9"/>
+   </item>
+   <item row="2" column="9">
+    <widget class="QComboBox" name="comboBox_10"/>
+   </item>
+   <item row="2" column="4">
+    <widget class="QComboBox" name="comboBox_5"/>
+   </item>
+   <item row="2" column="6">
+    <widget class="QComboBox" name="comboBox_7"/>
+   </item>
+   <item row="2" column="3">
+    <widget class="QComboBox" name="comboBox_4"/>
+   </item>
+   <item row="0" column="0" colspan="10">
+    <widget class="QLabel" name="label">
+     <property name="baseSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;You know, I've been thinking. Did you know that according to the Oxford English Dictionary, in the early days the word &lt;span style=&quot; font-style:italic;&quot;&gt;deadline&lt;/span&gt; just referred to lines that do not move?&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Another line that does not move is the &lt;span style=&quot; font-style:italic;&quot;&gt;International Date Line&lt;/span&gt;, which it's amusing because people often misspell the word &lt;span style=&quot; font-style:italic;&quot;&gt;deadline&lt;/span&gt; as &lt;span style=&quot; font-style:italic;&quot;&gt;dateline&lt;/span&gt;.&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Anyways, I find your usage of timezones and dates very &lt;span style=&quot; font-weight:600;&quot;&gt;confusing&lt;/span&gt;. My version is &lt;span style=&quot; font-style:italic;&quot;&gt;far superior&lt;/span&gt; so that's what you'll be using.&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Please enter your intended task deadline in &lt;span style=&quot; font-style:italic;&quot;&gt;UNIX time&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QComboBox" name="comboBox_2"/>
+   </item>
+   <item row="2" column="7">
+    <widget class="QComboBox" name="comboBox_8"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="QComboBox" name="comboBox_1"/>
+   </item>
+   <item row="2" column="5">
+    <widget class="QComboBox" name="comboBox_6"/>
+   </item>
+   <item row="2" column="2">
+    <widget class="QComboBox" name="comboBox_3"/>
+   </item>
+   <item row="1" column="9">
+    <widget class="QPushButton" name="done_button">
+     <property name="text">
+      <string>Done</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
