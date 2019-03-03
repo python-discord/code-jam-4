@@ -21,16 +21,21 @@ class EventViewer(tk.Frame):
         self.display_frame = tk.Frame(self.canvas)
         self.scrollbar = tk.Scrollbar(self, orient="vertical", width=20,
                                       command=self.canvas.yview)
-        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.canvas.configure(
+            yscrollcommand=self.scrollbar.set,
+            background="#000000")
 
         self.grid_rowconfigure(0, weight=100)
         self.scrollbar.grid(row=0, column=1, sticky="ns")
         self.canvas.grid(row=0, column=0)
-        self.canvas.create_window((240, 0), window=self.display_frame, anchor="n")
+        self.canvas.create_window(
+            (240, 0),
+            window=self.display_frame,
+            anchor="n")
 
         self.display_frame.bind("<Configure>", self.scrollMove)
         self.display_frame.grid_columnconfigure(0, weight=1000)
-
+        self.display_frame.configure(bg="#000000")
         self.events = {}
 
     def scrollMove(self, event):
@@ -41,11 +46,15 @@ class EventViewer(tk.Frame):
     def add_event(self, event):
         """Add a new event to the viewer."""
         event_frame = tk.Frame(self.display_frame,
-                               relief=tk.GROOVE, borderwidth=3)
+                               relief=tk.GROOVE, borderwidth=3, bg="#000000")
         event_frame.grid(column=0, pady=5, padx=5)
 
         self.events.update({event: event_frame})
 
         for key, name in self.eventLabels.items():
-            widget = tk.Label(event_frame, text=name+" - "+str(event[key]))
+            widget = tk.Label(
+                event_frame,
+                text=name + " - " + str(event[key]),
+                bg="#000000",
+                fg="#464646")
             widget.pack()
