@@ -76,15 +76,15 @@ class Tool:
 
         Arguments:
             toolName {str} -- Tools name for display
-            duration {tuple} -- randint duration[0], max time[1]
-            constDuration {int} -- the tool's duration time
-            brushSize {float} -- tools brushsize
+            brushSize {int} -- the Size of the Brush/Pen
             color {QColor} -- the Color to be used
             paintPattern {PaintPattern} -- the paint pattern that will be used
             PaintBoard {PaintBoard} -- Parent class
             iconPath {str} -- the path to the icon. duh...
             shortcut {str} -- well. its a shortcut. nothing less, nothing more.
             statusTip {str} -- the status tip that will be displayed...
+            duration {int} -- the tool's duration time
+            isDipped {bool} -- checks if the tool is dipped in paint
         """
 
         self.toolName = toolName
@@ -275,12 +275,12 @@ class PaintBoard(QMainWindow):
                                         (randint(5, 30), 30)  # randint(5,30)
                                         )
 
-        self.solidifed_brush = Tool("Solid Brush", 10, QColor(0, 0, 0, 0.0),
+        self.solidifed_brush = Tool("Solid Brush", 15, QColor(0, 0, 0, 0.0),
                                     [randint(1, 4), randint(1, 2),
                                      randint(0, 3), randint(0, 5)], self,
                                     'Design/icons/Solid Brush.png',
                                     "CTRL+J", "Gosh, that is a hard tip",
-                                    (1, 1)
+                                    (0, 0)
                                     )
 
         self.sunbathing_eraser = Tool("Sunbathing Eraser", 10, Qt.white,
@@ -396,7 +396,8 @@ class PaintBoard(QMainWindow):
                 self.drawing and self.currentTool is not None:
 
             Pen = QPen()
-            if self.currentTool.toolName != "Sunbathing Eraser":
+            if self.currentTool.toolName != \
+                    "Sunbathing Eraser" or "Solid Brush":
                 if self.currentTool.duration <= 0.0:
                     Pen.setDashPattern([0, 0, 0, 0])
                     self.drawing = False
@@ -409,9 +410,9 @@ class PaintBoard(QMainWindow):
 
                 # this here is to add more realism
                 # to the point when its breaking
-                if self.currentTool.duration <= 0.2 \
+                if self.currentTool.duration < 0.1 \
                         and self.currentTool.toolName != \
-                        'A bucket' or 'Sunbathing Eraser':
+                        'A bucket' and 'Sunbathing Eraser':
                     dots = QPen()
                     broken_tools = QPen()
                     if self.currentTool.toolName == "Pointy Pen":
@@ -421,7 +422,7 @@ class PaintBoard(QMainWindow):
                         broken_tools.setColor(self.currentTool.color)
                         broken_tools.setCapStyle(Qt.SquareCap)
                         broken_tools.setJoinStyle(Qt.BevelJoin)
-                        broken_tools.setWidth(self.currentTool.brushSize - 2)
+                        broken_tools.setWidth(self.currentTool.brushSize)
                         self.painter.setPen(broken_tools)
                         self.painter.drawLine(self.lastPoint, self.lastPoint)
                     dots.setCapStyle(Qt.RoundCap)
@@ -432,23 +433,19 @@ class PaintBoard(QMainWindow):
                     self.painter.setPen(dots)
                     self.painter.drawLine(self.lastPoint +
                                           QPoint(randint(10, 15),
-                                                 randint(1, 5)),
+                                                 randint(5, 10)),
                                           self.lastPoint +
                                           QPoint(randint(5, 10),
-                                                 randint(1, 10)))
+                                                 randint(5, 10)))
 
                 if self.currentTool.toolName == "Pointy Pen":
                     # QSound(SoundEffects['pen write']).play()
                     Pen.setCapStyle(Qt.RoundCap)
                     Pen.setJoinStyle(Qt.MiterJoin)
                 elif self.currentTool.toolName == \
-                        'Straggly Paintbrush' or 'Solid Brush':
-                    if self.currentTool.toolName == "Solid Brush":
-                        Pen.setCapStyle(Qt.RoundCap)
-                        Pen.setJoinStyle(Qt.BevelJoin)
-                    else:
-                        Pen.setCapStyle(Qt.SquareCap)
-                        Pen.setJoinStyle(Qt.MiterJoin)
+                        'Straggly Paintbrush':
+                    Pen.setCapStyle(Qt.SquareCap)
+                    Pen.setJoinStyle(Qt.MiterJoin)
                 Pen.setColor(self.currentTool.color)
                 Pen.setWidth(self.currentTool.brushSize)
 
@@ -460,7 +457,8 @@ class PaintBoard(QMainWindow):
                             QPixmap("Design/icons/Pointy Pen Broken.png")))
                         # QSound(SoundEffects['pen break']).play()
 
-                self.painter.drawLine(self.lastPoint, event.pos())
+                if self.currentTool.toolName != 'Solid Brush':
+                    self.painter.drawLine(self.lastPoint, event.pos())
                 self.lastPoint = event.pos()
             self.update()
         else:

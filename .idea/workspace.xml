@@ -2,7 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="19d228ac-f860-4fd1-a898-e3fe594f9d72" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/ArtiQule.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/ArtiQule.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/Design/sounds/emptying bucket.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/Design/sounds/fill bucket.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/Design/sounds/pointy pen break.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/Design/sounds/pointy pen writing.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/Design/sounds/solidified paintbrush hitting.m4a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/Design/sounds/straggly paintbrush brushing.m4a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/sounds/empty bucket.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/sounds/fill bucket.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/sounds/pen break.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/sounds/pen writing.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/sounds/solidified hitting.m4a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/sounds/straggly brushing.m4a" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +32,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/project/ArtiQule.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="401" column="24" selection-start-line="401" selection-start-column="24" selection-end-line="401" selection-end-column="24" />
+            <state relative-caret-position="119">
+              <caret line="436" column="20" selection-start-line="436" selection-start-column="20" selection-end-line="436" selection-end-column="20" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -233,10 +246,25 @@
     <entry file="file://$PROJECT_DIR$/project/__main__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/project/ArtiQule.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="401" column="24" selection-start-line="401" selection-start-column="24" selection-end-line="401" selection-end-column="24" />
+        <state relative-caret-position="119">
+          <caret line="436" column="20" selection-start-line="436" selection-start-column="20" selection-end-line="436" selection-end-column="20" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
