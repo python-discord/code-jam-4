@@ -1,8 +1,8 @@
-import pyqt5
-from pyqt5.QtWidgets import QWizard, QApplication, QMessageBox, QWizardPage
+from PyQt5.QtWidgets import QWizard, QApplication, QMessageBox, QWizardPage
+from PyQt5.QtMultimedia import QSound
+from PyQt5 import QtCore
 import wizard
 import sys
-import music
 
 class Troubleshooter(QWizard, wizard.Ui_Wizard):
     def __init__(self):
@@ -10,12 +10,10 @@ class Troubleshooter(QWizard, wizard.Ui_Wizard):
         self.setupUi(self)
     
     def closeEvent(self, event):
-        print("event")
         reply = QMessageBox.question(self, 'Message',
-            "Are you sure to quit?", QMessageBox.Yes, QMessageBox.No)
+            "bro plz", QMessageBox.Yes, QMessageBox.No)
 
-        if reply == QMessageBox.Yes:
-        	raise music.StopMusic
+        if reply == QMessageBox.No:
         	event.accept()
         else:
             event.ignore()
@@ -23,10 +21,13 @@ class Troubleshooter(QWizard, wizard.Ui_Wizard):
 def main():
     app = QApplication(sys.argv)
     form = Troubleshooter()
-    app.setApplicationName("Crocpad++ Troubleshooter")
+    app.setApplicationName("crocpad++ troubleshooter")
     form.show()
-    music.play("good.mid")
+    song = QSound("good.wav")
+    song.play()
+    song.setLoops(99999999)
     sys.exit(app.exec_())
+    song.stop()
 
 if __name__ == '__main__':
     main()

@@ -1,14 +1,18 @@
-from pyqt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
+from pathlib import Path
 
 class Ui_Wizard(object):
     def setupUi(self, Wizard):
         Wizard.setObjectName("Wizard")
         Wizard.resize(402, 300)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("../../code-jam-4/project/crocpad.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        window_icon = str(Path('crocpad') / Path('crocpad.ico'))
+        icon.addPixmap(QtGui.QPixmap(window_icon), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Wizard.setWindowIcon(icon)
         Wizard.setWizardStyle(QtWidgets.QWizard.ModernStyle)
         Wizard.setOptions(QtWidgets.QWizard.NoBackButtonOnStartPage)
+        Wizard.setPixmap(QtWidgets.QWizard.LogoPixmap,
+            QtGui.QPixmap(window_icon))
         self.wizardPage1 = QtWidgets.QWizardPage()
         self.wizardPage1.setObjectName("wizardPage1")
         self.verticalLayoutWidget = QtWidgets.QWidget(self.wizardPage1)
