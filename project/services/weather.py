@@ -33,7 +33,8 @@ class ForecastFetcher:
         try:
             self.owm.daily_forecast("New York")
         except UnauthorizedError:
-            raise AttributeError(f"The provided API key is not valid: {api_key}")
+            msg = f"The provided API key is not valid: {api_key}"
+            raise AttributeError(msg)
 
     def fetch_forecast_7_days(self, location: str,
                               unit: str) -> [Dict[str, str]]:
