@@ -19,6 +19,8 @@ class PasswordPrompt(QDialog):
         self.password = new_password
 
     def display(self):
+        self.ui.password_regular.setText("")
+        self.ui.password_backwards.setText("")
         self.success = False
         self.exec()
 
@@ -27,7 +29,7 @@ class PasswordPrompt(QDialog):
         field_one = self.ui.password_regular.text()
         field_two = self.ui.password_backwards.text()
         if (field_one == self.password) and \
-           (field_two == sorted(self.password)):
+           (field_two == ''.join(sorted(self.password))):
             self.success = True
             self.close()
         else:

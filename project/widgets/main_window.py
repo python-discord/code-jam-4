@@ -1,4 +1,5 @@
 import logging
+import random
 
 from PySide2.QtCore import QPoint, Qt
 from PySide2.QtGui import QMouseEvent
@@ -160,6 +161,13 @@ class MainWindow(QMainWindow):
 
     def play_pressed(self):
         """Play or pause the player depending on its state."""
+        if random.randint(0, 3) == 0:
+            self.password_prompt.display()
+            if self.password_prompt.success:
+                pass
+            else:
+                return
+        self.password_prompt.display()
         if self.player.state() in (media.Player.StoppedState, media.Player.PausedState):
             self.player.play()
         else:
