@@ -30,17 +30,16 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 
 # Project Information
 ##### Team Name
-Knowledgeable Kois
 
-`# TODO`
+Knowledgeable Kois
 
 ## Description
 
-`# TODO`
+A clipboard manager, Copy your text and images with ease! 
 
 ## Setup & Installation
 
-`# TODO`
+Clone this repo, in a terminal run `pipenv install` then `pipenv run start`
 
 Unit tests are written using the [pytest](https://docs.pytest.org/en/latest/) framework. 
 
@@ -48,7 +47,7 @@ Unit tests are written using the [pytest](https://docs.pytest.org/en/latest/) fr
 
 ## How do I use this thing?
 
-`# TODO`
+Simply copy text/images (images will only work with right-click>copy)
 
 ## Documentation
 

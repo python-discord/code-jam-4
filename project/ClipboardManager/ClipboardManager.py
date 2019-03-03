@@ -36,6 +36,7 @@ class ClipboardManager(QObject):
         (usually on add, move, delete, or moving items around """
 
         _config = ConfigManager.get_instance()
+
         # copy the top of the stack into the clipboard if the stack is not empty.
         if self.clipboard_stack.items_count():
             if _config.auto_load_top:
