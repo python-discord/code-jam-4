@@ -35,7 +35,7 @@ from contextlib import suppress
 
 from .view import Window, View
 from .front import Front
-# from .splash import Splash
+from .splash import Splash
 from . import SETTINGS
 
 
@@ -52,19 +52,20 @@ class App(tk.Tk):
         for name, val in parser['APP'].items():
             getattr(self, name)(val)
 
-        #self.window = Window(self)
-        #self.window.pack(expand=True, fill='both')
-        #elf.update()
+        self.window = Window(self)
+        self.window.pack(expand=True, fill='both')
+        self.update()
 
-        # self.splash = Splash(self)
+        self.splash = Splash(self)
         self.front = Front(self)
         self.front.pack(fill='both', expand=True)
-        # self.execution_order = iter((
-        #     # self.splash,
-        #     self.front,
-        #     # self.result
-        # ))
+        self.execution_order = iter((
+            # self.splash,
+            self.front,
+            # self.result
+        ))
         self.update()
+        self.switch()
 
     def switch(self):
         try:
