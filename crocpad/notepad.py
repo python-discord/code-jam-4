@@ -6,13 +6,12 @@ Contains the application class MainWindow which should only be instantiated once
 import random
 from pathlib import Path
 
-from PyQt5.QtCore import QEvent, Qt, QObject
+from PyQt5.QtCore import QEvent, QObject, Qt
 from PyQt5.QtGui import QFont, QFontDatabase, QIcon
 from PyQt5.QtMultimedia import QSound
-from PyQt5.QtWidgets import (QAction, QDesktopWidget, QApplication,
-                             QFileDialog, QFontDialog, QMainWindow,
-                             QMessageBox, QPlainTextEdit, QStatusBar,
-                             QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget, QFileDialog,
+                             QFontDialog, QMainWindow, QMessageBox,
+                             QPlainTextEdit, QStatusBar, QVBoxLayout, QWidget)
 
 import crocpad.stylesheets
 from crocpad.configuration import app_config, save_config
@@ -32,8 +31,8 @@ class MainWindow(QMainWindow):
         # Set up the QTextEdit editor configuration
         self.text_window = QPlainTextEdit()  # the actual editor pane
         self.text_window.setTabStopWidth(800)  # Set the tabstop to a nice pretty 800 pixels
-        fixedfont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
-        fixedfont.setPointSize(24)
+        fixed_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        fixed_font.setPointSize(24)
         self.text_window.setFont(QFont('Comic Sans MS', 30))
         self.text_window.installEventFilter(self)
         click_sound = str(Path('crocpad') / Path('sounds') / Path('click.wav'))
@@ -56,21 +55,27 @@ class MainWindow(QMainWindow):
         # Update title and centre window
         self.filename = "** Untitled **"
         self.setGeometry(50, 50, 800, 600)
-        qtRectangle = self.frameGeometry()
-        centerPoint = QDesktopWidget().availableGeometry().center()
-        qtRectangle.moveCenter(centerPoint)
-        self.move(qtRectangle.topLeft())
+        rectangle = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        rectangle.moveCenter(center_point)
+        self.move(rectangle.topLeft())
         window_icon = str(Path('crocpad') / Path('crocpad.ico'))
         self.setWindowIcon(QIcon(window_icon))
         self.create_menus()
-        self.app.setStyleSheet(crocpad.stylesheets.default)
+        styles = {'light': crocpad.stylesheets.light,
+                  'dark': crocpad.stylesheets.dark,
+                  'hotdogstand': crocpad.stylesheets.hotdogstand,
+                  'quitedark': crocpad.stylesheets.quitedark}
+        self.app.setStyleSheet(styles[app_config['Editor']['visualmode']])
         self.show()
 
         # Post-startup tasks
         if app_config['License']['eulaaccepted'] != 'yes':
             self.do_eula()
-        if app_config['Editor']['tips'] == 'on':
-            self.show_tip()
+        self.show_tip()  # tip of the day
+        if app_config['Editor']['linewrap'] == 'off':
+            self.text_window.setLineWrapMode(0)
+            self.wrap_action.setChecked(False)
 
     def create_menus(self):
         """Build the menu structure for the main window."""
@@ -104,19 +109,27 @@ class MainWindow(QMainWindow):
         accessibility_menu.addAction(action_quitedark_theme)
 
         # Special Tools menu
-        font_menu = QAction("Chang&e Font", self)
+        font_menu = QAction("Chang&e font", self)
         font_menu.triggered.connect(self.change_font)
         tools_menu.addAction(font_menu)
-        wrap_action = QAction("Toggl&e Line Wrap", self)
-        wrap_action.setCheckable(True)
-        wrap_action.setChecked(True)
-        wrap_action.triggered.connect(self.edit_toggle_wrap)
-        tools_menu.addAction(wrap_action)
+        self.wrap_action = QAction("Lin&e wrap", self)  # class attribute so we can toggle it
+        self.wrap_action.setCheckable(True)
+        self.wrap_action.setChecked(True)
+        self.wrap_action.triggered.connect(self.toggle_wrap)
+        tools_menu.addAction(self.wrap_action)
+        self.sound_action = QAction("Sound &effects", self)
+        self.sound_action.setCheckable(True)
+        self.sound_action.setChecked(True if app_config['Sound']['sounds'] == 'on' else False)
+        self.sound_action.triggered.connect(self.toggle_sound)
+        tools_menu.addAction(self.sound_action)
 
         # Edit menu
         action_insert_symbol = QAction("Ins&ert symbol", self)
         action_insert_symbol.triggered.connect(self.insert_emoji)
         edit_menu.addAction(action_insert_symbol)
+        action_open_settings = QAction("Op&en settings file", self)
+        action_open_settings.triggered.connect(self.open_settings)
+        edit_menu.addAction(action_open_settings)
 
         # Search menu
         action_open = QAction("S&earch for file to open", self)
@@ -143,11 +156,7 @@ class MainWindow(QMainWindow):
         eula_quiz_dialog = EulaQuizDialog()
         # run the EULA quiz, to make sure they read and understand
         while not eula_quiz_dialog.quiz_correct():
-            eula_dialog.exec_()  # makes dialog modal (user cannot access main window)
-            if eula_dialog.clicked_button == eula_dialog.eula_agree_button:
-                # We click the agree button
-                app_config['License']['eulaaccepted'] = 'yes'
-                save_config(app_config)
+            eula_dialog.exec_()  # exec_ makes dialog modal (user cannot access main window)
             eula_quiz_dialog.exec_()
 
     def show_tip(self):
@@ -201,28 +210,43 @@ class MainWindow(QMainWindow):
         self._filename = name
         self.setWindowTitle(f"Crocpad++ - {self.filename}")
 
-    def edit_toggle_wrap(self):
+    def toggle_wrap(self):
         """Toggle the line wrap flag in the text editor."""
         self.text_window.setLineWrapMode(not self.text_window.lineWrapMode())
+        if self.text_window.lineWrapMode():
+            app_config['Editor']['linewrap'] = 'on'
+        else:
+            app_config['Editor']['linewrap'] = 'off'
+        save_config(app_config)
+
+    def toggle_sound(self):
+        """Toggle the sound effects flag."""
+        if app_config['Sound']['sounds'] == 'off':
+            app_config['Sound']['sounds'] = 'on'
+        else:
+            app_config['Sound']['sounds'] = 'off'
+        save_config(app_config)
 
     def open_file(self):
         """Ask the user for a filename to open, and load it into the text editor.
 
         Called by the Open File menu action."""
         filename = QFileDialog.getOpenFileName()[0]
-        with open(filename, 'r', encoding='utf-8') as file:
-            self.text_window.setPlainText(file.read())
-        self.filename = filename
+        if filename != '':
+            with open(filename, 'r', encoding='utf-8') as file:
+                self.text_window.setPlainText(file.read())
+            self.filename = filename
 
     def save_file(self):
         """Ask the user for a filename to save to, and write out the text editor.
 
         Called by the Save File menu action."""
         filename = QFileDialog.getSaveFileName()[0]
-        text = self.text_window.document().toPlainText()
-        with open(filename, 'w', encoding='utf-8') as file:
-            file.write(text)
-        self.filename = filename
+        if filename != '':
+            text = self.text_window.document().toPlainText()
+            with open(filename, 'w', encoding='utf-8') as file:
+                file.write(text)
+            self.filename = filename
 
     def new_file(self):
         """Clear the text editor and insert a helpful message.
@@ -238,21 +262,35 @@ Cheshire Cheese
 Snekland
 Australia""")
 
+    def open_settings(self):
+        settings_file = Path('crocpad') / Path('notepad.ini')
+        with open(settings_file, 'r', encoding='utf-8') as file:
+            self.text_window.setPlainText(file.read())
+        self.filename = settings_file
+
     def set_light_theme(self):
         """Set the text view to the light theme."""
         self.app.setStyleSheet(crocpad.stylesheets.light)
+        app_config['Editor']['visualmode'] = 'light'
+        save_config(app_config)
 
     def set_dark_theme(self):
         """Set the text view to the dark theme."""
         self.app.setStyleSheet(crocpad.stylesheets.dark)
+        app_config['Editor']['visualmode'] = 'dark'
+        save_config(app_config)
 
     def set_hotdogstand_theme(self):
         """Set the text view to the High Contrast theme."""
         self.app.setStyleSheet(crocpad.stylesheets.hotdogstand)
+        app_config['Editor']['visualmode'] = 'hotdogstand'
+        save_config(app_config)
 
     def set_quitedark_theme(self):
         """Set the text view to the Quite Dark theme for the legally blind."""
         self.app.setStyleSheet(crocpad.stylesheets.quitedark)
+        app_config['Editor']['visualmode'] = 'quitedark'
+        save_config(app_config)
 
     def insert_emoji(self):
         """Open a modal EmojiPicker dialog which can insert arbitrary symbols at the cursor."""

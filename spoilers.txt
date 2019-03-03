@@ -1,0 +1,9 @@
+"Multimedia" keystrokes (with sound effects) are space, enter and backspace.
+
+All the menu shortcuts are the same where possible (Alt+E).
+
+Sometimes when you press the space bar, a message box with an OK button pops up, then disappears.
+
+The "Insert symbol" feature has an unlabeled dial with almost 10,000 positions.
+
+The color theme for blind users is black on black.

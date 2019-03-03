@@ -3,6 +3,8 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtCore import Qt
+
+from crocpad.configuration import app_config, save_config
 from crocpad.ui.eula_quiz import Ui_EulaQuizDialog
 
 
@@ -71,6 +73,8 @@ class EulaQuizDialog(QDialog, Ui_EulaQuizDialog):
 
         If the correct answers were all selected, the user is allowed to continue."""
         if self.quiz_correct():
+            app_config['License']['eulaaccepted'] = 'yes'
+            save_config(app_config)
             dlg = QtWidgets.QMessageBox(self)
             dlg.setText("Correct. Thank you for using Crocpad++.")
             dlg.setIcon(QtWidgets.QMessageBox.Critical)

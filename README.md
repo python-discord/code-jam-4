@@ -54,5 +54,12 @@ Contains `.ui` files created for Qt and the Python modules generated from those 
 `project/sounds`  
 Contains sound resources for a multimedia, user-friendly experience.
 
+## Known bugs
+- When running under Linux, occasionally the following message might appear:  
+    >```qt.qpa.xcb: QXcbConnection: XCB error: 3 (BadWindow), sequence: 5441, resource id: 27411671, major code: 40 (TranslateCoords), minor code: 0```
+
 ## Attributions
 `wrong.wav` is from https://freesound.org/people/sharesynth/sounds/341256/
+
+## Spoilers
+There are many subtle annoyances in Crocpad++. Please check `spoilers.txt` for a complete list.
