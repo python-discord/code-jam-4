@@ -4,7 +4,7 @@ from tkinter import messagebox
 from ..backend.DBHandler import DBHandler
 from .eventViewer import EventViewer
 import string
-from ..backend.utils.translator import translate
+from .userHandling import Register, Login
 
 
 class Application(tk.Tk):
@@ -46,11 +46,12 @@ class Application(tk.Tk):
         Returns:
             N/A
         """
+        self.pages[LoginPage] = LoginPage(self)
         self.pages[HomePage] = HomePage(self)
         self.pages[AddEventPage] = AddEventPage(self)
         self.pages[CalendarPage] = CalendarPage(self)
 
-        self.change_page(HomePage)
+        self.change_page(LoginPage)
 
     def change_page(self, new_page):
         """
@@ -67,12 +68,66 @@ class Application(tk.Tk):
         self.pages[new_page].grid(column=0, row=0)
 
 
+class LoginPage(tk.Frame):
+    """Landing page for application."""
+
+    def __init__(self, parent):
+        """Initialise Home Page class."""
+        super().__init__(parent)
+        self.grid_columnconfigure(0, weight=1000)
+
+        self.parent = parent
+        self.create_widgets()
+
+    def create_widgets(self):
+        """
+        Create the pages widgets.
+
+        Arguments:
+            N/A
+        Returns:
+            N/A
+        """
+        self.title = tk.Label(
+            self, text="Welcome to Green Greenhouses\nEvent Manager",
+            font=("Helvetica", 24, "bold")
+        )
+        self.title.grid(row=0, column=0, sticky="ew", pady=(10, 0))
+
+        self.register = tk.Button(
+            self, text="REGISTER", width=10,
+            font=("Arial", 20, "italic"),
+            command=self.register
+        )
+        self.register.grid(row=5, column=0, pady=100)
+
+        self.login = tk.Button(
+            self, text="LOGIN", width=10,
+            font=("Arial", 20, "italic"),
+            command=self.login
+        )
+        self.login.grid(row=10, column=0)
+
+    def register(self):
+        Register(self.parent.dbh)
+
+    def login(self):
+        loginWindow = Login(self.parent.dbh)
+        self.wait_window(loginWindow.window)
+        if loginWindow.loggedIn:
+            print(f"Logged In User {self.parent.dbh.logged_in_user}")
+            self.parent.change_page(HomePage)
+        else:
+            print("Not Logged In")
+
+
 class HomePage(tk.Frame):
     """Landing page for application."""
 
     def __init__(self, parent):
         """Initialise Home Page class."""
         super().__init__(parent)
+        self.grid_columnconfigure(0, weight=1000)
 
         self.parent = parent
         self.create_widgets()

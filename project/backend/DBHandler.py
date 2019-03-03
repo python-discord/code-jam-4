@@ -27,11 +27,13 @@ class DBHandler:
         self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS users(
                 ID INTEGER PRIMARY KEY,
-                username TEXT,
+                username TEXT UNIQUE,
                 password TEXT)""")
         with open("./project/backend/utils/jsonMessage.json") as jsonMessages:
             self.jsonMessages = json.load(jsonMessages)
         # self.populate()
+
+        self.logged_in_user = None
 
     def fetchEvents(self):
         """Fetch event from the database.
@@ -86,11 +88,16 @@ class DBHandler:
             entryName - the name to be added,
             entryPassword - the password for the user
         Returns:
-            None
+            True if user was successfully added to the database,
+            False otherwise.
         """
-        self.cursor.execute('''INSERT INTO users(username,password)
-                              VALUES(?,?)''', (username, password))
-        self.conn.commit()
+        try:
+            self.cursor.execute('''INSERT INTO users(username,password)
+                                   VALUES(?,?)''', (username, password))
+            self.conn.commit()
+            return True
+        except sqlite3.IntegrityError:
+            return False
 
     def tryLogin(self, username, password):
         """Attempt user login.
@@ -99,26 +106,25 @@ class DBHandler:
             username - user's username
             password - user's password
         Returns:
-            None
+            True if user was successfully logged in,
+            False otherwise.
         """
         if len(username) < 1 or len(password) < 1:
             messagebox.showerror("Error",
                                  self.jsonMessages['populateLogin']
                                  )
-            return
+            return False
         self.cursor.execute("""SELECT * FROM users WHERE username=? AND password=?""",
                             (username, password))
         rows = self.cursor.fetchall()
         if len(rows) == 0:
-            addUserMB = messagebox.askyesno("No user found",
-                                            self.jsonMessages['noUser'])
-            # If they select 'yes' on the messagebox
-            if addUserMB:
-                self.addUser(username, password)
-                messagebox.showinfo("Success",
-                                    self.jsonMessages['userAdded'])
-            return
+            messagebox.showwarning("No user found",
+                                   self.jsonMessages['noUser']
+                                   )
+            return False
         # LOG IN THE USER, MAYBE A METHOD IN MAIN APP
+        self.logged_in_user = rows[0][0]
+        return True
 
     # TESTING - ONLY USED IN DEVELOPMENT. REMOVE UPON RELEASE!!!
     def populate(self):
