@@ -8,6 +8,7 @@ flake8 = "*"
 
 [packages]
 nltk = "*"
+playsound = "*"
 
 [requires]
 python_version = "3.7"
