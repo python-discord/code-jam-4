@@ -72,10 +72,13 @@ class ImageCache:
             profile = self.get_profile()
             if profile is not None:
                 queue.put(profile)
-            time.sleep(self.ratelimit)
+            time.sleep(5)
 
     def next(self):
         return self.queue.get()
+
+    def ready(self):
+        return not self.queue.empty()
 
     def start(self):
         if self.worker is not None and self.worker.is_alive():

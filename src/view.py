@@ -79,7 +79,10 @@ class Window(widget.PrimaryCanvas):
         self.move_view(view, end)
         del self.views[view]
 
-    def change_view(self, view: View, direction: Direction):
+    def change_view(self, view: View, direction: Direction = None):
+        if direction is None:
+            self.set_view(view)
+            return
         if not isinstance(direction, Direction):
             direction = Direction[direction.upper()]  # Cast string for convenience
         self.animater.clear()

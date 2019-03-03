@@ -7,6 +7,7 @@ from .view import Window, View
 from .cache import ImageCache
 from .loading import Loading
 
+
 def process_image(image: bytes, width: int, height: int):
     im = Image.open(io.BytesIO(image))
     im = im.resize((width, height), Image.NEAREST)
@@ -23,18 +24,26 @@ class Front(widget.PrimaryFrame):
     _last = None
 
     def __next(self, direction: Direction = None):
-        data: dict = self.cache.next()
-        image = process_image(
-            data.pop('image'),
-            self.window.winfo_width(),
-            self.window.winfo_height()
-        )
-        name = data.pop('name')
-        self.__load(name, image, data)
-        if direction is None:
-            self.window.set_view(self.image)
-        else:
+        if self.cache.ready():
+            data: dict = self.cache.next()
+            image = process_image(
+                data.pop('image'),
+                self.window.winfo_width(),
+                self.window.winfo_height()
+            )
+            name = data.pop('name')
+            self.__load(name, image, data)
             self.window.change_view(self.image, direction)
+
+        else:
+            loadscreen = Loading(
+                self.window,
+                width=self.window.winfo_width(),
+                height=self.window.winfo_height()
+            )
+            self.window.change_view(View(loadscreen, 'widget'), direction)
+            loadscreen.waitfor(self.cache.ready, self.__next, ('up',))
+            self.update()
 
     def __load(self, name, image, data):
         self.title.config(text=name)
@@ -72,6 +81,8 @@ class Front(widget.PrimaryFrame):
 
         self.cache = ImageCache(self.cachesize)
         self.cache.start()
+
+    def start(self):
         self.after(0, self.__next)
 
     def cmd_dislike(self):
