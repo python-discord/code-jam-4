@@ -288,7 +288,7 @@ class Canvas(tk.AsyncCanvas):
 
         im = im.resize((width, height))
 
-        divider = 10 ** (-1 * factor) // 5
+        divider = max(10 ** (-1 * factor) // 5, 1)
         small_width = width // divider
         small_height = height // divider
 

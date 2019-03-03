@@ -27,10 +27,10 @@
         },
         "asynctk": {
             "hashes": [
-                "sha256:6643702ea2ee1c7c7866969d81669ea07558b7d519e282631e1774d60cf0d679"
+                "sha256:9ce8379b2fb11819f7c2390dbd6b5c395b9946f022949f2124ba68e1d5077836"
             ],
             "index": "pypi",
-            "version": "==2019.3.2.post3"
+            "version": "==2019.3.3.post4"
         },
         "entrypoints": {
             "hashes": [
