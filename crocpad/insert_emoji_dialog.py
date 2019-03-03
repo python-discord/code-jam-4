@@ -11,6 +11,7 @@ class EmojiPicker(QDialog, Ui_EmojiPicker):
     Calls the inherited setupUi method to set up the layout that was done in Qt Designer.
     Custom behaviour: show currently dialed symbol, and insert into document.
     """
+
     def __init__(self, cursor: QCursor):
         super(EmojiPicker, self).__init__()
         self.setupUi(self)  # inherited method from the Designer file

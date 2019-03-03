@@ -15,6 +15,7 @@ class EulaQuizDialog(QDialog, Ui_EulaQuizDialog):
         check quiz answers when Submit clicked
         disabled some ways of evading the dialog.
     """
+
     def __init__(self):
         super(EulaQuizDialog, self).__init__()
         self.setupUi(self)  # inherited method from the Designer file

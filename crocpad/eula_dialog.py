@@ -15,6 +15,7 @@ class EulaDialog(QDialog, Ui_EulaDialog):
         behaviours for Disagree and Agree buttons
         disabled some ways of evading the dialog
     """
+
     def __init__(self, eula: str):
         super(EulaDialog, self).__init__()
         self.setupUi(self)  # inherited method from the Designer file
