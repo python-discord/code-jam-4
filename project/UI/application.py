@@ -143,7 +143,9 @@ class AddEventPage(tk.Frame):
             text="Name ",
             font=(24), bg="#000000")
         self.name.grid(row=1, sticky="E")
-        self.nameEntry = tk.Text(self, fg="#464646", height=2, width=49, bg="#000000")
+        self.nameEntry = tk.Text(
+            self, fg="#464646",
+            height=2, width=49, bg="#000000")
         self.nameEntry.grid(row=1, column=1)
         # Location
         self.location = tk.Label(
@@ -151,7 +153,9 @@ class AddEventPage(tk.Frame):
             text="Location ",
             font=(24), bg="#000000")
         self.location.grid(row=2, sticky="E")
-        self.locationEntry = tk.Text(self, fg="#464646", height=2, width=49, bg="#000000")
+        self.locationEntry = tk.Text(
+            self, fg="#464646",
+            height=2, width=49, bg="#000000")
         self.locationEntry.grid(row=2, column=1)
         # Date
         self.date = tk.Label(
