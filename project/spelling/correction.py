@@ -1,7 +1,7 @@
-import project
+import project.spelling.data as data
 
 
-words = project.spelling.frequency_list()
+words = data.frequency_list()
 
 
 def distance1(word):
@@ -81,7 +81,3 @@ def correction(word):
             return dist1_word
         else:
             return word
-
-
-print([correction(w) for w in
-       "It deosn't mttaer in waht oredr the ltteers in a wrod are, the olny iprmoetnt tihng is taht the frist and lsat ltteer be at the rghit pclae.".split()])

@@ -147,15 +147,21 @@ def random_consonant(counter):
         current += value
 
 
-def misspell(word):
+def misspell(word, errors=1):
     """
     Given a word, roughly misspell it.
-    :param word:
+    :param errors: Maximum amount of errors in each word
+    :param word: The word that needs to be misspelled
     :return:
     """
     final_word = ""
     word_graphemes = graphemes(word)
-    misspelling = int(random.random() * len([x for x in word_graphemes if x.phoneme]))
+    misspellings = set()
+
+    for _ in range(errors):
+        value = int(random.random() * len([x for x in word_graphemes if x.phoneme]))
+        misspellings.add(value)
+
     current_consonant = 0
 
     for i in range(len(word_graphemes)):
@@ -166,7 +172,7 @@ def misspell(word):
             final_word += grapheme.letters
         # Consonant
         else:
-            if misspelling != current_consonant:
+            if current_consonant not in misspellings:
                 final_word += grapheme.letters
                 current_consonant += 1
                 continue
