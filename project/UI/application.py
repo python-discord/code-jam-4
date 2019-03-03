@@ -28,7 +28,6 @@ class Application(tk.Tk):
         self.dark_mode.trace("w", self.change_dark_mode)
         self.dark_mode.set(False)
 
-
         self.create_pages()
 
         self.protocol("WM_DELETE_WINDOW", self.close_window)
