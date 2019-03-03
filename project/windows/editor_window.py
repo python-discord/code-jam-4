@@ -3,14 +3,13 @@ from typing import Tuple
 import tkinter as tk
 
 from tkinter import filedialog
-from tkinter import messagebox
 
 from project.functionality.constants import Constants
 from project.functionality.utility import pairwise
 
 from project.windows.editor_window_events import NewWordEvent
 
-from project.windows.cloppy_window import CloppyButtonWindow
+from project.windows.cloppy_window import cloppy_yesno, CloppyButtonWindow
 from project.windows.cloppy_window_events import CloppyChoiceMadeEventData
 
 
@@ -338,22 +337,17 @@ class EditorWindow(tk.Toplevel):
         :return: 'break' in order to interrupt the normal event handling of
                  the backspace key.
         """
-        dialog = CloppyButtonWindow(self)
-        dialog.set_message(
-            "It looks like you're trying to erase some text.\n"
-            "The text you're erasing could be very important.\n"
-            "So it behooves me to ask:\n"
-            "Are you sure you want to do that?"
-        )
-        dialog.add_choice('Yes')
-        dialog.add_choice('No')
 
         def delete_text(choice_data: CloppyChoiceMadeEventData):
             if choice_data.choice == 'Yes':
                 self.delete_selected_text()
 
-        dialog.choice_made.add_callback(delete_text)
-        dialog.show()
+        cloppy_yesno(
+            self,
+            "It looks like you're trying to erase some text.\n"
+            "The text you're erasing could be very important.",
+            delete_text
+        ).show()
 
         return 'break'
 
@@ -367,15 +361,6 @@ class EditorWindow(tk.Toplevel):
         :return: 'break' in order to interrupt the normal event handling of
                  the backspace key.
         """
-        dialog = CloppyButtonWindow(self)
-        dialog.set_message(
-            "It looks like you're trying to cut some text.\n"
-            "The text you're cutting could be very important.\n"
-            "So it behooves me to ask:\n"
-            "Are you sure you want to do that?"
-        )
-        dialog.add_choice('Yes')
-        dialog.add_choice('No')
 
         def cut_text(choice_data: CloppyChoiceMadeEventData):
             if choice_data.choice == 'Yes':
@@ -386,8 +371,12 @@ class EditorWindow(tk.Toplevel):
                 )
                 self.set_selected_text('')
 
-        dialog.choice_made.add_callback(cut_text)
-        dialog.show()
+        cloppy_yesno(
+            self,
+            "It looks like you're trying to cut some text.\n"
+            "The text you're erasing could be very important.",
+            cut_text
+        ).show()
 
         return 'break'
 
@@ -401,9 +390,20 @@ class EditorWindow(tk.Toplevel):
         :return: 'break' in order to interrupt the normal event handling of
                  the backspace key.
         """
-        root: tk.Tk = self.master
-        root.clipboard_clear()
-        root.clipboard_append(self.get_selected_text())
+
+        def copy_text(choice_data: CloppyChoiceMadeEventData):
+            if choice_data.choice == 'Yes':
+                root: tk.Tk = self.master
+                root.clipboard_clear()
+                root.clipboard_append(self.get_selected_text())
+
+        cloppy_yesno(
+            self,
+            "It looks like you're trying to copy some text.\n"
+            "You might not have highlighted the correct section to copy.\n"
+            "Perhaps it'd be a good idea to double check now.",
+            copy_text
+        ).show()
 
         return 'break'
 
@@ -417,15 +417,25 @@ class EditorWindow(tk.Toplevel):
         :return: 'break' in order to interrupt the normal event handling of
                  ctrl+v.
         """
-        root: tk.Tk = self.master
-        try:
-            self.set_selected_text(
-                root.clipboard_get(),
-                set_selected=False
-            )
 
-        except tk.TclError:
-            pass
+        def paste_text(choice_data: CloppyChoiceMadeEventData):
+            if choice_data.choice == 'Yes':
+                root: tk.Tk = self.master
+                try:
+                    self.set_selected_text(
+                        root.clipboard_get(),
+                        set_selected=False
+                    )
+
+                except tk.TclError:
+                    pass
+
+        cloppy_yesno(
+            self,
+            "It looks like you're trying to paste some text.\n"
+            "The text you're pasting could be replacing other important text.",
+            paste_text
+        ).show()
 
         return 'break'
 
@@ -467,33 +477,28 @@ class EditorWindow(tk.Toplevel):
         """
 
         # Cloppy asks the user whether they want to open a file.
-        dialog = CloppyButtonWindow(self)
-        dialog.set_message(
-            "It looks like you're trying to open a file.\n"
-            "If you do you'll lose any unsaved work in the current file.\n"
-            "So it behooves me to ask:\n"
-            "Are you sure you want to do that?"
-        )
-        dialog.add_choice('Yes')
-        dialog.add_choice('No')
 
         def open_file(choice_data: CloppyChoiceMadeEventData):
             if choice_data.choice == 'Yes':
-                # Brings up a dialog asking the user to select a location for saving
-                # the file.
+                # Brings up a dialog asking the user to select a location for
+                # saving the file.
                 file = filedialog.askopenfile(
                     filetypes=(('Text Files', '*.txt'), ('All Files', '*.*'))
                 )
 
                 # Check to see if the user cancelled the dialog or not.
                 if file:
-                    # 'with' is used so that the file is automatically flushed/closed
-                    # after our work is done with it.
+                    # 'with' is used so that the file is automatically flushed
+                    # /closed after our work is done with it.
                     with file:
                         self.set_text(file.read())
 
-        dialog.choice_made.add_callback(open_file)
-        dialog.show()
+        cloppy_yesno(
+            self,
+            "It looks like you're trying to open a file.\n"
+            "If you do you'll lose any unsaved work in the current file.",
+            open_file
+        ).show()
 
         return 'break'
 
@@ -509,22 +514,16 @@ class EditorWindow(tk.Toplevel):
         """
 
         # Cloppy asks the user whether they want to create a new file.
-        dialog = CloppyButtonWindow(self)
-        dialog.set_message(
-            "It looks like you're trying to create a new file.\n"
-            "If you do you'll lose any unsaved work in the current file.\n"
-            "So it behooves me to ask:\n"
-            "Are you sure you want to do that?"
-        )
-        dialog.add_choice('Yes')
-        dialog.add_choice('No')
-
         def new_file(choice_data: CloppyChoiceMadeEventData):
             if choice_data.choice == 'Yes':
                 self.set_text('')
 
-        dialog.choice_made.add_callback(new_file)
-        dialog.show()
+        cloppy_yesno(
+            self,
+            "It looks like you're trying to create a new file.\n"
+            "If you do you'll lose any unsaved work in the current file.",
+            new_file
+        ).show()
 
         return 'break'
 
@@ -707,12 +706,6 @@ class EditorHelpMenu(EditorMenu):
         """
         Called when the 'About' action is selected from the Help menu.
         """
-
-        # messagebox.showinfo(
-        #     'About',
-        #     f'{Constants.program_name}\n'
-        #     f'By LargeKnome, Hanyuone, and Meta\n'
-        # )
 
         dialog = CloppyButtonWindow(self.master.editor_window)
         dialog.set_message(
