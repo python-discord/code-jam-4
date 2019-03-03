@@ -2,6 +2,7 @@ import logging
 import sys
 
 from PyQt5 import QtWidgets
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QMainWindow, QApplication, \
@@ -208,6 +209,8 @@ if __name__ == '__main__':
     logger = logging.getLogger(__name__)
     logger.info("App Started")
     app = QApplication(sys.argv)
+
+    app.setWindowIcon(QIcon("./project/icon.ico"))
 
     clipboard_mgr = ClipboardManager.ClipboardManager()
     main_window = MainWindow(clipboard_mgr)
