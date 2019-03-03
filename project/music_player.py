@@ -51,7 +51,7 @@ def create_password() -> str:
     dialogue.exec_()
 
     if dialogue.result() != QDialog.Accepted:
-        sys.exit(1)
+        sys.exit()
 
     password = dialogue.new_password
 
@@ -83,13 +83,12 @@ def get_password() -> str:
 
 def login() -> str:
     """Prompt for the password and return it. Create one if one doesn't exist."""
-    # password = get_password()
-    password = None
+    password = get_password()
     if password:
         prompt = PasswordPrompt(password)
-        prompt.display()
-        if not prompt.success:
-            sys.exit()
+        prompt.exec_()
+        if prompt.result() != QDialog.Accepted:
+            sys.exit(1)
     else:
         password = create_password()
 

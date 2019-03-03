@@ -24,7 +24,8 @@ class MainWindow(QMainWindow):
         self.ui = ui.MainWindow()
         self.ui.setupUi(self)
 
-        self.password_prompt = PasswordPrompt(password)
+        self.password_prompt = PasswordPrompt(password, self)
+        self.password_prompt.accepted.connect(self.play_pressed)
 
         self.captcha_dialogue = CaptchaDialogue(self)
         self.captcha_dialogue.finished.connect(self.add_files)
@@ -53,7 +54,7 @@ class MainWindow(QMainWindow):
         self.ui.seek_slider.mousePressEvent = self.seek_slider_pressed  # Override the event
 
         # Signal connections
-        self.ui.play_button.pressed.connect(self.play_pressed)
+        self.ui.play_button.pressed.connect(self.prompt_for_password)
         self.ui.previous_button.pressed.connect(self.player.playlist().previous)
         self.ui.next_button.pressed.connect(self.player.playlist().next)
         self.ui.add_files_action.triggered.connect(self.captcha_dialogue.open)
@@ -159,15 +160,15 @@ class MainWindow(QMainWindow):
             pos = self.seek_dialogue.get_position()
             self.player.setPosition(pos)
 
+    def prompt_for_password(self):
+        """30% chance to open the password prompt before pressing play."""
+        if random.randint(0, 100) <= 30:
+            self.password_prompt.open()
+        else:
+            self.play_pressed()
+
     def play_pressed(self):
         """Play or pause the player depending on its state."""
-        if random.randint(0, 3) == 0:
-            self.password_prompt.display()
-            if self.password_prompt.success:
-                pass
-            else:
-                return
-        self.password_prompt.display()
         if self.player.state() in (media.Player.StoppedState, media.Player.PausedState):
             self.player.play()
         else:

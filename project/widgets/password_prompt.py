@@ -7,32 +7,30 @@ class PasswordPrompt(QDialog):
     def __init__(self, password, *args, **kwargs):
         super(PasswordPrompt, self).__init__(*args, **kwargs)
 
-        self.password = password
         self.ui = ui.PasswordPrompt()
         self.ui.setupUi(self)
 
-        self.ui.cancel_button.pressed.connect(self.close)
-        self.ui.confirm_button.pressed.connect(self.check)
-        self.success = False
+        self.password = password
 
-    def change_password(self, new_password):
-        self.password = new_password
+        self.ui.buttons.accepted.connect(self.accept)
+        self.ui.buttons.rejected.connect(self.reject)
 
-    def display(self):
-        self.ui.password_regular.setText("")
-        self.ui.password_backwards.setText("")
-        self.success = False
-        self.exec()
+    def done(self, result: QDialog.DialogCode):
+        if result == QDialog.Accepted:
+            if not self._check():
+                self.ui.error.setText(
+                    f"<span style='color:red'>Passphrase incorrect. Try again.</span>"
+                )
+                return
 
-    def check(self):
-        """Check if entered passphrase is correct."""
-        field_one = self.ui.password_regular.text()
-        field_two = self.ui.password_backwards.text()
-        if (field_one == self.password) and \
-           (field_two == "".join(sorted(self.password))):
-            self.success = True
-            self.close()
-        else:
-            self.ui.correct_label.setText(
-                "<span style='color:red'>Passphrase incorrect. Try again.</span>"
-            )
+        self.ui.error.clear()
+        self.ui.password_input.clear()
+        self.ui.confirm_input.clear()
+
+        super().done(result)
+
+    def _check(self) -> bool:
+        """Check and return if the entered password is correct."""
+        regular = self.ui.password_input.text()
+        confirm = self.ui.confirm_input.text()
+        return regular == self.password and confirm == "".join(sorted(self.password))
