@@ -41,9 +41,13 @@ class MinesweeperApp(QtWidgets.QMainWindow):
         width = int(self.home_screen.set_width_input.text(), base=2)
         height = int(self.home_screen.set_height_input.text(), base=2)
         mines = int(self.home_screen.set_mines_input.text(), base=2)
-        if width * height <= mines:
+        if width * height <= mines or mines >= width * height*0.9:
             QtWidgets.QMessageBox.warning(self, 'Too many mines',
                                           'The amount of mines you entered is too big for the grid')
+            return
+        elif mines == 0:
+            QtWidgets.QMessageBox.warning(self, 'Too little mines',
+                                          'You need to have atleast 1 mine')
             return
         self.minesweeper = Minesweeper(width, height, mines, parent=self)
         self.minesweeper.setup_gui()
@@ -104,15 +108,15 @@ class MenuWidget(QtWidgets.QWidget):
 
         self.set_width_input = QtWidgets.QLineEdit('010000')
         self.set_width_input.setMaxLength(6)
-        self.set_width_input.setFixedWidth(30)
+        self.set_width_input.setFixedWidth(50)
         self.set_width_input.setValidator(only_binary)
         self.set_height_input = QtWidgets.QLineEdit('010000')
         self.set_height_input.setMaxLength(6)
-        self.set_height_input.setFixedWidth(30)
+        self.set_height_input.setFixedWidth(50)
         self.set_height_input.setValidator(only_binary)
         self.set_mines_input = QtWidgets.QLineEdit('0111111')
         self.set_mines_input.setMaxLength(7)
-        self.set_mines_input.setFixedWidth(30)
+        self.set_mines_input.setFixedWidth(50)
         self.set_mines_input.setValidator(only_binary)
 
         form_layout.addRow(width_label, self.set_width_input)
@@ -313,7 +317,7 @@ class Minesweeper(QtWidgets.QWidget):
         to stop clicking so fast'''
 
         if self.too_fast_modal is None:
-            self.too_fast_modal = MinesweeperModal('You are clicking too fast!', self)
+            self.too_fast_modal = MinesweeperModal('Too fast! Time penalty issued', self)
             self.too_fast_modal.close_button.clicked.connect(
                 lambda: self.modal_closed(self.too_fast_modal))
             self.too_fast_modal.move(self.rect().center() - self.too_fast_modal.rect().center())
@@ -464,15 +468,15 @@ class TimerThread(QtCore.QThread):
 
     def __init__(self):
         super().__init__()
-        self.interval = 1
+        self.factor = 1
 
     def run(self):
         for number in count(1):
-            self.update.emit(number)
-            time.sleep(self.interval)
+            self.update.emit(number * self.factor)
+            time.sleep(1)
 
     def speed_up(self):
-        self.interval /= 2
+        self.factor *= 2
 
 
 class DelayMineExplosionThread(QtCore.QThread):
