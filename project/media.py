@@ -35,7 +35,7 @@ def _compute_crc32(path: str) -> int:
         return binascii.crc32(data)
 
 
-def _parse_media(path: str):
+def _parse_media(path: str) -> Dict[str, Any]:
     """Parse the metadata of a media file and return it as a dictionary.
 
     Parameters
@@ -45,8 +45,8 @@ def _parse_media(path: str):
 
     Returns
     -------
-    dict
-        The media's metadata.
+    Dict[str, Any]
+        The media's metadata, or None on failure.
 
     """
     args = [
@@ -64,12 +64,12 @@ def _parse_media(path: str):
     if process.returncode != 0:
         log.error(f"Failed to fetch metadata for {path}: return code {process.returncode}")
         log.debug(process.stderr)
-
-    try:
-        metadata = json.loads(process.stdout, encoding="utf-8")
-        tags = metadata["format"]["tags"]
-    except (json.JSONDecodeError, KeyError):
-        log.exception("Failed to parse metadata for {path}")
+    else:
+        try:
+            metadata = json.loads(process.stdout, encoding="utf-8")
+            tags = metadata["format"]["tags"]
+        except (json.JSONDecodeError, KeyError):
+            log.exception("Failed to parse metadata for {path}")
 
     # Filter out unsupported tags and make them all lowercase.
     tags = {k.lower(): v for k, v in tags.items() if k.lower() in TAG_WHITELIST}
