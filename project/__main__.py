@@ -15,6 +15,8 @@ from project.Stack import Stack
 from project.Widgets import MainListWidget, TextListWidgetItem
 from project.Widgets.MainListWidget import ImageListWidgetItem
 from project.Widgets.SettingsScreen import SettingsScreen
+from project.TextEditor import Editor
+
 from .utils import CONSTANTS
 
 
@@ -37,6 +39,7 @@ class ActionBar(QWidget):
         self._edit_btn = QtWidgets.QPushButton("Edit")
         # self._edit_btn.setGeometry(QtCore.QRect(100, 3, 51, 20))
         self._edit_btn.setObjectName(MainWindow.EDIT_BUTTON_NAME)
+        self._edit_btn.clicked.connect(self._start_editor)
 
         self._move_up_btn = QtWidgets.QPushButton("Move Up")
         self._move_up_btn.setObjectName(MainWindow.MOVE_UP_BUTTON_NAME)
@@ -51,6 +54,9 @@ class ActionBar(QWidget):
         _horizontal_layout.addWidget(self._move_down_btn)
 
         _horizontal_layout.addStretch(1)
+
+    def _start_editor(text):
+        Editor.Editor.start()
 
 
 class MainWindow(QMainWindow):

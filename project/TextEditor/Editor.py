@@ -34,6 +34,15 @@ class Editor(object):
     def cancel(self):
         sys.exit(app.exec_())
 
+    def start():
+        import sys
+        app = QtWidgets.QApplication(sys.argv)
+        Dialog = QtWidgets.QDialog()
+        ui = Editor()
+        ui.setupUi(Dialog)
+        Dialog.show()
+        sys.exit(app.exec_())
+
 
 if __name__ == "__main__":
     import sys
