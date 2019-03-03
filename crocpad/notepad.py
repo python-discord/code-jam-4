@@ -50,7 +50,6 @@ class MainWindow(QMainWindow):
 
         # Update title and centre window
         self.filename = "** Untitled **"
-        self.update_title()
         self.setGeometry(50, 50, 800, 600)
         qtRectangle = self.frameGeometry()
         centerPoint = QDesktopWidget().availableGeometry().center()
@@ -178,8 +177,15 @@ class MainWindow(QMainWindow):
                     dlg.close()
         return False  # imitate overridden method
 
-    def update_title(self):
-        """Set title of main window with current file being edited."""
+    @property
+    def filename(self):
+        """Return the name of the current file being edited."""
+        return self._filename
+
+    @filename.setter
+    def filename(self, name: str):
+        """Update the title of the main window when filename changes."""
+        self._filename = name
         self.setWindowTitle(f"Crocpad++ - {self.filename}")
 
     def edit_toggle_wrap(self):
@@ -194,7 +200,6 @@ class MainWindow(QMainWindow):
         with open(filename, 'r', encoding='utf-8') as file:
             self.text_window.setPlainText(file.read())
         self.filename = filename
-        self.update_title()
 
     def save_file(self):
         """Ask the user for a filename to save to, and write out the text editor.
@@ -205,14 +210,12 @@ class MainWindow(QMainWindow):
         with open(filename, 'w', encoding='utf-8') as file:
             file.write(text)
         self.filename = filename
-        self.update_title()
 
     def new_file(self):
         """Clear the text editor and insert a helpful message.
 
         Called by the New File menu action."""
         self.filename = "** Untitled **"
-        self.update_title()
         self.text_window.document().clear()
         self.text_window.insertPlainText("""To remove this message, please make sure you have entered
 your full credit card details, made payable to:
