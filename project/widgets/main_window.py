@@ -3,9 +3,7 @@ import logging
 from PySide2.QtCore import QPoint, Qt
 from PySide2.QtGui import QMouseEvent
 from PySide2.QtSql import QSqlTableModel
-from PySide2.QtWidgets import (
-    QAbstractItemView, QAction, QFileDialog, QMainWindow, QMenu
-)
+from PySide2.QtWidgets import QAbstractItemView, QAction, QDialog, QFileDialog, QMainWindow, QMenu
 
 from project import media, ui
 from project.widgets.password_prompt import PasswordPrompt
@@ -22,7 +20,9 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
 
         self.password_prompt = PasswordPrompt("temporarypassword")
+
         self.seek_dialogue = SeekDialogue()
+        self.seek_dialogue.finished.connect(self.seek_finished)
 
         self.playlist_model = self.create_model()
         self.configure_view()
@@ -102,7 +102,12 @@ class MainWindow(QMainWindow):
     def seek_slider_pressed(self, event: QMouseEvent):
         """Open the seek dialogue when the slider is left clicked."""
         if event.button() == Qt.LeftButton:
-            self.seek_dialogue.show()
+            self.seek_dialogue.open()
+
+    def seek_finished(self, result: QDialog.DialogCode):
+        if result == QDialog.DialogCode.Accepted:
+            pos = self.seek_dialogue.get_position()
+            self.player.setPosition(pos)
 
     def add_files(self, checked: bool = False):
         """Show a file dialogue and add selected files to the playlist."""
