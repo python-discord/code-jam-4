@@ -8,6 +8,7 @@ import typing
 import pathlib
 import random
 
+import aiofiles
 import asynctk as tk
 from tkinter.ttk import Progressbar
 from PIL import Image, ImageDraw, ImageTk
@@ -239,14 +240,31 @@ class Canvas(tk.AsyncCanvas):
         max_bytes = buffer.tell()
         buffer.seek(0)
 
-        with open(file, "wb") as fp:
-            # Write one more byte since it was last saved
-            fp.write(buffer.read(self.read_nums))
+        async with aiofiles.open(file, "wb") as fp:
+            # For every byte
+            for i in range(max_bytes):
+                current_byte = buffer.read(1)
+                # Open a window
+                root = tk.AsyncToplevel(self._master)
+                # ... that the user cannot kill
+                root.protocol('WM_DELETE_WINDOW', lambda *i: None)
 
-        # We've written all bytes, reset the counter
-        if self.read_nums >= max_bytes:
-            self.read_nums = 0
-        self.read_nums += 1
+                async def cb(i=i):  # No late binding
+                    # Write the byte
+                    await fp.write(current_byte)
+                    # ... then kill the root
+                    await root.destroy()
+
+                # ... and place a button
+                tk.AsyncButton(
+                    root,  # ... on the window
+                    # ... that says the current byte
+                    text=f"Write byte {current_byte.hex().upper()}",
+                    # ... and writes it on click
+                    callback=cb,
+                ).pack()
+                # ... and wait until the button is pressed (so the user cannot mess up)
+                await self._master.wait_window(root)
 
     def forget(self):
         """Shortcut to remove the canvas from the main window"""

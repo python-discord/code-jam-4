@@ -48,9 +48,8 @@ Flamboyant Flamingos jam project.
 
 ## Description
 
-An intense editor that:
+A perverse editor that:
 
-* Is unintuitive
 * Has the entire UI in katakana
 * Makes you click a button once per byte during saving
 * Has unintuitive shortcuts
