@@ -39,7 +39,13 @@ Our team name is **Wild Whispers** and consists of the following users:
 
 ## Description
 
-`# TODO`
+This app does a few things:
+*  Location has a 50% chance to change into something similar, but not match your exact search. 
+(So if you search for `Oslo` with the intention to get `Oslo, Norway`, you could get `Olot, Spain`.)
+*  Images changes according to the weather, so if its a clear sky, you'll see a clear sky in the background. 
+*  Todays weather is swapped with tomorrows weather (The intention was to have todays weather be the weather for today, last year, but some API paywall restrictions stopped us)
+*  Its completely random if you see the weather in `celsius`, `fahrenheit` or `kelvin`
+*  An annoying, useless settings button, try to hover it.
 
 ## Setup & Installation
 
@@ -49,8 +55,11 @@ git clone https://github.com/JonasKs/code-jam-4
 cd code-jam-4
 pipenv --python 3.7
 pipenv install
-python setup.py # make sure you have an internet connection
+pipenv run setup  # make sure you have an internet connection
+pipenv run start
 ```
+After you've got the app running, type a place and click `enter`. 
+
 ## How do I use this thing?
 
 `# TODO`

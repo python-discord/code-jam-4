@@ -33,7 +33,8 @@ class Weatherh8su:
         self.background_image = ImageTk.PhotoImage(
             Image.open("data/sunny.jpg"))
         self.main_canvas = tk.Canvas(self.master)
-        self.canvas_image = self.main_canvas.create_image(0, 0, image=self.background_image)
+        self.canvas_image = self.main_canvas.create_image(
+            0, 0, image=self.background_image)
         self.main_canvas.pack()
         self.top_frame = tk.Frame(self.main_canvas)
         self.top_frame.pack()
@@ -61,7 +62,7 @@ class Weatherh8su:
         self.todays_label.pack()
         self.todays_content = tk.Label(
             self.todays_frame,
-            text="content\nhere",
+            text="",
             font=(None, 15),
             anchor="e")
         self.todays_content.pack(side=tk.LEFT)
@@ -73,7 +74,7 @@ class Weatherh8su:
         self.tomorrows_label.pack()
         self.tomorrows_content = tk.Label(
             self.tomorrows_frame,
-            text="content\nhere",
+            text="",
             font=(None, 15),
             anchor="e")
         self.tomorrows_content.pack(side=tk.LEFT)
@@ -143,7 +144,8 @@ class Weatherh8su:
         """
         self.background_image = ImageTk.PhotoImage(
             Image.open(f"data/{status}.jpg"))
-        self.main_canvas.itemconfig(self.canvas_image, image=self.background_image)
+        self.main_canvas.itemconfig(self.canvas_image,
+                                    image=self.background_image)
 
     def show_location_name(self, location_name: str):
         """
