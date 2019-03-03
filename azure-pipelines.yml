@@ -36,3 +36,6 @@ jobs:
 
   - script: pipenv run lint
     displayName: 'Lint the project'
+
+  - script: pipenv run test
+    displayName: 'Run unit tests'
