@@ -13,7 +13,10 @@ from tkinter.ttk import Progressbar
 from PIL import Image, ImageDraw, ImageTk
 import asyncio
 
-
+async def start(bar):
+    while 1:
+        bar.step()
+        await asyncio.sleep(0.05)
 class Colour:
 
     """
@@ -262,7 +265,7 @@ class Canvas(tk.AsyncCanvas):
         for r, g, b in data:
             new_data.append((g, b, r))
             root.bar["value"] += 1
-            await asyncio.sleep(0.01)
+            await asyncio.sleep(0.001)
         new_im = Image.new(im.mode, im.size, (255, 255, 255))
         new_im.putdata(new_data)
         try:
@@ -278,6 +281,7 @@ class Canvas(tk.AsyncCanvas):
             root, orient="horizontal", length=400, mode="indeterminate"
         )
         root.bar.pack()
+        asyncio.get_event_loop().create_task(start(root.bar))
         width, height = im.size
         wdigits = max(-1 * len(str(width)) + 2, 1)
         hdigits = max(-1 * len(str(height)) + 2, 1)
@@ -313,6 +317,7 @@ class Canvas(tk.AsyncCanvas):
             root, orient="horizontal", length=400, mode="indeterminate"
         )
         root.bar.pack()
+        asyncio.get_event_loop().create_task(start(root.bar))
         data = list(im.getdata())
         await asyncio.sleep(0.01)
         random.shuffle(data)
@@ -363,7 +368,7 @@ class Canvas(tk.AsyncCanvas):
                     )
                 )
                 root.bar["value"] += 1
-                await asyncio.sleep(0.01)
+                await asyncio.sleep(0.001)
 
         shuffle = list(blockmap)
         random.shuffle(shuffle)
@@ -373,7 +378,7 @@ class Canvas(tk.AsyncCanvas):
             c = im.crop(sbox)
             result.paste(c, box)
             root.bar["value"] += 1
-            await asyncio.sleep(0.01)
+            await asyncio.sleep(0.001)
         try:
             await root.destroy()
         except Exception:
