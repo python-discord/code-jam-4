@@ -9,6 +9,7 @@ class Weatherh8su:
         self.master = master
         master.title("Weather h8su")
         # Variables
+        self.main_canvas = None
         self.top_frame = None
         self.glass = None
         self.search_bar = None
@@ -26,7 +27,10 @@ class Weatherh8su:
         self.create_widgets()
 
     def create_widgets(self):
-        self.top_frame = tk.Frame(self.master)
+        self.background_image = None #@Hotfix needs to get us background images!
+        self.main_canvas = tk.Canvas(self.master)
+        self.main_canvas.create_image(0, 0, image=self.background_image)
+        self.top_frame = tk.Frame(self.main_canvas)
         self.top_frame.pack()
         self.glass = Image.open("data/glass.png")
         self.glass = ImageTk.PhotoImage(self.glass)
@@ -44,7 +48,7 @@ class Weatherh8su:
         self.settings.bind("<Leave>", lambda e: self.de_annoy())
         self.f.bind("<Leave>", lambda e: self.de_annoy())
         self.settings.grid(column=2, row=0)
-        self.todays_frame = tk.Frame(self.master)
+        self.todays_frame = tk.Frame(self.main_canvas)
         self.todays_frame.pack(anchor="w")
         self.todays_label = tk.Label(self.todays_frame, text="TODAY:",
                                      font=(None, 30), height=2, anchor="s")
@@ -52,7 +56,7 @@ class Weatherh8su:
         self.todays_content = tk.Label(
             self.todays_frame, text="content\nhere", font=(None, 15))
         self.todays_content.pack(side=tk.LEFT)
-        self.tomorrows_frame = tk.Frame(self.master)
+        self.tomorrows_frame = tk.Frame(self.main_canvas)
         self.tomorrows_frame.pack(anchor="w", pady=30)
         self.tomorrows_label = tk.Label(
             self.tomorrows_frame, text="TOMORROW:",
