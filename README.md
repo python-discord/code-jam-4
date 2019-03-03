@@ -30,16 +30,28 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 
 # Project Information
 
-`# TODO`
+TEAM: Enthusiastic-Electricians
 
 ## Description
 
-`# TODO`
+ArtiQule is our take on a Paint app that mixes a paint application with the theme of "This app hates you". The app does not rely on in built errors and glitches, instead it's just manned by the art world's deplorables. Take a look and see what you can draw, maybe start with creating a beautiful apple tree.
 
-## Setup & Installation
+## Setup & Installation - simply install the project and run it
 
-`# TODO`
+Necessary modules:
+  Python 3.X
+  PyQt5
+
+Run:
+  cd project 
+  python3 ArtiQule.py
+
+  
 
 ## How do I use this thing?
 
-`# TODO`
+Simply start the app up and let your creativity flow!
+Select your tool of choice and start drawing!
+If you want to use any colors, just go to "Colors"
+Dont worry you can open as many pallets as you want, but watch out, you can only use each color for so long!
+Be carefull when using your tools, they might break!!! 0_0
