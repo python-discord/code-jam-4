@@ -1,8 +1,12 @@
 """Class encapsulating clipboard events"""
+import ast
+import json
 import logging
+import traceback
 
 from PyQt5.Qt import QApplication  # noqa: F401
-from PyQt5.QtCore import pyqtSignal, QObject, pyqtSlot
+from PyQt5.QtCore import pyqtSignal, QObject, pyqtSlot, QByteArray, QBuffer, QIODevice
+from PyQt5.QtGui import QImage, QPixmap
 
 from project.ClipboardManager.ClipboardObject import TextClipboardObject, ImageClipboardObject
 from project.ConfigManager import ConfigManager
@@ -12,6 +16,8 @@ from project.Stack import Stack
 
 # https://stackoverflow.com/questions/36522809/
 # pyqt5-connection-doesnt-work-item-cannot-be-converted-to-pyqt5-qtcore-qobject
+
+
 class ClipboardManager(QObject):
     clipboard_changed_signal = pyqtSignal(Stack)
     stack_changed_signal = pyqtSignal(Stack)
@@ -30,6 +36,7 @@ class ClipboardManager(QObject):
         QApplication.clipboard().dataChanged.connect(self._clipboard_changed)
 
         self.clipboard_stack = Stack()
+
         self.stack_changed_signal.connect(self._stack_changed)
 
     @pyqtSlot(Stack)
@@ -125,3 +132,42 @@ class ClipboardManager(QObject):
         self.clipboard_stack.pop(idx)
         self.stack_changed_signal.emit(self.clipboard_stack)
         # self.clipboard_changed_signal.emit(self.clipboard_stack)
+
+    def save_state(self, location: str):
+        """Persists state of the stack to a JSON file"""
+        _list = []
+        for item in self.clipboard_stack.items():
+            if isinstance(item, TextClipboardObject):
+                _list.append({"type": "text", "value": item.text})
+            elif isinstance(item, ImageClipboardObject):
+                _ba = QByteArray()
+                _buffer = QBuffer(_ba)
+                _buffer.open(QIODevice.WriteOnly)
+                item.pixmap.toImage().save(_buffer, 'PNG')
+                _base64_data = _ba.toBase64().data()
+
+                _list.append({"type": "image", "value": str(_base64_data)})
+
+        with open(location, 'w') as outfile:
+            json.dump(_list, outfile)
+
+    def load_state(self, location: str):
+        """Loads the state of the stack from a JSON file"""
+        try:
+            self.clipboard_stack.clear()
+            with open(location, 'r') as infile:
+                _stack = json.load(infile)
+                for saved_item in _stack:
+
+                    if saved_item['type'] == 'text':
+                        self.clipboard_stack.push_item(TextClipboardObject(saved_item['value']))
+                    elif saved_item['type'] == 'image':
+                        _ba = QByteArray.fromBase64(ast.literal_eval(saved_item['value']))
+                        _img = QImage.fromData(_ba, 'PNG')
+                        _pixmap = QPixmap.fromImage(_img)
+                        self.clipboard_stack.push_item(ImageClipboardObject(_pixmap))
+
+            self.stack_changed_signal.emit(self.clipboard_stack)
+
+        except Exception:
+            traceback.print_exc()

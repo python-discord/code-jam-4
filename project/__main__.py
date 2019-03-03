@@ -1,26 +1,26 @@
 import logging
-import sys
 import os
+import sys
+from pathlib import Path
 
 from PyQt5 import QtWidgets
-from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
+from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QMainWindow, QApplication, \
     QHBoxLayout, QVBoxLayout, QWidget, QListWidgetItem, QFileDialog
 
 from project import ClipboardManager
 from project.ClipboardManager.ClipboardObject import TextClipboardObject, ImageClipboardObject
+from project.ConfigManager import ConfigManager
 from project.Plugins.Systray import SystemTrayIcon
 from project.Stack import Stack
+from project.TextEditor import Editor
 from project.Widgets import MainListWidget, TextListWidgetItem
 from project.Widgets.MainListWidget import ImageListWidgetItem
 from project.Widgets.PluginsScreen import PluginsScreen
 from project.Widgets.SettingsScreen import SettingsScreen
-from project.TextEditor import Editor
-
 from project.utils import CONSTANTS
-from project.Plugins import Save
 
 
 class ActionBar(QWidget):
@@ -39,10 +39,10 @@ class ActionBar(QWidget):
         # self._remove_btn.clicked.connect()
         self._remove_btn.setObjectName(MainWindow.REMOVE_BUTTON_NAME)
 
-        self._edit_btn = QtWidgets.QPushButton("Edit")
+        # self._edit_btn = QtWidgets.QPushButton("Edit")
         # self._edit_btn.setGeometry(QtCore.QRect(100, 3, 51, 20))
-        self._edit_btn.setObjectName(MainWindow.EDIT_BUTTON_NAME)
-        self._edit_btn.clicked.connect(self._start_editor)
+        # self._edit_btn.setObjectName(MainWindow.EDIT_BUTTON_NAME)
+        # self._edit_btn.clicked.connect(self._start_editor)
 
         self._move_up_btn = QtWidgets.QPushButton("Move Up")
         self._move_up_btn.setObjectName(MainWindow.MOVE_UP_BUTTON_NAME)
@@ -52,7 +52,7 @@ class ActionBar(QWidget):
 
         # _horizontal_layout.addWidget(self._add_btn)
         _horizontal_layout.addWidget(self._remove_btn)
-        _horizontal_layout.addWidget(self._edit_btn)
+        # _horizontal_layout.addWidget(self._edit_btn)
         _horizontal_layout.addWidget(self._move_up_btn)
         _horizontal_layout.addWidget(self._move_down_btn)
 
@@ -196,7 +196,7 @@ class MainWindow(QMainWindow):
         self.fileMenu.addAction(self.loadOption)
 
         self.menubar.addAction(self.fileMenu.menuAction())
-        
+
         # Settings Menu Bar
         self.settingsMenu = QtWidgets.QMenu(self.menubar)
         self.settingsMenu.setObjectName("settingsMenu")
@@ -210,7 +210,7 @@ class MainWindow(QMainWindow):
 
         self.settingsMenu.addAction(self.actionSettings)
 
-        # Plugin Settings        
+        # Plugin Settings
         self.pluginSettings = QtWidgets.QAction(self)
         self.pluginSettings.setObjectName("actionPlugins")
         self.pluginSettings.setText('Plugins')
@@ -229,6 +229,21 @@ class MainWindow(QMainWindow):
 
         self.show()
 
+        _config = ConfigManager.get_instance()
+
+        # check whether the autosave file is present and auto persist checked, if so, try to load it
+        _autosave_path_location = Path('./' + CONSTANTS['AUTOSAVE_DATA_FILE']).resolve()
+        print(_autosave_path_location)
+        if _config.persist_clipboard and os.path.isfile(_autosave_path_location):
+            self._clipboard_manager.load_state(_autosave_path_location)
+            # print(self.clipboard_stack.items_count())
+
+    def closeEvent(self, event):
+        """Fires on window close"""
+        _config = ConfigManager.get_instance()
+        if _config.persist_clipboard:
+            self._clipboard_manager.save_state(CONSTANTS['AUTOSAVE_DATA_FILE'])
+
     def keyPressEvent(self, event):
         self._logger.info("Key press detected")
         if event.matches(QKeySequence.Paste):
@@ -236,14 +251,15 @@ class MainWindow(QMainWindow):
 
     def _load(self):
         """ Function to load stack"""
-        filename, _ = QFileDialog.getOpenFileName(self, 'Load Clipboard State', os.environ["HOMEPATH"], '*.json')
-        print(filename)
-        # Save.saveState() self._clipboard_manager.clipboard_stack.items())
+        filename, _ = QFileDialog.getOpenFileName(self, 'Load Clipboard State', filter='*.json')
+        if filename:
+            self._clipboard_manager.load_state(filename)
 
     def _save(self):
         """ Function to save stack"""
-        filename, _ = QFileDialog.getSaveFileName(self, 'Save Clipboard State', os.environ["HOMEPATH"], '*.json')
-        Save.saveState(filename, self._clipboard_manager.clipboard_stack.items())
+        filename, _ = QFileDialog.getSaveFileName(self, 'Save Clipboard State', filter='*.json')
+        if filename:
+            self._clipboard_manager.save_state(filename)
 
 
 if __name__ == '__main__':

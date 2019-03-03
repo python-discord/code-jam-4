@@ -10,7 +10,7 @@ CONSTANTS = {
     'NAME': 'Clipboard Mangler',
     'NUMOFOBJECTS': 0,
     'HISTORY_MAX_ITEMS': 10,
-    'APP_DATA': 'project/app_data.json',
+    'AUTOSAVE_DATA_FILE': 'project/autosave.data',
     'CONFIG_FILE_LOCATION': 'project/config.ini',
     'ICON_LOCATION': "project\\icon.ico"
 }
