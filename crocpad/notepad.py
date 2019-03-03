@@ -70,6 +70,9 @@ class MainWindow(QMainWindow):
             self.do_eula()
         if app_config['Editor']['tips'] == 'on':
             self.show_tip()
+        if app_config['Editor']['linewrap'] == 'off':
+            self.text_window.setLineWrapMode(0)
+            self.wrap_action.setChecked(False)
 
     def create_menus(self):
         """Build the menu structure for the main window."""
@@ -106,11 +109,11 @@ class MainWindow(QMainWindow):
         font_menu = QAction("Chang&e Font", self)
         font_menu.triggered.connect(self.change_font)
         tools_menu.addAction(font_menu)
-        wrap_action = QAction("Toggl&e Line Wrap", self)
-        wrap_action.setCheckable(True)
-        wrap_action.setChecked(True)
-        wrap_action.triggered.connect(self.edit_toggle_wrap)
-        tools_menu.addAction(wrap_action)
+        self.wrap_action = QAction("Toggl&e Line Wrap", self)  # class attribute so we can toggle it elsewhere
+        self.wrap_action.setCheckable(True)
+        self.wrap_action.setChecked(True)
+        self.wrap_action.triggered.connect(self.edit_toggle_wrap)
+        tools_menu.addAction(self.wrap_action)
 
         # Edit menu
         action_insert_symbol = QAction("Ins&ert symbol", self)
@@ -202,6 +205,11 @@ class MainWindow(QMainWindow):
     def edit_toggle_wrap(self):
         """Toggle the line wrap flag in the text editor."""
         self.text_window.setLineWrapMode(not self.text_window.lineWrapMode())
+        if self.text_window.lineWrapMode():
+            app_config['Editor']['linewrap'] = 'on'
+        else:
+            app_config['Editor']['linewrap'] = 'off'
+        save_config(app_config)
 
     def open_file(self):
         """Ask the user for a filename to open, and load it into the text editor.

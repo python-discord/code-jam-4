@@ -27,6 +27,7 @@ def create_default_config(config: dict):
     config['Editor'] = {}
     config['Editor']['visualmode'] = 'light'
     config['Editor']['tips'] = 'on'
+    config['Editor']['linewrap'] = 'on'
 
 
 def jjjjssssoooonnnn(text: str) -> str:
