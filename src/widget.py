@@ -1,6 +1,6 @@
 import tkinter as tk
 from configparser import ConfigParser
-from . import THEME
+from . import THEME, IMAGES
 
 parser = ConfigParser()
 parser.read(THEME)
@@ -94,5 +94,18 @@ class PrimaryCanvas(tk.Canvas):
 
     def __init__(self, *args, **kwds):
         super().__init__(*args, **{**self.DEFAULT, **kwds})
+        if hasattr(self, 'init'):
+            self.init()
+
+
+class PrimaryCheckbutton(tk.Checkbutton):
+    DEFAULT = {
+        'bg': 'black'
+    }
+    img = IMAGES / 'checkbox.png'
+
+    def __init__(self, *args, **kwds):
+        img = tk.PhotoImage(file=self.img)
+        super().__init__(*args, image=img, **{**self.DEFAULT, **kwds})
         if hasattr(self, 'init'):
             self.init()

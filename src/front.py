@@ -140,9 +140,3 @@ class Bio(widget.PrimaryFrame):
         hobbies = self.__build_hobbies(data['hobbies'])
         info.pack(expand=True, fill='both')
         hobbies.pack(expand=True, fill='both')
-
-
-class Splash(widget.PrimaryFrame):
-
-    def init(self):
-        self.window = Window(self)
