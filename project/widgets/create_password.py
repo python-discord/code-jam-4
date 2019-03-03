@@ -1,3 +1,5 @@
+import sys
+
 from PySide2.QtWidgets import QDialog
 
 from project import ui
@@ -19,7 +21,7 @@ class CreatePassword(QDialog):
 
     def closeEvent(self, event):
         if self.new_password == "":
-            event.ignore()
+            sys.exit()
 
     def check(self):
         password = self.ui.password.text()
