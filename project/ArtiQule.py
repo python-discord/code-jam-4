@@ -5,7 +5,7 @@ from PyQt5.QtCore import QPoint, Qt, QThread, pyqtSignal
 from PyQt5.QtGui import (QColor, QCursor, QIcon, QImage, QPainter,
                          QPen, QPixmap)
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog,
-                             QMainWindow, QPushButton,)
+                             QMainWindow, QPushButton, )
 
 """
 Hover on QPaint detection
@@ -70,11 +70,11 @@ class ColorBox(QMainWindow):
 
         for obj in cls.objs:
             obj.setCursor(QCursor(QPixmap("Design/icons/{}.png".format(
-                    currentTool.toolName
-                    if currentTool else None)
-                        )
-                    )
-                )
+                currentTool.toolName
+                if currentTool else None)
+            )
+            )
+            )
 
 
 class Tool:
@@ -132,6 +132,7 @@ class Tool:
 
 class PalletteButton:
     """Class for color pallete; allows for mixing colors"""
+
     def __init__(self, parentBtn):
         self.parentBtn = parentBtn
         self.r = randint(0, 255)
@@ -196,9 +197,9 @@ class PalletteButton:
 
         self.parentBtn.setStyleSheet(
             "background-color: rgba{0}; border-radius:20px".format(
-                    self.palletteColor
-                )
+                self.palletteColor
             )
+        )
 
 
 class PaintBoard(QMainWindow):
@@ -350,10 +351,8 @@ class PaintBoard(QMainWindow):
         geo.moveLeft(geo.right())  # moves window right
         self.colorBox.setGeometry(geo)
 
-        p1, p2, p3, p4, p5,\
-        p6, p7, p8, p9, p10,\
-        p11, p12, p13, p14,\
-        p15, p16, p17, p18 = (QPushButton() for _ in range(18))
+        p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16,\
+        p17, p18 = (QPushButton() for _ in range(18))
 
         c1 = PalletteButton(p1)
         c2 = PalletteButton(p2)
@@ -411,15 +410,15 @@ class PaintBoard(QMainWindow):
         p9.clicked.connect(lambda: c9.mixColor(self.currentTool))
         self.colorBox.addPallette(p9)
         p10.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                         .format(c10.palletteColor))
+                          .format(c10.palletteColor))
         p10.clicked.connect(lambda: c10.mixColor(self.currentTool))
         self.colorBox.addPallette(p10)
         p11.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                         .format(c11.palletteColor))
+                          .format(c11.palletteColor))
         p11.clicked.connect(lambda: c11.mixColor(self.currentTool))
         self.colorBox.addPallette(p11)
         p12.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                         .format(c12.palletteColor))
+                          .format(c12.palletteColor))
         p12.clicked.connect(lambda: c12.mixColor(self.currentTool))
         self.colorBox.addPallette(p12)
         p13.setStyleSheet("background-color: rgba{0}; border-radius:20px"
@@ -483,7 +482,7 @@ class PaintBoard(QMainWindow):
         self.mousePos = event.pos()
         if (event.buttons() and Qt.LeftButton) and \
                 self.drawing and self.currentTool is not None:
-            
+
             Pen = QPen()
             if self.currentTool.toolName != "Sunbathing Eraser":
                 if self.currentTool.duration <= 0.0:
@@ -496,7 +495,8 @@ class PaintBoard(QMainWindow):
                         self.currentTool.opacityDuration -= 0.0125
                         # perhaps divide in class object
 
-                    # this here is to add more realism to the point when its breaking
+                # this here is to add more realism
+                # to the point when its breaking
                 if self.currentTool.duration <= 0.2:
                     dots = QPen()
                     broken_tools = QPen()
@@ -516,14 +516,19 @@ class PaintBoard(QMainWindow):
                     dots.setDashPattern([25, 50, 25, 50])
                     dots.setStyle(Qt.DashDotDotLine)
                     self.painter.setPen(dots)
-                    self.painter.drawLine(self.lastPoint + QPoint(randint(10, 15), randint(1, 5)),
-                                          self.lastPoint + QPoint(randint(5, 10), randint(1, 10)))
+                    self.painter.drawLine(self.lastPoint +
+                                          QPoint(randint(10, 15),
+                                                 randint(1, 5)),
+                                          self.lastPoint +
+                                          QPoint(randint(5, 10),
+                                                 randint(1, 10)))
 
                 if self.currentTool.toolName == "Pointy Pen":
                     # QSound(SoundEffects['pen write']).play()
                     Pen.setCapStyle(Qt.RoundCap)
                     Pen.setJoinStyle(Qt.MiterJoin)
-                elif self.currentTool.toolName == 'Straggly Paintbrush' or 'Solid Brush':
+                elif self.currentTool.toolName == \
+                        'Straggly Paintbrush' or 'Solid Brush':
                     if self.currentTool.toolName == "Solid Brush":
                         Pen.setCapStyle(Qt.RoundCap)
                         Pen.setJoinStyle(Qt.BevelJoin)
