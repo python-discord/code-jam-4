@@ -1,11 +1,11 @@
 import sys
 import time
 from random import randint
-from PyQt5.QtCore import QPoint, Qt, QThread, pyqtSignal
+from PyQt5.QtCore import QPoint, Qt, QThread, pyqtSignal, QRect
 from PyQt5.QtGui import (QColor, QCursor, QIcon, QImage, QPainter,
                          QPen, QPixmap)
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog,
-                             QMainWindow, QPushButton, )
+                             QMainWindow, QPushButton, QWidget, QGridLayout)
 
 
 class ColorBox(QMainWindow):
@@ -26,10 +26,21 @@ class ColorBox(QMainWindow):
         # self.setGeometry(990, 150, 150, 300)
         self.setWindowTitle('Colorbox')
         self.setFixedSize(150, 300)
+        self.mainLayout = QGridLayout()
+        self.mainLayout.setGeometry(QRect(0, 0, 150, 300))
+        self.mainLayout.setVerticalSpacing(1)
+        self.mainLayout.setHorizontalSpacing(1)
+
+        self.centralWidget = QWidget()
+        self.centralWidget.setLayout(self.mainLayout)
+
+        self.setCentralWidget(self.centralWidget)
 
     def addPallette(self, pallet):
         pallet.setGeometry(self.toolsX, self.toolsY, 40, 40)
-        self.layout().addWidget(pallet)
+        pallet.setFixedSize(40, 40)
+        pallet.move(self.toolsY, self.toolsX)
+        self.mainLayout.addWidget(pallet, self.toolsY, self.toolsX)
         self.toolsX += 50
         self.tools_holder += 1
         if self.tools_holder == 3:
@@ -512,7 +523,6 @@ class DripperEffect(QThread):
         QThread.__init__(self)
         self.parent = parent
         self.size = size * 2
-        print('size: ' + str(self.size))
         self._stop = False
 
     def stop(self):
@@ -531,7 +541,6 @@ class DripperEffect(QThread):
                 Drip.setJoinStyle(Qt.RoundJoin)
                 Drip.setCapStyle(Qt.RoundCap)
                 self.drip.emit(Drip)
-                print('drip\n')
             else:
                 pass
             time.sleep(0.5)
