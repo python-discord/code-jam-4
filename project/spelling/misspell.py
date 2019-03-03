@@ -1,97 +1,186 @@
-import random
+import project.spelling.consonants as consonants
+import project.spelling.data as data
 
-import project.spelling
+import math
+import random
 import re
 
 
-arpabet = project.spelling.arpabet()
+arpabet = data.arpabet()
 
-consonants = {
-    "M": ["m", "mm", "chm", "gm", "lm", "mb", "mbe", "me", "mh", "mme", "mn", "tm"],
-    "N": ["n", "nn", "cn", "dn", "gn", "gne", "kn", "ln", "mn", "mp", "nd", "ne", "ng", "nh", "nne", "nt", "pn", "sne"],
-    "NG": ["ng", "n", "nc", "nd", "ngh", "ngue"],
-    "P": ["p", "pp", "gh", "pe", "ph", "ppe"],
-    "B": ["b", "bb", "be", "bh", "pb"],
-    "T": ["t", "tt", "bt", "cht", "ct", "d", "ed", "ght", "pt", "te", "th", "tte", "tw"],
-    "D": ["d", "dd", "de", "dh", "ed", "ld", "t"],
-    "K": ["c", "k", "cc", "cch", "ch", "ck", "cq", "cqu", "cque", "cu", "ke", "kh", "kk", "lk", "q", "qu", "que", "x"],
-    "G": ["g", "gg", "ckg", "gge", "gh", "gu", "gue"],
-    "S": ["s", "ss", "c", "cc", "ce", "ps", "sc", "sce", "se", "sse", "st", "sth", "sw", "ts", "tsw", "tz", "z"],
-    "Z": ["z", "zz", "cz", "s", "sc", "se", "sp", "ss", "sth", "ts", "tz", "x", "ze"],
-    "SH": ["sh", "c", "ce", "ch", "che", "chi", "chsi", "ci", "s", "sc", "sch", "sci", "she", "shi", "si", "ss", "ssi", "ti"],
-    "ZH": ["g", "ge", "j", "s", "si", "ti", "z", "zh", "zi"],
-    "F": ["f", "ff", "fe", "ffe", "gh", "lf", "ph", "phe", "pph", "v", "ve"],
-    "V": ["v", "vv", "f", "lve", "ph", "ve", "w"],
-    "TH": ["th", "the", "chth", "phth", "tth"],
-    "DH": ["th", "the"],
-    "Y": ["y", "i", "j", "ll", "r"],
-    "HH": ["h", "wh", "j", "ch", "x"],
-    "R": ["r", "rr", "l", "re", "rh", "rre", "rrh", "rt", "wr"],
-    "L": ["l", "ll", "le", "lh", "lle"],
-    "W": ["w", "ww", "u", "o", "ou", "we", "wh"],
-    "CH": ["ch", "tch", "c", "cc", "che", "chi", "cz", "t", "tche", "te", "th", "ti", "ts", "tsch", "tsh", "tz", "tzs", "tzsch"],
-    "JH": ["g", "j", "ch", "d", "dg", "dge", "di", "dj", "ge", "gg", "gi", "jj", "t"],
-    "KS": ["x", "xx", "cast", "cc", "chs", "cks", "cques", "cs", "cz", "kes", "ks", "lks", "ques", "xc", "xe", "xs", "xsc", "xsw"]
-}
+
+class Grapheme:
+    def __init__(self, letters, phoneme=None):
+        self.letters = letters
+        self.phoneme = phoneme
+
+    def __str__(self):
+        return f"<Grapheme '{self.phoneme}' using letters '{self.letters}'>"
 
 
 def phonemes(word):
-    return arpabet[word][0]
+    final = ",".join(arpabet[word][0])
+
+    final = final.replace("K,S", "KS")
+    final = final.replace("K,W", "KW")
+
+    return final.split(",")
 
 
-def find_grapheme(word, phoneme):
-    possible_graphemes = consonants[phoneme]
+def find_grapheme(letters, phoneme):
+    """
+    Given letters, returns the first match of a phoneme,
+    as well as any "junk" that's behind it.
+    """
+    for i in range(1, len(letters) + 1):
+        substring = letters[:i]
 
-    for i in range(1, len(word) + 1):
-        sub = word[:i]
-
-        for grapheme in possible_graphemes:
-            if grapheme in sub:
-                return sub[:len(sub) - len(grapheme)], grapheme
+        for grapheme in consonants.search[phoneme]:
+            if grapheme in substring:
+                extra = substring[:len(substring) - len(grapheme)]
+                return Grapheme(extra), Grapheme(grapheme, phoneme)
 
 
-def vowels(grapheme):
-    regex = re.compile(r".*([aeiou]+)$")
-    v = regex.match(grapheme)
+def find_vowels(grapheme):
+    letters = grapheme.letters
+    regex = re.compile(".*?([aeioruy]+)$")
+    result = regex.match(letters)
 
-    if v is None:
-        return ""
+    if result is None:
+        return grapheme, None
     else:
-        return v.group(1)
+        vowels = result.group(1)
+        carry = letters[:len(letters) - len(vowels)]
+        return Grapheme(carry), Grapheme(vowels)
+
+
+def find_consonant(letters, phoneme):
+    for i in range(len(letters) + 1, 1, -1):
+        substring = letters[:i]
+
+        if substring in consonants.search[phoneme]:
+            return substring
 
 
 def graphemes(word):
+    """
+    Converts a word into its *graphemes* - i.e. separating
+    the words into letters, with each chunk of letters representing
+    either a consonant, a vowel or a vowel cluster.
+    """
+    final = []
     word_phonemes = phonemes(word)
-    split_word = []
 
+    # Iterate over every phoneme in a word
     for phoneme in word_phonemes:
-        if phoneme in consonants.keys():
+        # If that phoneme is a consonant:
+        if phoneme in consonants.search.keys():
+            # Find the first grapheme that matches that phoneme,
+            # and include the extra letters behind it
             extra, grapheme = find_grapheme(word, phoneme)
-            vowel = vowels(extra)
 
-            if vowel != "":
-                split_word.append(vowel)
+            crop_length = 0
 
-            split_word.append(phoneme)
-            word = word[len(extra) + len(grapheme):]
+            # Algorithm to "carry" silent/vowels to consonants to last consonant,
+            # since the consonant algorithm is lazy and gets the shortest
+            # string possible
+            if len(final) > 0:
+                consonant = final[-1]
+
+                # Creating a "letter pool" of possible characters that could
+                # be in the previous vowel
+                letter_pool = consonant.letters + extra.letters
+                new_consonant = find_consonant(letter_pool, consonant.phoneme)
+
+                # If we *do* find a new consonant:
+                if new_consonant is not None:
+                    # The amount of letters copied over from the extra letters
+                    # to the new consonant
+                    letters_from_extra = len(new_consonant) - len(consonant.letters)
+                    # We need to delete more letters from "word" since we're editing
+                    # "extra", so add those letters back again
+                    crop_length += letters_from_extra
+                    # Delete carried letters from "extra"
+                    extra.letters = extra.letters[letters_from_extra:]
+                    # Add the carried letters to the previous consonant
+                    consonant.letters = new_consonant
+
+            # If there are still any letters left in the "extra letters",
+            # add it to the end as a vowel cluster
+            if extra.letters != "":
+                final.append(extra)
+
+            final.append(grapheme)
+            crop_length += len(extra.letters) + len(grapheme.letters)
+            # Crop the word since we've already processed some letters
+            word = word[crop_length:]
         else:
             continue
 
-    vowel = vowels(word)
+    # The last iteration of "carrying"
+    if len(final) > 0:
+        consonant = final[-1]
 
-    if vowel != "":
-        split_word.append(vowel)
+        letter_pool = consonant.letters + word
+        new_consonant = find_consonant(letter_pool, consonant.phoneme)
 
-    return split_word
+        if new_consonant is not None:
+            letters_from_word = len(new_consonant) - len(consonant.letters)
+            word = word[letters_from_word:]
+            consonant.letters = new_consonant
+
+    if word != "":
+        final.append(Grapheme(word))
+
+    return final
+
+
+def random_consonant(counter):
+    total = sum(counter.values())
+    random_value = math.floor(random.random() * total)
+    current = 0
+
+    for key, value in counter.items():
+        if random_value <= current:
+            return key
+
+        current += value
 
 
 def misspell(word):
+    """
+    Given a word, roughly misspell it.
+    :param word:
+    :return:
+    """
+    final_word = ""
     word_graphemes = graphemes(word)
+    misspelling = int(random.random() * len([x for x in word_graphemes if x.phoneme]))
+    current_consonant = 0
 
-    for g in range(len(word_graphemes)):
-        grapheme = word_graphemes[g]
+    for i in range(len(word_graphemes)):
+        grapheme = word_graphemes[i]
 
-        if grapheme in consonants.keys():
-            word_graphemes[g] = random.choice(consonants[grapheme])
+        # Vowel cluster
+        if grapheme.phoneme is None:
+            final_word += grapheme.letters
+        # Consonant
+        else:
+            if misspelling != current_consonant:
+                final_word += grapheme.letters
+                current_consonant += 1
+                continue
 
-    return "".join(word_graphemes)
+            if i == 0:
+                possible = consonants.replace_start[grapheme.phoneme]
+            elif i == len(word_graphemes) - 1:
+                possible = consonants.replace_end[grapheme.phoneme]
+            else:
+                possible = consonants.replace_middle[grapheme.phoneme]
+
+            del possible[grapheme.letters]
+            final_word += random_consonant(possible)
+
+            current_consonant += 1
+
+    return final_word
