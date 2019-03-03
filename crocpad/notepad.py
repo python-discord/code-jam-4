@@ -215,13 +215,12 @@ class MainWindow(QMainWindow):
         self.update_title()
         self.text_window.document().clear()
         self.text_window.insertPlainText("""To remove this message, please make sure you have entered
-        your full credit card details, made payable to:
-        Crocpad++ Inc
-        PO BOX 477362213321233
-        Cheshire Cheese
-        Snekland
-        Australia
-        """)
+your full credit card details, made payable to:
+Crocpad++ Inc
+PO BOX 477362213321233
+Cheshire Cheese
+Snekland
+Australia""")
 
     def set_light_theme(self):
         """Set the text view to the light theme."""
