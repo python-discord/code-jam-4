@@ -1,6 +1,6 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-from project.services.location import get_similar_location
+#from project.services.location import get_similar_location
 from project.services.weather import ForecastFetcher
 
 
@@ -27,7 +27,7 @@ class Weatherh8su:
         self.create_widgets()
 
     def create_widgets(self):
-        self.background_image = None #@Hotfix needs to get us background images!
+        self.background_image = self.get_image()
         self.main_canvas = tk.Canvas(self.master)
         self.main_canvas.create_image(0, 0, image=self.background_image)
         self.main_canvas.pack()
@@ -85,6 +85,9 @@ class Weatherh8su:
 
     def search_function(self):
         "jon's function"
+
+    def get_image(self):
+        
 
 
 root = tk.Tk()
