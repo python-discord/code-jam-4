@@ -14,82 +14,6 @@ from PIL import Image, ImageDraw, ImageTk
 import asyncio
 
 
-def wrap_progress(determinate=True, title=""):
-    if determinate:
-
-        def _wrapper(coro_iter):
-            nonlocal title
-            try:
-                _title = coro_iter.__self__.master.cur_locale
-                for i in title.split("."):
-                    _title = getattr(_title, i)
-            except Exception:
-                pass
-            else:
-                title = _title
-
-            async def _coro(*args, **kwargs):
-                nonlocal title
-                root = tk.AsyncToplevel(coro_iter.__self__.master)
-                root.title(title)
-                first = True
-                _val = None
-                async for i in coro_iter(*args, **kwargs):
-                    if first:
-                        first = False
-                        root.bar = Progressbar(
-                            root,
-                            orient="horizontal",
-                            length=400,
-                            mode="determinate",
-                            maximum=i + 1,
-                        )
-                        root.bar.pack()
-                    else:
-                        _val = i
-                        root.bar["value"] += 1
-                try:
-                    await root.destroy()
-                except Exception:
-                    pass
-                return _val
-
-            return _coro
-
-        return _wrapper
-    else:
-
-        def _wrapper(coro):
-            nonlocal title
-            try:
-                _title = coro.__self__.master.cur_locale
-                for i in title.split("."):
-                    _title = getattr(_title, i)
-            except Exception:
-                pass
-            else:
-                title = _title
-
-            async def _coro(*args, **kwargs):
-                nonlocal title
-                root = tk.AsyncToplevel(coro.__self__.master)
-                root.title(title)
-                root.bar = Progressbar(
-                    root, orient="horizontal", length=400, mode="indeterminate"
-                )
-                root.bar.pack()
-                rv = await coro(*args, **kwargs)
-                try:
-                    await root.destroy()
-                except Exception:
-                    pass
-                return rv
-
-            return _coro
-
-        return _wrapper
-
-
 class Colour:
 
     """
@@ -248,6 +172,7 @@ class Canvas(tk.AsyncCanvas):
                 vbar.config(command=self.xview)
                 self.config(xscrollcommand=vbar.set)  # intentional switch
             self.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+            self.frame.cur_locale = master.cur_locale
 
         else:
             super().__init__(master, height=height, width=width, bg="white")
@@ -298,15 +223,15 @@ class Canvas(tk.AsyncCanvas):
         """Shortcut to save the PIL file"""
         # Get the file extension
         ext = str(file).split(".")[-1]
-        buffer = io.BytesIO()
-        
+        buffer = BytesIO()
+
         # Save into buffer
         self.pil_image.save(buffer, format=ext)
 
         # Find out how many bytes the file holds, and reset file pointer
         max_bytes = buffer.tell()
         buffer.seek(0)
-        
+
         with open(file, "wb") as fp:
             # Write one more byte since it was last saved
             fp.write(buffer.read(self.read_nums))
@@ -323,19 +248,34 @@ class Canvas(tk.AsyncCanvas):
         else:
             self.pack_forget()
 
-    @wrap_progress(determinate=True, title="general.corruptions.altercolour")
     async def altercolour(self, im: Image.Image):
         data = list(im.getdata())
-        yield len(data)
+        max = len(data)
+        root = tk.AsyncToplevel(self.master)
+        root.title(self.master.cur_locale.general.corruptions.altercolour)
+        root.bar = Progressbar(
+            root, orient="horizontal", length=400, mode="determinate", maximum=max
+        )
+        root.bar.pack()
         new_data = []
         for r, g, b in data:
-            yield new_data.append((g, b, r))
+            new_data.append((g, b, r))
+            root.bar["value"] += 1
         new_im = Image.new(im.mode, im.size, (255, 255, 255))
         new_im.putdata(new_data)
-        yield new_im
+        try:
+            await root.destroy()
+        except Exception:
+            pass
+        return new_im
 
-    @wrap_progress(determinate=False, title="general.corruptions.pixelate")
     async def pixelate(self, im: Image.Image):
+        root = tk.AsyncToplevel(self.master)
+        root.title(self.master.cur_locale.general.corruptions.pixelate)
+        root.bar = Progressbar(
+            root, orient="horizontal", length=400, mode="indeterminate"
+        )
+        root.bar.pack()
         width, height = im.size
         wdigits = -1 * len(str(width)) + 2
         hdigits = -1 * len(str(height)) + 2
@@ -354,17 +294,29 @@ class Canvas(tk.AsyncCanvas):
 
         new_im = im.resize((small_width, small_height))
         new_im = new_im.resize((width, height))
+        try:
+            await root.destroy()
+        except Exception:
+            pass
         return new_im
 
-    @wrap_progress(determinate=False, title="general.corruptions.alterpixel")
     async def alterpixel(self, im: Image.Image):
+        root = tk.AsyncToplevel(self.master)
+        root.title(self.master.cur_locale.general.corruptions.alterpixel)
+        root.bar = Progressbar(
+            root, orient="horizontal", length=400, mode="indeterminate"
+        )
+        root.bar.pack()
         data = list(im.getdata())
         random.shuffle(data)
         new_im = Image.new(im.mode, im.size, (255, 255, 255))
         new_im.putdata(data)
+        try:
+            await root.destroy()
+        except Exception:
+            pass
         return new_im
 
-    @wrap_progress(determinate=True, title="general.corruptions.alterpixel")
     async def alterpixel2(self, im: Image.Image):
         width, height = im.size
 
@@ -383,12 +335,18 @@ class Canvas(tk.AsyncCanvas):
 
         xblock = width // BLOCKLEN
         yblock = height // BLOCKLEN
-        yield xblock * yblock * 2
+        max = xblock * yblock * 2
+        root = tk.AsyncToplevel(self.master)
+        root.title(self.master.cur_locale.general.corruptions.alterpixel)
+        root.bar = Progressbar(
+            root, orient="horizontal", length=400, mode="determinate", maximum=max
+        )
+        root.bar.pack()
         blockmap = []
         for yb in range(yblock):
             row = []
             for xb in range(xblock):
-                yield row.append(
+                row.append(
                     (
                         xb * BLOCKLEN,
                         yb * BLOCKLEN,
@@ -396,6 +354,7 @@ class Canvas(tk.AsyncCanvas):
                         (yb + 1) * BLOCKLEN,
                     )
                 )
+                root.bar["value"] += 1
 
         shuffle = list(blockmap)
         random.shuffle(shuffle)
@@ -403,8 +362,13 @@ class Canvas(tk.AsyncCanvas):
         result = Image.new(im.mode, (width, height))
         for box, sbox in zip(blockmap, shuffle):
             c = im.crop(sbox)
-            yield result.paste(c, box)
-        yield result
+            result.paste(c, box)
+            root.bar["value"] += 1
+        try:
+            await root.destroy()
+        except Exception:
+            pass
+        return result
 
     async def nothing(self, im: Image.Image):
         return im
