@@ -72,8 +72,6 @@ class Front(widget.PrimaryFrame):
 
         self.cache = ImageCache(self.cachesize)
         self.cache.start()
-        # Prime the pump
-        self.after_idle(self.__next)
 
     def cmd_dislike(self):
         self.__next('left')
