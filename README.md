@@ -1,45 +1,56 @@
 # Code Jam IV: This app hates you!
 
-The theme for this code jam will be **This app hates you!**. You will be creating an application using a GUI library of your choice in Python. The application must serve a real purpose, but must also fit the theme.
-
-You can use any GUI library that you wish to use, but you have to make _a desktop app_. For example, you may use frameworks like PySide, PyQt, tkinter, or wxPython. You can even use stuff like Kivy or PyGame, although we do not recommend that you do. You may not, however, use webframeworks like Django or Flask, and you may not use anything that turns HTML and CSS into a desktop app that runs as a browser. 
-
-Here are a couple of examples of what we mean by an application that "serves a real purpose but also fits the theme":
-* A calculator app that calculates the right answers, but represents the answer in a way that's completely impractical.
-* An image resizer where you have to specify which part of the image to resize, specify how much force to apply to the resize operation in newtons, and then manually resize the image by turning a crank.
-* An alarm clock app that plays a very loud sound effect every 5 minutes reminding you that your alarm will ring in 6 hours. The closer it gets to the 6 hour mark, the lower the volume of the sound effect. When the time is up, the sound effect is virtually inaudible.
-
-Remember that teamwork is not optional for our code jams - You must find a way to work together. For this jam, we've assigned a leader for each team based on their responses to the application form. Remember to listen to your leader, and communicate with the rest of your team! 
-
-**Remember to provide instructions on how to set up and run your app at the bottom of this README**.
-
-# Tips
-
-* Please lint your code, and listen to the linter. We recommend **flake8**, and you can use `pipenv run lint` to run it. We will be evaluating your style, and unlinted code will lead to point deductions.
-* Remember to work closely with the rest of your team. We will deduct points for poor teamwork.
-* Don't overcomplicate this. It's better to write a relatively simple app that is 100% feature complete than failing to finish a more ambitious project.
-* For information on how the Code Jam will be judged, please see [this document](https://wiki.pythondiscord.com/wiki/jams/judging).
-
-# Setting Up
-
-You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a look 
-[at the documentation](https://pipenv.readthedocs.io/en/latest/) if you've never used it before. In short:
-
-* Setting up for development: `pipenv install --dev`
-* Running the application (assuming you use our project layout): `pipenv run start`
-
 # Project Information
 
-`# TODO`
+### SMH Editor
+
+Team Members:
+- LargeKnome (Leader)
+- Hanyuone
+- Meta
 
 ## Description
 
-`# TODO`
+The **S**mart **M**odern **H**elpful editor delivers a text editing experience
+tailored to the most discerning of connoisseurs. Its distraction free, 
+minimalistic interface was lovingly crafted to provide the ultimate in focus 
+and comfort. There is no better way to spend time with a keyboard at your
+fingertips.
+
+**_Smart_** - Its highly advanced spell checker will take your mind off of the
+pesky pitfalls of the English language, leaving you free to focus solely on
+sharing the light of your creativity with the world.
+
+**_Modern_** - The sleek, streamlined, look is intuitive and straightforward. 
+It evokes the editors of old, from a time when life was quieter and easier to
+understand. No messing around with tangly ribbons and dizzying radial menus 
+here.
+
+**_Helpful_** - The inbuilt personal assistant is always on hand to help you
+avoid common text editing disasters. Our highly skilled team of designers, 
+programmers and social psychologists have laboured tirelessly to deliver you 
+the true goldilocks zone of quality.
 
 ## Setup & Installation
 
-`# TODO`
+- Clone repo, open root directory.
+- `pipenv install`
+- `pipenv run start`
+- Wait a bit- it might take a while to start up.
 
 ## How do I use this thing?
 
-`# TODO`
+Same as you'd use any other text editor. Just open it up and type away.
+Let the editor guide you towards new highs of creative bliss.
+
+## Credits
+
+A picture used in the program is an alteration of
+`https://commons.wikimedia.org/wiki/File:Chestnut_horse_head,_all_excited.jpg`
+released under the Creative Commons Attribution-Share Alike 2.0 Generic license.
+
+An audio file used in the program is courtesy of
+`https://freesound.org/people/n_audioman/sounds/321947/`
+released under the Creative Commons Attribution Noncommercial License.
+
+

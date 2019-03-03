@@ -7,9 +7,12 @@ verify_ssl = true
 flake8 = "*"
 
 [packages]
+nltk = "*"
+playsound = "*"
 
 [requires]
 python_version = "3.7"
 
 [scripts]
 lint = "python -m flake8"
+start = "python -m project"
