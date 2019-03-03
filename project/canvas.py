@@ -277,8 +277,8 @@ class Canvas(tk.AsyncCanvas):
         )
         root.bar.pack()
         width, height = im.size
-        wdigits = -1 * len(str(width)) + 2
-        hdigits = -1 * len(str(height)) + 2
+        wdigits = max(-1 * len(str(width)) + 2, 1)
+        hdigits = max(-1 * len(str(height)) + 2, 1)
 
         factor = hdigits if hdigits > wdigits else wdigits
         print(factor)
