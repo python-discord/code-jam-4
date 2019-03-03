@@ -249,14 +249,14 @@ class Minesweeper(QtWidgets.QWidget):
         self.flag_count_lcd.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
         spacer = QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Expanding,
                                        QtWidgets.QSizePolicy.Preferred)
-        timer_label = QtWidgets.QLabel('Time')
+        timer_label = QtWidgets.QLabel('Time (in lustrums)')
         timer_label.setFont(QtGui.QFont('Consolas'))
         self.timer_lcd = QtWidgets.QLCDNumber(self.score_frame)
         self.timer_lcd.setSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                      QtWidgets.QSizePolicy.Fixed)
         self.timer_lcd.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
         self.counter_thread = TimerThread()
-        self.counter_thread.update.connect(self.timer_lcd.display)
+        self.counter_thread.update.connect(self.update_timer)
         self.counter_thread.start()
 
         self.score_frame.setLayout(h_layout)
@@ -303,6 +303,10 @@ class Minesweeper(QtWidgets.QWidget):
         self.window_layout.addWidget(self.game_frame)
         self.window_layout.addWidget(self.score_frame)
         self.setLayout(self.window_layout)
+
+    def update_timer(self, n):
+        # 157680000 is the number of seconds in a lustrum
+        self.timer_lcd.display(n/157680000)
 
     def show_click_modal(self):
         '''Shows a floating modal widget in the center of the screen which tells you
@@ -463,7 +467,7 @@ class TimerThread(QtCore.QThread):
         self.interval = 1
 
     def run(self):
-        for number in count(0):
+        for number in count(1):
             self.update.emit(number)
             time.sleep(self.interval)
 

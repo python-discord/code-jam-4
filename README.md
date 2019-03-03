@@ -39,13 +39,12 @@ Welcome to Minesweeper (but I want to die).
  - Nice sound effects
  - Functioning minesweeper game
  - Customisable grid length / height
- - Oh and did I mention that its a flipping (PG Family Friendly) nightmare to play?
-
-Each tile takes up to 100 clicks to destroy
-
-If you click too fast you get punished
-
-You have to type the settings in binary
+ 
+##### Real Features
+- Each tile takes up to 100 clicks to destroy
+- If you click too fast you get punished
+- You have to type the settings in binary
+- The time is measured in lustrums (period of 5 years)
 
 And the music is lovely ;)
 
