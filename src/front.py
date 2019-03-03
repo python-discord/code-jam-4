@@ -101,8 +101,8 @@ class Bio(widget.PrimaryFrame):
     def __build_info(self, info: dict):
         item = widget.PrimaryFrame(self)
         info = [
-            f"Age: {info['age']}",
             info['gender'].capitalize(),
+            f"Age: {info['age']}",
             f'{"She" if info["gender"].startswith("f") else "He"} is {info["location"]}.'
         ]
         for val in info:
