@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'qt/mainwindow.ui',
 # licensing of 'qt/mainwindow.ui' applies.
 #
-# Created: Sun Mar  3 03:21:32 2019
+# Created: Sun Mar  3 05:37:58 2019
 #      by: pyside2-uic  running on PySide2 5.12.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -64,7 +64,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "MainWindow", None, -1))
         self.previous_button.setText(QtWidgets.QApplication.translate("MainWindow", "Previous", None, -1))
-        self.play_button.setText(QtWidgets.QApplication.translate("MainWindow", "Play/Pause", None, -1))
+        self.play_button.setText(QtWidgets.QApplication.translate("MainWindow", "Play", None, -1))
         self.next_button.setText(QtWidgets.QApplication.translate("MainWindow", "Next", None, -1))
         self.media_time_lcd.setToolTip(QtWidgets.QApplication.translate("MainWindow", "<html><head/><body><p>Time remaining for the current track, in hexadecimal seconds.</p></body></html>", None, -1))
         self.menu_file.setTitle(QtWidgets.QApplication.translate("MainWindow", "File", None, -1))

@@ -32,11 +32,12 @@ class MainWindow(QMainWindow):
         self.player.durationChanged.connect(self.seek_dialogue.update_duration)
         self.player.positionChanged.connect(self.ui.seek_slider.setValue)
         self.player.positionChanged.connect(self.update_time_remaining)
+        self.player.stateChanged.connect(self.toggle_button_text)
 
         self.ui.seek_slider.mousePressEvent = self.seek_slider_pressed  # Override the event
 
         # Signal connections
-        self.ui.play_button.pressed.connect(self.player.play)
+        self.ui.play_button.pressed.connect(self.play_pressed)
         self.ui.previous_button.pressed.connect(self.player.playlist().previous)
         self.ui.next_button.pressed.connect(self.player.playlist().next)
         self.ui.add_files_action.triggered.connect(self.add_files)
@@ -111,9 +112,24 @@ class MainWindow(QMainWindow):
             self.seek_dialogue.open()
 
     def seek_finished(self, result: QDialog.DialogCode):
+        """Seek to the selected position if the seek dialogue was accepted."""
         if result == QDialog.DialogCode.Accepted:
             pos = self.seek_dialogue.get_position()
             self.player.setPosition(pos)
+
+    def play_pressed(self):
+        """Play or pause the player depending on its state."""
+        if self.player.state() in (media.Player.StoppedState, media.Player.PausedState):
+            self.player.play()
+        else:
+            self.player.pause()
+
+    def toggle_button_text(self, state: media.Player.State):
+        """Set the text of the play button depending on the player's state."""
+        if state in (media.Player.StoppedState, media.Player.PausedState):
+            self.ui.play_button.setText("Play")
+        else:
+            self.ui.play_button.setText("Pause")
 
     def add_files(self, checked: bool = False):
         """Show a file dialogue and add selected files to the playlist."""
