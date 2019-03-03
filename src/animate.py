@@ -168,44 +168,7 @@ class Animater:
 @dataclass
 class Motion:
     """
-    Defines the movements derived from a generated vector.
-    The result is a two dimensional generator: the first dimension yields
-    a "frame" generator, which in turn yields move commands. This structure allows
-    for different `speed`s of motion, as the length of the second
-    dimension is determined by `speed`. In other words, the `speed` determines
-    how many movements occur in one frame.
 
-    param:
-        canvas: tk.Canvas -- The parent canvas to issue the move command with.
-        id: int -- The id of the widget to be animated.
-        endpoints: Tuple[Coord] -- The final position(s) of the widget. Multiple positions allow for
-            more intricate pathing.
-        speed: int (optional) -- The multipler for move commands per frame.
-            Defaults to 1.
-
-    example::
-
-    ```
-    root = tk.Tk()
-
-    window = Animater(root)
-    window.pack()
-
-    c1 = Coord(50, 55)
-    c2 = Coord(60, 65)
-    rect = window.create_rectangle(c1, c2)
-
-    end = c1 + Direction.RIGHT * 50
-    end2 = end + Direction.DOWN * 50
-    end3 = end2 + (Direction.UP + Direction.LEFT) * 50
-
-    animation = Motion(window, rect, (end, end2, end3), speed=1)
-
-    window.add_motion(animation)
-    window.add_event('<B1-Motion>')
-
-    root.mainloop()
-    ```
     """
     canvas: tk.Canvas
     id: int
