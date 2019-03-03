@@ -21,11 +21,11 @@ class QuotePlugin(AbstractPlugin):
 
     @staticmethod
     def name() -> str:
-        return "SpellingMistakes"
+        return "Quotes"
 
     @staticmethod
     def description() -> str:
-        return "To help you sound more natural when writing."
+        return "Adds a random quote to help you sound smarter."
 
     def onload(self):
         pass

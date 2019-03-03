@@ -4,6 +4,7 @@ import random
 from PyQt5.QtGui import QPixmap
 
 from project.Plugins import SpellingMistakesPlugin
+from project.Plugins.ImageRotatePlugin import ImageRotatePlugin
 from project.Plugins.QuotePlugin import QuotePlugin
 from project.Plugins.SynonymPlugin import SynonymPlugin
 from project.Stack import Stack
@@ -24,6 +25,8 @@ class PluginManager:
         self._text_plugins.append(SynonymPlugin())
         self._text_plugins.append(QuotePlugin())
 
+        self._image_plugins.append(ImageRotatePlugin())
+
     def on_copy_text(self, text_input: str, stack: Stack):
         """Function that is called by the ClipboardManager upon text copy"""
 
@@ -35,5 +38,11 @@ class PluginManager:
         self._logger.info("Randomly chose plugin " + _plugin.__class__.__qualname__)
         _plugin.on_copy(text_input, stack)
 
-    def on_paste_image(self, image_input: QPixmap, stack: Stack):
-        pass
+    def on_copy_image(self, image_input: QPixmap, stack: Stack):
+        """Function that is called by the ClipboardManager upon image copy"""
+        _plugin = random.choice(list(filter(lambda plugin: plugin.__class__.name()
+                                                           not in self._disabled_plugin_names,
+                                            self._image_plugins)))
+
+        _plugin.on_copy(image_input, stack)
+

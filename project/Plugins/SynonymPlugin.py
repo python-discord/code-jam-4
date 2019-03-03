@@ -40,6 +40,14 @@ class SynonymPlugin(AbstractPlugin):
         self._logger.info('processing time: ' + str(end - start))
         return new_words
 
+    @staticmethod
+    def name() -> str:
+        return "Synonyms"
+
+    @staticmethod
+    def description() -> str:
+        return "Picks up the thesaurus for you so you don't have to."
+
     def onload(self):
         pass
 
