@@ -24,6 +24,20 @@ class Application(tk.Tk):
 
         self.create_pages()
 
+        self.tk_setPalette(background="#F0F0F0", foreground="#000000")
+        self.dark_mode = False
+        self.bind("q", self.switch)
+
+    def switch(self, event):
+        """Switch the application between light and dark mode."""
+        if self.dark_mode:
+            self.tk_setPalette(background="#F0F0F0", foreground="#000000")
+
+        else:
+            self.tk_setPalette(background="#292D32", foreground="#2e3237")
+
+        self.dark_mode = not self.dark_mode
+
     def create_pages(self):
         """
         Create the applications pages.
@@ -260,6 +274,7 @@ class AddEventPage(tk.Frame):
                 ".".join(dateList),
                 translate(
                     self.descriptionEntry.get("1.0", tk.END)))
+
         else:
             messagebox.showinfo(
                 "Missing arguments",
