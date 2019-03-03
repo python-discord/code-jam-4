@@ -205,6 +205,9 @@ class Minesweeper(QtWidgets.QWidget):
         self.explosion_sound = QtMultimedia.QSound(':/sound/explode.wav')
         self.beep_sound = QtMultimedia.QSound(':/sound/beep.wav')
         self.break_sound = QtMultimedia.QSound(':/sound/break.wav')
+        self.scream_sounds = (QtMultimedia.QSound(':/sound/scream1.wav'),
+                              QtMultimedia.QSound(':/sound/scream2.wav'),
+                              QtMultimedia.QSound(':/sound/scream3.wav'))
         self.tile_size = (20, 20)
         self.controller = logic.Minesweeper(self.grid_width, self.grid_height)
         self.controller.mines_number = mines
@@ -397,6 +400,7 @@ class Minesweeper(QtWidgets.QWidget):
     def button_health_update(self, row, column):
         '''Updates the button whenever the health has changed'''
         button = self.button_grid[row][column]
+        random.choice(self.scream_sounds).play()
 
         # Stops you from clicking too fast
         click_time = time.time()

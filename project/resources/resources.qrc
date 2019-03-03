@@ -20,5 +20,8 @@
     <file>explode.wav</file>
     <file>beep.wav</file>
     <file>break.wav</file>
+    <file>scream1.wav</file>
+    <file>scream2.wav</file>
+    <file>scream3.wav</file>
   </qresource>
 </RCC>
