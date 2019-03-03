@@ -102,6 +102,9 @@ class MainWindow(QMainWindow):
 
     def seek_slider_pressed(self, event: QMouseEvent):
         """Open the seek dialogue when the slider is left clicked."""
+        if self.player.playlist().currentMedia().isNull():
+            return
+
         if event.button() == Qt.LeftButton:
             pos = self.player.position()
             self.seek_dialogue.update_position(pos)
