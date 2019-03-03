@@ -1,6 +1,7 @@
 import tkinter as tk
 
-from project.spelling import *
+from project.spelling.correction import is_correct
+from project.spelling.misspell import misspell
 
 
 class SpellingWindow(tk.Toplevel):
