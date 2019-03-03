@@ -273,7 +273,7 @@ class Minesweeper(QtWidgets.QWidget):
         for row in range(1, self.grid_height+1):
             row_array = [None]
             for column in range(1, self.grid_width+1):
-                button = Tile(random.randint(50, 100)) #TODO MAKE SURE THIS IS CHANGED TO A HIGH NUMBER
+                button = Tile(random.randint(50, 100))
                 button.clicked.connect(partial(self.button_clicked, row, column))
                 button.right_clicked.connect(partial(self.place_flag, row, column))
                 button.health_decreased.connect(partial(self.button_health_update, row, column))
@@ -293,7 +293,8 @@ class Minesweeper(QtWidgets.QWidget):
 
         if self.too_fast_modal is None:
             self.too_fast_modal = MinesweeperModal('You are clicking too fast!', self)
-            self.too_fast_modal.close_button.clicked.connect(lambda: self.modal_closed(self.too_fast_modal))
+            self.too_fast_modal.close_button.clicked.connect(
+                lambda: self.modal_closed(self.too_fast_modal))
             self.too_fast_modal.move(self.rect().center() - self.too_fast_modal.rect().center())
 
         self.beep_sound.play()
@@ -308,7 +309,8 @@ class Minesweeper(QtWidgets.QWidget):
 
         if self.game_over_modal is None:
             self.game_over_modal = MinesweeperModal('GAME OVER', self)
-            self.game_over_modal.close_button.clicked.connect(lambda: self.modal_closed(self.game_over_modal))
+            self.game_over_modal.close_button.clicked.connect(
+                lambda: self.modal_closed(self.game_over_modal))
             self.game_over_modal.move(self.rect().center() - self.game_over_modal.rect().center())
 
         self.beep_sound.play()
