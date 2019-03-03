@@ -7,9 +7,7 @@ if __name__ == '__main__':
     # Hide root window.
     root.withdraw()
 
+    # Create editor window.
     editor_window = EditorWindow(root)
-
-    # This will close the hidden root window when the editor window is closed.
-    editor_window.protocol('WM_DELETE_WINDOW', root.destroy)
 
     root.mainloop()
