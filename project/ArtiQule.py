@@ -7,27 +7,6 @@ from PyQt5.QtGui import (QColor, QCursor, QIcon, QImage, QPainter,
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog,
                              QMainWindow, QPushButton, )
 
-"""
-Hover on QPaint detection
-def paintEvent(self, event):
-    option = QtGui.QStyleOptionButton()
-    option.initFrom(self)
-    painter = QtGui.QPainter(self)
-    if option.state & QtGui.QStyle.State_MouseOver:
-        # do hover stuff ...
-    else:
-        # do normal stuff ...
-"""
-
-SoundEffects = {
-    'pen break': r'Sounds/pen break.mp3',
-    'pen write': r'Sounds/pen writing.wav',
-    'fill bucket': r'Sounds/fill bucket.mp3',
-    'empty bucket': r'Sounds/empty bucket.mp3',
-    'solid hitting': r'Sounds/solidified hitting.m4a',
-    'straggly brush': r'Sounds/straggly brushing.m4a'
-}
-
 
 class ColorBox(QMainWindow):
     """ This window holds all the color pallettes"""
@@ -419,7 +398,8 @@ class PaintBoard(QMainWindow):
 
                 # this here is to add more realism
                 # to the point when its breaking
-                if self.currentTool.duration <= 0.2:
+                if self.currentTool.duration <= 0.2 and self.currentTool.toolName != \
+                        'A bucket' or 'Sunbathing Eraser':
                     dots = QPen()
                     broken_tools = QPen()
                     if self.currentTool.toolName == "Pointy Pen":
