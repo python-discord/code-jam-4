@@ -36,7 +36,8 @@ HEADERS += \
 FORMS += \
         mainwindow.ui \
     passwordprompt.ui \
-    createpassword.ui
+    createpassword.ui \
+    seekdialogue.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

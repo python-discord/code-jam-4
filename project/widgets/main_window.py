@@ -1,6 +1,7 @@
 import logging
 
 from PySide2.QtCore import QPoint, Qt
+from PySide2.QtGui import QMouseEvent
 from PySide2.QtSql import QSqlTableModel
 from PySide2.QtWidgets import (
     QAbstractItemView, QAction, QFileDialog, QMainWindow, QMenu
@@ -8,6 +9,7 @@ from PySide2.QtWidgets import (
 
 from project import media, ui
 from project.widgets.password_prompt import PasswordPrompt
+from project.widgets.seek_dialogue import SeekDialogue
 
 log = logging.getLogger(__name__)
 
@@ -20,18 +22,23 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
 
         self.password_prompt = PasswordPrompt("temporarypassword")
+        self.seek_dialogue = SeekDialogue()
 
         self.playlist_model = self.create_model()
         self.configure_view()
 
         self.player = media.Player(self.playlist_model)
+        self.player.durationChanged.connect(lambda dur: self.ui.seek_slider.setMaximum(dur))
+        self.player.positionChanged.connect(lambda pos: self.ui.seek_slider.setValue(pos))
+        self.player.positionChanged.connect(self.update_time_remaining)
+
+        self.ui.seek_slider.mousePressEvent = self.seek_slider_pressed  # Override the event
 
         # Signal connections
         self.ui.play_button.pressed.connect(self.player.play)
         self.ui.previous_button.pressed.connect(self.player.playlist().previous)
         self.ui.next_button.pressed.connect(self.player.playlist().next)
         self.ui.add_files_action.triggered.connect(self.add_files)
-        self.player.positionChanged.connect(self.update_time_remaining)
 
     @staticmethod
     def create_model() -> QSqlTableModel:
@@ -88,8 +95,14 @@ class MainWindow(QMainWindow):
         menu.popup(global_pos)
 
     def update_time_remaining(self, position: int):
+        """Update the time remaining for the current track on the LCD."""
         remaining = self.player.duration() - position
         self.ui.media_time_lcd.display(remaining // 1000)
+
+    def seek_slider_pressed(self, event: QMouseEvent):
+        """Open the seek dialogue when the slider is left clicked."""
+        if event.button() == Qt.LeftButton:
+            self.seek_dialogue.show()
 
     def add_files(self, checked: bool = False):
         """Show a file dialogue and add selected files to the playlist."""
