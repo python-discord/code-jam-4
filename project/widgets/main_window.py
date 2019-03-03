@@ -28,8 +28,9 @@ class MainWindow(QMainWindow):
         self.configure_view()
 
         self.player = media.Player(self.playlist_model)
-        self.player.durationChanged.connect(lambda dur: self.ui.seek_slider.setMaximum(dur))
-        self.player.positionChanged.connect(lambda pos: self.ui.seek_slider.setValue(pos))
+        self.player.durationChanged.connect(self.ui.seek_slider.setMaximum)
+        self.player.durationChanged.connect(self.seek_dialogue.update_duration)
+        self.player.positionChanged.connect(self.ui.seek_slider.setValue)
         self.player.positionChanged.connect(self.update_time_remaining)
 
         self.ui.seek_slider.mousePressEvent = self.seek_slider_pressed  # Override the event
@@ -102,6 +103,8 @@ class MainWindow(QMainWindow):
     def seek_slider_pressed(self, event: QMouseEvent):
         """Open the seek dialogue when the slider is left clicked."""
         if event.button() == Qt.LeftButton:
+            pos = self.player.position()
+            self.seek_dialogue.update_position(pos)
             self.seek_dialogue.open()
 
     def seek_finished(self, result: QDialog.DialogCode):
