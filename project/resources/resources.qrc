@@ -1,0 +1,29 @@
+<RCC>
+  <qresource prefix="images">
+    <file>flag.png</file>
+    <file>mine.png</file>
+    <file>explosion.gif</file>
+  </qresource>
+  <qresource prefix="tiles">
+    <file>crack0.png</file>
+    <file>crack1.png</file>
+    <file>crack2.png</file>
+    <file>crack3.png</file>
+    <file>crack4.png</file>
+    <file>crack5.png</file>
+    <file>crack6.png</file>
+    <file>crack7.png</file>
+    <file>crack8.png</file>
+    <file>crack9.png</file>
+  </qresource>
+  <qresource prefix="sound">
+    <file>explode.wav</file>
+    <file>beep.wav</file>
+    <file>break.wav</file>
+    <file>scream1.wav</file>
+    <file>scream2.wav</file>
+    <file>scream3.wav</file>
+    <file>win.wav</file>
+    <file>elevator.mp3</file>
+  </qresource>
+</RCC>

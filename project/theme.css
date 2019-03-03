@@ -1,0 +1,61 @@
+
+QLabel{
+    color: #fff;
+}
+
+QFrame#modal{
+    background: #111111;
+    border: 3px solid #8777c4;
+}
+
+QFrame#modal QPushButton{
+    background: #8777c4;
+    color: #fff;
+    border: none;
+}
+
+QFrame#modal QPushButton:hover{
+    background: #7a6daf;
+}
+
+QFrame#score{
+    background: #111111;
+}
+
+QLCDNumber{
+    background: #000;
+    color: red;
+}
+
+QFrame#game, QMainWindow{
+    background: #232323;
+}
+
+QPushButton#tile{
+    background: #35304c;
+    border: 1px solid #645b87;
+}
+
+QPushButton#tile:hover{
+    background: #484168;
+}
+
+QLabel#title{
+    color: #8777c4;
+}
+
+QPushButton#menuButton{
+    background: #8777c4;
+    color: #fff;
+    border: none;
+    padding: 0.3em 1em;
+    border-radius: 3px;
+}
+
+QPushButton#menuButton:hover{
+    background: #7a6daf;
+}
+
+QMessageBox QLabel{
+    color: black;
+}
