@@ -36,7 +36,7 @@ Confirm:"""
             self.new_password = new_password
 
             #output is self.new_password
-            #password input is to be added, but will replace "squid"
+            #password input is to be added, but will replace 'squid'
 
 
 security_root = tk.Tk()
