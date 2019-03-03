@@ -30,6 +30,7 @@ class kata:
             new = "ニュー ファイル"  # nyu-   fa i ru | New File
             saveas = "セイヴ アズ…"  # se i vu   a zu … | Save As...
             open = "オーペヌ ファイル"  # o- pe nu   fa i ru | Open File
+            write = "ライト バイト"  # ra i to   ba i to | Write Byte
 
             class button:
                 default = "セイヴ ヒール"  # se i vu   hi- ru | Save Here
@@ -97,6 +98,7 @@ class eng:
             new = "New File"
             saveas = "Save As..."
             open = "Open File"
+            write = "Write Byte"
 
             class button:
                 default = "Save Here"

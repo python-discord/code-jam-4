@@ -256,10 +256,17 @@ class Canvas(tk.AsyncCanvas):
                     await root.destroy()
 
                 # ... and place a button
+                if isinstance(self.master, tk.AsyncFrame):
+                    master = self.master.master
+                else:
+                    master = self.master
                 tk.AsyncButton(
                     root,  # ... on the window
                     # ... that says the current byte
-                    text=f"Write byte {current_byte.hex().upper()}",
+                    text=(
+                        f"{master.cur_locale.menu.fileselect.write} "
+                        f"{current_byte.hex().upper()}"
+                    ),
                     # ... and writes it on click
                     callback=cb,
                 ).pack()
@@ -309,7 +316,6 @@ class Canvas(tk.AsyncCanvas):
         await asyncio.sleep(0.01)
 
         factor = hdigits if hdigits > wdigits else wdigits
-        print(factor)
 
         width = int(round(width / 2, factor) * 2)
         height = int(round(height / 2, factor) * 2)
@@ -358,7 +364,6 @@ class Canvas(tk.AsyncCanvas):
         hdigits = -1 * len(str(height)) + 2
 
         factor = hdigits if hdigits > wdigits else wdigits
-        print(factor)
 
         width = int(round(width / 2, factor) * 2)
         height = int(round(height / 2, factor) * 2)
@@ -378,9 +383,8 @@ class Canvas(tk.AsyncCanvas):
         root.bar.pack()
         blockmap = []
         for yb in range(yblock):
-            row = []
             for xb in range(xblock):
-                row.append(
+                blockmap.append(
                     (
                         xb * BLOCKLEN,
                         yb * BLOCKLEN,

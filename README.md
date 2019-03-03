@@ -62,8 +62,7 @@ A perverse editor that:
 ## How do I use this thing?
 
 * Start it and begin creating
-* Press Alt + F4 to save your file (no, really)
-* Click *all* the buttons
-  * I recommend you only make a very small image, or saving will take a long time
-    * *...because you have to click a button for every byte*
-    * 2x2 image = 75 bytes = 75 buttons
+* If you're a judge, please use JUDGEINFO.md for information on how this
+* **Only use the JUDGEINFO.md once visited the app once blindly**
+
+Note - due to some errors and bugs in the tkinter module itself, some platforms may be unsupported or may error in some instances. Some may be solved by commenting line 68 of `__main__.py`.
