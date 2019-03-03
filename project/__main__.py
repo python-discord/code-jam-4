@@ -131,8 +131,8 @@ btndec = Button(cal,  text=("."), padx=16, bd=8, font=('arial', 20, 'bold'),
                 fg="purple", bg="pink",
                 command=lambda: btnClick(".")).grid(row=5, column=2)
 
-btntau = Button(cal,  text=("\u03C4"), padx=16, bd=8, font=('cambria', 20, 'bold'),
-                fg="purple", bg="pink",
+btntau = Button(cal,  text=("\u03C4"), padx=16, bd=8,
+                font=('cambria', 20, 'bold'), fg="purple", bg="pink",
                 command=lambda: btnTau()).grid(row=4, column=2)
 
 btnadd = Button(cal,  text=("+"), padx=16, bd=8, font=('arial', 20, 'bold'),
