@@ -1,3 +1,6 @@
+"""Custom stylesheets to be applied to the text editor pane."""
+
+
 light = """
 QPlainTextEdit { background: white }
 """

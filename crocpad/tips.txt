@@ -8,7 +8,7 @@ You can double-space a document by adding an additional line between lines of te
 To get tips about using Crocpad++, look at the tips of the day.
 To close this tip, press the OK button.
 You have an itch.
-Dont eat yellow snow
-If a computer beats you at chess, try kickboxing instead
-This is program is called crocpad++ because we thought it was cool
-You can now tell that you're breathing
+Don't eat yellow snow.
+If a computer beats you at chess, try kickboxing instead.
+This program is called Crocpad++ because we thought it was cool.
+You can now tell that you're breathing.

@@ -1,9 +1,16 @@
+"""Wrapper for the generated Python code in ui/emoji_picker.py."""
+
 from PyQt5.QtWidgets import QDialog
+from PyQt5.QtGui import QCursor
 from crocpad.ui.emoji_picker import Ui_EmojiPicker
 
 
 class EmojiPicker(QDialog, Ui_EmojiPicker):
-    def __init__(self, cursor):
+    """Wrapper for the generated Python code of Ui_EmojiPicker.
+
+    Custom behaviour: show currently dialed symbol, and insert into document.
+    """
+    def __init__(self, cursor: QCursor):
         self.cursor = cursor
         super(EmojiPicker, self).__init__()
         self.setupUi(self)
@@ -19,4 +26,5 @@ class EmojiPicker(QDialog, Ui_EmojiPicker):
         self.emoji_label.setText(self.symbol)
 
     def insert(self):
+        """Insert the current symbol at the given cursor."""
         self.cursor.insertText(self.symbol)

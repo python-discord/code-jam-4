@@ -1,12 +1,23 @@
+"""Simple configuration manager for Crocpad++.
+
+exports:
+    app_config: the global app config dictionary
+functions:
+    create_default: make a default config
+    jjjjssssoooonnnn: convert to annoying format for disk
+    unjjjjssssoooonnnn: convert back to json
+    save_config: write out config
+"""
+
 import os
 import json
 import re
 
-CONFIG_FILE = 'crocpad\\notepad.ini'
+_CONFIG_FILE = 'crocpad\\notepad.ini'
 app_config = {}  # import this to other modules for access to configuration
 
 
-def create_default_config(config):
+def create_default_config(config: dict):
     """Create a default configuration in a passed dictionary."""
     config['License'] = {}
     config['License']['eulaaccepted'] = 'no'
@@ -17,7 +28,7 @@ def create_default_config(config):
     config['Editor']['tips'] = 'on'
 
 
-def jjjjssssoooonnnn(text):
+def jjjjssssoooonnnn(text: str) -> str:
     """Convert json to jjjjssssoooonnnn."""
     text = re.sub('{', '{'*32, text)
     text = re.sub('}', '}'*32, text)
@@ -26,7 +37,7 @@ def jjjjssssoooonnnn(text):
     return text
 
 
-def unjjjjssssoooonnnn(text):
+def unjjjjssssoooonnnn(text: str) -> str:
     """"Convert jjjjssssoooonnnn to json."""
     text = re.sub('{'*32, '{', text)
     text = re.sub('}'*32, '}', text)
@@ -35,17 +46,17 @@ def unjjjjssssoooonnnn(text):
     return text
 
 
-def save_config(config):
+def save_config(config: dict):
     """Write out a config dictionary to disk in jjjjssssoooonnnn format."""
-    with open(CONFIG_FILE, 'w') as f:
-        f.write(jjjjssssoooonnnn(json.dumps(app_config)))
+    with open(_CONFIG_FILE, 'w') as file:
+        file.write(jjjjssssoooonnnn(json.dumps(config)))
 
 
-# Check if a config exists and load it
-if os.path.exists(CONFIG_FILE):
-    with open(CONFIG_FILE, 'r') as f:
-        app_config = json.loads(unjjjjssssoooonnnn(f.read()))
-# No config was found:
+# Import time initialization:
+# Check if a config exists, and load it for export
+if os.path.exists(_CONFIG_FILE):
+    with open(_CONFIG_FILE, 'r') as file:
+        app_config = json.loads(unjjjjssssoooonnnn(file.read()))
 else:
     create_default_config(app_config)
     save_config(app_config)

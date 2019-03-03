@@ -1,12 +1,15 @@
+"""Entry point into the Crocpad++ application."""
+
 import sys
 from PyQt5.QtWidgets import QApplication
 import crocpad.notepad
 
-# By default PyQt5 will give messages like "Process finished with exit code 1"
+# By default PyQt5 will give crash messages like "Process finished with exit code 1"
 # instead of a traceback. The following recipe to get tracebacks on an exception is from:
 # https://stackoverflow.com/questions/34363552/python-process-finished-with-exit-code-1-when-using-pycharm-and-pyqt5
 
-# Back up the reference to the exceptionhook
+# BEGIN EXTERNAL CODE
+# Back up the reference to the exception hook
 sys._excepthook = sys.excepthook
 
 
@@ -20,8 +23,9 @@ def my_exception_hook(exctype, value, traceback):
 
 # Set the exception hook to our wrapping function
 sys.excepthook = my_exception_hook
+# END EXTERNAL CODE
 
-# Back to code jam code:
+# Instantiate the application and main window, then pass control.
 app = QApplication(sys.argv)
 app.setApplicationName("Crocpad++")
 window = crocpad.notepad.MainWindow(app)

@@ -1,9 +1,14 @@
+"""The main module for Crocpad++.
+
+Contains the application class MainWindow which should only be instantiated once.
+"""
+
 import random
 
-from PyQt5.QtCore import QEvent, Qt
+from PyQt5.QtCore import QEvent, Qt, QObject
 from PyQt5.QtGui import QFont, QFontDatabase, QIcon
 from PyQt5.QtMultimedia import QSound
-from PyQt5.QtWidgets import (QAction, QDesktopWidget,
+from PyQt5.QtWidgets import (QAction, QDesktopWidget, QApplication,
                              QFileDialog, QFontDialog, QMainWindow,
                              QMessageBox, QPlainTextEdit, QStatusBar,
                              QVBoxLayout, QWidget)
@@ -16,29 +21,30 @@ from crocpad.insert_emoji_dialog import EmojiPicker
 
 
 class MainWindow(QMainWindow):
+    """Main application class for Crocpad++."""
 
-    def __init__(self, app, *args, **kwargs):
+    def __init__(self, app: QApplication, *args, **kwargs):
+        """Set up the single instance of the application."""
         super(MainWindow, self).__init__(*args, **kwargs)
-
         self.app = app
-        self.main_window = QPlainTextEdit()
 
-        # Setup the QTextEdit editor configuration
+        # Set up the QTextEdit editor configuration
+        self.text_window = QPlainTextEdit()  # the actual editor pane
         fixedfont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         fixedfont.setPointSize(24)
-        self.main_window.setFont(QFont('Comic Sans MS', 30))
-        self.main_window.installEventFilter(self)
+        self.text_window.setFont(QFont('Comic Sans MS', 30))
+        self.text_window.installEventFilter(self)
         self.sound = QSound("crocpad\\sounds\\click.wav")
         self.enter_sound = QSound("crocpad\\sounds\\scream.wav")
         self.backspace_sound = QSound("crocpad\\sounds\\wrong.wav")
 
+        # Main window layout. Most of the dialogs in Crocpad++ are converted to .py from
+        # Qt Designer .ui files in the ui/ directory, but the main app window is built here.
         layout = QVBoxLayout()
-        layout.addWidget(self.main_window)
-
+        layout.addWidget(self.text_window)
         container = QWidget()
         container.setLayout(layout)
         self.setCentralWidget(container)
-
         self.status = QStatusBar()
         self.setStatusBar(self.status)
 
@@ -62,75 +68,79 @@ class MainWindow(QMainWindow):
             self.show_tip()
 
     def create_menus(self):
-        mainMenu = self.menuBar()
-        helpMenu = mainMenu.addMenu('H&elp')
-        viewMenu = mainMenu.addMenu('Vi&ew')
-        fileMenu = mainMenu.addMenu('R&ecent Files')
-        editMenu = mainMenu.addMenu('&Edit')
-        searchMenu = mainMenu.addMenu('S&earch')
-        toolsMenu = mainMenu.addMenu('Sp&ecial Tools')
+        """Build the menu structure for the main window."""
+        main_menu = self.menuBar()
+        help_menu = main_menu.addMenu('H&elp')
+        view_menu = main_menu.addMenu('Vi&ew')
+        file_menu = main_menu.addMenu('R&ecent Files')
+        edit_menu = main_menu.addMenu('&Edit')
+        search_menu = main_menu.addMenu('S&earch')
+        tools_menu = main_menu.addMenu('Sp&ecial Tools')
 
         # Help menu
         action_tip = QAction("Tip of th&e Day", self)
         action_tip.triggered.connect(self.show_tip)
-        helpMenu.addAction(action_tip)
+        help_menu.addAction(action_tip)
 
         # View menu
-        themeMenu = viewMenu.addMenu("Th&emes")
+        theme_menu = view_menu.addMenu("Th&emes")
         action_light_theme = QAction("Light mod&e", self)
         action_light_theme.triggered.connect(self.set_light_theme)
-        themeMenu.addAction(action_light_theme)
+        theme_menu.addAction(action_light_theme)
         action_dark_theme = QAction("Dark mod&e", self)
         action_dark_theme.triggered.connect(self.set_dark_theme)
-        themeMenu.addAction(action_dark_theme)
-        accessibilityMenu = viewMenu.addMenu("Acc&essibility")
+        theme_menu.addAction(action_dark_theme)
+        accessibility_menu = view_menu.addMenu("Acc&essibility")
         action_hotdogstand_theme = QAction("High visibility th&eme", self)
         action_hotdogstand_theme.triggered.connect(self.set_hotdogstand_theme)
-        accessibilityMenu.addAction(action_hotdogstand_theme)
+        accessibility_menu.addAction(action_hotdogstand_theme)
         action_quitedark_theme = QAction("Th&eme for blind users", self)
         action_quitedark_theme.triggered.connect(self.set_quitedark_theme)
-        accessibilityMenu.addAction(action_quitedark_theme)
+        accessibility_menu.addAction(action_quitedark_theme)
 
         # Special Tools menu
         font_menu = QAction("Chang&e Font", self)
         font_menu.triggered.connect(self.change_font)
-        toolsMenu.addAction(font_menu)
+        tools_menu.addAction(font_menu)
 
         # Edit menu
         action_insert_symbol = QAction("Ins&ert symbol", self)
         action_insert_symbol.triggered.connect(self.insert_emoji)
-        editMenu.addAction(action_insert_symbol)
+        edit_menu.addAction(action_insert_symbol)
 
         # Search menu
         action_open = QAction("S&earch for file to open", self)
         action_open.triggered.connect(self.open_file)
-        searchMenu.addAction(action_open)
+        search_menu.addAction(action_open)
         action_save = QAction("S&earch for file to save", self)
         action_save.triggered.connect(self.save_file)
-        searchMenu.addAction(action_save)
+        search_menu.addAction(action_save)
         action_new = QAction("S&earch for a new file", self)
         action_new.triggered.connect(self.new_file)
-        searchMenu.addAction(action_new)
+        search_menu.addAction(action_new)
 
         # SubMenu Test
         testmenu = []
         for i in range(0, 200):
-            testmenu.append(fileMenu.addMenu(f'{i}'))
+            testmenu.append(file_menu.addMenu(f'{i}'))
 
     def do_eula(self):
+        """Display the End-User License Agreement and prompt the user to accept."""
         with open('crocpad\\EULA.txt', 'r', encoding='utf8') as f:
             eula = f.read()
-        self.eula_dialog = EulaDialog(eula)
-        self.eula_quiz_dialog = EulaQuizDialog()
-        while not self.eula_quiz_dialog.quiz_correct():
-            self.eula_dialog.exec_()
-            if self.eula_dialog.clicked_button == self.eula_dialog.eula_agree_button:
+        eula_dialog = EulaDialog(eula)
+        eula_quiz_dialog = EulaQuizDialog()
+        # run the EULA quiz, to make sure they read and understand
+        while not eula_quiz_dialog.quiz_correct():
+            eula_dialog.exec_()  # makes dialog modal (user cannot access main window)
+            if eula_dialog.clicked_button == eula_dialog.eula_agree_button:
                 # We click the agree button
                 app_config['License']['eulaaccepted'] = 'yes'
                 save_config(app_config)
-            self.eula_quiz_dialog.exec_()
+            eula_quiz_dialog.exec_()
 
     def show_tip(self):
+        """Randomly choose one tip of the day and display it."""
         with open('crocpad\\tips.txt', 'r', encoding='utf8') as f:
             tips = f.readlines()
         tip = random.choice(tips)
@@ -141,12 +151,14 @@ class MainWindow(QMainWindow):
         dlg.show()
 
     def change_font(self):
+        """Prompt the user for a font to change to."""
         # Do the users REEEEEALY need to change font :D
         font, ok = QFontDialog.getFont()
         if ok:
             print(font.toString())
 
-    def eventFilter(self, source, event):
+    def eventFilter(self, source: QObject, event: QEvent) -> bool:
+        """Override the eventFilter method of QObject to intercept keystrokes."""
         if event.type() == QEvent.KeyPress:
             if app_config['Sound']['sounds'] == 'on':
                 if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
@@ -157,47 +169,52 @@ class MainWindow(QMainWindow):
                     self.backspace_sound.play()
                 else:
                     self.sound.play()
-            if event.key() == Qt.Key_Space:
+            if event.key() == Qt.Key_Space:  # prank user with instant disappearing dialog
                 if random.random() > 0.8:
                     dlg = QMessageBox(self)
                     dlg.setWindowTitle("Are you sure?")
                     dlg.setText("_" * 100)
                     dlg.show()
                     dlg.close()
-        return False
-
-    def dialog_critical(self, alert_text):
-        dlg = QMessageBox(self)
-        dlg.setText(alert_text)
-        dlg.setIcon(QMessageBox.Critical)
-        dlg.show()
+        return False  # imitate overridden method
 
     def update_title(self):
+        """Set title of main window with current file being edited."""
         self.setWindowTitle(f"Crocpad++ - {self.filename}")
 
     def edit_toggle_wrap(self):
-        self.main_window.setLineWrapMode(not self.main_window.lineWrapMode())
+        """Toggle the line wrap flag in the text editor."""
+        self.text_window.setLineWrapMode(not self.text_window.lineWrapMode())
 
     def open_file(self):
+        """Ask the user for a filename to open, and load it into the text editor.
+
+        Called by the Open File menu action."""
         filename = QFileDialog.getOpenFileName()[0]
         with open(filename, 'r') as file:
-            self.main_window.setPlainText(file.read())
+            self.text_window.setPlainText(file.read())
         self.filename = filename
         self.update_title()
 
     def save_file(self):
+        """Ask the user for a filename to save to, and write out the text editor.
+
+        Called by the Save File menu action."""
         filename = QFileDialog.getSaveFileName()[0]
-        text = self.main_window.document().toPlainText()
+        text = self.text_window.document().toPlainText()
         with open(filename, 'w') as file:
             file.write(text)
         self.filename = filename
         self.update_title()
 
     def new_file(self):
+        """Clear the text editor and insert a helpful message.
+
+        Called by the New File menu action."""
         self.filename = "** Untitled **"
         self.update_title()
-        self.main_window.document().clear()
-        self.main_window.insertPlainText("""To remove this message, please make sure you have entered
+        self.text_window.document().clear()
+        self.text_window.insertPlainText("""To remove this message, please make sure you have entered
         your full credit card details, made payable to:
         Crocpad++ Inc
         PO BOX 477362213321233
@@ -207,18 +224,22 @@ class MainWindow(QMainWindow):
         """)
 
     def set_light_theme(self):
+        """Set the text view to the light theme."""
         self.app.setStyleSheet(crocpad.stylesheets.light)
 
     def set_dark_theme(self):
+        """Set the text view to the dark theme."""
         self.app.setStyleSheet(crocpad.stylesheets.dark)
 
     def set_hotdogstand_theme(self):
+        """Set the text view to the High Contrast theme."""
         self.app.setStyleSheet(crocpad.stylesheets.hotdogstand)
 
     def set_quitedark_theme(self):
+        """Set the text view to the Quite Dark theme for the legally blind."""
         self.app.setStyleSheet(crocpad.stylesheets.quitedark)
 
     def insert_emoji(self):
         """Open a modal EmojiPicker dialog which can insert arbitrary symbols at the cursor."""
-        picker = EmojiPicker(self.main_window.textCursor())
+        picker = EmojiPicker(self.text_window.textCursor())
         picker.exec_()
