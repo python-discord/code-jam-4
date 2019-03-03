@@ -32,8 +32,8 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 
 This project is our solution to the 4th code jam, created by the Python Discord. 
 Our team name is **Wild Whispers** and consists of the following users:
-*  Supalien#8434
-*  TheRealZeljko#2692
+*  Supalien#8434 (frontend master)
+*  TheRealZeljko#2692 (backend master)
 *  Hotfix#6638 (team leader)
 
 
@@ -58,8 +58,9 @@ pipenv install
 pipenv run setup  # make sure you have an internet connection
 pipenv run start
 ```
-After you've got the app running, type a place and click `enter`. 
+ 
 
 ## How do I use this thing?
+After you've got the app running, type a place and click `enter`. Maybe even click enter a few times, see where it takes you. Try to click the settings icon too? 
 
-`# TODO`
+

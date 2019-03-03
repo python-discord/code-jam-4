@@ -98,7 +98,13 @@ class Weatherh8su:
     def search_function(self):
         """
         Called with someone presses the
-        `enter`-button.
+        `enter`-button. Basically does everything:
+        - Fetches the search field
+        - Decides whether it should use the real word or swap it out
+        - Fetches backend for weather information
+        - Display information
+        - Calls on the change_background() function
+        - Display the location it actually searched for in the search bar
         """
         # Get the search string
         search_string = self.search_bar.get()
@@ -141,6 +147,7 @@ class Weatherh8su:
     def change_background(self, status: str):
         """
         Changes background according to the weather
+        :param status: Weather status. E.g. `Clear`
         """
         self.background_image = ImageTk.PhotoImage(
             Image.open(f"data/{status}.jpg"))
