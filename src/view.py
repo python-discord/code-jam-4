@@ -106,5 +106,9 @@ class Window(widget.PrimaryCanvas):
             raise NotImplementedError
 
     @property
+    def active(self):
+        return self.animater.running
+
+    @property
     def origin(self):
         return Coord(self.canvasx(0), self.canvasy(0))

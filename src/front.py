@@ -24,6 +24,8 @@ class Front(widget.PrimaryFrame):
     _last = None
 
     def __next(self, direction: Direction = None):
+        if self.window.active:
+            return
         if self.cache.ready():
             data: dict = self.cache.next()
             image = process_image(

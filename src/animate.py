@@ -133,6 +133,7 @@ class Animater:
 
     def start(self):
         while self._motions:
+            print(self._motions)
             complete = self.run(self._motions.copy())
             self._motions -= complete
             time.sleep(1/self.fps)
@@ -156,6 +157,10 @@ class Animater:
 
     def clear(self):
         self._motions.clear()
+
+    @property
+    def running(self):
+        return bool(self._motions)
 
 
 @dataclass
