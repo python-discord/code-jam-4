@@ -27,7 +27,7 @@ class CreatePassword(QDialog):
         password = self.ui.password.text()
         other = self.ui.confirm_password.text()
         error_message = ""
-        if 9 < len(password) > 13:
+        if len(password) < 10 or len(password) > 12:
             error_message += "Length of password must be between 10 and 12.\n"
         has_number, has_character, has_special = False, False, False
         for c in password:

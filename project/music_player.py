@@ -1,9 +1,8 @@
-import pickle
 import sqlite3
 import sys
 
 import qdarkstyle
-from PySide2.QtSql import QSqlDatabase
+from PySide2.QtSql import QSqlDatabase, QSqlQuery
 from PySide2.QtWidgets import QApplication
 
 from project.widgets import CreatePassword, MainWindow
@@ -32,6 +31,12 @@ def create_db():
                 path   text    not null
             );
         """)
+        cursor.execute("""
+            create table if not exists credentials (
+                id       integer primary key,
+                password text
+            );
+        """)  # The lack of security is a feature ;)
         conn.commit()
 
     db = QSqlDatabase.addDatabase("QSQLITE")
@@ -40,20 +45,40 @@ def create_db():
     # TODO: Handle possible errors if db fails to open
 
 
+def get_password():
+    query = QSqlQuery(QSqlDatabase.database())
+    query.exec_("select password from credentials")
+
+    if query.next():
+        password = query.value(0)
+        query.finish()
+        return password
+
+    create_password = CreatePassword()
+    create_password.display()
+    password = create_password.new_password
+
+    # upsert
+    query.prepare("""
+        insert into credentials (id, password)
+        values (0, :password)
+        on conflict (id)
+        do update set password=:password
+    """)
+    query.bindValue(":password", password)
+    query.exec_()
+    query.finish()
+
+    return password
+
+
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName("Music Player")
     app.setStyleSheet(qdarkstyle.load_stylesheet_pyside2())
 
     create_db()
-
-    try:
-        password = pickle.load(open("mycatfellonmykeyboard.omigosh", "rb"))
-    except FileNotFoundError:
-        create_password = CreatePassword()
-        create_password.display()
-        password = create_password.new_password
-        pickle.dump(password, open("mycatfellonmykeyboard.omigosh", "wb"))
+    password = get_password()
 
     window = MainWindow(password)
     window.setWindowTitle("Music Player")
