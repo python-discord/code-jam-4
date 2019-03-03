@@ -29,19 +29,30 @@ class Question(widget.PrimaryFrame):
 
 class Splash(widget.PrimaryFrame):
 
-    intro = (DOCS / 'intro.txt').read_text()  # .replace('\n', ' ').split('  ')
+    intro = (DOCS / 'intro.txt').read_text()
     with (DOCS / 'questions.json').open() as fp:
         questions = json.load(fp)
 
     def init(self):
-        self.window = Window(self)
-        self.window.pack(expand=True, fill='both')
+        self.title = widget.PrimaryLabel(
+            self, text=self.master.master.title(),
+            font=('Courier', 14), wraplength=300
+        )
 
+        self.window = Window(self, bg='gray')
         self.intro = View(
             self.window,
             text=self.intro,
             width=self.window.winfo_reqwidth(),
-            font=('sys', 14),
-            fill='white'
+            font=('sys', 10), justify='center'
         )
         self.window.set_view(self.intro)
+
+        self.btn_confirm = widget.PrimaryButton(self, command=self.begin, text='Okay')
+
+        self.title.pack(fill='x', pady=20)
+        self.btn_confirm.pack(side='bottom', expand=True)
+
+
+    def begin(self):
+        pass

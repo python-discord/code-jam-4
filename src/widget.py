@@ -78,7 +78,7 @@ class PrimaryLabel(tk.Label):
     DEFAULT = {
         'font': ('Courier', 25),
         'bg': 'black',
-        'fg': 'blue'
+        'fg': 'gray'
     }
 
     def __init__(self, *args, **kwds):

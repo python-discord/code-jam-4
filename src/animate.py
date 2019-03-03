@@ -154,7 +154,7 @@ class Animater:
         self._motions.add(iter(motion))
 
     def add_motion(self, id: int, end: Coord, **kwargs):
-        motion = Motion(self.canvas, id, (end,), **kwargs)
+        motion = Motion(self.canvas, id, end, **kwargs)
         self.add(motion)
 
     def clear(self):
@@ -172,7 +172,7 @@ class Motion:
     """
     canvas: tk.Canvas
     id: int
-    endpoints: Tuple[Coord]
+    end: Coord
 
     speed: int = 1
 
@@ -180,23 +180,24 @@ class Motion:
         """
         The entry point for generating move commands.
         """
-        move = partial(self.canvas.move, self.id)
-
         def frame(increment: Coord, count: int = 1):
             for _ in range(count):
                 move(*increment)
                 self.canvas.master.update_idletasks()
 
-        for end in self.endpoints:
-            start = self.current
-            steps = round(start.distance(end) / self.speed)
-            frames = round(steps / self.speed)
-            increment = (end - start) / steps
+        start = self.current
+        steps = round(start.distance(self.end) / self.speed)
+        frames = round(steps / self.speed)
+        increment = (self.end - start) / steps
 
-            for _ in range(frames):
-                yield partial(frame, increment, round(steps / frames))
-            buffer = end - self.current
-            yield partial(frame, buffer)
+        for _ in range(frames):
+            yield partial(frame, increment, round(steps / frames))
+        buffer = self.end - self.current
+        yield partial(frame, buffer)
+
+    @property
+    def move(self):
+        return partial(self.canvas.move, self.id)
 
     @property
     def current(self):
@@ -213,3 +214,7 @@ class Motion:
 
     def __eq__(self):
         return isinstance(self, type(other)) and self.__key() == other.__key()
+
+
+class BounceBall(Motion):
+
