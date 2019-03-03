@@ -103,6 +103,9 @@ def play_sound(soundcode='tap'):
     *A thread to play the audio
     *A thread to prepare the next audio stream (to minimize latency)
     '''
+    if soundcode not in valid_soundcodes:
+        raise ValueError("Soundcode must be one of \
+                          {}".format(valid_soundcodes))
 
     def play_and_close():
         stream, wave_file, path_file = sound_streams[soundcode].pop()

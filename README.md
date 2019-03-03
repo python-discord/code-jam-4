@@ -31,6 +31,7 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 # Project Information
 
 High Tech Keyboard (HTT), a High Houses company (of the Adorable corperation)
+You can run `project/__main__.py` on any device with the dependencies installed, but for pipenv to work you must be running up-to-date Windows x32.
 
 ## Description
 
