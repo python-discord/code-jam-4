@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'qt/mainwindow.ui',
 # licensing of 'qt/mainwindow.ui' applies.
 #
-# Created: Sat Feb 23 19:25:33 2019
+# Created: Sun Mar  3 03:21:32 2019
 #      by: pyside2-uic  running on PySide2 5.12.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -40,6 +40,8 @@ class Ui_MainWindow(object):
         self.media_controls_layout.addWidget(self.next_button)
         self.media_time_lcd = QtWidgets.QLCDNumber(self.central_widget)
         self.media_time_lcd.setGeometry(QtCore.QRect(870, 410, 171, 23))
+        self.media_time_lcd.setDigitCount(8)
+        self.media_time_lcd.setMode(QtWidgets.QLCDNumber.Hex)
         self.media_time_lcd.setObjectName("media_time_lcd")
         MainWindow.setCentralWidget(self.central_widget)
         self.menu_bar = QtWidgets.QMenuBar(MainWindow)
@@ -64,6 +66,7 @@ class Ui_MainWindow(object):
         self.previous_button.setText(QtWidgets.QApplication.translate("MainWindow", "Previous", None, -1))
         self.play_button.setText(QtWidgets.QApplication.translate("MainWindow", "Play/Pause", None, -1))
         self.next_button.setText(QtWidgets.QApplication.translate("MainWindow", "Next", None, -1))
+        self.media_time_lcd.setToolTip(QtWidgets.QApplication.translate("MainWindow", "<html><head/><body><p>Time remaining for the current track, in hexadecimal seconds.</p></body></html>", None, -1))
         self.menu_file.setTitle(QtWidgets.QApplication.translate("MainWindow", "File", None, -1))
         self.add_files_action.setText(QtWidgets.QApplication.translate("MainWindow", "Add files", None, -1))
 

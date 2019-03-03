@@ -79,6 +79,15 @@
       <height>23</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Time remaining for the current track, in hexadecimal seconds.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="digitCount">
+     <number>8</number>
+    </property>
+    <property name="mode">
+     <enum>QLCDNumber::Hex</enum>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menu_bar">

@@ -31,6 +31,7 @@ class MainWindow(QMainWindow):
         self.ui.previous_button.pressed.connect(self.player.playlist().previous)
         self.ui.next_button.pressed.connect(self.player.playlist().next)
         self.ui.add_files_action.triggered.connect(self.add_files)
+        self.player.positionChanged.connect(self.update_time_remaining)
 
     @staticmethod
     def create_model() -> QSqlTableModel:
@@ -85,6 +86,10 @@ class MainWindow(QMainWindow):
 
         global_pos = self.ui.playlist_view.mapToGlobal(pos)
         menu.popup(global_pos)
+
+    def update_time_remaining(self, position: int):
+        remaining = self.player.duration() - position
+        self.ui.media_time_lcd.display(remaining // 1000)
 
     def add_files(self, checked: bool = False):
         """Show a file dialogue and add selected files to the playlist."""
