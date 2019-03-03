@@ -33,7 +33,7 @@ class ForecastFetcher:
         try:
             self.owm.daily_forecast("New York")
         except UnauthorizedError:
-            raise AttributeError("The provided API key is not valid.")
+            raise AttributeError(f"The provided API key is not valid: {api_key}")
 
     def fetch_forecast_7_days(self, location: str,
                               unit: str) -> [Dict[str, str]]:
@@ -68,7 +68,7 @@ def format_forecast(weather: Weather, unit: str) -> Dict[str, str]:
     units = {'celsius', 'fahrenheit', 'kelvin'}
     unit_symbols = {'celsius': '°C', 'fahrenheit': '°F', 'kelvin': 'K'}
 
-    if unit not in units and unit == 'random':
+    if unit not in units and not unit == 'random':
         msg = "This is not a valid input unit, please enter one of the " \
               "following: {}"
         raise AttributeError(msg.format(' '.join(units)))
