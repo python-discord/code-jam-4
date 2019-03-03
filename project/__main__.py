@@ -30,6 +30,7 @@ class Weatherh8su:
         self.background_image = None #@Hotfix needs to get us background images!
         self.main_canvas = tk.Canvas(self.master)
         self.main_canvas.create_image(0, 0, image=self.background_image)
+        self.main_canvas.pack()
         self.top_frame = tk.Frame(self.main_canvas)
         self.top_frame.pack()
         self.glass = Image.open("data/glass.png")
