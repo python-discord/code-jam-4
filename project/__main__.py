@@ -1,12 +1,13 @@
 import logging
 import sys
+import os
 
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QMainWindow, QApplication, \
-    QHBoxLayout, QVBoxLayout, QWidget, QListWidgetItem
+    QHBoxLayout, QVBoxLayout, QWidget, QListWidgetItem, QFileDialog
 
 from project import ClipboardManager
 from project.ClipboardManager.ClipboardObject import TextClipboardObject, ImageClipboardObject
@@ -18,7 +19,8 @@ from project.Widgets.PluginsScreen import PluginsScreen
 from project.Widgets.SettingsScreen import SettingsScreen
 from project.TextEditor import Editor
 
-from .utils import CONSTANTS
+from project.utils import CONSTANTS
+from project.Plugins import Save
 
 
 class ActionBar(QWidget):
@@ -77,10 +79,6 @@ class MainWindow(QMainWindow):
     EDIT_BUTTON_NAME = 'edit_btn'
     MOVE_UP_BUTTON_NAME = 'move_up_btn'
     MOVE_DOWN_BUTTON_NAME = 'move_down_btn'
-
-    # please label what these are / relate to:
-    num_of_objects = 0
-    items = []
 
     def __init__(self, clipboard_manager: ClipboardManager):
         """ Initialises new MainWindow class """
@@ -173,26 +171,54 @@ class MainWindow(QMainWindow):
 
         self._central_widget_layout.addWidget(self._main_list_widget)
 
+        # Menu Bar
         self.menubar = self.menuBar()
-        self.menuFile = QtWidgets.QMenu(self.menubar)
-        self.menuFile.setObjectName("menuFile")
-        self.menuFile.setTitle("Settings")
 
+        # File Menu Bar
+        self.fileMenu = QtWidgets.QMenu(self.menubar)
+        self.fileMenu.setObjectName("fileMenu")
+        self.fileMenu.setTitle("File")
+
+        # Save:
+        self.saveOption = QtWidgets.QAction(self)
+        self.saveOption.setObjectName("saveOption")
+        self.saveOption.setText("Save current clipboard")
+        self.saveOption.triggered.connect(self._save)
+
+        self.fileMenu.addAction(self.saveOption)
+
+        # Load:
+        self.loadOption = QtWidgets.QAction(self)
+        self.loadOption.setObjectName("loadOption")
+        self.loadOption.setText("Load existing clipboard")
+        self.loadOption.triggered.connect(self._load)
+
+        self.fileMenu.addAction(self.loadOption)
+
+        self.menubar.addAction(self.fileMenu.menuAction())
+        
+        # Settings Menu Bar
+        self.settingsMenu = QtWidgets.QMenu(self.menubar)
+        self.settingsMenu.setObjectName("settingsMenu")
+        self.settingsMenu.setTitle("Settings")
+
+        # General Settings
         self.actionSettings = QtWidgets.QAction(self)
         self.actionSettings.setObjectName("actionSettings")
         self.actionSettings.setText("General")
         self.actionSettings.triggered.connect(self._show_settings_window)
 
-        self.menuFile.addAction(self.actionSettings)
+        self.settingsMenu.addAction(self.actionSettings)
 
+        # Plugin Settings        
         self.pluginSettings = QtWidgets.QAction(self)
         self.pluginSettings.setObjectName("actionPlugins")
         self.pluginSettings.setText('Plugins')
         self.pluginSettings.triggered.connect(self._show_plugins_window)
 
-        self.menuFile.addAction(self.pluginSettings)
+        self.settingsMenu.addAction(self.pluginSettings)
 
-        self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.settingsMenu.menuAction())
 
         self._central_widget.setLayout(self._central_widget_layout)
         self.setCentralWidget(self._central_widget)
@@ -208,9 +234,16 @@ class MainWindow(QMainWindow):
         if event.matches(QKeySequence.Paste):
             self._logger.info("Detected paste")
 
-    def closeEvent(self, event):
-        """ Fires on window close"""
-        pass
+    def _load(self):
+        """ Function to load stack"""
+        filename, _ = QFileDialog.getOpenFileName(self, 'Load Clipboard State', os.environ["HOMEPATH"], '*.json')
+        print(filename)
+        # Save.saveState() self._clipboard_manager.clipboard_stack.items())
+
+    def _save(self):
+        """ Function to save stack"""
+        filename, _ = QFileDialog.getSaveFileName(self, 'Save Clipboard State', os.environ["HOMEPATH"], '*.json')
+        Save.saveState(filename, self._clipboard_manager.clipboard_stack.items())
 
 
 if __name__ == '__main__':
@@ -219,7 +252,7 @@ if __name__ == '__main__':
     logger.info("App Started")
     app = QApplication(sys.argv)
 
-    app.setWindowIcon(QIcon("./project/icon.ico"))
+    app.setWindowIcon(QIcon(CONSTANTS["ICON_LOCATION"]))
 
     clipboard_mgr = ClipboardManager.ClipboardManager()
     main_window = MainWindow(clipboard_mgr)

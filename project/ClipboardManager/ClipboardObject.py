@@ -32,6 +32,12 @@ class TextClipboardObject(ClipboardObject):
     def set_text(self, text: str):
         self.text = text
 
+    def __str__(self):
+        return self.text
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class ImageClipboardObject(ClipboardObject):
 
@@ -47,3 +53,6 @@ class ImageClipboardObject(ClipboardObject):
     def __init__(self, pixmap: QPixmap):
         super().__init__()
         self.pixmap = pixmap
+
+    def getImage(self):
+        return self.pixmap
