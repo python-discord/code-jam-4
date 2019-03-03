@@ -8,6 +8,7 @@ flake8 = "*"
 
 [packages]
 nltk = "*"
+jamspell = "*"
 
 [requires]
 python_version = "3.7"
