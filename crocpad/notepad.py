@@ -191,7 +191,7 @@ class MainWindow(QMainWindow):
 
         Called by the Open File menu action."""
         filename = QFileDialog.getOpenFileName()[0]
-        with open(filename, 'r') as file:
+        with open(filename, 'r', encoding='utf-8') as file:
             self.text_window.setPlainText(file.read())
         self.filename = filename
         self.update_title()
@@ -202,7 +202,7 @@ class MainWindow(QMainWindow):
         Called by the Save File menu action."""
         filename = QFileDialog.getSaveFileName()[0]
         text = self.text_window.document().toPlainText()
-        with open(filename, 'w') as file:
+        with open(filename, 'w', encoding='utf-8') as file:
             file.write(text)
         self.filename = filename
         self.update_title()
