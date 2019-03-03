@@ -18,7 +18,7 @@ class ForecastFetcher:
     ff.fetch_forecast_7_days('Berlin', unit='Celsius')
 
     """
-    def __init__(self, api_key_path: str):
+    def __init__(self, api_key_path: str = 'OWM_API_KEY'):
         """Returns a ForecastFetcher object which fetched the weather for the
            next seven days.
 
@@ -83,6 +83,7 @@ def format_forecast(weather: Weather, unit: str) -> Dict[str, str]:
                           'max': 'highest',
                           'eve': 'evening',
                           'morn': 'morning'}
+
     for t in temperatures:
         key = temperature_naming.get(t, t) + ' temperature'
         output_dict[key] = str(temperatures[t]) + ' ' + unit_symbols[unit]
