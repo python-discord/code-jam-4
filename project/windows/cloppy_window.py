@@ -141,7 +141,11 @@ class CloppyWindow(tk.Toplevel):
                 traceback.print_exc()
 
             finally:
-                self.destroy()
+                try:
+                    self.destroy()
+
+                except tk.TclError:
+                    pass
 
     def show(self):
         """

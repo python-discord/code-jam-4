@@ -7,10 +7,14 @@ from tkinter import filedialog
 from project.functionality.constants import Constants
 from project.functionality.utility import pairwise
 
-from project.windows.editor_window_events import NewWordEvent
+from project.windows.editor_window_events import NewWordEvent, NewWordEventData
 
 from project.windows.cloppy_window import cloppy_yesno, CloppyButtonWindow
 from project.windows.cloppy_window_events import CloppyChoiceMadeEventData
+
+from project.windows.cloppy_spelling_window import CloppySpellingWindow
+
+from project.spelling.correction import is_correct
 
 
 class EditorWindow(tk.Toplevel):
@@ -51,6 +55,9 @@ class EditorWindow(tk.Toplevel):
         # testing/test_editor_window.py
         self.new_word = NewWordEvent()
 
+        # Register the on_new_word callback for the new_word event.
+        self.new_word.add_callback(self.on_new_word)
+
         # Setting up key press event binding.
         self.text_box.bind('<Key>', self.on_key_press)
 
@@ -75,6 +82,10 @@ class EditorWindow(tk.Toplevel):
 
         # Set window title.
         self.wm_title(Constants.program_name)
+
+        # Setting up window destruction event binding.
+        self.protocol('WM_DELETE_WINDOW', self.on_destroy)
+        # self.bind('<Destroy>', lambda e: None)
 
     def get_text(self, start='1.0', end=tk.END) -> str:
         """
@@ -560,6 +571,29 @@ class EditorWindow(tk.Toplevel):
         context_menu.show()
         return 'break'
 
+    def on_new_word(self, word_data: NewWordEventData):
+        word_data.word = word_data.word.lower()
+        if not is_correct(word_data.word.lower()):
+            CloppySpellingWindow(self, word_data).show()
+
+    def on_destroy(self):
+        def destroy_window(choice_data: CloppyChoiceMadeEventData):
+            if choice_data.choice == 'Yes':
+                try:
+                    self.master.destroy()
+
+                except tk.TclError:
+                    pass
+
+        cloppy_yesno(
+            self,
+            "It looks like you're about to exit the program.\n"
+            "If you do this you might lose any unsaved work.",
+            destroy_window
+        ).show()
+
+        return "break"
+
 
 class EditorMenuBar(tk.Menu):
     """
@@ -649,7 +683,7 @@ class EditorFileMenu(EditorMenu):
         """
         Called when the user selects the 'Exit' option in the File menu.
         """
-        self.master.editor_window.destroy()
+        self.master.editor_window.on_destroy()
 
 
 class EditorEditMenu(EditorMenu):

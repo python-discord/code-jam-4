@@ -81,9 +81,9 @@ def graphemes(word):
 
             crop_length = 0
 
-            # Algorithm to "carry" silent/vowels to consonants to last consonant,
-            # since the consonant algorithm is lazy and gets the shortest
-            # string possible
+            # Algorithm to "carry" silent/vowels to consonants to last
+            # consonant, since the consonant algorithm is lazy and gets the
+            # shortest string possible.
             if len(final) > 0:
                 consonant = final[-1]
 
@@ -96,9 +96,11 @@ def graphemes(word):
                 if new_consonant is not None:
                     # The amount of letters copied over from the extra letters
                     # to the new consonant
-                    letters_from_extra = len(new_consonant) - len(consonant.letters)
-                    # We need to delete more letters from "word" since we're editing
-                    # "extra", so add those letters back again
+                    letters_from_extra = (
+                        len(new_consonant) - len(consonant.letters)
+                    )
+                    # We need to delete more letters from "word" since we're
+                    # editing "extra", so add those letters back again
                     crop_length += letters_from_extra
                     # Delete carried letters from "extra"
                     extra.letters = extra.letters[letters_from_extra:]
@@ -159,7 +161,7 @@ def misspell(word, errors=1):
     try:
         # Check if the word can be mapped to graphemes
         word_graphemes = graphemes(word)
-    except:
+    except Exception:
         # It can't - this either means the word doesn't have an
         # entry in the dictionary or the word just behaves weirdly
         # (e.g. "aaa" maps to "triple a" in pronunciation).
@@ -169,7 +171,9 @@ def misspell(word, errors=1):
     misspellings = set()
 
     for _ in range(errors):
-        value = int(random.random() * len([x for x in word_graphemes if x.phoneme]))
+        value = int(
+            random.random() * len([x for x in word_graphemes if x.phoneme])
+        )
         misspellings.add(value)
 
     current_consonant = 0
@@ -194,8 +198,14 @@ def misspell(word, errors=1):
             else:
                 possible = consonants.replace_middle[grapheme.phoneme]
 
-            possible = {k: v for k, v in possible.items() if k != grapheme.letters}
-            final_word += random_consonant(possible)
+            possible = {
+                k: v for k, v in possible.items() if k != grapheme.letters
+            }
+            try:
+                final_word += random_consonant(possible)
+
+            except TypeError:
+                break
 
             current_consonant += 1
 
