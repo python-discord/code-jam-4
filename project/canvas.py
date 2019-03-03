@@ -3,6 +3,7 @@ This module contains the canvas and entry section items that fill
 the normal tk window (located in __main__.py)
 """
 
+from io import BytesIO
 import typing
 import pathlib
 import random
@@ -218,6 +219,7 @@ class Canvas(tk.AsyncCanvas):
         width: int,
     ):
         self.frame = None
+        self.read_nums = 1
 
         if height > 600 or width > 600:
 
@@ -294,7 +296,25 @@ class Canvas(tk.AsyncCanvas):
 
     async def save(self, file: typing.Union[str, pathlib.Path]):
         """Shortcut to save the PIL file"""
-        self.pil_image.save(file)
+        # Get the file extension
+        ext = str(file).split(".")[-1]
+        buffer = io.BytesIO()
+        
+        # Save into buffer
+        self.pil_image.save(buffer, format=ext)
+
+        # Find out how many bytes the file holds, and reset file pointer
+        max_bytes = buffer.tell()
+        buffer.seek(0)
+        
+        with open(file, "wb") as fp:
+            # Write one more byte since it was last saved
+            fp.write(buffer.read(self.read_nums))
+
+        # We've written all bytes, reset the counter
+        if self.read_nums >= max_bytes:
+            self.read_nums = 0
+        self.read_nums += 1
 
     def forget(self):
         """Shortcut to remove the canvas from the main window"""
