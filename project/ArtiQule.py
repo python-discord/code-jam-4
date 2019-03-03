@@ -398,7 +398,8 @@ class PaintBoard(QMainWindow):
 
                 # this here is to add more realism
                 # to the point when its breaking
-                if self.currentTool.duration <= 0.2 and self.currentTool.toolName != \
+                if self.currentTool.duration <= 0.2 \
+                        and self.currentTool.toolName != \
                         'A bucket' or 'Sunbathing Eraser':
                     dots = QPen()
                     broken_tools = QPen()
