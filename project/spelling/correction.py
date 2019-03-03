@@ -54,8 +54,9 @@ def correction(word):
             dist2_word = current_word
             dist2_freq = current_freq
 
+    # No possible corrections - just return the word
     if dist0_freq == dist1_freq == dist2_freq == 0:
-        raise NameError(f"Word {word} cannot be corrected")
+        return word
 
     if len(word) < 6:
         if dist2_freq >= dist1_freq * short_coeff:

@@ -19,9 +19,6 @@ class Grapheme:
 
 
 def phonemes(word):
-    if word not in arpabet.keys():
-        raise NameError(f"Word {word} does not have a pronunciation in the dictionary")
-
     final = ",".join(arpabet[word][0])
 
     final = final.replace("K,S", "KS")
@@ -158,7 +155,17 @@ def misspell(word, errors=1):
     :return:
     """
     final_word = ""
-    word_graphemes = graphemes(word)
+
+    try:
+        # Check if the word can be mapped to graphemes
+        word_graphemes = graphemes(word)
+    except:
+        # It can't - this either means the word doesn't have an
+        # entry in the dictionary or the word just behaves weirdly
+        # (e.g. "aaa" maps to "triple a" in pronunciation).
+        # Either way, return the original word.
+        return word
+
     misspellings = set()
 
     for _ in range(errors):
