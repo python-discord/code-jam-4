@@ -128,6 +128,9 @@
      </item>
      <item row="3" column="1">
       <widget class="QLCDNumber" name="min_lcd">
+       <property name="toolTip">
+        <string>The minutes, in octal, of the position to seek.</string>
+       </property>
        <property name="digitCount">
         <number>2</number>
        </property>
@@ -151,6 +154,9 @@
      </item>
      <item row="3" column="2">
       <widget class="QLCDNumber" name="sec_lcd">
+       <property name="toolTip">
+        <string>The seconds, in octal, of the position to seek.</string>
+       </property>
        <property name="digitCount">
         <number>2</number>
        </property>
@@ -161,6 +167,9 @@
      </item>
      <item row="3" column="0">
       <widget class="QLCDNumber" name="hour_lcd">
+       <property name="toolTip">
+        <string>The hours, in octal, of the position to seek.</string>
+       </property>
        <property name="digitCount">
         <number>3</number>
        </property>

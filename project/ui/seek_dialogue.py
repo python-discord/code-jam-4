@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'qt/seekdialogue.ui',
 # licensing of 'qt/seekdialogue.ui' applies.
 #
-# Created: Sun Mar  3 04:22:11 2019
+# Created: Sun Mar  3 05:41:17 2019
 #      by: pyside2-uic  running on PySide2 5.12.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -104,4 +104,7 @@ class Ui_SeekDialogue(object):
         self.hour_label.setText(QtWidgets.QApplication.translate("SeekDialogue", "Hours", None, -1))
         self.sec_label.setText(QtWidgets.QApplication.translate("SeekDialogue", "Seconds", None, -1))
         self.min_label.setText(QtWidgets.QApplication.translate("SeekDialogue", "Minutes", None, -1))
+        self.min_lcd.setToolTip(QtWidgets.QApplication.translate("SeekDialogue", "The minutes, in octal, of the position to seek.", None, -1))
+        self.sec_lcd.setToolTip(QtWidgets.QApplication.translate("SeekDialogue", "The seconds, in octal, of the position to seek.", None, -1))
+        self.hour_lcd.setToolTip(QtWidgets.QApplication.translate("SeekDialogue", "The hours, in octal, of the position to seek.", None, -1))
 
