@@ -7,8 +7,6 @@ from PyQt5.QtGui import (QColor, QCursor, QIcon, QImage, QPainter,
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog,
                              QMainWindow, QPushButton,)
 
-# QBrush
-
 """
 Hover on QPaint detection
 def paintEvent(self, event):
@@ -23,7 +21,7 @@ def paintEvent(self, event):
 
 
 class ColorBox(QMainWindow):
-    """ """
+    """ This window holds all the color pallettes"""
     objs = []
 
     def __init__(self, parent=None):
@@ -60,6 +58,7 @@ class ColorBox(QMainWindow):
 
     @classmethod
     def setWindowCursor(cls, currentTool):
+        """Connects Canvas window with colorBox window"""
 
         for obj in cls.objs:
             obj.setCursor(QCursor(QPixmap("Design/icons/{}.png".format(
@@ -121,7 +120,7 @@ class Tool:
 
 
 class PalletteButton:
-    """Class for color pallete; allows for mixing color"""
+    """Class for color pallete; allows for mixing colors"""
     def __init__(self, parentBtn):
         self.parentBtn = parentBtn
         self.r = randint(0, 255)
@@ -135,6 +134,12 @@ class PalletteButton:
 
 
     def mixColor(self, tool):
+        """Mixes colors from tool holding the color
+           NO COLOR IN TOOL: Pick up color pallette color
+               IS TOOL BUCKET: empties palette
+           COLOR IN TOOL: Mix pallette and tool color;
+               IS BUCKET: mixes
+        """
         if tool is None or tool.toolName in \
                 ("Pointy Pen", "Pointy Pen Broken", "Sunbathing Eraser"):
             return None
@@ -155,8 +160,6 @@ class PalletteButton:
                 self.g = (self.g + tool.color.green()) // 2
                 self.b = (self.b + tool.color.blue()) // 2
             elif tool.toolName == "A bucket filled":
-                # TODO: bucket has to be able to
-                # overflow other color pallette
                 self.r = (self.r + tool.color.red()) // 4
                 self.g = (self.g + tool.color.green()) // 4
                 self.b = (self.b + tool.color.blue()) // 4
@@ -196,13 +199,13 @@ class PaintBoard(QMainWindow):
         self.Setup()
 
     def Setup(self):
+
         self.canvas = QImage(self.size(), QImage.Format_RGB32)
         self.canvas.fill(Qt.white)
         self.connectTool()
         self.painter = QPainter(self.canvas)
 
-        # TODO: custom paintPatterns
-
+        ## MENUBARS ##
         mainMenu = self.menuBar()
 
         fileMenu = mainMenu.addMenu('File')
@@ -234,6 +237,8 @@ class PaintBoard(QMainWindow):
         open_file_action.triggered.connect(self.openFile)
         save_file_action.triggered.connect(self.saveFile)
         exit_action.triggered.connect(self.exit)
+
+        ## TOOLBAR AND WITH TOOL ICONS ##
 
         self.toolbar = self.addToolBar("Toolbar")
         self.toolbar.setStyleSheet('background-color: white')
@@ -274,7 +279,8 @@ class PaintBoard(QMainWindow):
                                     )
 
         self.sunbathing_eraser = Tool("Sunbathing Eraser", 10, Qt.white,
-                           [0, 0, 0, 0.0], self, "", "Ctrl+F",
+                           [0, 0, 0, 0.0], self, "Design/icons/Sunbathing Eraser",
+                                      "Ctrl+F",
                            "Erase Your Mistakes, Kid!",
                            (99999, 99999))  # infinte duration
 
@@ -304,9 +310,7 @@ class PaintBoard(QMainWindow):
                                                  )
                     )))
 
-    # TODO: make a variable self.currentTool
-    #  that'll hold the current selected tool, i fixed the class
-    # TODO: check if window already exists if not make one
+
     def colorBoxRun(self):
 
         self.colorBox = ColorBox(self)
@@ -422,33 +426,27 @@ class PaintBoard(QMainWindow):
                 if self.currentTool.toolName == "Pointy Pen":
                     Pen.setCapStyle(Qt.RoundCap)
                     Pen.setJoinStyle(Qt.MiterJoin)
-                    Pen.setWidth(self.currentTool.brushSize)
                 elif "Brush" in self.currentTool.toolName:
-                    Pen = QBrush()
                     if self.currentTool.toolName == "Straggly Paintbrush":
-                        Pen.setStyle(Qt.HorPattern)
+                        # TODO: this should more be like a brush
+                        Pen.setCapStyle(Qt.SquareCap)
+                        Pen.setJoinStyle(Qt.MiterJoin)
                     else:
                         pass
                 Pen.setColor(self.currentTool.color)
+                Pen.setWidth(self.currentTool.brushSize)
 
                 self.painter.setOpacity(self.currentTool.opacityDuration)
-                self.painter.setPen(Pen) if Pen is QPen else \
-                    self.painter.setBrush(Pen)
+                self.painter.setPen(Pen)
                 if self.currentTool.duration <= 0:
                     if self.currentTool.toolName == "Pointy Pen":
                         self.setCursor(QCursor(
                             QPixmap("Design/icons/Pointy Pen Broken.png")))
 
-            try:
-                self.painter.drawLine(self.lastPoint, event.pos()) if Pen is QPen \
-                else self.painter.drawRect(event.x(), event.y(), 100, 100)
+                self.painter.drawLine(self.lastPoint, event.pos())
                 self.lastPoint = event.pos()
                 self.update()
-            except Exception as ex:
-                template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-                message = template.format(type(ex).__name__, ex.args)
-                print(message)
-            print(self.currentTool.duration, self.currentTool.opacityDuration)
+
         else:
             return None
 

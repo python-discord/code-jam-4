@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list id="40218802-4901-446d-8996-5c61197f1f95" name="Revert: NEW: - changed changePaintAreaVars into connectTool and deleted all except the self instance argument; - managed to make the tools change color, at least in value" comment="" />
-    <list default="true" id="b3fadb6e-a4f7-45b3-8f6e-9b28d34a2c00" name="Default Changelist" comment="fixed serious bug regarding color mixing">
+    <list default="true" id="b3fadb6e-a4f7-45b3-8f6e-9b28d34a2c00" name="Default Changelist" comment="made the opacity drop while using brushes; started to transform brushes into QBrushes and found some pretty cool art things (I'll have this commit so I can access this interesting thing)">
+      <change afterPath="$PROJECT_DIR$/project/Design/icons/Sunbathing Eraser.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/ArtiQule.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/ArtiQule.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/Design/icons/Straggly Paintbrush.png" beforeDir="false" afterPath="$PROJECT_DIR$/project/Design/icons/Straggly PaintBrush.png" afterDir="false" />
     </list>
+    <list id="40218802-4901-446d-8996-5c61197f1f95" name="Revert: NEW: - changed changePaintAreaVars into connectTool and deleted all except the self instance argument; - managed to make the tools change color, at least in value" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,8 +20,8 @@
       <file leaf-file-name="ArtiQule.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/project/ArtiQule.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="424">
-              <caret line="443" column="54" selection-start-line="443" selection-start-column="54" selection-end-line="443" selection-end-column="54" />
+            <state relative-caret-position="288">
+              <caret line="429" column="65" selection-start-line="429" selection-start-column="65" selection-end-line="429" selection-end-column="65" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
                 <element signature="e#10959#13068#0" />
@@ -50,8 +52,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>PalletteButton</find>
-      <find>currentTool</find>
       <find>exists</find>
       <find>eraser</find>
       <find>self.currentBrush</find>
@@ -80,6 +80,8 @@
       <find>constDuration</find>
       <find>setpen</find>
       <find>space</find>
+      <find>straggly paintbrush</find>
+      <find>sunbathing eraser</find>
     </findStrings>
     <replaceStrings>
       <replace>QAction</replace>
@@ -92,8 +94,8 @@
       <replace>ColorPicker</replace>
       <replace>brush</replace>
       <replace>self.palletteColor</replace>
-      <replace>Straggly PaintBrush</replace>
       <replace>Sunbathing Eraser</replace>
+      <replace>Straggly PaintBrush</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -270,7 +272,14 @@
       <option name="project" value="LOCAL" />
       <updated>1551563109504</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="made the opacity drop while using brushes; started to transform brushes into QBrushes and found some pretty cool art things (I'll have this commit so I can access this interesting thing)">
+      <created>1551617142434</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1551617142434</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TodoView">
@@ -294,7 +303,7 @@
       <window_info anchor="bottom" id="Python Console" order="10" />
       <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49776787" visible="true" weight="0.1650165" />
       <window_info id="Structure" order="1" sideWeight="0.5010482" side_tool="true" weight="0.1108631" />
-      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32838285" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3349835" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -351,7 +360,8 @@
     <MESSAGE value="duration timing works now, without toolDead; fill tool now empties pallettes; ERROR: fill tool on other colors doesn't work after first try." />
     <MESSAGE value="color pallette now updates upon changing color!!!" />
     <MESSAGE value="fixed serious bug regarding color mixing" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed serious bug regarding color mixing" />
+    <MESSAGE value="made the opacity drop while using brushes; started to transform brushes into QBrushes and found some pretty cool art things (I'll have this commit so I can access this interesting thing)" />
+    <option name="LAST_COMMIT_MESSAGE" value="made the opacity drop while using brushes; started to transform brushes into QBrushes and found some pretty cool art things (I'll have this commit so I can access this interesting thing)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -576,7 +586,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/project/Design/icons/Straggly Paintbrush.png">
+    <entry file="file://$PROJECT_DIR$/project/Design/icons/Straggly PaintBrush.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
     <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/301484422/PyQt5/QtGui/QPen.py">
@@ -595,8 +605,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/project/ArtiQule.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="424">
-          <caret line="443" column="54" selection-start-line="443" selection-start-column="54" selection-end-line="443" selection-end-column="54" />
+        <state relative-caret-position="288">
+          <caret line="429" column="65" selection-start-line="429" selection-start-column="65" selection-end-line="429" selection-end-column="65" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
             <element signature="e#10959#13068#0" />
