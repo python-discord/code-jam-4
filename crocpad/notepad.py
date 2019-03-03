@@ -199,7 +199,7 @@ class MainWindow(QMainWindow):
                     dlg.show()
                     dlg.close()
             if random.random() > 0.9:
-                troubleshooter = Troubleshooter()  # pester the user with an obnoxious troubleshooter
+                troubleshooter = Troubleshooter()  # pester the user with a troubleshooter
                 troubleshooter.exec()
         return False  # imitate overridden method
 
