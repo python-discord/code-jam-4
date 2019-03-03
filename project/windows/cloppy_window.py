@@ -197,12 +197,30 @@ class CloppyButtonWindow(CloppyWindow):
         self.choice_buttons[choice].focus_set()
 
     def on_up_key(self, event: tk.Event):
+        """
+        Called when the user presses the Up arrow key when focused on the
+        Cloppy dialog.
+
+        :param event: tkinter event data.
+        """
         self.set_highlighted_choice(self.highlighted_choice-1)
 
     def on_down_key(self, event: tk.Event):
+        """
+        Called when the user presses the Down arrow key when focused on the
+        Cloppy dialog.
+
+        :param event: tkinter event data.
+        """
         self.set_highlighted_choice(self.highlighted_choice+1)
 
     def on_enter_key(self, event: tk.Event):
+        """
+        Called when the user presses the Enter key when focused on the
+        Cloppy dialog.
+
+        :param event: tkinter event data.
+        """
         self.choice_buttons[self.highlighted_choice].invoke()
 
 

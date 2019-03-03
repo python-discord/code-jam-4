@@ -5,6 +5,7 @@ class NewWordEvent(Event):
     """
     This class represent an event emitter for new word events.
     These are emitted every time the user is detected to have typed a word.
+
     It passes data to its callbacks using a NewWordEventData object.
     These will contain information about the word's contents, and its
     starting and ending indexes.
