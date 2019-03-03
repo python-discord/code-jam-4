@@ -1,6 +1,7 @@
 import random
-from tkinter import *
-from tkinter.ttk import *
+from tkinter import Tk, Frame, Listbox, Button, Label, Scrollbar, VERTICAL, END, SINGLE, NONE, \
+    StringVar, Radiobutton, Toplevel, N, S, E, W
+from tkinter.ttk import Notebook
 from project.contact import Contact
 import pickle
 from project.WheelSpinner.WheelSpinner import WheelSpinner
@@ -11,7 +12,8 @@ from project.AlphabetGuesser.AlphabetGuesserInter import AlphabetGuesserInter
 class Controller(Tk):
     """
     Controller Class:
-    - Serves as a hub for every page contained in the UI, allows for the flow of information between pages
+    - Serves as a hub for every page contained in the UI, allows for the flow of information between
+        pages
     - Acts as the container for ContactsPage, and AddContactsPage by making use of ttk.Notebook
 
     === Public Attributes ===
@@ -23,6 +25,7 @@ class Controller(Tk):
     === Methods ===
     None
     """
+
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
         self.resizable(False, False)
@@ -36,7 +39,7 @@ class Controller(Tk):
         self.frames = {}
 
         self.notebook = Notebook(self)
-        self.notebook.grid(row=0, column=0, columnspan=5, rowspan=5, sticky=N+S+E+W)
+        self.notebook.grid(row=0, column=0, columnspan=5, rowspan=5, sticky=N + S + E + W)
 
         for page in [ContactsPage, AddContactPage]:
             frame = page(self.notebook, self)
@@ -92,8 +95,10 @@ class ContactsPage(Frame):
     load_contacts: Loads contacts in from a file
     save_contacts: Saves contacts as a file
     yview: Adjusts the view of contacts_field & letters_field at the same time
-    on_mouse_wheel: Adjusts the view of contacts_field and letters_field at the same time, for the mouse wheel
+    on_mouse_wheel: Adjusts the view of contacts_field and letters_field at the same time, for the
+        mouse wheel
     """
+
     def __init__(self, master, controller, **kw):
         super().__init__(master, **kw)
         self.master = master
@@ -104,8 +109,8 @@ class ContactsPage(Frame):
         # Initialize object names
         self.contacts_list = {}
         self.current_contact = None
-        self.alphabetical_order = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-                                   'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+        self.alphabetical_order = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+                                   'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
         self.scroll_bar = None
         self.contacts_field = None
@@ -132,10 +137,10 @@ class ContactsPage(Frame):
         )
 
         self.delete = Button(self, text="Delete", command=lambda: self.delete_contact())
-        self.delete.grid(row=2, column=3, columnspan=3, sticky=N+S+E+W)
+        self.delete.grid(row=2, column=3, columnspan=3, sticky=N + S + E + W)
 
         self.show_info = Button(self, text="Show Info", command=lambda: self.show_contact_info())
-        self.show_info.grid(row=2, column=0, columnspan=3, sticky=N+S+E+W)
+        self.show_info.grid(row=2, column=0, columnspan=3, sticky=N + S + E + W)
 
         wheel_spin_options = ['Name', 'Home Phone Numbers', 'Work Phone Numbers',
                               'Personal Phone Numbers', 'Emails', 'Home Addresses', 'Notes']
@@ -157,9 +162,9 @@ class ContactsPage(Frame):
         )
 
         self.letters_field.bind('<<ListboxSelect>>', self.scroll_to_letter)
-        self.contacts_field.grid(row=1, column=0, columnspan=5, sticky=N+S+E+W)
-        self.letters_field.grid(row=1, column=4, sticky=N+S+E+W)
-        self.scroll_bar.grid(row=1, column=5, sticky=N+S+E+W)
+        self.contacts_field.grid(row=1, column=0, columnspan=5, sticky=N + S + E + W)
+        self.letters_field.grid(row=1, column=4, sticky=N + S + E + W)
+        self.scroll_bar.grid(row=1, column=5, sticky=N + S + E + W)
         self.scroll_bar.config(command=self.yview)
         self.contacts_field.bind("<MouseWheel>", self.on_mouse_wheel)
         self.letters_field.bind("<MouseWheel>", self.on_letter_mouse_wheel)
@@ -169,14 +174,14 @@ class ContactsPage(Frame):
             text="Save Contacts",
             command=lambda: self.save_contacts()
         )
-        self.save.grid(row=0, column=3, columnspan=4, sticky=N+S+E+W)
+        self.save.grid(row=0, column=3, columnspan=4, sticky=N + S + E + W)
 
         self.load = Button(
             self,
             text="Load Contacts",
             command=lambda: self.load_contacts()
         )
-        self.load.grid(row=0, column=0, columnspan=3, sticky=N+S+E+W)
+        self.load.grid(row=0, column=0, columnspan=3, sticky=N + S + E + W)
 
         for i in range(3):
             self.grid_rowconfigure(i, weight=1)
@@ -197,7 +202,7 @@ class ContactsPage(Frame):
         self.letters_field.selection_clear(0, END)
 
     def on_mouse_wheel(self, event) -> str:
-        self.contacts_field.yview("scroll", int(-event.delta/80), "units")
+        self.contacts_field.yview("scroll", int(-event.delta / 80), "units")
         return "break"
 
     def on_letter_mouse_wheel(self, event) -> str:
@@ -242,7 +247,8 @@ class ContactsPage(Frame):
 
     def show_contact_info(self) -> None:
         """
-        This method shows the spinning wheel if a contact is selected and if the wheel isn't already rotating
+        This method shows the spinning wheel if a contact is selected and if the wheel isn't already
+            rotating
         It is called on the Show Contact Info button.
         :return: None
         """
@@ -255,8 +261,8 @@ class ContactsPage(Frame):
 
     def show_winning_info(self, event) -> None:
         """
-        This method is called when the event <<Finish Spinning Wheel>> is invoked. It displays the current contact
-        information that was selected by the spinning wheel.
+        This method is called when the event <<Finish Spinning Wheel>> is invoked. It displays the
+        current contact information that was selected by the spinning wheel.
         :return: None
         """
         self.randomize_alphabetical_order()
@@ -294,7 +300,8 @@ class ContactsPage(Frame):
 
     def order_contact(self) -> list:
         """
-        This function takes all the contacts and order them in the order stored in self.alphabetical_order
+        This function takes all the contacts and order them in the order stored in self.alphabetical
+        order
         :return: The ordered list
         """
         i = 0
@@ -309,19 +316,23 @@ class ContactsPage(Frame):
                 if current_next_contact is None:
                     current_next_contact = contact
                     continue
-                # If the first letter is higher in the order than the current next contact, we change the contact.
+                # If the first letter is higher in the order than the current next contact, we
+                # change the contact.
                 if order.index(contact[0].lower()) < order.index(current_next_contact[0].lower()):
                     current_next_contact = contact
                     continue
 
-                # If the first character is the same, we loop through the other character to find which on should be
+                # If the first character is the same, we loop through the other character to find
+                # which on should be
                 # added first.
                 if order.index(contact[0].lower()) == order.index(current_next_contact[0].lower()):
                     for current_character in range(1, min(len(contact), len(current_next_contact))):
-                        if order.index(contact[current_character].lower()) < order.index(current_next_contact[current_character].lower()):
+                        if order.index(contact[current_character].lower()) < \
+                                order.index(current_next_contact[current_character].lower()):
                             current_next_contact = contact
                             break
-                        if order.index(contact[current_character].lower()) > order.index(current_next_contact[current_character].lower()):
+                        if order.index(contact[current_character].lower()) > \
+                                order.index(current_next_contact[current_character].lower()):
                             break
             # we append the contact to the list and remove it from the remaining contact to order.
             contacts.remove(current_next_contact)
@@ -331,7 +342,8 @@ class ContactsPage(Frame):
 
     def __on_visibility(self, event) -> None:
         """
-        This function is called when the user click on the contact tab. It randomizes the alphabetical order
+        This function is called when the user click on the contact tab. It randomizes the
+        alphabetical order
         :param event:
         :return: None
         """
@@ -390,8 +402,10 @@ class AddContactPage(Frame):
     add_email: Adds the email to the new contact and updates the preview
     add_address: Adds the address to the new contact and updates the preview
     add_notes: Adds the note to the new contact and updates the preview
-    refresh_field: Clears the field then populates it with all the current information of the new contact
+    refresh_field: Clears the field then populates it with all the current information of the new
+    contact
     """
+
     def __init__(self, master, controller, **kw):
         super().__init__(master, **kw)
         self.master = master
@@ -445,17 +459,20 @@ class AddContactPage(Frame):
             yscrollcommand=self.preview_scroll.set
         )
         self.preview_scroll.config(command=self.preview.yview)
-        self.preview.grid(row=8, column=0, columnspan=5, sticky=N+S+E+W)
-        self.preview_scroll.grid(row=8, column=5, sticky=N+S+E+W)
+        self.preview.grid(row=8, column=0, columnspan=5, sticky=N + S + E + W)
+        self.preview_scroll.grid(row=8, column=5, sticky=N + S + E + W)
 
-        self.add_to_contacts = Button(self, text="Submit to Contacts", command=lambda: self.add_contact())
-        self.add_to_contacts.grid(row=7, column=0, columnspan=2, sticky=N+S+E+W)
+        self.add_to_contacts = Button(self, text="Submit to Contacts",
+                                      command=lambda: self.add_contact())
+        self.add_to_contacts.grid(row=7, column=0, columnspan=2, sticky=N + S + E + W)
 
         self.clear = Button(self, text="Clear All", command=lambda: self.clear_all())
-        self.clear.grid(row=7, column=2, sticky=N+S+E+W)
+        self.clear.grid(row=7, column=2, sticky=N + S + E + W)
 
         self.enter_notes = Label(self, text="Click here to add a note.", relief="sunken")
-        self.enter_notes.bind("<Button-1>", lambda event, arg=self.enter_notes: self.input_text(event, arg, "Notes"))
+        self.enter_notes.bind("<Button-1>",
+                              lambda event,
+                              arg=self.enter_notes: self.input_text(event, arg, "Notes"))
         self.enter_notes_label = Label(self, text="Notes:")
         self.enter_notes_button = Button(
             self,
@@ -463,13 +480,14 @@ class AddContactPage(Frame):
             command=lambda: self.add_notes(self.enter_notes['text']),
             width=5
         )
-        self.enter_notes_button.grid(row=6, column=4, columnspan=2, sticky=N+S+E+W)
-        self.enter_notes_label.grid(row=6, column=0, sticky=N+S+E+W)
-        self.enter_notes.grid(row=6, column=1, columnspan=3, sticky=N+S+E+W)
+        self.enter_notes_button.grid(row=6, column=4, columnspan=2, sticky=N + S + E + W)
+        self.enter_notes_label.grid(row=6, column=0, sticky=N + S + E + W)
+        self.enter_notes.grid(row=6, column=1, columnspan=3, sticky=N + S + E + W)
 
         self.enter_address = Label(self, text="Click here to add an address.", relief="sunken")
         self.enter_address.bind("<Button-1>",
-                                lambda event, arg=self.enter_address: self.input_text(event, arg, "Address"))
+                                lambda event, arg=self.enter_address: self.input_text(event, arg,
+                                                                                      "Address"))
         self.enter_address_label = Label(self, text="Address")
         self.enter_address_button = Button(
             self,
@@ -477,12 +495,14 @@ class AddContactPage(Frame):
             command=lambda: self.add_address(self.enter_address['text']),
             width=5
         )
-        self.enter_address_label.grid(row=5, column=0, sticky=N+S+E+W)
-        self.enter_address.grid(row=5, column=1, columnspan=3, sticky=N+S+E+W)
-        self.enter_address_button.grid(row=5, column=4, columnspan=2, sticky=N+S+E+W)
+        self.enter_address_label.grid(row=5, column=0, sticky=N + S + E + W)
+        self.enter_address.grid(row=5, column=1, columnspan=3, sticky=N + S + E + W)
+        self.enter_address_button.grid(row=5, column=4, columnspan=2, sticky=N + S + E + W)
 
         self.enter_email = Label(self, text="Click here to add an email.", relief="sunken")
-        self.enter_email.bind("<Button-1>", lambda event, arg=self.enter_email: self.input_text(event, arg, "Email"))
+        self.enter_email.bind("<Button-1>",
+                              lambda event, arg=self.enter_email: self.input_text(event, arg,
+                                                                                  "Email"))
         self.enter_email_label = Label(self, text="Email:")
         self.enter_email_button = Button(
             self,
@@ -490,9 +510,9 @@ class AddContactPage(Frame):
             command=lambda: self.add_email(self.enter_email['text']),
             width=5
         )
-        self.enter_email_label.grid(row=4, column=0, sticky=N+S+E+W)
-        self.enter_email.grid(row=4, column=1, columnspan=3, sticky=N+S+E+W)
-        self.enter_email_button.grid(row=4, column=4, columnspan=2, sticky=N+S+E+W)
+        self.enter_email_label.grid(row=4, column=0, sticky=N + S + E + W)
+        self.enter_email.grid(row=4, column=1, columnspan=3, sticky=N + S + E + W)
+        self.enter_email_button.grid(row=4, column=4, columnspan=2, sticky=N + S + E + W)
 
         # PLACEHOLDER FOR ACTUAL PHONE NUMBER ENTRY
         self.enter_phone_num = Label(self, text="###-###-####", relief="sunken")
@@ -501,22 +521,24 @@ class AddContactPage(Frame):
         phone_type_var = StringVar()
         self.phone_type_home = Radiobutton(self, text="Home", variable=phone_type_var, value="Home")
         self.phone_type_work = Radiobutton(self, text="Work", variable=phone_type_var, value="Work")
-        self.phone_type_personal = Radiobutton(self, text="Personal", variable=phone_type_var, value="Personal")
+        self.phone_type_personal = Radiobutton(self, text="Personal", variable=phone_type_var,
+                                               value="Personal")
         self.enter_phone_num_button = Button(
             self,
             text="Add",
             command=lambda: self.add_phone_num(phone_type_var.get(), self.enter_phone_num['text']),
             width=5
         )
-        self.enter_phone_num_label.grid(row=2, column=0, sticky=N+S+E+W)
-        self.enter_phone_num.grid(row=2, column=1, columnspan=3, sticky=N+S+E+W)
-        self.phone_type_home.grid(row=3, column=0, sticky=N+S+E+W)
-        self.phone_type_work.grid(row=3, column=1, sticky=N+S+E+W)
-        self.phone_type_personal.grid(row=3, column=2, sticky=N+S+E+W)
-        self.enter_phone_num_button.grid(row=2, column=4, columnspan=2, sticky=N+S+E+W)
+        self.enter_phone_num_label.grid(row=2, column=0, sticky=N + S + E + W)
+        self.enter_phone_num.grid(row=2, column=1, columnspan=3, sticky=N + S + E + W)
+        self.phone_type_home.grid(row=3, column=0, sticky=N + S + E + W)
+        self.phone_type_work.grid(row=3, column=1, sticky=N + S + E + W)
+        self.phone_type_personal.grid(row=3, column=2, sticky=N + S + E + W)
+        self.enter_phone_num_button.grid(row=2, column=4, columnspan=2, sticky=N + S + E + W)
 
         self.enter_name = Label(self, text="Click here to add a name.", relief="sunken")
-        self.enter_name.bind("<Button-1>", lambda event, arg=self.enter_name: self.input_text(event, arg, "Name"))
+        self.enter_name.bind("<Button-1>",
+                             lambda event, arg=self.enter_name: self.input_text(event, arg, "Name"))
         self.enter_name_label = Label(self, text="Name:")
         self.enter_name_button = Button(
             self,
@@ -524,9 +546,9 @@ class AddContactPage(Frame):
             command=lambda: self.add_name(self.enter_name['text']),
             width=5
         )
-        self.enter_name_button.grid(row=1, column=4, columnspan=2, sticky=N+S+E+W)
-        self.enter_name_label.grid(row=1, column=0, sticky=N+S+E+W)
-        self.enter_name.grid(row=1, column=1, columnspan=3, sticky=N+S+E+W)
+        self.enter_name_button.grid(row=1, column=4, columnspan=2, sticky=N + S + E + W)
+        self.enter_name_label.grid(row=1, column=0, sticky=N + S + E + W)
+        self.enter_name.grid(row=1, column=1, columnspan=3, sticky=N + S + E + W)
 
         for i in range(8):
             self.grid_rowconfigure(i, weight=1)
@@ -570,6 +592,7 @@ class AddContactPage(Frame):
             # self.controller.show()
             self.enter_phone_num['text'] = phone.get_complete_phone_number()
             new_window.destroy()
+
         new_window.bind("<<Phone Number Complete>>", send_phone_input)
         new_window.wm_protocol("WM_DELETE_WINDOW", quit_phone_input)
 
@@ -639,7 +662,8 @@ class AddContactPage(Frame):
         self.contact_new = Contact('')
 
     def clear_all(self) -> None:
-        for entry in [self.enter_name, self.enter_phone_num, self.enter_email, self.enter_address, self.enter_notes,
+        for entry in [self.enter_name, self.enter_phone_num, self.enter_email, self.enter_address,
+                      self.enter_notes,
                       self.preview]:
             entry.delete(0, END)
 

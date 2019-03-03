@@ -6,42 +6,43 @@ from project.PhoneNumber.PhoneButton import PhoneButton
 
 class PhoneCanvas(tk.Canvas):
     """
-    Class for PhoneCanvas, draws a working rotary phone. The user can click and drag the button in order to dial a
-    phone number. It outputs
+    Class for PhoneCanvas, draws a working rotary phone. The user can click and drag the button in
+    order to dial a phone number.
 
     === Public Attributes ===
     canvas_size: Size of the canvas (square canvas of size X size)
     radius: Biggest radius of the phone
     phone_button_radius: Radius of all the phone buttons
-    phone_button_pos_radius: Radius of the circle where all the phone buttons are layed out
+    phone_button_pos_radius: Radius of the circle where all the phone buttons are lain out
     circle_buttons: List containing all the phone buttons.
     mouse_controller: MouseController object linked to the root window of the canvas.
 
     === Methods ===
     create_circle: Simple canvas method allowing to draw a circle.
     create_circle_arc: Simple canvas method allowing to draw a circle arc.
-    send_output_number: This method is called by the PhoneButton when their rotating animation is done. It sends
-                        the number to the __output_entry
+    send_output_number: This method is called by the PhoneButton when their rotating animation is
+        done. The output number is sent to the number to the __output_entry
     rotate_all_circles: This method rotates all the PhoneButton by the given angle.
-    verify_click_position: This method verifies where the user clicked. If it's inside one of the PhoneButton, it
-                           calls the PhoneButton.on_mouse_down() method.
-    mouse_release: This method is called when the mouse button is released. It calls the PhoneButton method of the
-                   button that was clicked.
-    update_current_phone_number: This method verifies the position of all the PhoneButton and store the current phone
-                                 number that should be dialed if the user stops moving.
-    find_angle_from_center: This method takes a position (x,y) and returns the angle of this position according to
-                            the center of the phone.
+    verify_click_position: This method verifies where the user clicked. If it's inside one of the
+        PhoneButton, it calls the PhoneButton.on_mouse_down() method.
+    mouse_release: This method is called when the mouse button is released. It calls the PhoneButton
+        method of the button that was clicked.
+    update_current_phone_number: This method verifies the position of all the PhoneButton and store
+        the current phone number that should be dialed if the user stops moving.
+    find_angle_from_center: This method takes a position (x,y) and returns the angle of this
+        position according to the center of the phone.
     """
+
     def __init__(self, master, width=300):
         super().__init__(master, width=width, height=width)
         self.master = master
         self.configure(bg='#00536a', border=0, bd=0, highlightthickness=0, relief='ridge')
 
         self.canvas_size = width
-        self.radius = int(self.canvas_size/2 * 0.99)
-        self.phone_button_radius = int(self.radius*0.10)
-        # radius of the circle where all the buttons will be layed out. 
-        self.phone_button_pos_radius = int(0.7*self.canvas_size/2)  
+        self.radius = int(self.canvas_size / 2 * 0.99)
+        self.phone_button_radius = int(self.radius * 0.10)
+        # radius of the circle where all the buttons will be lain out.
+        self.phone_button_pos_radius = int(0.7 * self.canvas_size / 2)
         # List containing all the buttons
         self.circle_buttons = []
 
@@ -78,8 +79,10 @@ class PhoneCanvas(tk.Canvas):
         :param x: X position of the center of the arc
         :param y: Y position of the center of the arc
         :param r: Radius of the arc
-        :param kwargs: important parameter are 'start' and 'end' to setup the angle where the arc is positioned.
-        :return: Returns the modified create_arc methods that will actually draw a circle_arc with the given parameters.
+        :param kwargs: important parameter are 'start' and 'end' to setup the angle where the arc is
+            positioned.
+        :return: Returns the modified create_arc methods that will actually draw a circle_arc with
+            the given parameters.
         """
         if "start" in kwargs and "end" in kwargs:
             kwargs["extent"] = kwargs["end"] - kwargs["start"]
@@ -93,7 +96,7 @@ class PhoneCanvas(tk.Canvas):
         """
         self.__is_button_animated = False
         if self.__current_phone_number is None:
-            return None
+            return ''
         return self.__current_phone_number.text
 
     def rotate_all_circles(self, angle) -> None:
@@ -109,8 +112,8 @@ class PhoneCanvas(tk.Canvas):
 
     def verify_click_position(self, event) -> None:
         """
-        This method verifies the click position and call the PhoneButton.on_click_down() method if the click is
-        inside the PhoneButton.
+        This method verifies the click position and call the PhoneButton.on_click_down() method if
+            the click is inside the PhoneButton.
         :param event: The event is a "<Button-1>" event.
         :return: None
         """
@@ -128,8 +131,8 @@ class PhoneCanvas(tk.Canvas):
 
     def mouse_release(self, event) -> None:
         """
-        This method is linked to the button release event. It verifies if a button was being dragged and calls its
-        on_click_release method if that's the case.
+        This method is linked to the button release event. It verifies if a button was being dragged
+            and calls its on_click_release method if that's the case.
         :param event: "<ButtonRelease-1>"
         :return: None
         """
@@ -139,14 +142,15 @@ class PhoneCanvas(tk.Canvas):
 
     def update_current_phone_number(self) -> None:
         """
-        This method verifies all the PhoneButton position and change the __current_phone_number variable to the number
-        that should be dialed if the user release the current drag.
+        This method verifies all the PhoneButton position and change the __current_phone_number
+            variable to the number that should be dialed if the user release the current drag.
         :return: None
         """
         min_angle = 5  # This is the angle of the stopper.
         current_button = None
         nearest_angle = math.inf
-        # We loop through the buttons to verify if any went up to the stopper, and which on went further.
+        # We loop through the buttons to verify if any went up to the stopper,
+        # and which on went further.
         for button in self.circle_buttons:
             if min_angle <= button.current_angle < nearest_angle:
                 nearest_angle = button.current_angle
@@ -164,21 +168,25 @@ class PhoneCanvas(tk.Canvas):
         :param pos_y: Y position to calculate the angle to
         :return: angle in rad
         """
-        return math.atan2(pos_y - self.canvas_size/2 , pos_x - self.canvas_size/2) +math.pi
+        return math.atan2(pos_y - self.canvas_size / 2, pos_x - self.canvas_size / 2) + math.pi
 
     def __draw_circles(self):
-        self.create_circle(self.canvas_size/2, self.canvas_size/2, self.radius, fill='black',
+        self.create_circle(self.canvas_size / 2, self.canvas_size / 2, self.radius, fill='black',
                            tag='main_circle', outline='#00536a', width='5')
-        self.create_circle(self.canvas_size/2, self.canvas_size/2, self.radius*0.40, fill='#00536a',
+        self.create_circle(self.canvas_size / 2, self.canvas_size / 2, self.radius * 0.40,
+                           fill='#00536a',
                            outline='#00536a', width='3')
 
     def __draw_phone_buttons(self):
         angle = 30 / 180 * math.pi
         for i in range(0, 10):
-            x_center_of_circle = int(self.canvas_size/2 - self.phone_button_pos_radius * math.cos(angle))
-            y_center_of_circle = int(self.canvas_size/2 - self.phone_button_pos_radius * math.sin(angle))
+            x_center_of_circle = int(self.canvas_size / 2 - self.phone_button_pos_radius *
+                                     math.cos(angle))
+            y_center_of_circle = int(
+                self.canvas_size / 2 - self.phone_button_pos_radius * math.sin(angle))
             self.circle_buttons.append(PhoneButton(self, x_center_of_circle, y_center_of_circle,
-                                                   int(self.canvas_size/2), int(self.canvas_size/2),
+                                                   int(self.canvas_size / 2),
+                                                   int(self.canvas_size / 2),
                                                    self.phone_button_radius, str(i)))
             angle += 25 / 180 * math.pi
 
@@ -186,32 +194,35 @@ class PhoneCanvas(tk.Canvas):
         stopper_angle = 60
         stopper_radius = self.radius * 0.15
 
-        self.create_circle_arc(self.canvas_size/2, self.canvas_size/2, stopper_radius, fill='#00536a',
+        self.create_circle_arc(self.canvas_size / 2, self.canvas_size / 2, stopper_radius,
+                               fill='#00536a',
                                outline='white', width=5,
-                               start=stopper_angle-90, end=stopper_angle+90, style='arc')
-        x1 = self.canvas_size/2 - stopper_radius*math.cos((90-stopper_angle)/180*math.pi)
-        y1 = self.canvas_size/2 - stopper_radius*math.sin((90-stopper_angle)/180*math.pi)
-        x2 = self.canvas_size/2 - self.radius*math.sin((90-stopper_angle)/180*math.pi)
+                               start=stopper_angle - 90, end=stopper_angle + 90, style='arc')
+        x1 = self.canvas_size / 2 - stopper_radius * math.cos((90 - stopper_angle) / 180 * math.pi)
+        y1 = self.canvas_size / 2 - stopper_radius * math.sin((90 - stopper_angle) / 180 * math.pi)
+        x2 = self.canvas_size / 2 - self.radius * math.sin((90 - stopper_angle) / 180 * math.pi)
         y2 = self.canvas_size / 2 + self.radius * math.cos((90 - stopper_angle) / 180 * math.pi)
         x3 = self.canvas_size / 2 + stopper_radius * math.cos((90 - stopper_angle) / 180 * math.pi)
         y3 = self.canvas_size / 2 + stopper_radius * math.sin((90 - stopper_angle) / 180 * math.pi)
 
         self.create_polygon([x1, y1, x2, y2, x3, y3], fill='#00536a', outline='white', width=5)
-        self.create_circle(self.canvas_size / 2, self.canvas_size / 2, stopper_radius-4, fill='#00536a', width=0)
+        self.create_circle(self.canvas_size / 2, self.canvas_size / 2, stopper_radius - 4,
+                           fill='#00536a', width=0)
 
     def __draw_all_numbers(self):
         angle = 30 / 180 * math.pi
         for i in range(0, 10):
-            x_center_of_circle = self.canvas_size/2 - self.phone_button_pos_radius * math.cos(angle)
-            y_center_of_circle = self.canvas_size/2 - self.phone_button_pos_radius * math.sin(angle)
-            self.create_text(x_center_of_circle, y_center_of_circle, text=i, font=('Calibri', int(0.05*self.canvas_size)))
+            x_center_of_circle = self.canvas_size / 2 - self.phone_button_pos_radius * math.cos(
+                angle)
+            y_center_of_circle = self.canvas_size / 2 - self.phone_button_pos_radius * math.sin(
+                angle)
+            self.create_text(x_center_of_circle, y_center_of_circle, text=i,
+                             font=('Calibri', int(0.05 * self.canvas_size)))
             angle += 25 / 180 * math.pi
 
 
 if __name__ == '__main__':
     root = tk.Tk()
     root.resizable(False, False)
-    PhoneCanvas(root, tk.Entry)
+    PhoneCanvas(root)
     root.mainloop()
-
-

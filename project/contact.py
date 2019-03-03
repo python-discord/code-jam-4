@@ -152,13 +152,11 @@ class Contact:
 
     def __str__(self):
         text_to_print = "Contact: \nName: " + str(self.name) + "\n"
-        text_to_print = text_to_print + "Work phone number: " + str(self.phone_numbers["Work"]) + "\n"
-        text_to_print = text_to_print + "Home phone number: " + str(self.phone_numbers["Home"]) + "\n"
-        text_to_print = text_to_print + "Personal phone number: " + str(self.phone_numbers["Personal"]) + "\n"
-        text_to_print = text_to_print + "Email address: " + str(self.email_addresses) + "\n"
-        text_to_print = text_to_print + "Home address: " + str(self.addresses) + "\n"
-        text_to_print = text_to_print + "Notes: " + str(self.notes) + "\n"
+        text_to_print += "Work phone number: " + str(self.phone_numbers["Work"]) + "\n"
+        text_to_print += "Home phone number: " + str(self.phone_numbers["Home"]) + "\n"
+        text_to_print += "Personal phone number: " + str(self.phone_numbers["Personal"]) + "\n"
+        text_to_print += "Email address: " + str(self.email_addresses) + "\n"
+        text_to_print += "Home address: " + str(self.addresses) + "\n"
+        text_to_print += "Notes: " + str(self.notes) + "\n"
 
         return text_to_print
-
-

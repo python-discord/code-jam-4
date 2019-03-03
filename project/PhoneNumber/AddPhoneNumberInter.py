@@ -4,8 +4,8 @@ from project.PhoneNumber.PhoneCanvas import PhoneCanvas
 
 class AddPhoneNumberInter(tk.Frame):
     """
-    This class is the frame that contains PhoneCanvas with the label that shows the phone number as the user
-    dials them. It gives the option of erasing the whole phone number.
+    This class is the frame that contains PhoneCanvas with the label that shows the phone number as
+    the user dials them. It gives the option of erasing the whole phone number.
 
     === Public Attributes ===
         master: root of the frame
@@ -22,15 +22,18 @@ class AddPhoneNumberInter(tk.Frame):
         super().__init__(master, *args, **kwargs)
         self.master = master
         self.page_name = 'Add Phone Number'
-        self.text_label = tk.Label(self, font=('Calibri', 10), fg='#63FF20', bg='#00536a', borderwidth=2,
-                                   text="Please enter the phone number you wish\n to add with the rotary phone below.")
+        self.text_label = tk.Label(self, font=('Calibri', 10), fg='#63FF20', bg='#00536a',
+                                   borderwidth=2,
+                                   text="Please enter the phone number you wish\n to add with the"
+                                        "rotary phone below.")
 
         self.label_frame = tk.Frame(self, bg='#00536a')
-        self.phone_number_label = PhoneNumberLabel(self.label_frame, font=('Calibri', 20), fg='#63FF20', bg='#00536a',
-                                                   width=12, borderwidth=2, relief='sunken')
+        self.phone_number_label = PhoneNumberLabel(self.label_frame, font=('Calibri', 20),
+                                                   fg='#63FF20', bg='#00536a', width=12,
+                                                   borderwidth=2, relief='sunken')
 
-        self.button = tk.Button(self.label_frame, text='Clear', bg='#00536a', font=('Calibri', 14), height=1,
-                                command=self.phone_number_label.clear_phone_number)
+        self.button = tk.Button(self.label_frame, text='Clear', bg='#00536a', font=('Calibri', 14),
+                                height=1, command=self.phone_number_label.clear_phone_number)
 
         self.text_label.grid(row=0, column=0)
         self.phone_number_label.grid(row=0, column=0)
@@ -59,7 +62,8 @@ class AddPhoneNumberInter(tk.Frame):
 
     def __get_dialed_number(self, event) -> None:
         """
-        This method gets the phone number from the PhoneCanvas, it is called by the <<Send_Phone_Number>> event.
+        This method gets the phone number from the PhoneCanvas, it is called by the
+            <<Send_Phone_Number>> event.
         :param event:
         :return: None
         """
@@ -72,13 +76,14 @@ class AddPhoneNumberInter(tk.Frame):
 
 class PhoneNumberLabel(tk.Label):
     """
-    PhoneNumberLabel is a simple class inherited from tk.Label. It allows the user to add one number at the time and
-    will keep the ###-###-#### formatting.
+    PhoneNumberLabel is a simple class inherited from tk.Label. It allows the user to add one number
+        at the time and will keep the ###-###-#### formatting.
+
     === Public Attributes ===
 
     === Methods ===
-    add_phone_number: This method adds one number to the displayed text. It automatically adds '-' to keep the
-    ###-###-#### formatting.
+    add_phone_number: This method adds one number to the displayed text. It automatically adds '-'
+        to keep the ###-###-#### formatting.
     clear_phone_number: This method erases all the number that were displayed on the label.
     """
 
@@ -87,8 +92,8 @@ class PhoneNumberLabel(tk.Label):
 
     def add_phone_number(self, num: int) -> None:
         """
-        This method adds a number to the label, it automatically adds '-' at the right location in order to keep the
-        ###-###-#### formatting.
+        This method adds a number to the label, it automatically adds '-' at the right location in
+            order to keep the ###-###-#### formatting.
         :param num: Number we wish to add to the label.
         :return: None
         """

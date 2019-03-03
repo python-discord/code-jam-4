@@ -10,20 +10,19 @@ class LetterGuesser:
     dictionary
     possible_characters
 
-    === Methods ===
-    request_word: returns a random word from the dictionary
-    remove_possible_letters: removes all characters from possible_characters that are not contained in the given
-                             word/phrase
-    remove_possible_words: removes all words/phrases from dictionary that contain none of the characters in the given
-                           word/phrase
-    contains_none_letters: Returns True only if none the letters in word_2 are contained in word_1
+    === Methods === request_word: returns a random word from the dictionary
+    remove_possible_letters: removes all characters from possible_characters that are not
+        contained in the given word/phrase remove_possible_words: removes all words/phrases from
+        dictionary that contain none of the characters in the given word/phrase
+    contains_none_letters: Returns True only if none the letters in word_2 are contained in  word_1
     answer: Handles the user's answer of either "Yes" or "No"
     """
     def __init__(self):
         self.dictionary = None
-        self.possible_characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
-                                    'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
-                                    '8', '9', '@', '.', '-', ' ', '?', '!']
+        self.possible_characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+                                    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+                                    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '@', '.', '-',
+                                    ' ', '?', '!']
         with open("project/alphabetguesser/words_pickle", "rb") as openfile:
             self.dictionary = pickle.load(openfile)
             openfile.close()
@@ -32,7 +31,8 @@ class LetterGuesser:
         """
         Handles the user's answer for a given word
         :param requested_word: The context of the user's answer
-        :param answer: string that should be either "Yes" or "No"; the program will  not respond to anything else
+        :param answer: string that should be either "Yes" or "No"; the program will  not respond to
+            anything else
         :return: None
         """
         self.remove_possible_letters(requested_word, answer)
@@ -99,7 +99,8 @@ if __name__ == '__main__':
     print('Pick a character, any character; keep it in mind as you answer these questions!\n')
     while True:
         word = guesser.request_word()
-        yes_no = input('Question #{0}:\nIs your character in the word/phrase:\n{1}\n(Yes/No):'.format(question_num, word))
+        yes_no = input('Question #{0}:\nIs your character in the word/phrase:\n{1}\n(Yes/No):'
+                       .format(question_num, word))
         if yes_no == "Quit":
             break
         question_num += 1

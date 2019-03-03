@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import *
+from tkinter import N, S, E, W
 from random import randint
 from project.AlphabetGuesser.letter_guesser import LetterGuesser
 
@@ -34,8 +34,10 @@ class AlphabetGuesserInter(tk.Frame):
                                     font="Calibri 10")
 
         self.title_label = tk.Label(self,
-                                    text="You are entering {} {}:\nAnswer the questions below to fill out the entry\n"
-                                         "".format(self.get_prefix(self.current_entry), self.current_entry),
+                                    text="You are entering {} {}:\nAnswer the questions below to"
+                                         "fill out the entry\n"
+                                    .format(self.get_prefix(self.current_entry),
+                                            self.current_entry),
                                     font="Calibri 11")
         self.question_label = tk.Label(self,
                                        text="Is your {} character contained in the phrase :"
@@ -54,21 +56,24 @@ class AlphabetGuesserInter(tk.Frame):
         self.current_entry_label = tk.Label(self, text=self.current_entry + " :", font="Calibri 12")
         self.letters_input = tk.Label(self, relief="sunken", font="Calibri 15")
 
-        self.submit_button = tk.Button(self, text="Submit", font="Calibri 15", command=lambda: self.submit())
+        self.submit_button = tk.Button(self, text="Submit", font="Calibri 15",
+                                       command=lambda: self.submit())
 
         self.header.grid(row=0, column=0, columnspan=2, sticky=N + S + E + W)
         self.description.grid(row=1, column=0, columnspan=2, sticky=N + S + E + W)
 
         self.title_label.grid(column=0, row=2, columnspan=2, sticky=N + S + E + W)
         self.question_label.grid(column=0, row=3, columnspan=2, sticky=N + S + E + W)
-        self.current_word.grid(column=0, row=4, columnspan=2, padx=10, pady=10, sticky=N + S + E + W)
+        self.current_word.grid(column=0, row=4, columnspan=2, padx=10, pady=10,
+                               sticky=N + S + E + W)
 
         self.button_1.grid(column=0, row=5, sticky=N + S + E + W)
         self.button_2.grid(column=1, row=5, sticky=N + S + E + W)
 
         self.current_entry_label.grid(column=0, row=6, columnspan=2, sticky=N + S + E + W)
         self.letters_input.grid(column=0, row=7, columnspan=2, padx=10, sticky=N + S + E + W)
-        self.submit_button.grid(column=0, row=8, columnspan=2, padx=10, pady=10, sticky=N + S + E + W)
+        self.submit_button.grid(column=0, row=8, columnspan=2, padx=10, pady=10,
+                                sticky=N + S + E + W)
 
         self.grid(row=0, column=0)
 
@@ -100,9 +105,9 @@ class AlphabetGuesserInter(tk.Frame):
         self.question_label['text'] = "I found your character! Continue?"
         self.current_word['text'] = self.letter_guesser.possible_characters[0].upper()
         if len(self.letters_input['text']) == 0 or self.letters_input['text'][-1] == " ":
-            self.letters_input['text'] = self.letters_input['text'] + self.letter_guesser.possible_characters[0].upper()
+            self.letters_input['text'] += self.letter_guesser.possible_characters[0].upper()
         else:
-            self.letters_input['text'] = self.letters_input['text'] + self.letter_guesser.possible_characters[0]
+            self.letters_input['text'] += self.letter_guesser.possible_characters[0]
         self.__letter_found = True
 
     def randomize_buttons(self):

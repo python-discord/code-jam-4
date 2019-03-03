@@ -4,6 +4,7 @@ import time
 import math
 from project.MouseController import MouseController
 
+
 class WheelSpinner(tk.Frame):
 
     def __init__(self, master, wheel_options, radius, *args, **kwargs):
@@ -13,7 +14,7 @@ class WheelSpinner(tk.Frame):
         self.radius = radius
         self.display_label = tk.Label(self, height=2)
         self.wheel_options = wheel_options
-        self.size = radius*2.1
+        self.size = radius * 2.1
         self.canvas = tk.Canvas(self, width=self.size, height=self.size)
         self.drawn_arc = []
         self.count = None
@@ -23,13 +24,11 @@ class WheelSpinner(tk.Frame):
 
         self.frame = 0
         self.speed = 400
-        #self.draw()
         self.display_label.grid(row=0, column=0)
         self.canvas.grid(row=1, column=0)
 
         self.canvas.bind("<Button-1>", lambda event: self.verify_click_position(event))
         self.canvas.bind("<ButtonRelease-1>", lambda event: self.on_mouse_release(event))
-
 
         self.__drawn = False
         self.__rotation_speed_list = []
@@ -41,21 +40,21 @@ class WheelSpinner(tk.Frame):
         self.__mouse_controller = MouseController(self.canvas)
 
         self.update()
-        #self.grid(row=0, column=0)
 
     def draw(self):
         self.display_label['text'] = "Spin the wheel to find out \nwhat information you'll see!"
         self.count = len(self.wheel_options)
         angle = 0
-        self.angle_increment = 360/self.count
+        self.angle_increment = 360 / self.count
         for option in self.wheel_options:
 
-            if self.wheel_options[self.count-1] == option:
-                self.drawn_arc.append(RotatingArc(self, self.size/2, self.size/2, self.radius, angle, 360, option,
+            if self.wheel_options[self.count - 1] == option:
+                self.drawn_arc.append(RotatingArc(self, self.size / 2, self.size / 2, self.radius,
+                                                  angle, 360, option,
                                                   fill=self.generate_random_color(), width=3))
             else:
-                self.drawn_arc.append(RotatingArc(self, self.size/2, self.size/2, self.radius, angle,
-                                                  angle + self.angle_increment, option,
+                self.drawn_arc.append(RotatingArc(self, self.size / 2, self.size / 2, self.radius,
+                                                  angle, angle + self.angle_increment, option,
                                                   fill=self.generate_random_color(), width=3))
             angle = angle + self.angle_increment
 
@@ -67,8 +66,7 @@ class WheelSpinner(tk.Frame):
     def display_current_winner(self):
         winner = None
         for arc in self.drawn_arc:
-            if 90 >= arc.start_angle >= 90-self.angle_increment:
-
+            if 90 >= arc.start_angle >= 90 - self.angle_increment:
                 winner = arc.text
         if winner is not None:
             self.display_label['text'] = winner
@@ -98,9 +96,10 @@ class WheelSpinner(tk.Frame):
 
         x, y = event.x, event.y
 
-        #self.is_rotating = True
+        # self.is_rotating = True
 
-        if math.sqrt(math.pow(self.size/2 - x, 2) + math.pow(self.size/2 - y, 2)) <= self.radius:
+        if math.sqrt(
+                math.pow(self.size / 2 - x, 2) + math.pow(self.size / 2 - y, 2)) <= self.radius:
             self.__is_dragging = True
             self.__rotation_speed_list = []
             self.__init_drag_pos = x, y
@@ -108,12 +107,13 @@ class WheelSpinner(tk.Frame):
     def drag(self):
         x0, y0 = self.__init_drag_pos
         x, y = self.__mouse_controller.get_absolute_position()
-        angle_to_rotate = math.atan2(y - self.size/2, x - self.size/2) - math.atan2(y0 - self.size/2, x0 - self.size/2)
+        angle_to_rotate = math.atan2(y - self.size / 2, x - self.size / 2) - \
+            math.atan2(y0 - self.size / 2, x0 - self.size / 2)
         if abs(angle_to_rotate) > math.pi:
-            angle_to_rotate = -math.copysign(1, angle_to_rotate)*2*math.pi + angle_to_rotate
+            angle_to_rotate = -math.copysign(1, angle_to_rotate) * 2 * math.pi + angle_to_rotate
         print(angle_to_rotate)
-        self.rotate_all(-angle_to_rotate/math.pi*180)
-        self.__rotation_speed_list.append((angle_to_rotate/math.pi*180/self.__delta_time))
+        self.rotate_all(-angle_to_rotate / math.pi * 180)
+        self.__rotation_speed_list.append((angle_to_rotate / math.pi * 180 / self.__delta_time))
         self.__init_drag_pos = x, y
 
     def on_mouse_release(self, event):
@@ -122,7 +122,7 @@ class WheelSpinner(tk.Frame):
             self.__calculate_initial_speed()
 
     def __calculate_initial_speed(self):
-        if len(self.__rotation_speed_list)<=1:
+        if len(self.__rotation_speed_list) <= 1:
             self.display_label['text'] = "SPIN HARDER!"
             return
 
@@ -131,7 +131,6 @@ class WheelSpinner(tk.Frame):
             self.display_label['text'] = "SPIN HARDER!"
         else:
             self.is_rotating = True
-
 
     def rotate_all(self, degree):
         for arc in self.drawn_arc:
@@ -159,11 +158,13 @@ class WheelSpinner(tk.Frame):
         else:
             acceleration = 10 * -math.copysign(1, self.speed)
 
-        if math.copysign(1, self.speed) != math.copysign(1, self.speed + acceleration*self.__delta_time):
+        if math.copysign(1, self.speed) != math.copysign(1,
+                                                         self.speed + acceleration *
+                                                         self.__delta_time):
             self.speed = 0
             self.finish_rotation()
         else:
-            self.speed = self.speed + acceleration*self.__delta_time
+            self.speed = self.speed + acceleration * self.__delta_time
         print(self.speed)
 
     def finish_rotation(self):
@@ -172,18 +173,19 @@ class WheelSpinner(tk.Frame):
         self.erase()
         self.__drawn = False
         self.master.event_generate("<<Finish Spinning Wheel>>", when="tail")
-        self.master.show_winning_info
+        self.master.show_winning_info()
 
     def __get_elapsed_time(self):
         """
-        This function returns the elapsed time since the last time we updated the rotating animation. If it's the first
-        frame of the animation, we assume the elapsed_time is 0.033s which correspond to 30 fps.
+        This function returns the elapsed time since the last time we updated the rotating animation
+        If it's the first frame of the animation, we assume the elapsed_time is 0.033s which
+            correspond to 30 fps.
         :return:
         """
-        if self.is_animation_on is None:
+        if self.is_rotating is None:
             elapsed_time = 0.0333
         else:
-            elapsed_time = time.time() - self.is_animation_on
+            elapsed_time = time.time() - self.is_rotating
         return elapsed_time
 
     def create_circle_arc(self, x, y, r, **kwargs) -> classmethod:
@@ -192,23 +194,28 @@ class WheelSpinner(tk.Frame):
         :param x: X position of the center of the arc
         :param y: Y position of the center of the arc
         :param r: Radius of the arc
-        :param kwargs: important parameter are 'start' and 'end' to setup the angle where the arc is positioned.
-        :return: Returns the modified create_arc methods that will actually draw a circle_arc with the given parameters.
+        :param kwargs: important parameter are 'start' and 'end' to setup the angle where the arc is
+            positioned.
+        :return: Returns the modified create_arc methods that will actually draw a circle_arc with
+            the given parameters.
         """
         if "start" in kwargs and "end" in kwargs:
             kwargs["extent"] = kwargs["end"] - kwargs["start"]
             del kwargs["end"]
         return self.canvas.create_arc(x - r, y - r, x + r, y + r, **kwargs)
 
-    def generate_random_color(self):
-        R = randint(0, 255)
-        G = randint(0, 255)
-        B = randint(0, 255)
+    @staticmethod
+    def generate_random_color():
+        r = randint(0, 255)
+        g = randint(0, 255)
+        b = randint(0, 255)
 
-        return "#%02x%02x%02x" % (R, G, B)
+        return "#%02x%02x%02x" % (r, g, b)
+
 
 class RotatingArc:
-    def __init__(self, frame, position_x, position_y, radius, start_angle, end_angle, text, *args, **kwargs):
+    def __init__(self, frame, position_x, position_y, radius, start_angle, end_angle, text, *args,
+                 **kwargs):
         self.frame_parent = frame
         self.canvas_parent = frame.canvas
         self.radius = radius
@@ -221,8 +228,10 @@ class RotatingArc:
         self.draw(*args, **kwargs)
 
     def draw(self, *args, **kwargs):
-        self.item =self.frame_parent.create_circle_arc(self.position_x, self.position_y, self.radius,
-                                                       start=self.start_angle, end=self.end_angle, *args, **kwargs)
+        self.item = self.frame_parent.create_circle_arc(self.position_x, self.position_y,
+                                                        self.radius,
+                                                        start=self.start_angle, end=self.end_angle,
+                                                        *args, **kwargs)
 
     def rotate(self, angle, *args):
         self.canvas_parent.itemconfigure(self.item, start=self.start_angle + angle)
@@ -231,7 +240,6 @@ class RotatingArc:
             self.start_angle -= 360
         if self.start_angle < 0:
             self.start_angle += 360
-
 
 
 if __name__ == '__main__':
