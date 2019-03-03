@@ -32,14 +32,30 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 
 TEAM GREEN GREENHOUSES
 
+Team Leader:
+
+  [FliX](https://github.com/FelixRandle)
+  
+Team Members:
+
+  [Throupy](https://github.com/Throupy)
+  
+  [Zomatree](https://github.com/zomatree)
+
 ## Description
 
-`# TODO`
+Find it tough to manage all those events you partake in?
+
+Google Calendar too tough to understand, don't worry, we only have like, 4 buttons.
+
+With all new dark mode to ensure that you're eyes never hurt after a long event management session.
 
 ## Setup & Installation
 
-`# TODO`
+Run `pipenv install --dev` from the repo's directory.
 
 ## How do I use this thing?
 
-`# TODO`
+Run `pipenv start run` from the repo's directory.
+
+Register in the application. Add new events and take a look at all your stored events.
