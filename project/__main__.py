@@ -65,6 +65,7 @@ class Framed(tk.AsyncTk):
         self.konami_code = 0
 
         self.wm_title(self.cur_locale.general.title)
+        self.iconbitmap(bitmap="icon.ico", default="icon.ico")
 
         self._setupMenu()
 
