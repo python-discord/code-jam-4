@@ -87,11 +87,12 @@ class Window(widget.PrimaryCanvas):
             direction = Direction[direction.upper()]  # Cast string for convenience
         self.animater.clear()
 
-        self.move_out(self.current, direction)
-        self.move_in(view, direction.flip())
+        last = self.current
+        self.current = view
+        self.move_in(self.current, direction.flip())
+        self.move_out(last, direction)
 
         self.animater.start()
-        self.current = view
 
     def get_distance(self, direction: Direction):
         if not isinstance(direction, Direction):
