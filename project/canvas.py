@@ -13,10 +13,13 @@ from tkinter.ttk import Progressbar
 from PIL import Image, ImageDraw, ImageTk
 import asyncio
 
+
 async def start(bar):
     while 1:
         bar.step()
         await asyncio.sleep(0.05)
+
+
 class Colour:
 
     """
