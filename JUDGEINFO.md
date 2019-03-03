@@ -31,7 +31,7 @@ Entering **Up, Up, Down, Down, Left, Right, Left, Right, B, A, ~~Start~~ Return*
 
 ## Saving
 
-The "Save Processer Time" button destroys the program. Having already gone through the application, you may have discovered this. 
+The "Save Processor Time" button destroys the program. Having already gone through the application, you may have discovered this. 
 In order to save, use `Alt + F4` (or the X button) to save your file to a file select window. However I suggest you save small files, since a button needs to be pressed for every byte saved. For example, a 2x2 image contains 75 bytes, meaning that you'd need to press the button 75 times.
 
 ## Small, slightly inconvenient things
@@ -57,5 +57,5 @@ Also, in massive folders, it doesn't scroll so good luck finding that one file a
 
 ### New File
 
-To create a new file, use the *New File* button and specify a height and width. Don't think you're off the hook because the Label is correct. Legends say that your height and width may be switched around...
+To create a new file, use the *New File* button and specify a height and width. Don't think you're off the hook because the label is correct. Legends say that your height and width may be switched around...
 
