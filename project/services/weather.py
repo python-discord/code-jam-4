@@ -74,7 +74,7 @@ def format_forecast(weather: Weather, unit: str) -> Dict[str, str]:
         raise AttributeError(msg.format(' '.join(units)))
 
     if unit == 'random':
-        unit = random.sample(units, 1)
+        unit = random.sample(units, 1)[0]
 
     output_dict = {}
 
