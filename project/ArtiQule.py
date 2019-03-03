@@ -83,7 +83,7 @@ class Tool:
             brushSize {float} -- tools brushsize
             color {QColor} -- the Color to be used
             paintPattern {PaintPattern} -- the paint pattern that will be used
-            PaintBoard {PaintBoard} -- Its a paintboard?
+            PaintBoard {PaintBoard} -- Parent class
             iconPath {str} -- the path to the icon. duh...
             shortcut {str} -- well. its a shortcut. nothing less, nothing more.
             statusTip {str} -- the status tip that will be displayed...
@@ -389,10 +389,9 @@ class PaintBoard(QMainWindow):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton and \
-                self.connectTool is not None:
+                self.currentTool is not None:
             self.drawing = True
-            if self.currentTool is not None and \
-                    self.currentTool.toolName == "A bucket filled" \
+            if self.currentTool.toolName == "A bucket filled" \
                     and self.currentTool.duration >= 0:
                 Pen = QPen(self.currentTool.color)
                 Pen.setWidth(self.currentTool.brushSize)
@@ -402,6 +401,14 @@ class PaintBoard(QMainWindow):
                 self.currentTool.toolName = "A bucket"
                 self.currentTool.color = QColor(0,0,0,0)
                 self.connectTool(self.currentTool)
+            elif self.currentTool.toolName == "Solid Brush"\
+                    and self.currentTool.duration >= 0:
+                Pen = QPen(self.currentTool.color)
+                Pen.setWidth(self.currentTool.brushSize)
+                self.painter.setPen(Pen)  #TODO: doesn't work properly
+                self.painter.drawRect(event.pos(), 25, 10)
+                self.currentTool.duration -= 1
+
             self.lastPoint = event.pos()
             self.update()
         else:
