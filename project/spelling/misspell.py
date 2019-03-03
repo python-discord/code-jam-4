@@ -19,6 +19,9 @@ class Grapheme:
 
 
 def phonemes(word):
+    if word not in arpabet.keys():
+        raise NameError(f"Word {word} does not have a pronunciation in the dictionary")
+
     final = ",".join(arpabet[word][0])
 
     final = final.replace("K,S", "KS")
