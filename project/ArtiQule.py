@@ -1,4 +1,5 @@
 import sys
+import time
 from random import randint
 from PyQt5.QtCore import QPoint, Qt, QThread, pyqtSignal
 from PyQt5.QtGui import (QColor, QCursor, QIcon, QImage, QPainter,
@@ -121,7 +122,10 @@ class Tool:
         tool_btn.setShortcut(self.shortcut)
         tool_btn.setStatusTip(self.statusTip)
         tool_btn.triggered.connect(
-            lambda: self.PaintBoard.connectTool(self, curisDipped=self.isDipped)
+            lambda: self.PaintBoard.connectTool(
+                self,
+                curisDipped=self.isDipped
+            )
         )
         self.PaintBoard.toolbar.addAction(tool_btn)
 
@@ -160,7 +164,7 @@ class PalletteButton:
                 ]
             )
 
-            if  colorSum and tool.color.alpha() and self.alpha:
+            if colorSum and tool.color.alpha() and self.alpha:
                 # self.alpha so that color pallette is not empty
                 self.r = (self.r + tool.color.red()) // 2
                 self.g = (self.g + tool.color.green()) // 2
@@ -193,7 +197,9 @@ class PalletteButton:
 
         self.parentBtn.setStyleSheet(
             "background-color: rgba{0}; border-radius:20px".format(
-            self.palletteColor))
+                    self.palletteColor
+                )
+            )
 
 
 class PaintBoard(QMainWindow):
@@ -211,6 +217,8 @@ class PaintBoard(QMainWindow):
         self.canvas.fill(Qt.white)
         self.connectTool()
         self.painter = QPainter(self.canvas)
+
+        self.mousePos = QPoint(0, 0)
 
         # MENUBARS
         mainMenu = self.menuBar()
@@ -286,7 +294,8 @@ class PaintBoard(QMainWindow):
                                     )
 
         self.sunbathing_eraser = Tool("Sunbathing Eraser", 10, Qt.white,
-                                      [0, 0, 0, 0.0], self, "Design/icons/Sunbathing Eraser",
+                                      [0, 0, 0, 0.0], self,
+                                      "Design/icons/Sunbathing Eraser",
                                       "Ctrl+F",
                                       "Erase Your Mistakes, Kid!",
                                       (99999, 99999))  # infinte duration
@@ -308,8 +317,10 @@ class PaintBoard(QMainWindow):
         else:
             self.currentTool.isDipped = curisDipped
             if self.currentTool.toolName == "Pointy Pen":
-                self.currentTool.duration = randint(0,
-                                            self.currentTool.constDuration)
+                self.currentTool.duration = randint(
+                    0,
+                    self.currentTool.constDuration
+                )
         ColorBox.setWindowCursor(self.currentTool)
 
         self.setCursor(QCursor(
@@ -319,10 +330,16 @@ class PaintBoard(QMainWindow):
                                                  )
                     )))
         if self.currentTool is not None:
-            if self.currentTool.toolName != "Pointy Pen" or "A bucket" or "Sunbathing Eraser"\
+            if self.currentTool.toolName != \
+                    "Pointy Pen" or \
+                    "A bucket" or \
+                    "Sunbathing Eraser" \
                     and self.currentTool.isDipped:
-                self.dripper = DripperEffect(self.currentTool.color, self.currentTool.brushSize)
-                self.dripper.drip.connect(self.DripperHandler)
+                self.dripper = DripperEffect(
+                    self.currentTool.color,
+                    self.currentTool.brushSize
+                )
+                self.dripper.drip.connect(self.dripperHandler)
                 self.dripper.start()
 
     def colorBoxRun(self):
@@ -433,11 +450,15 @@ class PaintBoard(QMainWindow):
         # showing toolBox
         self.colorBox.showColorBox()
 
-    def DripperHandler(self, result):
+    def dripperHandler(self, result):
         Dripper = result
         print('drip')
         self.painter.setPen(Dripper)
-        self.painter.drawLine(self.lastPoint, self.lastPoint)
+        point = QPoint(self.cursor().pos().x(), self.cursor().pos().y())
+        point = self.mapFromGlobal(point)
+        print(point.x(), point.y())
+        self.painter.drawLine(point, point)
+        self.update()
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton and \
@@ -463,9 +484,11 @@ class PaintBoard(QMainWindow):
             return None
 
     def mouseMoveEvent(self, event):
+        print("hey")
+        self.mousePos = event.pos()
         if (event.buttons() and Qt.LeftButton) and \
                 self.drawing and self.currentTool is not None:
-
+            
             Pen = QPen()
             if self.currentTool.toolName != "Sunbathing Eraser":
                 if self.currentTool.duration <= 0.0:
@@ -576,19 +599,26 @@ class DripperEffect(QThread):
         QThread.__init__(self)
         self.color = color
         self.size = size
+        self._stop = False
+
+    def stop(self):
+        self._stop = True
 
     def run(self):
-        drip_chance = randint(0, 1)
-        if drip_chance == 1:
-            Drip = QPen()
-            Drip.setWidth(self.size)
-            Drip.setStyle(Qt.DotLine)
-            Drip.setColor(self.color)
-            Drip.setJoinStyle(Qt.RoundJoin)
-            Drip.setCapStyle(Qt.RoundCap)
-            self.drip.emit(Drip)
-        else:
-            pass
+        while not self._stop:
+            drip_chance = randint(0, 5)
+            # 1/3 chance it drips
+            if drip_chance < 2:
+                Drip = QPen()
+                Drip.setWidth(self.size)
+                Drip.setStyle(Qt.DotLine)
+                Drip.setColor(self.color)
+                Drip.setJoinStyle(Qt.RoundJoin)
+                Drip.setCapStyle(Qt.RoundCap)
+                self.drip.emit(Drip)
+            else:
+                pass
+            time.sleep(0.5)
 
 
 if __name__ == '__main__':
