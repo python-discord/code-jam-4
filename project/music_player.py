@@ -5,7 +5,7 @@ import qdarkstyle
 from PySide2.QtSql import QSqlDatabase, QSqlQuery
 from PySide2.QtWidgets import QApplication
 
-from project.widgets import CreatePassword, MainWindow
+from project.widgets import CreatePassword, MainWindow, PasswordPrompt
 
 DB_NAME = "library.sqlite"
 
@@ -45,7 +45,29 @@ def create_db():
     # TODO: Handle possible errors if db fails to open
 
 
-def get_password():
+def create_password() -> str:
+    """Prompt for a password to be created and return it."""
+    dialogue = CreatePassword()
+    dialogue.display()
+    password = dialogue.new_password
+
+    # upsert
+    query = QSqlQuery(QSqlDatabase.database())
+    query.prepare("""
+            insert into credentials (id, password)
+            values (0, :password)
+            on conflict (id)
+            do update set password=:password
+        """)
+    query.bindValue(":password", password)
+    query.exec_()
+    query.finish()
+
+    return password
+
+
+def get_password() -> str:
+    """Return the password from the database."""
     query = QSqlQuery(QSqlDatabase.database())
     query.exec_("select password from credentials")
 
@@ -54,20 +76,17 @@ def get_password():
         query.finish()
         return password
 
-    create_password = CreatePassword()
-    create_password.display()
-    password = create_password.new_password
 
-    # upsert
-    query.prepare("""
-        insert into credentials (id, password)
-        values (0, :password)
-        on conflict (id)
-        do update set password=:password
-    """)
-    query.bindValue(":password", password)
-    query.exec_()
-    query.finish()
+def login() -> str:
+    """Prompt for the password and return it. Create one if one doesn't exist."""
+    password = get_password()
+    if password:
+        prompt = PasswordPrompt(password)
+        prompt.display()
+        if not prompt.success:
+            sys.exit()
+    else:
+        password = create_password()
 
     return password
 
@@ -78,7 +97,7 @@ def main():
     app.setStyleSheet(qdarkstyle.load_stylesheet_pyside2())
 
     create_db()
-    password = get_password()
+    password = login()
 
     window = MainWindow(password)
     window.setWindowTitle("Music Player")
