@@ -17,9 +17,9 @@ class Stack:
         UP = 1
         DOWN = 2
 
-    def __init__(self, existing_stack=[], cur_stack_pointer=None):
+    def __init__(self, cur_stack_pointer=None):
         # Stack is backwards???
-        self._stack = existing_stack
+        self._stack = []
 
         if cur_stack_pointer:
             self._stack_pointer = cur_stack_pointer
