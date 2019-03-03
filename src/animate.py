@@ -213,19 +213,25 @@ class Motion:
         """
         move = partial(self.canvas.move, self.id)
 
-        def frame(increment: Coord, count: int):
+        def frame(increment: Coord, count: int = 1):
             for _ in range(count):
                 move(*increment)
                 self.canvas.master.update_idletasks()
 
         for end in self.endpoints:
-            start = Coord(*self.canvas.coords(self.id)[:2])
+            start = self.current
             steps = round(start.distance(end) / self.speed)
             frames = round(steps / self.speed)
             increment = (end - start) / steps
 
             for _ in range(frames):
                 yield partial(frame, increment, round(steps / frames))
+            buffer = end - self.current
+            yield partial(frame, buffer)
+
+    @property
+    def current(self):
+        return Coord(*self.canvas.coords(self.id)[:2])
 
     def __iter__(self):
         return self.start()

@@ -72,6 +72,7 @@ class Front(widget.PrimaryFrame):
 
         self.cache = ImageCache(self.cachesize)
         self.cache.start()
+        self.after(0, self.__next)
 
     def cmd_dislike(self):
         self.__next('left')
@@ -110,3 +111,10 @@ class Bio(widget.PrimaryFrame):
         for name, val in data.items():
             item = self.__make_item(name, val)
             item.pack(expand=True, fill='x')
+
+
+class Splash(widget.PrimaryFrame):
+
+    def init(self):
+        self.window = Window(self)
+
