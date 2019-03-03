@@ -10,6 +10,115 @@ from dataclasses import dataclass
 from functools import partialmethod
 
 
+class Animater:
+    """
+    Manager for executing animations.
+
+    example::
+
+    ```
+    motion = Motion(...)
+    window = Animater(...)
+    window.add_motion(motion)
+    ```
+    """
+    _motions = set()
+
+    def __init__(self, canvas: tk.Canvas):
+        self.canvas = canvas
+
+    def start(self):
+        while self._motions:
+            self.run()
+
+    def run(self):
+        for motion in self._motions.copy():
+            try:
+                move = next(motion)
+                move()
+            except StopIteration:
+                self._motions.remove(motion)
+
+    def add(self, motion: Motion):
+        self._motions.add(motion.start())
+
+    def add_motion(self, id: int, end: Coord, **kwargs):
+        motion = Motion(self.canvas, id, end, **kwargs)
+        self.add(motion)
+
+    def clear(self):
+        self._motions.clear()
+
+    @property
+    def running(self):
+        return bool(self._motions)
+
+
+@dataclass
+class Motion:
+    """
+
+    """
+    canvas: tk.Canvas
+    id: int
+    end: Coord
+
+    speed: int = 1
+
+    def __iter__(self):
+        return self.start()
+
+    def __key(self):
+        return self.id
+
+    def __hash__(self):
+        return hash(self.__key())
+
+    def __eq__(self):
+        return isinstance(self, type(other)) and self.__key() == other.__key()
+
+    def start(self) -> Generator[Callable]:
+        """
+        The entry point for generating move commands.
+        """
+        self.time = time.time()
+        self.start = self.current
+        self.distance = self.start.distance(self.end)
+        self.speed = self.speed ** 3
+        while self.current != self.end:
+            yield self.move
+
+    def move(self):
+        self.canvas.move(self.id, *self.increment)
+        self.canvas.update_idletasks()
+
+    @property
+    def time(self):
+        return time.time() - self._time
+
+    @time.setter
+    def time(self, val):
+        self._time = val
+
+    @property
+    def increment(self):
+        mult = (self.time * self.speed) / self.distance
+        point = (self.end - self.start) * mult + self.start
+
+        if point.distance(self.end) > self.journey:
+            return self.end - self.current
+        else:
+            return point - self.current
+
+    @property
+    def current(self):
+        return Coord(*self.canvas.coords(self.id))
+
+    @property
+    def journey(self):
+        return self.current.distance(self.end)
+
+
 class Coord(NamedTuple):
     """
     Helper class for managing coordinate values.
@@ -112,115 +221,3 @@ class Direction(Enum):
 
     def flip(self):
         return Direction(Coord(0, 0) - self.value)
-
-
-class Animater:
-    """
-    Manager for executing animations.
-
-    example::
-
-    ```
-    motion = Motion(...)
-    window = Animater(...)
-    window.add_motion(motion)
-    ```
-    """
-    _motions = set()
-
-    def __init__(self, canvas: tk.Canvas):
-        self.canvas = canvas
-
-    def start(self):
-        while self._motions:
-            print(self._motions)
-            self.run()
-
-    def run(self):
-        for motion in self._motions.copy():
-            try:
-                move = next(motion)
-                move()
-                self.canvas.update()
-            except StopIteration:
-                self._motions.remove(motion)
-
-    def add(self, motion: Motion):
-        self._motions.add(motion.start())
-
-    def add_motion(self, id: int, end: Coord, **kwargs):
-        motion = Motion(self.canvas, id, end, **kwargs)
-        self.add(motion)
-
-    def clear(self):
-        self._motions.clear()
-
-    @property
-    def running(self):
-        return bool(self._motions)
-
-
-@dataclass
-class Motion:
-    """
-
-    """
-    canvas: tk.Canvas
-    id: int
-    end: Coord
-
-    speed: int = 1
-
-    def start(self) -> Generator[Callable]:
-        """
-        The entry point for generating move commands.
-        """
-        self.time = time.time()
-        self.start = self.current
-        self.distance = self.start.distance(self.end)
-        self.speed = self.speed ** 3
-        while self.current != self.end:
-            yield self.move
-
-    def move(self):
-        self.canvas.move(self.id, *self.increment)
-        self.canvas.update_idletasks()
-
-    @property
-    def time(self):
-        return time.time() - self._time
-
-    @time.setter
-    def time(self, val):
-        self._time = val
-
-    @property
-    def increment(self):
-        mult = (self.time * self.speed) / self.distance
-        point = (self.end - self.start) * mult + self.start
-
-        if point.distance(self.end) > self.journey:
-            return self.end - self.current
-        else:
-            return point - self.current
-
-
-    @property
-    def current(self):
-        return Coord(*self.canvas.coords(self.id))
-
-    @property
-    def journey(self):
-        return self.current.distance(self.end)
-
-    def __iter__(self):
-        return self.start()
-
-    def __key(self):
-        return self.id
-
-    def __hash__(self):
-        return hash(self.__key())
-
-    def __eq__(self):
-        return isinstance(self, type(other)) and self.__key() == other.__key()

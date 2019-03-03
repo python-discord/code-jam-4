@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-import tkinter as tk
-from typing import TypeVar
 from enum import Enum
-from PIL import ImageTk
 
 from . import widget
 from .animate import Coord, Animater, Direction
@@ -11,8 +8,8 @@ from .animate import Coord, Animater, Direction
 
 class Window(widget.PrimaryCanvas):
     animation_speed = 10
-    current = None
     views = {}
+    current = None
 
     def init(self):
         self.animater = Animater(self)
@@ -55,6 +52,7 @@ class Window(widget.PrimaryCanvas):
             return
         if not isinstance(direction, Direction):
             direction = Direction[direction.upper()]  # Cast string for convenience
+
         self.animater.clear()
 
         last = self.current
