@@ -1,6 +1,7 @@
 import tkinter as tk
 import traceback
 from typing import List
+from playsound import playsound
 from project.windows.cloppy_window_events import CloppyChoiceMadeEvent
 from project.functionality.constants import Constants
 
@@ -129,6 +130,8 @@ class CloppyWindow(tk.Toplevel):
 
         self.geometry(f'+{x}+{y}')
         self.deiconify()
+
+        playsound(Constants.cloppy_sound_path, block=False)
 
 
 class CloppyButtonWindow(CloppyWindow):

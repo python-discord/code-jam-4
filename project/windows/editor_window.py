@@ -63,6 +63,13 @@ class EditorWindow(tk.Toplevel):
         self.text_box.bind('<Control-c>', self.on_control_c)
         self.text_box.bind('<Control-v>', self.on_control_v)
 
+        # Setting up saving and opening key event binding.
+        self.text_box.bind('<Control-s>', self.on_control_s)
+        self.text_box.bind('<Control-o>', self.on_control_o)
+
+        # Setting up new file key event binding.
+        self.text_box.bind('<Control-n>', self.on_control_n)
+
         # Setting up backspace/delete key event binding.
         self.text_box.bind('<BackSpace>', self.on_backspace)
         self.text_box.bind('<Delete>', self.on_backspace)
@@ -360,12 +367,27 @@ class EditorWindow(tk.Toplevel):
         :return: 'break' in order to interrupt the normal event handling of
                  the backspace key.
         """
-        root: tk.Tk = self.master
-        root.clipboard_clear()
-        root.clipboard_append(
-            self.get_selected_text()
+        dialog = CloppyButtonWindow(self)
+        dialog.set_message(
+            "It looks like you're trying to cut some text.\n"
+            "The text you're cutting could be very important.\n"
+            "So it behooves me to ask:\n"
+            "Are you sure you want to do that?"
         )
-        self.set_selected_text('')
+        dialog.add_choice('Yes')
+        dialog.add_choice('No')
+
+        def cut_text(choice_data: CloppyChoiceMadeEventData):
+            if choice_data.choice == 'Yes':
+                root: tk.Tk = self.master
+                root.clipboard_clear()
+                root.clipboard_append(
+                    self.get_selected_text()
+                )
+                self.set_selected_text('')
+
+        dialog.choice_made.add_callback(cut_text)
+        dialog.show()
 
         return 'break'
 
@@ -404,6 +426,105 @@ class EditorWindow(tk.Toplevel):
 
         except tk.TclError:
             pass
+
+        return 'break'
+
+    def on_control_s(self, event=None):
+        """
+        Called when Ctrl+S is pressed in the editor's text box.
+        Also called by the 'Save' menu option.
+
+        :param event: tkinter event data. None by default in case the method
+                      is invoked artificially.
+        :return: 'break' in order to interrupt the normal event handling of
+                 the backspace key.
+        """
+
+        # Brings up a dialog asking the user to select a location for saving
+        # the file.
+        file = filedialog.asksaveasfile(
+            filetypes=(('Text Files', '*.txt'), ('All Files', '*.*'))
+        )
+
+        # Check to see if the user cancelled the dialog or not.
+        if file:
+            # 'with' is used so that the file is automatically flushed/closed
+            # after our work is done with it.
+            with file:
+                file.write(self.get_text())
+
+        return 'break'
+
+    def on_control_o(self, event=None):
+        """
+        Called when Ctrl+O is pressed in the editor's text box.
+        Also called by the 'Open' menu option.
+
+        :param event: tkinter event data. None by default in case the method
+                      is invoked artificially.
+        :return: 'break' in order to interrupt the normal event handling of
+                 the backspace key.
+        """
+
+        # Cloppy asks the user whether they want to open a file.
+        dialog = CloppyButtonWindow(self)
+        dialog.set_message(
+            "It looks like you're trying to open a file.\n"
+            "If you do you'll lose any unsaved work in the current file.\n"
+            "So it behooves me to ask:\n"
+            "Are you sure you want to do that?"
+        )
+        dialog.add_choice('Yes')
+        dialog.add_choice('No')
+
+        def open_file(choice_data: CloppyChoiceMadeEventData):
+            if choice_data.choice == 'Yes':
+                # Brings up a dialog asking the user to select a location for saving
+                # the file.
+                file = filedialog.askopenfile(
+                    filetypes=(('Text Files', '*.txt'), ('All Files', '*.*'))
+                )
+
+                # Check to see if the user cancelled the dialog or not.
+                if file:
+                    # 'with' is used so that the file is automatically flushed/closed
+                    # after our work is done with it.
+                    with file:
+                        self.set_text(file.read())
+
+        dialog.choice_made.add_callback(open_file)
+        dialog.show()
+
+        return 'break'
+
+    def on_control_n(self, event=None):
+        """
+        Called when Ctrl+N is pressed in the editor's text box.
+        Also called by the 'New' menu option.
+
+        :param event: tkinter event data. None by default in case the method
+                      is invoked artificially.
+        :return: 'break' in order to interrupt the normal event handling of
+                 the backspace key.
+        """
+
+        # Cloppy asks the user whether they want to create a new file.
+        dialog = CloppyButtonWindow(self)
+        dialog.set_message(
+            "It looks like you're trying to create a new file.\n"
+            "If you do you'll lose any unsaved work in the current file.\n"
+            "So it behooves me to ask:\n"
+            "Are you sure you want to do that?"
+        )
+        dialog.add_choice('Yes')
+        dialog.add_choice('No')
+
+        def new_file(choice_data: CloppyChoiceMadeEventData):
+            if choice_data.choice == 'Yes':
+                self.set_text('')
+
+        dialog.choice_made.add_callback(new_file)
+        dialog.show()
 
         return 'break'
 
@@ -497,41 +618,26 @@ class EditorFileMenu(EditorMenu):
         self.add_separator()
         self.add_command(label='Exit', command=self.on_exit)
 
+    def on_new(self):
+        """
+        Called when the 'New' action is selected from the File menu.
+        """
+
+        self.master.editor_window.on_control_n()
+
     def on_open(self):
         """
         Called when the 'Open' action is selected from the File menu.
         """
 
-        # Brings up a dialog asking the user to select a location for saving
-        # the file.
-        file = filedialog.askopenfile(
-            filetypes=(('Text Files', '*.txt'), ('All Files', '*.*'))
-        )
-
-        # Check to see if the user cancelled the dialog or not.
-        if file:
-            # 'with' is used so that the file is automatically flushed/closed
-            # after our work is done with it.
-            with file:
-                self.master.editor_window.set_text(file.read())
+        self.master.editor_window.on_control_o()
 
     def on_save(self):
         """
         Called when the 'Save' action is selected from the File menu.
         """
 
-        # Brings up a dialog asking the user to select a location for saving
-        # the file.
-        file = filedialog.asksaveasfile(
-            filetypes=(('Text Files', '*.txt'), ('All Files', '*.*'))
-        )
-
-        # Check to see if the user cancelled the dialog or not.
-        if file:
-            # 'with' is used so that the file is automatically flushed/closed
-            # after our work is done with it.
-            with file:
-                file.write(self.master.editor_window.get_text())
+        self.master.editor_window.on_control_s()
 
     # def on_save_as(self):
     #     """
@@ -602,11 +708,19 @@ class EditorHelpMenu(EditorMenu):
         Called when the 'About' action is selected from the Help menu.
         """
 
-        messagebox.showinfo(
-            'About',
-            f'{Constants.program_name}\n'
-            f'By LargeKnome, Hanyuone, and Meta\n'
+        # messagebox.showinfo(
+        #     'About',
+        #     f'{Constants.program_name}\n'
+        #     f'By LargeKnome, Hanyuone, and Meta\n'
+        # )
+
+        dialog = CloppyButtonWindow(self.master.editor_window)
+        dialog.set_message(
+            f'This program was made by:\n'
+            f'LargeKnome, Hanyuone, and Meta\n'
         )
+        dialog.add_choice('Ok')
+        dialog.show()
 
 
 class EditorContextMenu(tk.Menu):
