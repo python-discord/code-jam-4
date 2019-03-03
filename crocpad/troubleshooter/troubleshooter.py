@@ -8,7 +8,6 @@ class Troubleshooter(QWizard, wizard.Ui_Wizard):
     def __init__(self):
         super(self.__class__, self).__init__()
         self.setupUi(self)
-    
     def closeEvent(self, event):
         reply = QMessageBox.question(self, 'Message',
             "bro plz", QMessageBox.Yes, QMessageBox.No)
@@ -17,9 +16,9 @@ class Troubleshooter(QWizard, wizard.Ui_Wizard):
         	event.accept()
         else:
             event.ignore()
-
     def reject(self):
         self.close()
+
 def main():
     app = QApplication(sys.argv)
     form = Troubleshooter()
