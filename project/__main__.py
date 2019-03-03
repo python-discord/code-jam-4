@@ -25,12 +25,12 @@ def btnTau():
     global operator
     c = random.randint(0, 101)
 
-    if c <= 20:
+    if c <= 40:
         k = math.pi
     elif c <= 80:
         k = 2*math.pi
     else:
-        k = math.floor(c/100)
+        k = math.floor(c/10)
 
     operator = operator + str(k)
     text_Input.set(operator)
