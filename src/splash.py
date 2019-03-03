@@ -52,7 +52,7 @@ class Intro(widget.PrimaryFrame):
         width = self.winfo_reqwidth()
         self.title = View(
             self.window,
-            text=self.master.master.master.title(),  # yikes
+            text=self.master.master.title(),  # yikes
             font=('Courier', 17),
             width=width, justify='center'
         )
@@ -94,4 +94,4 @@ class Question(widget.PrimaryFrame):
             val.pack(side='left')
 
         self.title.pack(fill='both', expand=True)
-self.choices.pack(fill='both', expand=True)
+        self.choices.pack(fill='both', expand=True)
