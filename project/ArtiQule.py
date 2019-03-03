@@ -351,100 +351,20 @@ class PaintBoard(QMainWindow):
         geo.moveLeft(geo.right())  # moves window right
         self.colorBox.setGeometry(geo)
 
-        p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16,\
-        p17, p18 = (QPushButton() for _ in range(18))
+        number_of_buttons = 18
+        PalletteButtons = {PalletteButton(button): button for button in[
+                QPushButton() for _ in range(number_of_buttons)
+            ]
+        }
 
-        c1 = PalletteButton(p1)
-        c2 = PalletteButton(p2)
-        c3 = PalletteButton(p3)
-        c4 = PalletteButton(p4)
-        c5 = PalletteButton(p5)
-        c6 = PalletteButton(p6)
-        c7 = PalletteButton(p7)
-        c8 = PalletteButton(p8)
-        c9 = PalletteButton(p9)
-        c10 = PalletteButton(p10)
-        c11 = PalletteButton(p11)
-        c12 = PalletteButton(p12)
-        c13 = PalletteButton(p13)
-        c14 = PalletteButton(p14)
-        c15 = PalletteButton(p15)
-        c16 = PalletteButton(p16)
-        c17 = PalletteButton(p17)
-        c18 = PalletteButton(p18)
+        style_sheet_str = "background-color: rgba{0}; border-radius:20px"
 
-        p1.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                         .format(c1.palletteColor))
-        p1.clicked.connect(lambda: c1.mixColor(self.currentTool))
-        self.colorBox.addPallette(p1)
-        p2.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                         .format(c2.palletteColor))
-        p2.clicked.connect(lambda: c2.mixColor(self.currentTool))
-        self.colorBox.addPallette(p2)
-        p3.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                         .format(c3.palletteColor))
-        p3.clicked.connect(lambda: c3.mixColor(self.currentTool))
-        self.colorBox.addPallette(p3)
-        p4.setStyleSheet("background-color: rgba{0}; border-radius:20px;"
-                         .format(c4.palletteColor))
-        p4.clicked.connect(lambda: c4.mixColor(self.currentTool))
-        self.colorBox.addPallette(p4)
-        p5.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                         .format(c5.palletteColor))
-        p5.clicked.connect(lambda: c5.mixColor(self.currentTool))
-        self.colorBox.addPallette(p5)
-        p6.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                         .format(c6.palletteColor))
-        p6.clicked.connect(lambda: c6.mixColor(self.currentTool))
-        self.colorBox.addPallette(p6)
-        p7.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                         .format(c7.palletteColor))
-        p7.clicked.connect(lambda: c7.mixColor(self.currentTool))
-        self.colorBox.addPallette(p7)
-        p8.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                         .format(c8.palletteColor))
-        p8.clicked.connect(lambda: c8.mixColor(self.currentTool))
-        self.colorBox.addPallette(p8)
-        p9.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                         .format(c9.palletteColor))
-        p9.clicked.connect(lambda: c9.mixColor(self.currentTool))
-        self.colorBox.addPallette(p9)
-        p10.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                          .format(c10.palletteColor))
-        p10.clicked.connect(lambda: c10.mixColor(self.currentTool))
-        self.colorBox.addPallette(p10)
-        p11.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                          .format(c11.palletteColor))
-        p11.clicked.connect(lambda: c11.mixColor(self.currentTool))
-        self.colorBox.addPallette(p11)
-        p12.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                          .format(c12.palletteColor))
-        p12.clicked.connect(lambda: c12.mixColor(self.currentTool))
-        self.colorBox.addPallette(p12)
-        p13.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                          .format(c13.palletteColor))
-        p13.clicked.connect(lambda: c13.mixColor(self.currentTool))
-        self.colorBox.addPallette(p13)
-        p14.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                          .format(c14.palletteColor))
-        p14.clicked.connect(lambda: c14.mixColor(self.currentTool))
-        self.colorBox.addPallette(p14)
-        p15.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                          .format(c15.palletteColor))
-        p15.clicked.connect(lambda: c15.mixColor(self.currentTool))
-        self.colorBox.addPallette(p15)
-        p16.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                          .format(c16.palletteColor))
-        p16.clicked.connect(lambda: c16.mixColor(self.currentTool))
-        self.colorBox.addPallette(p16)
-        p17.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                          .format(c17.palletteColor))
-        p17.clicked.connect(lambda: c17.mixColor(self.currentTool))
-        self.colorBox.addPallette(p17)
-        p18.setStyleSheet("background-color: rgba{0}; border-radius:20px"
-                          .format(c18.palletteColor))
-        p18.clicked.connect(lambda: c18.mixColor(self.currentTool))
-        self.colorBox.addPallette(p18)
+        for button_index in range(number_of_buttons):
+            c = list(PalletteButtons.keys())[button_index]
+            p = PalletteButtons[list(PalletteButtons.keys())[button_index]]
+            p.setStyleSheet(style_sheet_str.format(c.palletteColor))
+            p.clicked.connect(lambda: c.mixColor(self.currentTool))
+            self.colorBox.addPallette(p)
 
         # showing toolBox
         self.colorBox.showColorBox()
