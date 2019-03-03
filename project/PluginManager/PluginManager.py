@@ -3,8 +3,8 @@ import random
 
 from PyQt5.QtGui import QPixmap
 
-# from project.ConfigManager import ConfigManager
 from project.Plugins import SpellingMistakesPlugin
+from project.Plugins.QuotePlugin import QuotePlugin
 from project.Plugins.SynonymPlugin import SynonymPlugin
 from project.Stack import Stack
 
@@ -22,9 +22,10 @@ class PluginManager:
         # within this folder.
         self._text_plugins.append(SpellingMistakesPlugin())
         self._text_plugins.append(SynonymPlugin())
+        self._text_plugins.append(QuotePlugin())
 
     def on_copy_text(self, text_input: str, stack: Stack):
-        # _config = ConfigManager.get_instance()
+        """Function that is called by the ClipboardManager upon text copy"""
 
         _plugin = random.choice(list(filter(lambda plugin: plugin.__class__.name()
                                             not in self._disabled_plugin_names,

@@ -42,21 +42,23 @@ class SettingsScreen(QMainWindow):
         # Checkboxes begin here
         self._persist_clipboard_checkbox = \
             QCheckBox("Persist clipboard upon app quit", self)
-        self._delete_after_paste_checkbox = \
-            QCheckBox("Delete selected clipboard item after paste", self)
+
+        # Can't capture key events outside app easily in a cross-platform way/security risk
+        # self._delete_after_paste_checkbox = \
+        #     QCheckBox("Delete selected clipboard item after paste", self)
         self._auto_load_top_checkbox = \
-            QCheckBox("Automatically load top item into clipboard", self)
+            QCheckBox("Always load top item into clipboard", self)
 
         self._persist_clipboard_checkbox.setChecked(_config_mgr.persist_clipboard)
-        self._delete_after_paste_checkbox.setChecked(_config_mgr.delete_after_paste)
+        # self._delete_after_paste_checkbox.setChecked(_config_mgr.delete_after_paste)
         self._auto_load_top_checkbox.setChecked(_config_mgr.auto_load_top)
 
         self._persist_clipboard_checkbox.toggled.connect(self._persist_clipboard_checkbox_clicked)
-        self._delete_after_paste_checkbox.toggled.connect(self._delete_after_paste_checkbox_clicked)
+        # self._delete_after_paste_checkbox.toggled.connect(self._delete_after_paste_checkbox_clicked)
         self._auto_load_top_checkbox.toggled.connect(self._auto_load_top_checkbox_clicked)
 
         self._central_widget_layout.addWidget(self._persist_clipboard_checkbox)
-        self._central_widget_layout.addWidget(self._delete_after_paste_checkbox)
+        # self._central_widget_layout.addWidget(self._delete_after_paste_checkbox)
         self._central_widget_layout.addWidget(self._auto_load_top_checkbox)
 
         # Bottom save button

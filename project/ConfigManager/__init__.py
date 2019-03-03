@@ -1,2 +1,2 @@
 
-from .ConfigManager import ConfigManager
+from .ConfigManager import ConfigManager  # noqa: F401

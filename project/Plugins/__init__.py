@@ -1,2 +1,2 @@
-from .AbstractPlugin import AbstractPlugin
-from .SpellingMistakesPlugin import SpellingMistakesPlugin
+from .AbstractPlugin import AbstractPlugin  # noqa: F401
+from .SpellingMistakesPlugin import SpellingMistakesPlugin  # noqa: F401

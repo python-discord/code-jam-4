@@ -14,6 +14,7 @@ flake8 = "*"
 lxml = "*"
 requests = "*"
 thesaurus = "*"
+nltk = "*"
 
 [requires]
 python_version = "3.7"

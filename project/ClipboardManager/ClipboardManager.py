@@ -1,12 +1,13 @@
 """Class encapsulating clipboard events"""
-from PyQt5.Qt import QApplication, QClipboard  # noqa: F401
+import logging
+
+from PyQt5.Qt import QApplication  # noqa: F401
 from PyQt5.QtCore import pyqtSignal, QObject, pyqtSlot
 
 from project.ClipboardManager.ClipboardObject import TextClipboardObject, ImageClipboardObject
+from project.ConfigManager import ConfigManager
 from project.PluginManager import PluginManager
 from project.Stack import Stack
-
-import logging
 
 
 # https://stackoverflow.com/questions/36522809/
@@ -25,46 +26,54 @@ class ClipboardManager(QObject):
         self._last_image = None
 
         QApplication.clipboard().dataChanged.connect(self._clipboard_changed)
+
         self.clipboard_stack = Stack()
         self.stack_changed_signal.connect(self._stack_changed)
 
     @pyqtSlot(Stack)
     def _stack_changed(self):
-        """Slot to be called when the state of the stack changes (usually on add, move, delete, or moving items
-        around """
+        """Slot to be called when the state of the stack changes
+        (usually on add, move, delete, or moving items around """
+
+        _config = ConfigManager.get_instance()
         # copy the top of the stack into the clipboard if the stack is not empty.
         if self.clipboard_stack.items_count():
-            if isinstance(self.clipboard_stack.peek(), TextClipboardObject):
-                QApplication.clipboard().setText(self.clipboard_stack.peek().text)
-            if isinstance(self.clipboard_stack.peek(), ImageClipboardObject):
-                QApplication.clipboard().setPixmap(self.clipboard_stack.peek().pixmap)
+            if _config.auto_load_top:
+                item_to_load = self.clipboard_stack.peek()
+            else:
+                item_to_load = self.clipboard_stack.current_item
+
+            if isinstance(item_to_load, TextClipboardObject):
+                self._last_text = item_to_load.text
+                self._logger.info("Current Stack Item: " + item_to_load.text)
+                QApplication.clipboard().setText(item_to_load.text)
+            if isinstance(item_to_load, ImageClipboardObject):
+                self._last_image = item_to_load.pixmap
+                QApplication.clipboard().setPixmap(item_to_load.pixmap)
 
     @pyqtSlot()
     def _clipboard_changed(self):
-        """Slot to be called when the state of the system's clipboard changes (mostly after copying)"""
+        """Slot to be called when the state of the system's clipboard changes
+        (mostly after copying)"""
         # current_text = Text.apply(QApplication.clipboard().text())
         current_text = QApplication.clipboard().text()
         current_image = QApplication.clipboard().pixmap()
 
-        top_item = self.clipboard_stack.peek()
+        # top_item = self.clipboard_stack.peek()
 
         # current_text = PT.apply(QApplication.clipboard().text()) # TODO: Chain plugins together
-        self._logger.info("Current Text:", QApplication.clipboard().text())
-        self._logger.info("Current Image Info:", QApplication.clipboard().pixmap())
+        self._logger.info("Current Text:" + str(QApplication.clipboard().text()))
+        # self._logger.info("Current Image Info:", str(QApplication.clipboard().pixmap()))
 
-        if current_text and (self._last_text is None or current_text != self._last_text) and \
-                not (isinstance(top_item, TextClipboardObject) and top_item.text == current_text):
-
+        # print(str(current_text) != self._last_text)
+        if current_text and (self._last_text is None or current_text != self._last_text):
             # self.clipboard_stack.push_item(TextClipboardObject(current_text))
             self._plugin_manager.on_copy_text(current_text, self.clipboard_stack)
-
             self.clipboard_changed_signal.emit(self.clipboard_stack)
 
         if not current_image.toImage().isNull() \
                 and (self._last_image is None
-                     or current_image.toImage() != self._last_image.toImage()) \
-                and not (isinstance(top_item, ImageClipboardObject)
-                         and top_item.pixmap.toImage() == current_image.toImage()):
+                     or current_image.toImage() != self._last_image.toImage()):
             self.clipboard_stack.push_item(ImageClipboardObject(current_image))
             self.clipboard_changed_signal.emit(self.clipboard_stack)
 
@@ -73,15 +82,15 @@ class ClipboardManager(QObject):
 
     # DONE: use Qt signals properly
     # https://stackoverflow.com/questions/36434706/pyqt-proper-use-of-emit-and-pyqtsignal
-    # def bind_clipboard_state_callback(self, function):
-    #     self._clipboard_state_callback = function
 
+    @pyqtSlot(int)
     def set_selected_object(self, idx):
+        """Highlights a particular row in the main window"""
         if not 0 <= idx < self.clipboard_stack.items_count():
             raise Exception("Index is out of bounds")
 
-        """Highlights a particular row in the main window"""
         self.clipboard_stack.set_current_item(idx)
+        self._stack_changed()
 
     @pyqtSlot()
     def remove_clipboard_item(self):

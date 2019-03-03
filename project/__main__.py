@@ -3,6 +3,7 @@ import sys
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
+from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QMainWindow, QApplication, \
     QHBoxLayout, QVBoxLayout, QWidget, QListWidgetItem
 
@@ -76,6 +77,7 @@ class MainWindow(QMainWindow):
     def __init__(self, clipboard_manager: ClipboardManager):
         """ Initialises new MainWindow class """
         super().__init__()
+        self._logger = logging.getLogger(self.__class__.__qualname__)
 
         self._central_widget_layout = QVBoxLayout()
         self._central_widget = QtWidgets.QWidget(self)
@@ -116,6 +118,9 @@ class MainWindow(QMainWindow):
     def _show_settings_window(self):
         self._settings_screen.show()
 
+    def _show_plugins_window(self):
+        pass
+
     @pyqtSlot(Stack)
     def _render_clipboard_stack(self, clipboard_stack: Stack):
         self._main_list_widget.clear()
@@ -143,10 +148,6 @@ class MainWindow(QMainWindow):
                                              .current_item_idx - 1)
 
     def setupUi(self):
-        # MainWindow.setObjectName("MainWindow")
-        # self.setFixedSize(640, 480)
-
-        # No idea what all these widgets are. Please clarify and comment around BWAC?
 
         self._central_widget.setObjectName(MainWindow.CENTRAL_WIDGET_NAME)
 
@@ -161,69 +162,30 @@ class MainWindow(QMainWindow):
         self._main_list_widget.currentRowChanged.connect(self._set_current_row)
 
         self._central_widget_layout.addWidget(self._main_list_widget)
-        # self._central_widget_layout.addStretch(1)
 
-        # self.Add = QtWidgets.QPushButton(self._central_widget)
-        # self.Add.setGeometry(QtCore.QRect(0, 3, 51, 20))
-        # self.Add.clicked.connect(self.addObject)
-        # self.Add.setObjectName("Add")
-
-        # self.Remove = QtWidgets.QPushButton(self._central_widget)
-        # self.Remove.setGeometry(QtCore.QRect(50, 3, 51, 20))
-        # self.Remove.clicked.connect(self.removeObject)
-        # self.Remove.setObjectName("Remove")
-        #
-        # self.Edit = QtWidgets.QPushButton(self._central_widget)
-        # self.Edit.setGeometry(QtCore.QRect(100, 3, 51, 20))
-        # self.Edit.setObjectName("Edit")
-
-        # self.treeWidget = QtWidgets.QTreeWidget(self._central_widget)
-        # self.treeWidget.setGeometry(QtCore.QRect(0, 30, 631, 411))
-        # self.treeWidget.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        # self.treeWidget.setObjectName("treeWidget")
-
-        # menu bar has no members?
         self.menubar = self.menuBar()
-        # self.menubar.setGeometry(QtCore.QRect(0, 0, 640, 21))
-        # self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
-        self.menuFile.setTitle("File")
+        self.menuFile.setTitle("Settings")
 
-        # self.menuPlugins = QtWidgets.QMenu(self.menubar)
-        # self.menuPlugins.setObjectName("menuPlugins")
-        # self.menuItem = QtWidgets.QMenu(self.menubar)
-        # self.menuItem.setObjectName("menuItem")
-        # self.setMenuBar(self.menubar)
-        # self.statusbar = QtWidgets.QStatusBar(self)
-        # self.statusbar.setObjectName("statusbar")
-        # self.setStatusBar(self.statusbar)
-        # self.actionAdd = QtWidgets.QAction(self)
-        # self.actionAdd.setObjectName("actionAdd")
-        # self.actionDelete = QtWidgets.QAction(self)
-        # self.actionDelete.setObjectName("actionDelete")
-        # self.action_todo = QtWidgets.QAction(self)
-        # self.action_todo.setObjectName("action_todo")
         self.actionSettings = QtWidgets.QAction(self)
         self.actionSettings.setObjectName("actionSettings")
-        self.actionSettings.setText("Settings")
+        self.actionSettings.setText("General")
         self.actionSettings.triggered.connect(self._show_settings_window)
-        # self.actionAdd_2 = QtWidgets.QAction(self)
-        # self.actionAdd_2.setObjectName("actionAdd_2")
-        # self.actionRemove = QtWidgets.QAction(self)
-        # self.actionRemove.setObjectName("actionRemove")
+
         self.menuFile.addAction(self.actionSettings)
-        # self.menuPlugins.addAction(self.action_todo)
-        # self.menuItem.addAction(self.actionAdd_2)
-        # self.menuItem.addAction(self.actionRemove)
+
+        self.pluginSettings = QtWidgets.QAction(self)
+        self.pluginSettings.setObjectName("actionPlugins")
+        self.pluginSettings.setText('Plugins')
+        self.pluginSettings.triggered.connect(self._show_plugins_window)
+
+        self.menuFile.addAction(self.pluginSettings)
+
         self.menubar.addAction(self.menuFile.menuAction())
-        # self.menubar.addAction(self.menuPlugins.menuAction())
-        # self.menubar.addAction(self.menuItem.menuAction())
 
         self._central_widget.setLayout(self._central_widget_layout)
         self.setCentralWidget(self._central_widget)
-
-        self.retranslateUi()
 
         # https://stackoverflow.com/questions/2462401/problem-in-understanding-connectslotsbyname-in-pyqt
         # Better to use new-style decorator @QtCore.pyqtSlot()
@@ -231,42 +193,10 @@ class MainWindow(QMainWindow):
 
         self.show()
 
-    def retranslateUi(self):
-        """Generated by Qt designer for localization purposes. Currently unused."""
-
-        # _translate = QtCore.QCoreApplication.translate
-        # MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        # self._add_btn.setText(_translate("MainWindow", "Add"))
-        # self._remove_btn.setText(_translate("MainWindow", "Remove"))
-        # self._edit_btn.setText(_translate("MainWindow", "Edit"))
-        # self.treeWidget.headerItem() \
-        #     .setText(0, _translate("MainWindow", "Items:"))
-        # __sortingEnabled = self.treeWidget.isSortingEnabled()
-        # self.treeWidget.setSortingEnabled(False)
-        # self.menuFile.setTitle(_translate("MainWindow", "File"))
-        # self.menuPlugins.setTitle(_translate("MainWindow", "Plugins"))
-        # self.menuItem.setTitle(_translate("MainWindow", "Items"))
-        # self.actionAdd.setText(_translate("MainWindow", "Add"))
-        # self.actionDelete.setText(_translate("MainWindow", "Delete"))
-        # self.action_todo.setText(_translate("MainWindow", "Install #todo"))
-        # self.actionSettings.setText(_translate("MainWindow", "Settings #todo"))
-        # self.actionAdd_2.setText(_translate("MainWindow", "Add #todo"))
-        # self.actionRemove.setText(_translate("MainWindow", "Remove #todo"))
-
-    # def _add_object(self):
-    #     exec('item_' + str(self.num_of_objects) + ' = QtWidgets.QTreeWidgetItem(self.treeWidget)')
-    #     exec('item_' + str(self.num_of_objects) + '.setText(0, "Untitled")')
-    #     self.num_of_objects + 1
-    # def removeObject(self):
-    #     # TODO make it remove instead of add
-    #
-    #     if self.items == []:
-    #         return
-    #
-    #     exec('item_' + str(self.num_of_objects) + ' = QtWidgets.QTreeWidgetItem(self.treeWidget)')
-    #     exec('item_' + str(self.num_of_objects) + '.setText(0, "Untitled")')
-    #
-    #     self.num_of_objects + 1
+    def keyPressEvent(self, event):
+        self._logger.info("Key press detected")
+        if event.matches(QKeySequence.Paste):
+            self._logger.info("Detected paste")
 
     def closeEvent(self, event):
         """ Fires on window close"""
@@ -274,7 +204,6 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == '__main__':
-
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
     logger.info("App Started")
