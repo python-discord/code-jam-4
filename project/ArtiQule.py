@@ -184,7 +184,6 @@ class PalletteButton:
                 tool.isDipped = True
             elif tool.toolName == "A bucket" and self.alpha:
                 """The pallette gets emptied """
-                print('bucket selected')
                 self.r = 0
                 self.g = 0
                 self.b = 0
@@ -333,7 +332,8 @@ class PaintBoard(QMainWindow):
             if self.currentTool.toolName != \
                     "Pointy Pen" or \
                     "A bucket" or \
-                    "Sunbathing Eraser" \
+                    "Sunbathing Eraser" or \
+                    "A bucket filled" \
                     and self.currentTool.isDipped:
                 self.dripper = DripperEffect(
                     self.currentTool.color,
@@ -452,11 +452,9 @@ class PaintBoard(QMainWindow):
 
     def dripperHandler(self, result):
         Dripper = result
-        print('drip')
         self.painter.setPen(Dripper)
         point = QPoint(self.cursor().pos().x(), self.cursor().pos().y())
         point = self.mapFromGlobal(point)
-        print(point.x(), point.y())
         self.painter.drawLine(point, point)
         self.update()
 
@@ -466,7 +464,6 @@ class PaintBoard(QMainWindow):
             self.drawing = True
             if self.currentTool.toolName == "A bucket filled" \
                     and self.currentTool.duration >= 0:
-                print(self.currentTool.toolName)
                 Pen = QPen()
                 Pen.setColor(self.currentTool.color)
                 Pen.setWidth(self.currentTool.brushSize)
@@ -476,7 +473,6 @@ class PaintBoard(QMainWindow):
                 self.currentTool.toolName = "A bucket"
                 self.currentTool.color = QColor(0, 0, 0, 0)
                 self.connectTool(self.currentTool)
-                print('used bucket')
 
             self.lastPoint = event.pos()
             self.update()
@@ -484,7 +480,6 @@ class PaintBoard(QMainWindow):
             return None
 
     def mouseMoveEvent(self, event):
-        print("hey")
         self.mousePos = event.pos()
         if (event.buttons() and Qt.LeftButton) and \
                 self.drawing and self.currentTool is not None:
@@ -494,23 +489,33 @@ class PaintBoard(QMainWindow):
                 if self.currentTool.duration <= 0.0:
                     Pen.setDashPattern([0, 0, 0, 0])
                     self.drawing = False
+                    self.dripper.stop()
                 else:
                     self.currentTool.duration -= 0.1
                     if "Brush" in self.currentTool.toolName:
                         self.currentTool.opacityDuration -= 0.0125
-                        # TODO EXTRA: find more fitting duration time
                         # perhaps divide in class object
 
-                # this here is to add more realism to the point when its breaking
-                if self.currentTool.duration <= 0.5 and self.currentTool.toolName == "Pointy Pen":
-                    broken_pen = QPen()
-                    broken_pen.setCapStyle(Qt.RoundCap)
-                    broken_pen.setJoinStyle(Qt.MiterJoin)
-                    broken_pen.setWidth(1)
-                    broken_pen.setColor(self.currentTool.color)
-                    broken_pen.setDashPattern([25, 50, 25, 50])
-                    broken_pen.setStyle(Qt.DashDotDotLine)
-                    self.painter.setPen(broken_pen)
+                    # this here is to add more realism to the point when its breaking
+                if self.currentTool.duration <= 0.2:
+                    dots = QPen()
+                    broken_tools = QPen()
+                    if self.currentTool.toolName == "Pointy Pen":
+                        dots.setColor(Qt.black)
+                        dots.setWidth(1)
+                    if self.currentTool.toolName == "Solid Brush":
+                        broken_tools.setColor(self.currentTool.color)
+                        broken_tools.setCapStyle(Qt.SquareCap)
+                        broken_tools.setJoinStyle(Qt.BevelJoin)
+                        broken_tools.setWidth(self.currentTool.brushSize - 2)
+                        self.painter.setPen(broken_tools)
+                        self.painter.drawLine(self.lastPoint, self.lastPoint)
+                    dots.setCapStyle(Qt.RoundCap)
+                    dots.setJoinStyle(Qt.RoundJoin)
+                    dots.setColor(self.currentTool.color)
+                    dots.setDashPattern([25, 50, 25, 50])
+                    dots.setStyle(Qt.DashDotDotLine)
+                    self.painter.setPen(dots)
                     self.painter.drawLine(self.lastPoint + QPoint(randint(10, 15), randint(1, 5)),
                                           self.lastPoint + QPoint(randint(5, 10), randint(1, 10)))
 
@@ -598,7 +603,8 @@ class DripperEffect(QThread):
     def __init__(self, color, size):
         QThread.__init__(self)
         self.color = color
-        self.size = size
+        self.size = size * 2
+        print('size: ' + str(self.size))
         self._stop = False
 
     def stop(self):
@@ -616,6 +622,7 @@ class DripperEffect(QThread):
                 Drip.setJoinStyle(Qt.RoundJoin)
                 Drip.setCapStyle(Qt.RoundCap)
                 self.drip.emit(Drip)
+                print('drip')
             else:
                 pass
             time.sleep(0.5)
