@@ -2,7 +2,8 @@ import sys
 from random import randint
 
 from PyQt5.QtCore import QPoint, Qt
-from PyQt5.QtGui import QColor, QCursor, QIcon, QImage, QPainter, QPen, QPixmap
+from PyQt5.QtGui import (QColor, QCursor, QIcon, QImage, QPainter,
+                         QPen, QPixmap, QBrush)
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog,
                              QMainWindow, QPushButton,)
 
@@ -33,6 +34,7 @@ class ColorBox(QMainWindow):
         self.tools_holder = 1
         self.exists = True
         self.Setup()
+        # TODO MINOR: can open as many windows as one desires
 
     def Setup(self):
         # self.setGeometry(990, 150, 150, 300)
@@ -58,7 +60,6 @@ class ColorBox(QMainWindow):
 
     @classmethod
     def setWindowCursor(cls, currentTool):
-        print(len(cls.objs))
 
         for obj in cls.objs:
             obj.setCursor(QCursor(QPixmap("Design/icons/{}.png".format(
@@ -99,7 +100,8 @@ class Tool:
         self.shortcut = shortcut
         self.statusTip = statusTip
         self.duration = duration[0]
-        self.constDuration = randint(0, duration[1])
+        self.constDuration = duration[1]
+        self.opacityDuration = 1
 
         self.create_button()
 
@@ -128,14 +130,16 @@ class PalletteButton:
         self.alpha = 255
         self.palletteColor = self.r, self.g, self.b, self.alpha
         # {tuple} so it can be applied below
+        self.timesToUse = randint(10, 20)
+        # TODO: pallette will become empty after being used X amount of times
+
 
     def mixColor(self, tool):
         if tool is None or tool.toolName in \
-                ("Pointy Pen", "Pointy Pen Broken", "Eraser"):
+                ("Pointy Pen", "Pointy Pen Broken", "Sunbathing Eraser"):
             return None
 
-        # TODO: pointy pen & no tool crashes upon clicking here with it
-        if tool.toolName in ["A bucket", "Straggly Paintbrush",
+        if tool.toolName in ["A bucket", "Straggly PaintBrush",
                              "Solid Brush"]:
             colorSum = sum(
                 [
@@ -153,7 +157,7 @@ class PalletteButton:
             elif tool.toolName == "A bucket filled":
                 # TODO: bucket has to be able to
                 # overflow other color pallette
-                self.r = (self.r + tool.color.red()) // 4  #
+                self.r = (self.r + tool.color.red()) // 4
                 self.g = (self.g + tool.color.green()) // 4
                 self.b = (self.b + tool.color.blue()) // 4
             elif not sum((self.r, self.g, self.b, self.alpha)): pass
@@ -161,8 +165,9 @@ class PalletteButton:
             self.palletteColor = (self.r, self.g, self.b, self.alpha)
             tool.color = QColor(self.r, self.g, self.b, self.alpha)
 
-            if tool.toolName in ["Straggly Paintbrush",
+            if tool.toolName in ["Straggly PaintBrush",
                                  "Solid Brush"]:
+                tool.opacityDuration = 1
                 tool.isDipped = True
             elif "A bucket" in tool.toolName and self.alpha:
                 """The pallette gets emptied """
@@ -174,7 +179,7 @@ class PalletteButton:
                                       self.b, self.alpha)
                 tool.toolName = "A bucket filled"
                 tool.PaintBoard.connectTool(tool)
-            tool.duration = tool.constDuration
+            tool.duration = randint(0, tool.constDuration)
 
         self.parentBtn.setStyleSheet(
             "background-color: rgba{0}; border-radius:20px".format(
@@ -250,13 +255,13 @@ class PaintBoard(QMainWindow):
                          (1, 1)
                          )
 
-        self.straggly_paintbrush = Tool("Straggly Paintbrush",
+        self.straggly_paintbrush = Tool("Straggly PaintBrush",
                                         10, QColor(0, 0, 0, 0.0),
                                         [randint(1, 4), randint(1, 2),
                                          randint(0, 3), randint(0, 5)],
                                         self,
-                                        "Design/icons/Straggly Paintbrush.png",
-                                        "CTRL+A", "A Straggly Paintbrush.",
+                                        "Design/icons/Straggly PaintBrush.png",
+                                        "CTRL+A", "A Straggly PaintBrush.",
                                         (randint(5, 30), 30)  # randint(5,30)
                                         )
 
@@ -268,7 +273,7 @@ class PaintBoard(QMainWindow):
                                     (1, 1)
                                     )
 
-        self.eraser = Tool("Eraser", 10, Qt.white,
+        self.sunbathing_eraser = Tool("Sunbathing Eraser", 10, Qt.white,
                            [0, 0, 0, 0.0], self, "", "Ctrl+F",
                            "Erase Your Mistakes, Kid!",
                            (99999, 99999))  # infinte duration
@@ -288,8 +293,8 @@ class PaintBoard(QMainWindow):
             pass
         else:
             if self.currentTool.toolName == "Pointy Pen":
-                self.currentTool.duration = self.currentTool.constDuration
-        print(self.currentTool)
+                self.currentTool.duration = randint(0,
+                                            self.currentTool.constDuration)
         ColorBox.setWindowCursor(self.currentTool)
 
         self.setCursor(QCursor(
@@ -310,7 +315,7 @@ class PaintBoard(QMainWindow):
         geo.moveLeft(geo.right())  # moves window right
         self.colorBox.setGeometry(geo)
 
-        p1, p2, p3, p4, p5, p6 = (QPushButton() for _ in range(6))
+        p1, p2, p3, p4, p5, p6,p7,p8,p9,p10,p11,p12 = (QPushButton() for _ in range(12))
 
         c1 = PalletteButton(p1)
         c2 = PalletteButton(p2)
@@ -318,6 +323,12 @@ class PaintBoard(QMainWindow):
         c4 = PalletteButton(p4)
         c5 = PalletteButton(p5)
         c6 = PalletteButton(p6)
+        c7 = PalletteButton(p7)
+        c8 = PalletteButton(p8)
+        c9 = PalletteButton(p9)
+        c10 = PalletteButton(p10)
+        c11 = PalletteButton(p11)
+        c12 = PalletteButton(p12)
 
         p1.setStyleSheet("background-color: rgba{0}; border-radius:20px"
                          .format(c1.palletteColor))
@@ -343,6 +354,31 @@ class PaintBoard(QMainWindow):
                          .format(c6.palletteColor))
         p6.clicked.connect(lambda: c6.mixColor(self.currentTool))
         self.colorBox.addPallette(p6)
+        p7.setStyleSheet("background-color: rgba{0}; border-radius:20px"
+                         .format(c7.palletteColor))
+        p7.clicked.connect(lambda: c7.mixColor(self.currentTool))
+        self.colorBox.addPallette(p7)
+        p8.setStyleSheet("background-color: rgba{0}; border-radius:20px"
+                         .format(c8.palletteColor))
+        p8.clicked.connect(lambda: c8.mixColor(self.currentTool))
+        self.colorBox.addPallette(p8)
+        p9.setStyleSheet("background-color: rgba{0}; border-radius:20px"
+                         .format(c9.palletteColor))
+        p9.clicked.connect(lambda: c9.mixColor(self.currentTool))
+        self.colorBox.addPallette(p9)
+        p10.setStyleSheet("background-color: rgba{0}; border-radius:20px"
+                         .format(c10.palletteColor))
+        p10.clicked.connect(lambda: c10.mixColor(self.currentTool))
+        self.colorBox.addPallette(p10)
+        p11.setStyleSheet("background-color: rgba{0}; border-radius:20px"
+                         .format(c11.palletteColor))
+        p11.clicked.connect(lambda: c11.mixColor(self.currentTool))
+        self.colorBox.addPallette(p11)
+        p12.setStyleSheet("background-color: rgba{0}; border-radius:20px"
+                         .format(c12.palletteColor))
+        p12.clicked.connect(lambda: c12.mixColor(self.currentTool))
+        self.colorBox.addPallette(p12)
+
 
         # showing toolBox
         self.colorBox.showColorBox()
@@ -372,35 +408,47 @@ class PaintBoard(QMainWindow):
                 self.drawing and self.currentTool is not None:
 
             Pen = QPen()
-            if self.currentTool.toolName != "Eraser":
+            if self.currentTool.toolName != "Sunbathing Eraser":
                 if self.currentTool.duration <= 0.0:
                     Pen.setDashPattern([0, 0, 0, 0])
                     self.drawing = False
                 else:
-                    #while self.currentTool.duration:
-                    #    self.currentTool.color.alpha()
                     self.currentTool.duration -= 0.1
+                    if "Brush" in self.currentTool.toolName:
+                        self.currentTool.opacityDuration-=0.0125
+                        #TODO EXTRA: find more fitting duration time
+                        # perhaps divide in class object
 
-            if self.currentTool.toolName == "Pointy Pen":
-                Pen.setCapStyle(Qt.RoundCap)
-                Pen.setJoinStyle(Qt.BevelJoin)
-            elif self.currentTool.toolName == "Straggly Paintbrush" or \
-                    "Solid Brush":
-                Pen.setCapStyle(Qt.SquareCap)
-                Pen.setJoinStyle(Qt.MiterJoin)
-
-            Pen.setColor(self.currentTool.color)
-            Pen.setWidth(self.currentTool.brushSize)
-
-            self.painter.setPen(Pen)
-            if self.currentTool.duration <= 0:
                 if self.currentTool.toolName == "Pointy Pen":
-                    self.setCursor(QCursor(
-                        QPixmap("Design/icons/Pointy Pen Broken.png")))
+                    Pen.setCapStyle(Qt.RoundCap)
+                    Pen.setJoinStyle(Qt.MiterJoin)
+                    Pen.setWidth(self.currentTool.brushSize)
+                elif "Brush" in self.currentTool.toolName:
+                    Pen = QBrush()
+                    if self.currentTool.toolName == "Straggly Paintbrush":
+                        Pen.setStyle(Qt.HorPattern)
+                    else:
+                        pass
+                Pen.setColor(self.currentTool.color)
 
-            self.painter.drawLine(self.lastPoint, event.pos())
-            self.lastPoint = event.pos()
-            self.update()
+                self.painter.setOpacity(self.currentTool.opacityDuration)
+                self.painter.setPen(Pen) if Pen is QPen else \
+                    self.painter.setBrush(Pen)
+                if self.currentTool.duration <= 0:
+                    if self.currentTool.toolName == "Pointy Pen":
+                        self.setCursor(QCursor(
+                            QPixmap("Design/icons/Pointy Pen Broken.png")))
+
+            try:
+                self.painter.drawLine(self.lastPoint, event.pos()) if Pen is QPen \
+                else self.painter.drawRect(event.x(), event.y(), 100, 100)
+                self.lastPoint = event.pos()
+                self.update()
+            except Exception as ex:
+                template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+                message = template.format(type(ex).__name__, ex.args)
+                print(message)
+            print(self.currentTool.duration, self.currentTool.opacityDuration)
         else:
             return None
 
