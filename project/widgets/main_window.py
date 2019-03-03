@@ -21,7 +21,7 @@ class MainWindow(QMainWindow):
 
         self.password_prompt = PasswordPrompt("temporarypassword")
 
-        self.seek_dialogue = SeekDialogue()
+        self.seek_dialogue = SeekDialogue(self)
         self.seek_dialogue.finished.connect(self.seek_finished)
 
         self.playlist_model = self.create_model()
