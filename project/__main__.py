@@ -33,15 +33,16 @@ class Weatherh8su:
         self.search_icon = tk.Label(self.top_frame, image=self.glass)
         self.search_icon.grid(row=0, column=0)
         self.search_bar = tk.Entry(self.top_frame, width=70)
+        self.search_bar.bind("<Return>", lambda e: self.search_function())
         self.search_bar.grid(row=0, column=1)
         self.f = tk.Frame(self.top_frame, width=26, height=30)
         self.f.grid(column=2, row=1)
         self.gear = Image.open("data/gear.png")
         self.gear = ImageTk.PhotoImage(self.gear)
         self.settings = tk.Label(self.top_frame, image=self.gear)
-        self.settings.bind("<Enter>", lambda a: self.annoy())
-        self.settings.bind("<Leave>", lambda a: self.de_annoy())
-        self.f.bind("<Leave>", lambda a: self.de_annoy())
+        self.settings.bind("<Enter>", lambda e: self.annoy())
+        self.settings.bind("<Leave>", lambda e: self.de_annoy())
+        self.f.bind("<Leave>", lambda e: self.de_annoy())
         self.settings.grid(column=2, row=0)
         self.todays_frame = tk.Frame(self.master)
         self.todays_frame.pack(anchor="w")
@@ -76,6 +77,9 @@ class Weatherh8su:
                 *self.master.winfo_pointerxy()) == widget:
             return True
         return False
+
+    def search_function(self):
+        "jon's function"
 
 
 root = tk.Tk()
