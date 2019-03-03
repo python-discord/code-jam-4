@@ -130,6 +130,9 @@ class Player(QMediaPlayer):
             The paths to the media files to add.
 
         """
+        if not paths:
+            return
+
         # TODO: Let's just hope the commits and rollbacks always succeed for now...
         self._model.database().transaction()
         paths_added = []
