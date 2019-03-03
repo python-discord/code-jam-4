@@ -15,13 +15,13 @@ if __name__ == '__main__':
 
     # This plays the background music in a continuous loop
     music_file = os.path.join(os.path.dirname(__file__), 'background.mp3')
-    bgmplaylist = QtMultimedia.QMediaPlaylist()
-    bgmplaylist.addMedia(QtMultimedia.QMediaContent(
+    bgm_playlist = QtMultimedia.QMediaPlaylist()
+    bgm_playlist.addMedia(QtMultimedia.QMediaContent(
         QUrl.fromLocalFile(music_file)))
-    bgmplaylist.setPlaybackMode(QtMultimedia.QMediaPlaylist.Loop)
-    bgmplayer = QtMultimedia.QMediaPlayer()
-    bgmplayer.setPlaylist(bgmplaylist)
-    bgmplayer.play()
+    bgm_playlist.setPlaybackMode(QtMultimedia.QMediaPlaylist.Loop)
+    bgm_player = QtMultimedia.QMediaPlayer()
+    bgm_player.setPlaylist(bgm_playlist)
+    bgm_player.play()
 
     window = MinesweeperApp()
     window.show()

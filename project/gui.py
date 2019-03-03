@@ -225,7 +225,7 @@ class Minesweeper(QtWidgets.QWidget):
         self.tile_size = (20, 20)
         self.controller = logic.Minesweeper(self.grid_width, self.grid_height)
         self.controller.mines_number = mines
-        self.flag_count = mines
+        self.flag_count = 1
         self.too_fast_modal = None
         self.game_over_modal = None
 
