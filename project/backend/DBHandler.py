@@ -124,7 +124,7 @@ class DBHandler:
                                    self.jsonMessages['noUser']
                                    )
             return False
-        # LOG IN THE USER, MAYBE A METHOD IN MAIN APP
+
         self.logged_in_user = rows[0][0]
         return True
 

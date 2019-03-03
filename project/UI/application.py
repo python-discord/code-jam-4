@@ -23,11 +23,14 @@ class Application(tk.Tk):
 
         self.pages = {}
 
+        self.tk_setPalette(background="#F0F0F0", foreground="#000000")
+        self.dark_mode = tk.BooleanVar()
+        self.dark_mode.trace("w", self.change_dark_mode)
+        self.dark_mode.set(False)
+
+
         self.create_pages()
 
-        self.tk_setPalette(background="#F0F0F0", foreground="#000000")
-        self.dark_mode = False
-        self.bind("d", self.switch)
         self.protocol("WM_DELETE_WINDOW", self.close_window)
 
     def close_window(self):
@@ -48,15 +51,12 @@ class Application(tk.Tk):
                             else:
                                 self.quit()
 
-    def switch(self, event):
+    def change_dark_mode(self, *args):
         """Switch the application between light and dark mode."""
-        if self.dark_mode:
+        if not self.dark_mode.get():
             self.tk_setPalette(background="#F0F0F0", foreground="#000000")
-
         else:
             self.tk_setPalette(background="#292D32", foreground="#2e3237")
-
-        self.dark_mode = not self.dark_mode
 
     def create_pages(self):
         """
@@ -111,17 +111,21 @@ class LoginPage(tk.Frame):
             N/A
         """
         self.title = tk.Label(
-            self, text="Welcome to Green Greenhouses\nEvent Manager",
+            self, text="Welcome to\nGreen Greenhouses\nEvent Manager",
             font=("Helvetica", 24, "bold")
         )
         self.title.grid(row=0, column=0, sticky="ew", pady=(10, 0))
+
+        self.dark_mode = tk.Checkbutton(self, text="Dark Mode",
+                                        variable=self.parent.dark_mode)
+        self.dark_mode.grid(row=0, column=0, sticky="ne", padx=100)
 
         self.registerButton = tk.Button(
             self, text="REGISTER", width=10,
             font=("Arial", 20, "italic"),
             command=self.register
         )
-        self.registerButton.grid(row=5, column=0, pady=100)
+        self.registerButton.grid(row=5, column=0, pady=80)
 
         self.loginButton = tk.Button(
             self, text="LOGIN", width=10,
@@ -137,10 +141,7 @@ class LoginPage(tk.Frame):
         loginWindow = Login(self.parent.dbh)
         self.wait_window(loginWindow.window)
         if loginWindow.loggedIn:
-            print(f"Logged In User {self.parent.dbh.logged_in_user}")
             self.parent.change_page(HomePage)
-        else:
-            print("Not Logged In")
 
 
 class HomePage(tk.Frame):
@@ -168,6 +169,10 @@ class HomePage(tk.Frame):
             font=("Helvetica", 24, "bold")
         )
         self.title.grid(row=0, column=0, pady=(10, 0), sticky="ew")
+
+        self.dark_mode = tk.Checkbutton(self, text="Dark Mode",
+                                        variable=self.parent.dark_mode)
+        self.dark_mode.grid(row=0, column=0, sticky="ne", padx=100)
 
         self.view_events = tk.Button(
             self, text="VIEW EVENTS", width=12,
