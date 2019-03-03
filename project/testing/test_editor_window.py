@@ -47,6 +47,15 @@ class TestEditorWindow(EditorWindow):
                 'Underlined', start, end
             )
 
+            # testing out showing menus at the location of a word.
+            x, y, width, height = self.text_box.bbox(start)
+            test_menu = tk.Menu(self, tearoff=False)
+            test_menu.add_command(label='test')
+            test_menu.tk_popup(
+                self.text_box.winfo_rootx()+x,
+                self.text_box.winfo_rooty()+y+height
+            )
+
             self.previous_word = NewWordEventData(start, end, word)
 
 
