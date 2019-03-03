@@ -176,7 +176,6 @@ class PalletteButton:
                 tool.isDipped = True
             elif tool.toolName == "A bucket" and self.alpha == 255:
                 """The pallette gets emptied """
-                print("here")
                 self.r = 0
                 self.g = 0
                 self.b = 0
@@ -316,13 +315,12 @@ class PaintBoard(QMainWindow):
                         )
                     )
                 )
-        if self.currentTool is not None:
+
             if self.currentTool.toolName not in [
                     "Pointy Pen",
                     "A bucket",
                     "Sunbathing Eraser",
-                    "A bucket filled"] \
-                        and self.currentTool.isDipped:
+                    "A bucket filled"]:
                 if hasattr(self, "dripper"):
                     self.dripper.stop()
                 self.dripper = DripperEffect(
@@ -521,7 +519,7 @@ class DripperEffect(QThread):
                 self.drip.emit(Drip)
             else:
                 pass
-            time.sleep(0.5)
+            time.sleep(0.4)
 
 
 if __name__ == '__main__':
