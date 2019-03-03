@@ -30,9 +30,9 @@ class PluginManager:
     def on_copy_text(self, text_input: str, stack: Stack):
         """Function that is called by the ClipboardManager upon text copy"""
 
-        _plugin = random.choice(list(filter(lambda plugin: plugin.__class__.name()
-                                            not in self._disabled_plugin_names,
-                                            self._text_plugins)))
+        _plugin = random.choice(
+            list(filter(lambda plugin: plugin.__class__.name() not in self._disabled_plugin_names,
+                        self._text_plugins)))
 
         self._logger.info("Passing " + text_input + " to plugins!")
         self._logger.info("Randomly chose plugin " + _plugin.__class__.__qualname__)
@@ -40,9 +40,8 @@ class PluginManager:
 
     def on_copy_image(self, image_input: QPixmap, stack: Stack):
         """Function that is called by the ClipboardManager upon image copy"""
-        _plugin = random.choice(list(filter(lambda plugin: plugin.__class__.name()
-                                                           not in self._disabled_plugin_names,
-                                            self._image_plugins)))
+        _plugin = random.choice(
+            list(filter(lambda plugin: plugin.__class__.name() not in self._disabled_plugin_names,
+                        self._image_plugins)))
 
         _plugin.on_copy(image_input, stack)
-

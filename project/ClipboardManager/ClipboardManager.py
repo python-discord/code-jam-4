@@ -69,15 +69,16 @@ class ClipboardManager(QObject):
 
         # current_text = PT.apply(QApplication.clipboard().text()) # TODO: Chain plugins together
         self._logger.info("Current Text:" + str(QApplication.clipboard().text()))
-        self._logger.info("Current Image Info:", str(QApplication.clipboard().pixmap()))
+        self._logger.info("Current Image Info:" + str(QApplication.clipboard().pixmap()))
 
         if current_text and (self._last_text is None or current_text != self._last_text):
             self._plugin_manager.on_copy_text(current_text, self.clipboard_stack)
             self.clipboard_changed_signal.emit(self.clipboard_stack)
 
         # If the image is not blank
-        if not current_image.toImage().isNull() and (self._last_image is None
-                                                     or current_image.toImage() != self._last_image.toImage()):
+        if not current_image.toImage().isNull() \
+                and (self._last_image is None
+                     or current_image.toImage() != self._last_image.toImage()):
             self._plugin_manager.on_copy_image(current_image, self.clipboard_stack)
             self.clipboard_changed_signal.emit(self.clipboard_stack)
 
