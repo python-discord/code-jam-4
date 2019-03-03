@@ -97,6 +97,7 @@ A selected item, ① in the infographic below, has a different background color 
 This may be useful if you want to organize your frequently accessed items at the top. Unchecking the `Always load top item into clipboard` option in the Settings menu will automatically copy the selected item into the system's clipboard.
 
 Saving the state of the clipboard is done automatically if the option in Settings is checked, or may be done manually in the File menu.
+
 ![Screenshot of Clipboard Mangler on macOS Mojave](https://i.imgur.com/FbxCbjF.png)
 
 ## Documentation
