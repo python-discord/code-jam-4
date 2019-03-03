@@ -172,7 +172,6 @@ class Canvas(tk.AsyncCanvas):
                 vbar.config(command=self.xview)
                 self.config(xscrollcommand=vbar.set)  # intentional switch
             self.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
-            self.frame.cur_locale = master.cur_locale
 
         else:
             super().__init__(master, height=height, width=width, bg="white")
@@ -185,6 +184,8 @@ class Canvas(tk.AsyncCanvas):
 
         self.undo_list = []
         self.redo_list = []
+
+        self._master = master
 
     async def add_pixel(self, x: int, y: int, colour: Colour):
         """
@@ -251,8 +252,8 @@ class Canvas(tk.AsyncCanvas):
     async def altercolour(self, im: Image.Image):
         data = list(im.getdata())
         max = len(data)
-        root = tk.AsyncToplevel(self.master)
-        root.title(self.master.cur_locale.general.corruptions.altercolour)
+        root = tk.AsyncToplevel(self._master)
+        root.title(self._master.cur_locale.general.corruptions.altercolour)
         root.bar = Progressbar(
             root, orient="horizontal", length=400, mode="determinate", maximum=max
         )
@@ -270,8 +271,8 @@ class Canvas(tk.AsyncCanvas):
         return new_im
 
     async def pixelate(self, im: Image.Image):
-        root = tk.AsyncToplevel(self.master)
-        root.title(self.master.cur_locale.general.corruptions.pixelate)
+        root = tk.AsyncToplevel(self._master)
+        root.title(self._master.cur_locale.general.corruptions.pixelate)
         root.bar = Progressbar(
             root, orient="horizontal", length=400, mode="indeterminate"
         )
@@ -301,8 +302,8 @@ class Canvas(tk.AsyncCanvas):
         return new_im
 
     async def alterpixel(self, im: Image.Image):
-        root = tk.AsyncToplevel(self.master)
-        root.title(self.master.cur_locale.general.corruptions.alterpixel)
+        root = tk.AsyncToplevel(self._master)
+        root.title(self._master.cur_locale.general.corruptions.alterpixel)
         root.bar = Progressbar(
             root, orient="horizontal", length=400, mode="indeterminate"
         )
@@ -336,8 +337,8 @@ class Canvas(tk.AsyncCanvas):
         xblock = width // BLOCKLEN
         yblock = height // BLOCKLEN
         max = xblock * yblock * 2
-        root = tk.AsyncToplevel(self.master)
-        root.title(self.master.cur_locale.general.corruptions.alterpixel)
+        root = tk.AsyncToplevel(self._master)
+        root.title(self._master.cur_locale.general.corruptions.alterpixel)
         root.bar = Progressbar(
             root, orient="horizontal", length=400, mode="determinate", maximum=max
         )
