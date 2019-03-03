@@ -10,6 +10,10 @@ from project.spelling.misspell import misspell
 
 
 class CloppySpellingWindow(CloppyButtonWindow):
+    """
+    This class represents individual Cloppy windows used to suggest spelling
+    corrections to the user.
+    """
     def __init__(self, master, word_data: NewWordEventData):
         super().__init__(master)
 
