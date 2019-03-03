@@ -27,21 +27,18 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    passwordprompt.cpp \
-    dialog.cpp
+    passwordprompt.cpp
 
 HEADERS += \
         mainwindow.h \
-    passwordprompt.h \
-    dialog.h
+    passwordprompt.h
 
 FORMS += \
         mainwindow.ui \
     passwordprompt.ui \
     createpassword.ui \
     seekdialogue.ui \
-    captchadialogue.ui \
-    dialog.ui
+    captchadialogue.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

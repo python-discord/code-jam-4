@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'qt/mainwindow.ui',
 # licensing of 'qt/mainwindow.ui' applies.
 #
-# Created: Sun Mar  3 11:38:48 2019
+# Created: Sun Mar  3 15:46:35 2019
 #      by: pyside2-uic  running on PySide2 5.12.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -86,6 +86,21 @@ class Ui_MainWindow(object):
         self.media_controls_layout.addWidget(self.next_button)
         spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.media_controls_layout.addItem(spacerItem6)
+        self.volume_slider = QtWidgets.QSlider(self.central_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.volume_slider.sizePolicy().hasHeightForWidth())
+        self.volume_slider.setSizePolicy(sizePolicy)
+        self.volume_slider.setMinimumSize(QtCore.QSize(125, 0))
+        self.volume_slider.setBaseSize(QtCore.QSize(0, 0))
+        self.volume_slider.setMaximum(100)
+        self.volume_slider.setProperty("value", 75)
+        self.volume_slider.setOrientation(QtCore.Qt.Horizontal)
+        self.volume_slider.setObjectName("volume_slider")
+        self.media_controls_layout.addWidget(self.volume_slider)
+        spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        self.media_controls_layout.addItem(spacerItem7)
         self.gridLayout_2.addLayout(self.media_controls_layout, 4, 0, 1, 5)
         MainWindow.setCentralWidget(self.central_widget)
         self.menu_bar = QtWidgets.QMenuBar(MainWindow)

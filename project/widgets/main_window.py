@@ -58,6 +58,7 @@ class MainWindow(QMainWindow):
         self.ui.previous_button.pressed.connect(self.player.playlist().previous)
         self.ui.next_button.pressed.connect(self.player.playlist().next)
         self.ui.add_files_action.triggered.connect(self.captcha_dialogue.open)
+        self.ui.volume_slider.valueChanged.connect(self.player.setVolume)
 
     @staticmethod
     def create_model() -> QSqlTableModel:
