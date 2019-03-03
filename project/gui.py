@@ -297,6 +297,7 @@ class Minesweeper(QtWidgets.QWidget):
             self.too_fast_modal.move(self.rect().center() - self.too_fast_modal.rect().center())
 
         self.beep_sound.play()
+        self.counter_thread.speed_up()
         self.too_fast_modal.setHidden(False)
         self.too_fast_modal.raise_()
         self.game_frame.setDisabled(True)
@@ -425,10 +426,17 @@ class TimerThread(QtCore.QThread):
 
     update = QtCore.pyqtSignal(int)
 
+    def __init__(self):
+        super().__init__()
+        self.interval = 1
+
     def run(self):
         for number in count(0):
             self.update.emit(number)
-            time.sleep(1)
+            time.sleep(self.interval)
+
+    def speed_up(self):
+        self.interval /= 2
 
 
 class DelayMineExplosionThread(QtCore.QThread):
