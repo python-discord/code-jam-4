@@ -23,6 +23,9 @@ class View:
             viewtype = ViewType(viewtype.upper())  # Breaks if not string
         self.viewtype = viewtype
 
+    def __getattr__(self, name):
+        return getattr(self.data, name)
+
 
 class Window(widget.PrimaryCanvas):
     animation_speed = 4
@@ -93,6 +96,7 @@ class Window(widget.PrimaryCanvas):
         self.move_out(last, direction)
 
         self.animater.start()
+        print(len(self.views))
 
     def get_distance(self, direction: Direction):
         if not isinstance(direction, Direction):

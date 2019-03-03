@@ -133,7 +133,6 @@ class Animater:
 
     def start(self):
         while self._motions:
-            print(self._motions)
             complete = self.run(self._motions.copy())
             self._motions -= complete
             time.sleep(1/self.fps)
@@ -141,11 +140,14 @@ class Animater:
     def run(self, frame):
         done = set()
         for motion in frame:
+            if not self.running:
+                break
             try:
                 next(motion)()
                 self.canvas.update()
             except StopIteration:
                 done.add(motion)
+        self.canvas.update()
         return done
 
     def add(self, motion: Motion):
