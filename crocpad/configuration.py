@@ -26,7 +26,6 @@ def create_default_config(config: dict):
     config['Sound']['sounds'] = 'on'
     config['Editor'] = {}
     config['Editor']['visualmode'] = 'light'
-    config['Editor']['tips'] = 'on'
     config['Editor']['linewrap'] = 'on'
 
 

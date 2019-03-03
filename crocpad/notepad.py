@@ -62,14 +62,17 @@ class MainWindow(QMainWindow):
         window_icon = str(Path('crocpad') / Path('crocpad.ico'))
         self.setWindowIcon(QIcon(window_icon))
         self.create_menus()
-        self.app.setStyleSheet(crocpad.stylesheets.default)
+        styles = {'light': crocpad.stylesheets.light,
+                  'dark': crocpad.stylesheets.dark,
+                  'hotdogstand': crocpad.stylesheets.hotdogstand,
+                  'quitedark': crocpad.stylesheets.quitedark}
+        self.app.setStyleSheet(styles[app_config['Editor']['visualmode']])
         self.show()
 
         # Post-startup tasks
         if app_config['License']['eulaaccepted'] != 'yes':
             self.do_eula()
-        if app_config['Editor']['tips'] == 'on':
-            self.show_tip()
+        self.show_tip()  # tip of the day
         if app_config['Editor']['linewrap'] == 'off':
             self.text_window.setLineWrapMode(0)
             self.wrap_action.setChecked(False)
@@ -106,14 +109,19 @@ class MainWindow(QMainWindow):
         accessibility_menu.addAction(action_quitedark_theme)
 
         # Special Tools menu
-        font_menu = QAction("Chang&e Font", self)
+        font_menu = QAction("Chang&e font", self)
         font_menu.triggered.connect(self.change_font)
         tools_menu.addAction(font_menu)
-        self.wrap_action = QAction("Toggl&e Line Wrap", self)  # class attribute so we can toggle it
+        self.wrap_action = QAction("Lin&e wrap", self)  # class attribute so we can toggle it
         self.wrap_action.setCheckable(True)
         self.wrap_action.setChecked(True)
-        self.wrap_action.triggered.connect(self.edit_toggle_wrap)
+        self.wrap_action.triggered.connect(self.toggle_wrap)
         tools_menu.addAction(self.wrap_action)
+        self.sound_action = QAction("Sound &effects", self)
+        self.sound_action.setCheckable(True)
+        self.sound_action.setChecked(True if app_config['Sound']['sounds'] == 'on' else False)
+        self.sound_action.triggered.connect(self.toggle_sound)
+        tools_menu.addAction(self.sound_action)
 
         # Edit menu
         action_insert_symbol = QAction("Ins&ert symbol", self)
@@ -202,13 +210,21 @@ class MainWindow(QMainWindow):
         self._filename = name
         self.setWindowTitle(f"Crocpad++ - {self.filename}")
 
-    def edit_toggle_wrap(self):
+    def toggle_wrap(self):
         """Toggle the line wrap flag in the text editor."""
         self.text_window.setLineWrapMode(not self.text_window.lineWrapMode())
         if self.text_window.lineWrapMode():
             app_config['Editor']['linewrap'] = 'on'
         else:
             app_config['Editor']['linewrap'] = 'off'
+        save_config(app_config)
+
+    def toggle_sound(self):
+        """Toggle the sound effects flag."""
+        if app_config['Sound']['sounds'] == 'off':
+            app_config['Sound']['sounds'] = 'on'
+        else:
+            app_config['Sound']['sounds'] = 'off'
         save_config(app_config)
 
     def open_file(self):
@@ -255,18 +271,26 @@ Australia""")
     def set_light_theme(self):
         """Set the text view to the light theme."""
         self.app.setStyleSheet(crocpad.stylesheets.light)
+        app_config['Editor']['visualmode'] = 'light'
+        save_config(app_config)
 
     def set_dark_theme(self):
         """Set the text view to the dark theme."""
         self.app.setStyleSheet(crocpad.stylesheets.dark)
+        app_config['Editor']['visualmode'] = 'dark'
+        save_config(app_config)
 
     def set_hotdogstand_theme(self):
         """Set the text view to the High Contrast theme."""
         self.app.setStyleSheet(crocpad.stylesheets.hotdogstand)
+        app_config['Editor']['visualmode'] = 'hotdogstand'
+        save_config(app_config)
 
     def set_quitedark_theme(self):
         """Set the text view to the Quite Dark theme for the legally blind."""
         self.app.setStyleSheet(crocpad.stylesheets.quitedark)
+        app_config['Editor']['visualmode'] = 'quitedark'
+        save_config(app_config)
 
     def insert_emoji(self):
         """Open a modal EmojiPicker dialog which can insert arbitrary symbols at the cursor."""
