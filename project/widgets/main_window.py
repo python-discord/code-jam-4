@@ -3,7 +3,7 @@ import logging
 from PySide2.QtCore import QPoint, Qt
 from PySide2.QtGui import QMouseEvent
 from PySide2.QtSql import QSqlTableModel
-from PySide2.QtWidgets import QAction, QDialog, QFileDialog, QMainWindow, QMenu
+from PySide2.QtWidgets import QAction, QDialog, QFileDialog, QMainWindow, QMenu, QMessageBox
 
 from project import media, ui
 from project.widgets.password_prompt import PasswordPrompt
@@ -76,7 +76,7 @@ class MainWindow(QMainWindow):
         menu.addAction(remove_action)
 
         row = self.ui.playlist_view.rowAt(pos.y())
-        remove_action.triggered.connect(lambda: self.player.remove_media(row))
+        remove_action.triggered.connect(lambda: self.remove_triggered(row))
 
         return menu
 
@@ -87,6 +87,39 @@ class MainWindow(QMainWindow):
 
         global_pos = self.ui.playlist_view.mapToGlobal(pos)
         menu.popup(global_pos)
+
+    def remove_triggered(self, row: int):
+        """Show confirmation message boxes and remove the media at `row`."""
+        title = self.playlist_model.index(row, 1).data()
+
+        result_1 = QMessageBox.question(
+            self,
+            "Remove Media",
+            f"Are you sure you want to remove {title}?"
+        )
+
+        if result_1 != QMessageBox.Yes:
+            return
+
+        result_2 = QMessageBox.question(
+            self,
+            "Remove Media",
+            f"Are you <i>really</i> sure?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+
+        if result_2 != QMessageBox.Yes:
+            return
+
+        result_3 = QMessageBox.warning(
+            self,
+            "Remove Media",
+            f"Are you <i>really really</i> sure?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+
+        if result_3 == QMessageBox.Yes:
+            self.player.remove_media(row)
 
     def update_time_remaining(self, position: int):
         """Update the time remaining for the current track on the LCD."""
