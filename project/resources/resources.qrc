@@ -24,5 +24,6 @@
     <file>scream2.wav</file>
     <file>scream3.wav</file>
     <file>win.wav</file>
+    <file>elevator.mp3</file>
   </qresource>
 </RCC>

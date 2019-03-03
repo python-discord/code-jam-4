@@ -7,6 +7,7 @@ import random
 import os
 
 
+# This defines max speed you can click a tile
 MAXIMUM_CLICKS_PER_SECOND = 2
 
 
@@ -135,7 +136,8 @@ class MenuWidget(QtWidgets.QWidget):
         self.setLayout(layout)
 
 
-# Minesweeper Widgets
+# Minesweeper Game Widgets
+
 
 class Tile(QtWidgets.QPushButton):
     '''Represents a Tile on a minesweeper grid'''
@@ -446,6 +448,9 @@ class Minesweeper(QtWidgets.QWidget):
             self.win_modal.setHidden(False)
             self.win_modal.raise_()
             self.game_frame.setDisabled(True)
+
+
+# Minesweeper Game Threads
 
 
 class TimerThread(QtCore.QThread):
