@@ -72,7 +72,7 @@ class ImageCache:
             profile = self.get_profile()
             if profile is not None:
                 queue.put(profile)
-            time.sleep(5)
+            time.sleep(self.ratelimit)
 
     def next(self):
         return self.queue.get()

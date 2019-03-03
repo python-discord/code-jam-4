@@ -1,6 +1,8 @@
 import configparser
 import tkinter as tk
+from contextlib import suppress
 from pygame import mixer
+
 
 from .front import Front
 from . import SETTINGS
@@ -25,8 +27,8 @@ class App(tk.Tk):
 
         self.front = Front(self)
         self.front.pack(fill='both', expand=True)
-        self.front.start()
 
     def cleanup(self):
-        self.front.cleanup()
-        self.destroy()
+        with suppress(Exception):
+            self.front.cleanup()
+            self.destroy()

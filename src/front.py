@@ -36,14 +36,13 @@ class Front(widget.PrimaryFrame):
             self.window.change_view(self.image, direction)
 
         else:
-            loadscreen = Loading(
+            self.loadscreen = Loading(
                 self.window,
                 width=self.window.winfo_width(),
                 height=self.window.winfo_height()
             )
-            self.window.change_view(View(loadscreen, 'widget'), direction)
-            loadscreen.waitfor(self.cache.ready, self.__next, ('up',))
-            self.update()
+            self.window.change_view(View(self.loadscreen, 'widget'), direction)
+            self.loadscreen.waitfor(self.cache.ready, self.__next, ('up',))
 
     def __load(self, name, image, data):
         self.title.config(text=name)
@@ -61,6 +60,7 @@ class Front(widget.PrimaryFrame):
 
         self.bio = None
         self.image = None
+        self.loading = None
 
         self.btn_dislike = widget.PrimaryButton(
             self.commandbar, text='Nope', bg='red', command=self.cmd_dislike
@@ -81,6 +81,7 @@ class Front(widget.PrimaryFrame):
 
         self.cache = ImageCache(self.cachesize)
         self.cache.start()
+        self.start()
 
     def start(self):
         self.after(0, self.__next)

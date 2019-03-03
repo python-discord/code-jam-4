@@ -17,20 +17,20 @@ def generate_frames(im: Image):
 
 class Loading(PrimaryCanvas):
     image = IMAGES / "loading.gif"
-    last = 0
     limit = 1 / 20
+    active = True
 
     def init(self):
         self.frames = generate_frames(Image.open(self.image))
 
     def waitfor(self, condition: Callable, cmd: Callable = None, args=()):
         for im in cycle(self.frames):
+            if not self.active:
+                break
             if condition():
                 if cmd is not None:
                     cmd(*args)
                 break
-            if self.last:
-                self.delete(self.last)
-            self.last = self.create_image(-42, 0, image=im, anchor='nw')
-            self.update()
+            self.last = self.create_image(-40.5, 0, image=im, anchor='nw')
+            self.update_idletasks()
             sleep(self.limit)
