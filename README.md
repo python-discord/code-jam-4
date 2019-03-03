@@ -30,16 +30,26 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 
 # Project Information
 
-`# TODO`
+Team: Durable Drills
 
 ## Description
 
-`# TODO`
+Keep track of your contact information using the Durable Drills Contact Manager™. 
 
 ## Setup & Installation
 
-`# TODO`
+Assuming you are using pipenv, "pipenv run start" should make the program work!
 
 ## How do I use this thing?
 
-`# TODO`
+Using the Contact Manager is simple:
+  - To load in your current contacts, press 'Load Contacts' in the 'View Contacts' tab
+  - To save your current list of contacts, press 'Save Contacts'
+  - To view the information of a specific contact, select that contact and press 'Show Info', then spin the Wheel™ to determine what info you can see
+  - To delete a specific contact, select that contact then press 'Delete'
+  
+  - To create a new contact, go to the 'New Contact' tab and enter your contacts information:
+    - For text entries, like the contact Name, Address, Email, and Notes, answer the questions provided by the EntryBot3000™
+    - For numerical entries, like the Phone Number, use the provided rotary phone, then select the type of phone number: Personal, Work, or Home.
+    - For all entries, you need to press the accompanying 'Add' button to add that information to the preview window; when the preview looks the way you want it, press 'Submit to Contacts'.
+    - To clear all entries, press 'Clear'

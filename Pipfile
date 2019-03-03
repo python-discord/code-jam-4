@@ -12,4 +12,5 @@ flake8 = "*"
 python_version = "3.7"
 
 [scripts]
+start = "python -m project"
 lint = "python -m flake8"
