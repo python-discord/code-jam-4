@@ -136,14 +136,14 @@ class PalletteButton:
         # TODO: pallette will become empty after being used X amount of times
 
     def mixColor(self, tool):
-        
+
         """Mixes colors from tool holding the color
            NO COLOR IN TOOL: Pick up color pallette color
                IS TOOL BUCKET: empties palette
            COLOR IN TOOL: Mix pallette and tool color;
                IS BUCKET: mixes
         """
-        
+
         if tool is None or tool.toolName in \
                 ("Pointy Pen", "Pointy Pen Broken", "Sunbathing Eraser"):
             return None
@@ -173,7 +173,8 @@ class PalletteButton:
             self.palletteColor = (self.r, self.g, self.b, self.alpha)
             tool.color = QColor(self.r, self.g, self.b, self.alpha)
 
-            if tool.toolName == "Straggly PaintBrush" or tool.toolName == "Solid Brush":
+            if tool.toolName == "Straggly PaintBrush"\
+                    or tool.toolName == "Solid Brush":
                 tool.opacityDuration = 1
                 tool.isDipped = True
             elif tool.toolName == "A bucket" and self.alpha == 255:
@@ -360,7 +361,8 @@ class PaintBoard(QMainWindow):
             c = list(PalletteButtons.keys())[button_index]
             p = PalletteButtons[list(PalletteButtons.keys())[button_index]]
             p.setStyleSheet(style_sheet_str.format(c.palletteColor))
-            # set the default value of c to c because otherwise it will always look up the newest value
+            # set the default value of c to c because
+            # otherwise it will always look up the newest value
             p.clicked.connect(lambda state, c=c: c.mixColor(self.currentTool))
             self.colorBox.addPallette(p)
 
