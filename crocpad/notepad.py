@@ -109,7 +109,7 @@ class MainWindow(QMainWindow):
         font_menu = QAction("Chang&e Font", self)
         font_menu.triggered.connect(self.change_font)
         tools_menu.addAction(font_menu)
-        self.wrap_action = QAction("Toggl&e Line Wrap", self)  # class attribute so we can toggle it elsewhere
+        self.wrap_action = QAction("Toggl&e Line Wrap", self)  # class attribute so we can toggle it
         self.wrap_action.setCheckable(True)
         self.wrap_action.setChecked(True)
         self.wrap_action.triggered.connect(self.edit_toggle_wrap)
