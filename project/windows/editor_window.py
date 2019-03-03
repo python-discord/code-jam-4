@@ -572,11 +572,22 @@ class EditorWindow(tk.Toplevel):
         return 'break'
 
     def on_new_word(self, word_data: NewWordEventData):
+        """
+        Called every time a new word is typed in the editor's text box.
+        :param word_data: An object containing information about the starting
+                          index, ending index and contents of the word.
+        """
         word_data.word = word_data.word.lower()
         if not is_correct(word_data.word.lower()):
             CloppySpellingWindow(self, word_data).show()
 
     def on_destroy(self):
+        """
+        Called whenever the window is about to be closed.
+
+        :return: 'break' to interrupt the normal handling of any events this
+                 method is bound to.
+        """
         def destroy_window(choice_data: CloppyChoiceMadeEventData):
             if choice_data.choice == 'Yes':
                 try:
@@ -592,7 +603,7 @@ class EditorWindow(tk.Toplevel):
             destroy_window
         ).show()
 
-        return "break"
+        return 'break'
 
 
 class EditorMenuBar(tk.Menu):
