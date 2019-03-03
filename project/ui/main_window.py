@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'qt/mainwindow.ui',
 # licensing of 'qt/mainwindow.ui' applies.
 #
-# Created: Sun Mar  3 05:37:58 2019
+# Created: Sun Mar  3 05:45:30 2019
 #      by: pyside2-uic  running on PySide2 5.12.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,6 +18,13 @@ class Ui_MainWindow(object):
         self.central_widget.setObjectName("central_widget")
         self.playlist_view = QtWidgets.QTableView(self.central_widget)
         self.playlist_view.setGeometry(QtCore.QRect(20, 20, 1021, 371))
+        self.playlist_view.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.playlist_view.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.playlist_view.setAlternatingRowColors(True)
+        self.playlist_view.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.playlist_view.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.playlist_view.setSortingEnabled(True)
+        self.playlist_view.setWordWrap(False)
         self.playlist_view.setObjectName("playlist_view")
         self.seek_slider = QtWidgets.QSlider(self.central_widget)
         self.seek_slider.setGeometry(QtCore.QRect(30, 410, 811, 22))

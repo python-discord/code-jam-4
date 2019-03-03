@@ -3,7 +3,7 @@ import logging
 from PySide2.QtCore import QPoint, Qt
 from PySide2.QtGui import QMouseEvent
 from PySide2.QtSql import QSqlTableModel
-from PySide2.QtWidgets import QAbstractItemView, QAction, QDialog, QFileDialog, QMainWindow, QMenu
+from PySide2.QtWidgets import QAction, QDialog, QFileDialog, QMainWindow, QMenu
 
 from project import media, ui
 from project.widgets.password_prompt import PasswordPrompt
@@ -64,15 +64,7 @@ class MainWindow(QMainWindow):
     def configure_view(self):
         """Configure the playlist table view."""
         self.ui.playlist_view.setModel(self.playlist_model)
-        self.ui.playlist_view.setEditTriggers(QAbstractItemView.NoEditTriggers)  # Disable editing
-        self.ui.playlist_view.setSortingEnabled(True)
-
-        self.ui.playlist_view.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.ui.playlist_view.setSelectionMode(QAbstractItemView.SingleSelection)
-
-        self.ui.playlist_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.playlist_view.customContextMenuRequested.connect(self.show_view_context_menu)
-
         self.ui.playlist_view.hideColumn(0)  # id
         self.ui.playlist_view.hideColumn(6)  # crc32
         self.ui.playlist_view.hideColumn(7)  # path
