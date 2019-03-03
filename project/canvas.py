@@ -262,6 +262,7 @@ class Canvas(tk.AsyncCanvas):
         for r, g, b in data:
             new_data.append((g, b, r))
             root.bar["value"] += 1
+            await asyncio.sleep(0.01)
         new_im = Image.new(im.mode, im.size, (255, 255, 255))
         new_im.putdata(new_data)
         try:
@@ -280,6 +281,7 @@ class Canvas(tk.AsyncCanvas):
         width, height = im.size
         wdigits = max(-1 * len(str(width)) + 2, 1)
         hdigits = max(-1 * len(str(height)) + 2, 1)
+        await asyncio.sleep(0.01)
 
         factor = hdigits if hdigits > wdigits else wdigits
         print(factor)
@@ -287,11 +289,14 @@ class Canvas(tk.AsyncCanvas):
         width = int(round(width / 2, factor) * 2)
         height = int(round(height / 2, factor) * 2)
 
+        await asyncio.sleep(0.01)
         im = im.resize((width, height))
+        await asyncio.sleep(0.01)
 
         divider = max(10 ** (-1 * factor) // 5, 1)
         small_width = width // divider
         small_height = height // divider
+        await asyncio.sleep(0.01)
 
         new_im = im.resize((small_width, small_height))
         new_im = new_im.resize((width, height))
@@ -309,7 +314,9 @@ class Canvas(tk.AsyncCanvas):
         )
         root.bar.pack()
         data = list(im.getdata())
+        await asyncio.sleep(0.01)
         random.shuffle(data)
+        await asyncio.sleep(0.01)
         new_im = Image.new(im.mode, im.size, (255, 255, 255))
         new_im.putdata(data)
         try:
@@ -356,6 +363,7 @@ class Canvas(tk.AsyncCanvas):
                     )
                 )
                 root.bar["value"] += 1
+                await asyncio.sleep(0.01)
 
         shuffle = list(blockmap)
         random.shuffle(shuffle)
@@ -365,6 +373,7 @@ class Canvas(tk.AsyncCanvas):
             c = im.crop(sbox)
             result.paste(c, box)
             root.bar["value"] += 1
+            await asyncio.sleep(0.01)
         try:
             await root.destroy()
         except Exception:
