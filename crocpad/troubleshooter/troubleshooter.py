@@ -18,6 +18,8 @@ class Troubleshooter(QWizard, wizard.Ui_Wizard):
         else:
             event.ignore()
 
+    def reject(self):
+        self.close()
 def main():
     app = QApplication(sys.argv)
     form = Troubleshooter()

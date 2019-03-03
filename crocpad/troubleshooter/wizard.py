@@ -1,5 +1,43 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from pathlib import Path
+from threading import Thread
+import time
+
+class LoadingPage(object):
+    def setupUi(self, WizardPage):
+        WizardPage.setObjectName("WizardPage")
+        WizardPage.resize(400, 300)
+        WizardPage.setCommitPage(True)
+        self.verticalLayoutWidget = QtWidgets.QWidget(WizardPage)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 381, 281))
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem)
+        self.progressBar = QtWidgets.QProgressBar(self.verticalLayoutWidget)
+        self.progressBar.setProperty("value", 0)
+        self.progressBar.setObjectName("progressBar")
+        self.verticalLayout.addWidget(self.progressBar)
+        self.label = QtWidgets.QLabel(self.verticalLayoutWidget)
+        font = QtGui.QFont()
+        font.setFamily("Comic Sans MS")
+        self.label.setFont(font)
+        self.label.setCursor(QtGui.QCursor(QtCore.Qt.WaitCursor))
+        self.label.setObjectName("label")
+        self.verticalLayout.addWidget(self.label)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem1)
+        self.retranslateUi(WizardPage)
+        QtCore.QMetaObject.connectSlotsByName(WizardPage)
+
+        return self.progressBar
+
+    def retranslateUi(self, WizardPage):
+        _translate = QtCore.QCoreApplication.translate
+        WizardPage.setWindowTitle(_translate("WizardPage", "WizardPage"))
+        self.label.setText(_translate("WizardPage", "loading troubleshooter..."))
 
 class Ui_Wizard(object):
     def setupUi(self, Wizard):
@@ -13,6 +51,18 @@ class Ui_Wizard(object):
         Wizard.setOptions(QtWidgets.QWizard.NoBackButtonOnStartPage)
         Wizard.setPixmap(QtWidgets.QWizard.LogoPixmap,
             QtGui.QPixmap(window_icon))
+        self.help_button = Wizard.HelpButton
+        self.stretch = Wizard.Stretch
+        self.cancel_button = Wizard.CancelButton
+        self.next_button = Wizard.NextButton
+        self.finish_button = Wizard.FinishButton
+        buttons = [self.help_button, self.stretch, self.cancel_button, self.next_button, self.finish_button]
+        
+        self.setButtonLayout(buttons)
+
+        Wizard.button(self.help_button).clicked.connect(self.help)
+        #Wizard.button(self.next_button).clicked.connect(self.nextCalled)
+        # trying to make next button trigger event to start load bar when on page right before load bar
         self.wizardPage1 = QtWidgets.QWizardPage()
         self.wizardPage1.setObjectName("wizardPage1")
         self.verticalLayoutWidget = QtWidgets.QWidget(self.wizardPage1)
@@ -21,23 +71,20 @@ class Ui_Wizard(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.label_2 = QtWidgets.QLabel(self.verticalLayoutWidget)
-        self.label_2.setFrameShape(QtWidgets.QFrame.Box)
-        self.label_2.setTextFormat(QtCore.Qt.AutoText)
-        self.label_2.setObjectName("label_2")
-        self.verticalLayout.addWidget(self.label_2)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
-        self.progressBar = QtWidgets.QProgressBar(self.verticalLayoutWidget)
-        self.progressBar.setProperty("value", 24)
-        self.progressBar.setObjectName("progressBar")
-        self.verticalLayout.addWidget(self.progressBar)
         self.label = QtWidgets.QLabel(self.verticalLayoutWidget)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
         spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem1)
         Wizard.addPage(self.wizardPage1)
+
+        self.loadingPage = QtWidgets.QWizardPage()
+        self.progressBar = LoadingPage().setupUi(self.loadingPage)
+        self.loadingPage.setObjectName("loadingPage")
+        Wizard.addPage(self.loadingPage)
+
         self.wizardPage2 = QtWidgets.QWizardPage()
         self.wizardPage2.setObjectName("wizardPage2")
         Wizard.addPage(self.wizardPage2)
@@ -45,15 +92,28 @@ class Ui_Wizard(object):
         font = QtGui.QFont()
         font.setFamily("Comic Sans MS")
         self.label.setFont(font)
-        self.label_2.setFont(font)
-
         self.retranslateUi(Wizard)
         QtCore.QMetaObject.connectSlotsByName(Wizard)
 
     def retranslateUi(self, Wizard):
-        Wizard.setWindowTitle(QtWidgets.QApplication.translate("Wizard", "Crocpad++ Troubleshooter", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("Wizard", "Troubleshooter", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("Wizard", "hello welcome to the crocpad++ troubleshooter", None, -1))
+        Wizard.setWindowTitle(QtWidgets.QApplication.translate("Wizard", "crocpad++ troubleshooter", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("Wizard", "hello welcome to the crocpad++ troubleshooter let me fix ur problems", None, -1))
+    
+    def help(self):
+        QtWidgets.QMessageBox.question(self, 'Help', "This is a troubleshooter.")
+
+    def clock(self):
+        for i in range(5):
+            time.sleep(1)
+            self.progressBar.setProperty("value", i)
+
+    def runClock(self):
+        t = Thread(target=self.clock(), args="self,")
+        t.start()
+
+    def nextCalled(self, Wizard):
+        if Wizard.currentPage() == self.wizardPage1:
+            self.runClock()
 
 
 # -*- coding: utf-8 -*-
