@@ -4,6 +4,8 @@ from tkinter import messagebox
 from ..backend.DBHandler import DBHandler
 from .eventViewer import EventViewer
 import string
+
+
 class Application(tk.Tk):
     """Main Application class inheriting from tkinter.Tk."""
 
@@ -13,6 +15,7 @@ class Application(tk.Tk):
 
         self.resizable(False, False)
         self.geometry("500x500")
+        self.configure(background="#000000")
 
         self.dbh = DBHandler()
 
@@ -58,7 +61,7 @@ class HomePage(tk.Frame):
         super().__init__(parent)
 
         self.parent = parent
-
+        self.configure(background="#000000")
         self.create_widgets()
 
     def create_widgets(self):
@@ -70,13 +73,22 @@ class HomePage(tk.Frame):
         Returns:
             N/A
         """
-        self.title = tk.Label(self, text="Hello World")
+        self.title = tk.Label(
+            self, fg="#464646",
+            text="Hello World",
+            bg="#000000")
         self.title.grid(row=0, column=0)
 
-        self.button = tk.Button(self, text="Go to add event",
+        self.button = tk.Button(self, text="Go to events", bg="#000000",
                                 command=lambda:
                                     self.parent.change_page(CalendarPage))
         self.button.grid(row=1, column=0)
+
+        self.addEventBtn = tk.Button(self, bg="#000000",
+                                     text="[+] Add event",
+                                     command=lambda: self.parent.change_page(
+                                         AddEventPage))
+        self.addEventBtn.grid()
 
 
 class AddEventPage(tk.Frame):
@@ -94,7 +106,7 @@ class AddEventPage(tk.Frame):
         super().__init__()
 
         self.parent = parent
-
+        self.configure(background="#000000")
         self.create_widgets()
         self.months = {
             "1": 31,
@@ -120,60 +132,82 @@ class AddEventPage(tk.Frame):
         Returns:
             N/A
         """
-        self.title = tk.Label(self, text="Add an event", font=(30))
+        self.title = tk.Label(
+            self, fg="#464646",
+            text="Add an event", font=(30),
+            bg="#000000")
         self.title.grid(column=1)
         # Name
-        self.name = tk.Label(self, text="Name ", font=(24))
+        self.name = tk.Label(
+            self, fg="#464646",
+            text="Name ",
+            font=(24), bg="#000000")
         self.name.grid(row=1, sticky="E")
-        self.nameEntry = tk.Text(self, height=2, width=49)
+        self.nameEntry = tk.Text(self, fg="#464646", height=2, width=49, bg="#000000")
         self.nameEntry.grid(row=1, column=1)
         # Location
-        self.location = tk.Label(self, text="Location ", font=(24))
+        self.location = tk.Label(
+            self, fg="#464646",
+            text="Location ",
+            font=(24), bg="#000000")
         self.location.grid(row=2, sticky="E")
-        self.locationEntry = tk.Text(self, height=2, width=49)
+        self.locationEntry = tk.Text(self, fg="#464646", height=2, width=49, bg="#000000")
         self.locationEntry.grid(row=2, column=1)
         # Date
-        self.date = tk.Label(self, text="Date ", font=(24))
+        self.date = tk.Label(
+            self, fg="#464646",
+            text="Date ",
+            font=(24), bg="#000000")
         self.date.grid(row=3, sticky="E")
-        self.dateSpinBoxs = tk.Frame(self)
+        self.dateSpinBoxs = tk.Frame(self, bg="#000000")
         self.timeEntryD = tk.Spinbox(self.dateSpinBoxs,
                                      width=14,
                                      from_=1,
-                                     to=31)
+                                     to=31,
+                                     bg="#000000")
 
         self.timeEntryM = tk.Spinbox(self.dateSpinBoxs,
                                      width=15,
                                      from_=1,
-                                     to=12)
+                                     to=12,
+                                     bg="#000000")
 
         self.timeEntryY = tk.Spinbox(
             self.dateSpinBoxs,
             width=14,
             from_=2019,
-            to=3000)
+            to=3000,
+            bg="#000000")
         self.timeEntryD.grid(row=3, column=1)
         self.timeEntryM.grid(row=3, column=2)
         self.timeEntryY.grid(row=3, column=3)
         self.dateSpinBoxs.grid(row=3, column=1)
         # Description
-        self.description = tk.Label(self, text="Description ", font=(24))
+        self.description = tk.Label(
+            self, fg="#464646",
+            text="Description ",
+            font=(24), bg="#000000")
         self.description.grid(row=4, sticky="N")
-        self.descriptionEntry = tk.Text(self, height=20, width=49)
+        self.descriptionEntry = tk.Text(
+            self, height=20,
+            width=49, bg="#000000")
         self.descriptionEntry.grid(row=4, column=1)
 
         # Submit Button
-        self.submitBack = tk.Frame(self)
+        self.submitBack = tk.Frame(self, bg="#000000")
         self.submitBtn = tk.Button(
             self.submitBack,
             text="Submit ✔",
-            command=lambda: self.inputCheck())
+            command=lambda: self.inputCheck(),
+            bg="#000000")
         self.submitBtn.grid(row=1, sticky="W")
         # back button
         self.back = tk.Button(
             self.submitBack,
             text="Back",
             command=lambda:
-            self.parent.change_page(CalendarPage))
+            self.parent.change_page(HomePage),
+            bg="#000000")
         self.back.grid(row=1, column=1, sticky="W")
         self.submitBack.grid(column=1)
 
@@ -222,7 +256,7 @@ class AddEventPage(tk.Frame):
                 "Or you didnt fill the date correctly\n" +
                 "please fill them all correctly and try again.")
         self.parent.pages[CalendarPage].create_widgets()
-        self.parent.change_page(CalendarPage)
+        self.parent.change_page(HomePage)
 
 
 class CalendarPage(tk.Frame):
@@ -248,13 +282,8 @@ class CalendarPage(tk.Frame):
         super().__init__()
 
         self.parent = parent
-
+        self.configure(background="#000000")
         self.create_widgets()
-
-        self.addEventBtn = tk.Button(self,
-                                     text="[+] Add event",
-                                     command=lambda: self.parent.change_page(
-                                         AddEventPage))
 
     def create_widgets(self):
         """
@@ -265,8 +294,13 @@ class CalendarPage(tk.Frame):
         Returns:
             None
         """
-        # Create an add event button
-        self.addEventBtn.grid()
+        self.back = tk.Button(
+            self,
+            text="Back",
+            command=lambda:
+            self.parent.change_page(HomePage))
+
+        self.back.grid(sticky="W")
         # Fetch all events
         events = self.parent.dbh.fetchEvents()
         # Event format:
