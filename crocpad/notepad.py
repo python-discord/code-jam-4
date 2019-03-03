@@ -116,6 +116,9 @@ class MainWindow(QMainWindow):
         action_insert_symbol = QAction("Ins&ert symbol", self)
         action_insert_symbol.triggered.connect(self.insert_emoji)
         edit_menu.addAction(action_insert_symbol)
+        action_open_settings = QAction("Op&en settings file", self)
+        action_open_settings.triggered.connect(self.open_settings)
+        edit_menu.addAction(action_open_settings)
 
         # Search menu
         action_open = QAction("S&earch for file to open", self)
@@ -232,6 +235,12 @@ PO BOX 477362213321233
 Cheshire Cheese
 Snekland
 Australia""")
+
+    def open_settings(self):
+        settings_file = Path('crocpad') / Path('notepad.ini')
+        with open(settings_file, 'r', encoding='utf-8') as file:
+            self.text_window.setPlainText(file.read())
+        self.filename = settings_file
 
     def set_light_theme(self):
         """Set the text view to the light theme."""
