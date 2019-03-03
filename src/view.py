@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import tkinter as tk
 from typing import TypeVar
 from enum import Enum
@@ -5,26 +7,6 @@ from PIL import ImageTk
 
 from . import widget
 from .animate import Coord, Animater, Direction
-
-
-class ViewType(Enum):
-    IMAGE = 'IMAGE'
-    WIDGET = 'WIDGET'
-
-
-T = TypeVar('T', ImageTk.PhotoImage, tk.Widget)
-
-
-class View:
-
-    def __init__(self, data: T, viewtype: ViewType):
-        self.data = data
-        if not isinstance(viewtype, ViewType):
-            viewtype = ViewType(viewtype.upper())  # Breaks if not string
-        self.viewtype = viewtype
-
-    def __getattr__(self, name):
-        return getattr(self.data, name)
 
 
 class Window(widget.PrimaryCanvas):
@@ -38,23 +20,8 @@ class Window(widget.PrimaryCanvas):
     def __coord(self, id):
         return Coord(*self.coords(id)[:2])
 
-    def __set_image(self, image: ImageTk.PhotoImage, coord: Coord):
-        return self.create_image(
-            coord, image=image, anchor='nw'
-        )
-
-    def __set_widget(self, widget: tk.Widget, coord: Coord):
-        return self.create_window(
-            coord, window=widget, anchor='nw'
-        )
-
     def __set(self, view: View, coord: Coord):
-        if view.viewtype == ViewType.IMAGE:
-            wid = self.__set_image(view.data, coord)
-        elif view.viewtype == ViewType.WIDGET:
-            wid = self.__set_widget(view.data, coord)
-        else:
-            raise NotImplementedError
+        wid = view.draw(coord, anchor='nw')
         self.views[view] = wid
         return wid
 
@@ -115,3 +82,28 @@ class Window(widget.PrimaryCanvas):
     @property
     def origin(self):
         return Coord(self.canvasx(0), self.canvasy(0))
+
+
+class DrawType(Enum):
+    IMAGE = 'create_image'
+    WIDGET = 'create_window'
+    TEXT = 'create_text'
+
+
+class View:
+
+    def __init__(self, window: Window, **kwds):
+        self.window = window
+        self.kwds = kwds
+        self.drawtype = self.data = None
+        for k, v in self.kwds.items():
+            k = k.upper()
+            if hasattr(DrawType, k):
+                self.drawtype = DrawType[k]
+                self.data = v
+        if self.drawtype is None:
+            raise NotImplementedError
+
+    def draw(self, *args, **kwds):
+        fn = getattr(self.window, self.drawtype.value)
+        return fn(*args, **{**self.kwds, **kwds})

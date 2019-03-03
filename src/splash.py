@@ -1,7 +1,7 @@
 import tkinter as tk
 import json
 
-from .view import Window
+from .view import Window, View
 from . import widget, DOCS, IMAGES
 
 
@@ -29,10 +29,19 @@ class Question(widget.PrimaryFrame):
 
 class Splash(widget.PrimaryFrame):
 
-    intro = (DOCS / 'intro.txt').read_text().replace('\n', ' ').split('  ')
+    intro = (DOCS / 'intro.txt').read_text()  # .replace('\n', ' ').split('  ')
+    with (DOCS / 'questions.json').open() as fp:
+        questions = json.load(fp)
 
     def init(self):
         self.window = Window(self)
-        Question(self)
+        self.window.pack(expand=True, fill='both')
 
-        
+        self.intro = View(
+            self.window,
+            text=self.intro,
+            width=self.window.winfo_reqwidth(),
+            font=('sys', 14),
+            fill='white'
+        )
+        self.window.set_view(self.intro)
