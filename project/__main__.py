@@ -11,7 +11,6 @@ from project.AlphabetGuesser.create_dictionary import create_dictionary
 from project.create_contact_list_pickle import main as create_contact_list
 
 
-
 class Controller(Tk):
     """
     Controller Class:

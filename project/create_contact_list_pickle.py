@@ -69,6 +69,7 @@ def generate_note() -> str:
                  "Rude person", "BFF"]
     return note_list[randint(0, len(note_list) - 1)]
 
+
 def main():
     name_list = ["Ray Allen", "Clarence Boisvert", "Katherina Burpee", "Nevada Dominguez",
                  "Xochitl Olivas", "Rubi Branscome", "Emely Ackley", "Etta Holton", "Pearl Addario",
@@ -106,6 +107,7 @@ def main():
     with open("project/contacts_pickle", 'rb') as infile:
         test = pickle.load(infile)
         print(test["Ray Allen"])
+
 
 if __name__ == '__main__':
     main()
