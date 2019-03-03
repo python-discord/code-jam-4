@@ -208,19 +208,21 @@ class MainWindow(QMainWindow):
 
         Called by the Open File menu action."""
         filename = QFileDialog.getOpenFileName()[0]
-        with open(filename, 'r', encoding='utf-8') as file:
-            self.text_window.setPlainText(file.read())
-        self.filename = filename
+        if filename != '':
+            with open(filename, 'r', encoding='utf-8') as file:
+                self.text_window.setPlainText(file.read())
+            self.filename = filename
 
     def save_file(self):
         """Ask the user for a filename to save to, and write out the text editor.
 
         Called by the Save File menu action."""
         filename = QFileDialog.getSaveFileName()[0]
-        text = self.text_window.document().toPlainText()
-        with open(filename, 'w', encoding='utf-8') as file:
-            file.write(text)
-        self.filename = filename
+        if filename != '':
+            text = self.text_window.document().toPlainText()
+            with open(filename, 'w', encoding='utf-8') as file:
+                file.write(text)
+            self.filename = filename
 
     def new_file(self):
         """Clear the text editor and insert a helpful message.
