@@ -16,7 +16,6 @@ class Application(tk.Tk):
 
         self.resizable(False, False)
         self.geometry("500x500")
-        self.configure(background="#000000")
 
         self.dbh = DBHandler()
 
@@ -76,7 +75,6 @@ class HomePage(tk.Frame):
         super().__init__(parent)
 
         self.parent = parent
-        self.configure(background="#000000")
         self.create_widgets()
 
     def create_widgets(self):
@@ -89,17 +87,16 @@ class HomePage(tk.Frame):
             N/A
         """
         self.title = tk.Label(
-            self, fg="#464646",
-            text="Hello World",
-            bg="#000000")
+            self,
+            text="Hello World")
         self.title.grid(row=0, column=0)
 
-        self.button = tk.Button(self, text="Go to events", bg="#000000",
+        self.button = tk.Button(self, text="Go to events",
                                 command=lambda:
                                     self.parent.change_page(CalendarPage))
         self.button.grid(row=1, column=0)
 
-        self.addEventBtn = tk.Button(self, bg="#000000",
+        self.addEventBtn = tk.Button(self,
                                      text="[+] Add event",
                                      command=lambda: self.parent.change_page(
                                          AddEventPage))
@@ -121,7 +118,6 @@ class AddEventPage(tk.Frame):
         super().__init__()
 
         self.parent = parent
-        self.configure(background="#000000")
         self.create_widgets()
         self.months = {
             "1": 31,
@@ -147,57 +143,50 @@ class AddEventPage(tk.Frame):
             N/A
         """
         self.title = tk.Label(
-            self, fg="#464646",
-            text="Add an event", font=(30),
-            bg="#000000")
+            self,
+            text="Add an event", font=(30))
         self.title.grid(column=1)
         # Name
         self.name = tk.Label(
-            self, fg="#464646",
+            self,
             text="Name ",
-            font=(24), bg="#000000")
+            font=(24))
         self.name.grid(row=1, sticky="E")
         self.nameEntry = tk.Text(
-            self, fg="#464646",
-            height=2, width=49, bg="#000000")
+            self,
+            height=2, width=49)
         self.nameEntry.grid(row=1, column=1)
         # Location
         self.location = tk.Label(
-            self, fg="#464646",
+            self,
             text="Location ",
-            font=(24), bg="#000000")
+            font=(24),)
         self.location.grid(row=2, sticky="E")
         self.locationEntry = tk.Text(
-            self, fg="#464646",
-            height=2, width=49, bg="#000000")
+            self,
+            height=2, width=49)
         self.locationEntry.grid(row=2, column=1)
         # Date
         self.date = tk.Label(
-            self, fg="#464646",
+            self,
             text="Date ",
-            font=(24), bg="#000000")
+            font=(24))
         self.date.grid(row=3, sticky="E")
-        self.dateSpinBoxs = tk.Frame(self, bg="#000000")
+        self.dateSpinBoxs = tk.Frame(self)
         self.timeEntryD = tk.Spinbox(self.dateSpinBoxs,
                                      width=14,
                                      from_=1,
-                                     to=31,
-                                     bg="#000000",
-                                     fg="#464646",)
+                                     to=31)
 
         self.timeEntryM = tk.Spinbox(self.dateSpinBoxs,
                                      width=15,
                                      from_=1,
-                                     to=12,
-                                     bg="#000000",
-                                     fg="#464646",)
+                                     to=12)
 
         self.timeEntryY = tk.Spinbox(self.dateSpinBoxs,
                                      width=14,
                                      from_=2019,
-                                     to=3000,
-                                     bg="#000000",
-                                     fg="#464646")
+                                     to=3000)
 
         self.timeEntryD.grid(row=3, column=1)
         self.timeEntryM.grid(row=3, column=2)
@@ -205,31 +194,28 @@ class AddEventPage(tk.Frame):
         self.dateSpinBoxs.grid(row=3, column=1)
         # Description
         self.description = tk.Label(
-            self, fg="#464646",
+            self,
             text="Description ",
-            font=(24), bg="#000000")
+            font=(24))
         self.description.grid(row=4, sticky="N")
         self.descriptionEntry = tk.Text(
             self, height=20,
-            width=49, bg="#000000",
-            fg="#464646")
+            width=49)
         self.descriptionEntry.grid(row=4, column=1)
 
         # Submit Button
-        self.submitBack = tk.Frame(self, bg="#000000")
+        self.submitBack = tk.Frame(self)
         self.submitBtn = tk.Button(
             self.submitBack,
             text="Submit ✔",
-            command=lambda: self.inputCheck(),
-            bg="#000000")
+            command=lambda: self.inputCheck())
         self.submitBtn.grid(row=1, sticky="W")
         # back button
         self.back = tk.Button(
             self.submitBack,
             text="Back",
             command=lambda:
-            self.parent.change_page(HomePage),
-            bg="#000000")
+            self.parent.change_page(HomePage))
         self.back.grid(row=1, column=1, sticky="W")
         self.submitBack.grid(column=1)
 
@@ -257,23 +243,26 @@ class AddEventPage(tk.Frame):
 
         if (
                 any(
-                    letter.lower() in self.descriptionEntry.get("1.0", tk.END)
-                    for letter in string.ascii_lowercase) and
+                    letter for letter in self.descriptionEntry.get(
+                        "1.0",
+                        tk.END)
+                    if letter.lower() in string.ascii_lowercase) and
                 any(
-                    letter.lower() in self.locationEntry.get("1.0", tk.END)
-                    for letter in string.ascii_lowercase) and
+                    letter for letter in self.locationEntry.get(
+                        "1.0",
+                        tk.END)
+                    if letter.lower() in string.ascii_lowercase) and
                 self.IsDaysCorrect(dateList) and
                 any(
-                    letter.lower() in self.nameEntry.get("1.0", tk.END)
-                    for letter in string.ascii_lowercase)):
+                    letter for letter in self.nameEntry.get(
+                        "1.0",
+                        tk.END)
+                    if letter.lower() in string.ascii_lowercase)):
             self.parent.dbh.addEvent(
-                translate(
-                    self.nameEntry.get("1.0", tk.END)),
-                translate(
-                    self.locationEntry.get("1.0", tk.END)),
+                self.nameEntry.get("1.0", tk.END),
+                self.locationEntry.get("1.0", tk.END),
                 ".".join(dateList),
-                translate(
-                    self.descriptionEntry.get("1.0", tk.END)))
+                self.descriptionEntry.get("1.0", tk.END))
 
         else:
             messagebox.showinfo(
@@ -308,7 +297,6 @@ class CalendarPage(tk.Frame):
         super().__init__()
 
         self.parent = parent
-        self.configure(background="#000000")
         self.create_widgets()
 
     def create_widgets(self):
@@ -323,16 +311,16 @@ class CalendarPage(tk.Frame):
         self.back = tk.Button(
             self,
             text="Back",
-            bg="#000000",
             command=lambda:
             self.parent.change_page(HomePage))
 
         self.back.grid(sticky="W")
+        self.grid_columnconfigure(0, weight=1)
         # Fetch all events
+
         events = self.parent.dbh.fetchEvents()
         # Event format:
         # (ID, name, location, Date, description)--
-        self.grid_columnconfigure(0, weight=1)
 
         self.event_viewer = EventViewer(self)
         self.event_viewer.grid(row=10, column=0)
