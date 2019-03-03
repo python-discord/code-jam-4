@@ -29,18 +29,41 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 * Running the application (assuming you use our project layout): `pipenv run start`
 
 # Project Information
-**Team:** Overjoyed Otolaryngologists
-
-**Idea:** Minesweeper But... (secret)
+Overjoyed Olaryngologists attempt at code jam 4... hope you like it
 
 ## Description
 
-`# TODO`
+Welcome to Minesweeper (but I want to die).
+##### Features
+ - Very nice user interface
+ - Nice sound effects
+ - Functioning minesweeper game
+ - Customisable grid length / height
+ - Oh and did I mention that its a flipping (PG Family Friendly) nightmare to play?
+
+Each tile takes up to 100 clicks to destroy
+
+If you click too fast you get punished
+
+You have to type the settings in binary
+
+And the music is lovely ;)
 
 ## Setup & Installation
-
-`# TODO`
+Very simple
+```cmd
+git clone https://github.com/ravenkls/code-jam-4.git
+cd code-jam-4
+pipenv install
+pipenv run start
+```
 
 ## How do I use this thing?
 
-`# TODO`
+Very intuitive so I don't think it will be that hard to understand.
+
+Just run the program, enter the grid height and width in binary and then run the game.
+
+You have to repeatedly click the mines to break them, you will see cracks form as visual feedback.
+
+https://www.wikihow.com/Play-Minesweeper

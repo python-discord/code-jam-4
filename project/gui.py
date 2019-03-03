@@ -8,13 +8,13 @@ import os
 
 
 # This defines max speed you can click a tile
-MAXIMUM_CLICKS_PER_SECOND = 2
+MAXIMUM_CLICKS_PER_SECOND = 1.5
 
 
 class MinesweeperApp(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle('Minesweeper')
+        self.setWindowTitle('Minesweeper (but I want to die)')
         self.setWindowIcon(QtGui.QIcon(':/images/mine.png'))
         self.setup_ui()
 
@@ -38,9 +38,9 @@ class MinesweeperApp(QtWidgets.QMainWindow):
 
     def start_game(self):
         # Minesweeper Widget
-        width = int(self.home_screen.set_width_input.text())
-        height = int(self.home_screen.set_height_input.text())
-        mines = int(self.home_screen.set_mines_input.text())
+        width = int(self.home_screen.set_width_input.text(), base=2)
+        height = int(self.home_screen.set_height_input.text(), base=2)
+        mines = int(self.home_screen.set_mines_input.text(), base=2)
         if width * height <= mines:
             QtWidgets.QMessageBox.warning(self, 'Too many mines',
                                           'The amount of mines you entered is too big for the grid')
@@ -100,20 +100,20 @@ class MenuWidget(QtWidgets.QWidget):
         mines_label = QtWidgets.QLabel('No. of Mines: ')
         mines_label.setFont(font)
 
-        self.onlyInt = QtGui.QIntValidator()
+        only_binary = QtGui.QRegExpValidator(QtCore.QRegExp('[10]+'))
 
-        self.set_width_input = QtWidgets.QLineEdit('16')
-        self.set_width_input.setMaxLength(2)
+        self.set_width_input = QtWidgets.QLineEdit('010000')
+        self.set_width_input.setMaxLength(6)
         self.set_width_input.setFixedWidth(30)
-        self.set_width_input.setValidator(self.onlyInt)
-        self.set_height_input = QtWidgets.QLineEdit('16')
-        self.set_height_input.setMaxLength(2)
+        self.set_width_input.setValidator(only_binary)
+        self.set_height_input = QtWidgets.QLineEdit('010000')
+        self.set_height_input.setMaxLength(6)
         self.set_height_input.setFixedWidth(30)
-        self.set_height_input.setValidator(self.onlyInt)
-        self.set_mines_input = QtWidgets.QLineEdit('64')
-        self.set_mines_input.setMaxLength(3)
+        self.set_height_input.setValidator(only_binary)
+        self.set_mines_input = QtWidgets.QLineEdit('0111111')
+        self.set_mines_input.setMaxLength(7)
         self.set_mines_input.setFixedWidth(30)
-        self.set_mines_input.setValidator(self.onlyInt)
+        self.set_mines_input.setValidator(only_binary)
 
         form_layout.addRow(width_label, self.set_width_input)
         form_layout.addRow(height_label, self.set_height_input)
