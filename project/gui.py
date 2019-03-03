@@ -306,8 +306,10 @@ class Minesweeper(QtWidgets.QWidget):
 
     def modal_closed(self):
         '''This action is called when a modal is closed'''
-        self.game_over_modal.setHidden(True)
-        self.too_fast_modal.setHidden(True)
+        if self.game_over_modal is not None:
+            self.game_over_modal.setHidden(True)
+        if self.too_fast_modal is not None:
+            self.too_fast_modal.setHidden(True)
         self.game_frame.setDisabled(False)
 
     def refresh_gui(self):
