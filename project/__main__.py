@@ -7,6 +7,9 @@ import pickle
 from project.WheelSpinner.WheelSpinner import WheelSpinner
 from project.PhoneNumber.AddPhoneNumberInter import AddPhoneNumberInter
 from project.AlphabetGuesser.AlphabetGuesserInter import AlphabetGuesserInter
+from project.AlphabetGuesser.create_dictionary import create_dictionary
+from project.create_contact_list_pickle import main as create_contact_list
+
 
 
 class Controller(Tk):
@@ -328,11 +331,11 @@ class ContactsPage(Frame):
                 if order.index(contact[0].lower()) == order.index(current_next_contact[0].lower()):
                     for current_character in range(1, min(len(contact), len(current_next_contact))):
                         if order.index(contact[current_character].lower()) < \
-                                order.index(current_next_contact[current_character].lower()):
+                           order.index(current_next_contact[current_character].lower()):
                             current_next_contact = contact
                             break
                         if order.index(contact[current_character].lower()) > \
-                                order.index(current_next_contact[current_character].lower()):
+                           order.index(current_next_contact[current_character].lower()):
                             break
             # we append the contact to the list and remove it from the remaining contact to order.
             contacts.remove(current_next_contact)
@@ -585,11 +588,11 @@ class AddContactPage(Frame):
         self.controller.withdraw()
 
         def quit_phone_input():
-            # self.controller.show()
+            self.controller.show()
             new_window.destroy()
 
         def send_phone_input(event):
-            # self.controller.show()
+            self.controller.show()
             self.enter_phone_num['text'] = phone.get_complete_phone_number()
             new_window.destroy()
 
@@ -669,5 +672,7 @@ class AddContactPage(Frame):
 
 
 if __name__ == "__main__":
+    create_dictionary()
+    create_contact_list()
     app = Controller()
     app.mainloop()

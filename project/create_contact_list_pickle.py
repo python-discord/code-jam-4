@@ -69,8 +69,7 @@ def generate_note() -> str:
                  "Rude person", "BFF"]
     return note_list[randint(0, len(note_list) - 1)]
 
-
-if __name__ == '__main__':
+def main():
     name_list = ["Ray Allen", "Clarence Boisvert", "Katherina Burpee", "Nevada Dominguez",
                  "Xochitl Olivas", "Rubi Branscome", "Emely Ackley", "Etta Holton", "Pearl Addario",
                  "Kimi Pelosi", "Vernita Pennel", "Reyes Buhl", "Jovan Selle", "Rene Nicks",
@@ -101,9 +100,12 @@ if __name__ == '__main__':
         contact_dictionary[name] = contact
 
     # Saving the dictionary on the output pickle.
-    with open("contacts_pickle", 'wb') as outfile:
+    with open("project/contacts_pickle", 'wb') as outfile:
         pickle.dump(contact_dictionary, outfile)
     # Loading the dictionary to see if it worked.
-    with open("contacts_pickle", 'rb') as infile:
+    with open("project/contacts_pickle", 'rb') as infile:
         test = pickle.load(infile)
         print(test["Ray Allen"])
+
+if __name__ == '__main__':
+    main()

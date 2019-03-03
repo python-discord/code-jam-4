@@ -38,7 +38,7 @@ Keep track of your contact information using the Durable Drills Contact Managerâ
 
 ## Setup & Installation
 
-`# TODO`
+Assuming you are using pipenv, "pipenv run start" should make the program work!
 
 ## How do I use this thing?
 
