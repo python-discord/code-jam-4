@@ -41,7 +41,7 @@ IMAGE_PATHS = {'new_icon': IMAGE_PATH / 'new_icon.png',
 
 audio_player = pyaudio.PyAudio()
 
-CHUNK = 1024
+AUDIO_CHUNK_SIZE = 1024
 
 
 async def mainloop_coro(root):
@@ -75,16 +75,26 @@ sound_streams = {soundcode: [get_sound_data(soundcode) for i in range(10)]
 
 
 def prepare_sound(soundcode):
+    '''Add a sound to the prepared sounds (makes play_sound faster)'''
     sound_streams[soundcode].append(get_sound_data(soundcode))
 
 
 def play_sound(soundcode='tap'):
+    '''
+    Plays a sound!
+    Soundcode must be the name of a .wav file in code_jam_4/audio.
+    Soundcode must not include the .wav extension.
+    Creates:
+    *A thread to play the audio
+    *A thread to prepare the next audio stream (to minimize latency)
+    '''
+
     def play_and_close():
         stream, wave_file, path_file = sound_streams[soundcode].pop()
-        data = wave_file.readframes(CHUNK)
+        data = wave_file.readframes(AUDIO_CHUNK_SIZE)
         while data:
             stream.write(data)
-            data = wave_file.readframes(CHUNK)
+            data = wave_file.readframes(AUDIO_CHUNK_SIZE)
         stream.stop_stream()
         for sound_datum_to_close in stream, wave_file, path_file:
             sound_datum_to_close.close()
@@ -97,8 +107,9 @@ with open(WORDS_PATH, 'r') as words_file:
 
 
 def is_word(text):
+    '''Returns whether the given word is accepted as an English word.'''
     assert text.isalpha()
-    return text in real_words
+    return text.lower() in real_words
 
 
 letter_scores = {'a': 1, 'e': 1, 'i': 1, 'u': 1, 'n': 1, 'r': 1, 'o': 1,
@@ -108,6 +119,10 @@ letter_scores = {'a': 1, 'e': 1, 'i': 1, 'u': 1, 'n': 1, 'r': 1, 'o': 1,
 
 
 def calculate_xp(word):
+    '''
+    Returns the XP value of a word.
+    This method can be overridden with a different XP algorithm.
+    '''
     return sum([letter_scores[letter] for letter in word])
 
 
@@ -127,6 +142,11 @@ LOOTBOX_PULLS_PER_BOX = 5
 
 
 def get_last_word(text):
+    '''
+    Given a string, returns the string of letters separated by punctuation \
+    closest to the end.
+    'Hi;There!how are*you?' -> 'you'
+    '''
     text = text.lower().strip()
     for end_index in range(len(text)-1, -1, -1):
         if text[end_index].isalpha():
@@ -138,6 +158,10 @@ def get_last_word(text):
 
 
 class UserInterface(tk.Frame):
+    '''
+    Main frame of the HTT program. Should be packed into root.
+    Also contains general program functions not directly related to UI.
+    '''
     def __init__(self, master, *args, **kwargs):
         tk.Frame.__init__(self, master, *args, **kwargs)
 
@@ -247,23 +271,34 @@ class UserInterface(tk.Frame):
         self.tutorial_trigger('start')
 
     def tutorial_trigger(self, trigger):
+        '''
+        Called when a tutorial trigger is reached.
+        If the user has not yet seen the given tutorial, it will play.
+        '''
         if trigger in self.tutorials:
             tutorial_data = self.tutorials.pop(trigger)
             TutorialWindow(self, tutorial_data['text'], tutorial_data['smirk'])
 
     def new_file(self):
+        '''Called when the user requests a new file'''
         self.working_file = None
         self.text_entry_section.set_text('')
 
     def save_file(self):
-        print('Save command')
+        '''
+        Called when the user requests their file be saved
+        User wishes to overwrite the existing file if possible
+        '''
         if self.working_file is None:
             self.save_file_as()
         else:
             self.write_file(self.working_file)
 
     def save_file_as(self):
-        print('Save as command')
+        '''
+        Called when the user requests their file be saved
+        User wishes to (or must) specify file save location
+        '''
         filepath = fd.asksaveasfilename(
                                         initialdir=self.working_directory,
                                         title='Save as...',
@@ -271,26 +306,22 @@ class UserInterface(tk.Frame):
                                                    ('all files', '*.*')
                                                    )
                                         )
-        # User hit cancel
-        if filepath == '':
-            return
-        self.working_file = filepath
-        self.write_file(filepath)
+        if filepath:
+            self.working_file = filepath
+            self.write_file(filepath)
 
     def write_file(self, filepath):
-        filepath = Path(filepath)
+        '''Writes textentry data to a given filepath'''
         doc_text = self.text_entry_section.get_text()
         try:
-            filepath.write_text(doc_text)
-            save_complete = True
+            Path(filepath).write_text(doc_text)
         except IOError:
             messagebox.showinfo('Error', 'Error saving file')
-
-        if save_complete:
+        else:
             messagebox.showinfo(self.window_name, 'Save complete.')
 
     def load_file(self):
-        print('Load command')
+        '''Called when the user wishes to load a file'''
         filepath = fd.askopenfilename(
                                       initialdir=self.working_directory,
                                       title='Open file',
@@ -299,21 +330,19 @@ class UserInterface(tk.Frame):
                                                  )
                                       )
         # User hit cancel
-        if filepath == '':
-            return
-        filepath = Path(filepath)
-        try:
-            doc_text = filepath.read_text()
-            load_complete = True
-        except IOError:
-            messagebox.showinfo('Error', 'Error loading file')
-
-        if load_complete:
-            self.text_entry_section.set_text(doc_text)
-            self.text_entry_section.backspace()
-            self.working_file = str(filepath)
+        if filepath:
+            filepath = Path(filepath)
+            try:
+                doc_text = filepath.read_text()
+            except IOError:
+                messagebox.showinfo('Error', 'Error loading file')
+            else:
+                self.text_entry_section.set_text(doc_text)
+                self.text_entry_section.backspace()
+                self.working_file = str(filepath)
 
     def add_xp(self, xp_increase):
+        '''Adds a given amount of XP to the user's XP value.'''
         self.xp += xp_increase
         while self.xp >= self.next_xp_milestone:
             self.prev_xp_milestone = self.next_xp_milestone
@@ -325,20 +354,30 @@ class UserInterface(tk.Frame):
         self.tutorial_trigger('xpgain')
 
     def set_darkmode(self):
+        '''
+        User has toggled the darkmode setting
+        Toggles the background of certain elements on the UI
+        '''
         self.text_entry_section.set_darkmode(self.is_darkmode.get())
         self.keyboard_section.set_darkmode(self.is_darkmode.get())
         self.tutorial_trigger('darkmode')
 
     def receive_key(self, char):
+        '''
+        Called when the onscreen keyboard has recognized a keystroke.
+        Backspace will not call this; it will instead call backspace
+        '''
         play_sound('tap')
         self.text_entry_section.receive_key(char)
         self.tutorial_trigger('grow')
 
     def backspace(self):
+        '''Called when the onscreen keyboard has recognized a backspace'''
         play_sound('tap')
         self.text_entry_section.backspace()
 
     def unlock_lootbox(self):
+        '''Adds a lootbox (the keys contained) to the user's keyboard'''
         unlocked_keys = []
         rarities = []
 
@@ -356,7 +395,11 @@ class UserInterface(tk.Frame):
         play_sound('decision4')
 
     def on_word_complete(self, last_word: str):
-        if last_word is not None:
+        '''
+        Called when the user has completed a word.
+        Checks for valid words and their respective XP gain
+        '''
+        if last_word:
             assert last_word.lower() == last_word
             assert last_word.strip() == last_word
             assert last_word.isalpha()
@@ -371,13 +414,9 @@ class UserInterface(tk.Frame):
 
 class TextEntrySection(tk.Frame):
     '''
-    This class should contain the text entry box (multiple lines),
-        save/load buttons (as well as ctrl-s functionality and such),
-        and should look like a generic (albeit extremely barebones)
-        text editor.
-    It can accept true keyboard input for now, but should also
-        accept input from a receive_key method, which is how input
-        will be recieved in the future.
+    This class contains the text entry box, and its appropriate methods.
+    Accepts input from the onscreen keyboard.
+    Blocks input from the true keyboard.
     '''
     def __init__(self, master: UserInterface, *args, **kwargs):
         tk.Frame.__init__(self, master, *args, **kwargs)
@@ -385,6 +424,10 @@ class TextEntrySection(tk.Frame):
         self.textbox.pack(fill='x')
 
     def receive_key(self, char):
+        '''
+        Called when the onscreen keyboard has recognized a keystroke.
+        Backspace will not call this; it will instead call backspace
+        '''
         self.textbox.configure(state='normal')
         self.textbox.insert('end', char)
         self.textbox.configure(state='disabled')
@@ -395,17 +438,24 @@ class TextEntrySection(tk.Frame):
             self.master.on_word_complete(last_word)
 
     def backspace(self):
+        '''Removes the last character in the textbox'''
         self.textbox.configure(state='normal')
         self.textbox.delete('end - 2 chars', 'end')
         self.textbox.configure(state='disabled')
 
     def set_darkmode(self, is_darkmode: bool):
+        '''Toggles the darkmode background of the textbox'''
         self.textbox['bg'] = 'black' if is_darkmode else 'white'
 
     def get_text(self):
+        '''Returns the contents of the textbox'''
         return self.textbox.get(1.0, 'end')
 
     def set_text(self, new_text):
+        '''
+        Sets the entire text of the textbox.
+        Should only be used for new files or loading a file
+        '''
         self.textbox.configure(state='normal')
         self.textbox.delete(1.0, 'end')
         self.textbox.insert(1.0, new_text)
@@ -413,11 +463,7 @@ class TextEntrySection(tk.Frame):
 
 
 class KeyboardSection(tk.Frame):
-    '''
-    This class should contain the dynamically shaped onscreen keyboard,
-        which should allow each key to send a receive_key command to
-        its master.
-    '''
+    '''Contains the dynamically shaped onscreen keyboard and its keys'''
     def __init__(self, master: UserInterface, saved_keys=set(),
                  saved_scales=set(), *args, **kwargs):
         tk.Frame.__init__(self, master, *args, **kwargs)
@@ -434,9 +480,14 @@ class KeyboardSection(tk.Frame):
         except IOError:
             print('Failed to load key_descriptions.json')
 
-        self.make_keys(saved_keys=saved_keys, saved_scales=saved_scales)
+        for idx, key_to_add in enumerate(saved_keys):
+            self.add_key(key_to_add, scale=saved_scales[idx])
 
     def add_key(self, key_name: str, scale=1.0):
+        '''
+        Adds a key to the keyboard.
+        Generally only called on initialization or lootbox unlock.
+        '''
         row_index, col_index = divmod(
                                       len(self.buttons)
                                       + self.accumulated_blank_space,
@@ -444,7 +495,7 @@ class KeyboardSection(tk.Frame):
                                       )
         key_dict = self.key_descriptions[key_name]
         key_size = key_dict['size']
-        new_key = KeyboardKey.from_master_and_dict(self, key_dict)
+        new_key = KeyboardKey(self, **key_dict)
         new_key.set_scale(scale)
         self.buttons.append(new_key)
         new_key.grid(row=row_index,
@@ -455,11 +506,11 @@ class KeyboardSection(tk.Frame):
         if key_size > 1:
             self.accumulated_blank_space += key_size - 1
 
-    def make_keys(self, saved_keys=None, saved_scales=None):
-        for idx, key_to_add in enumerate(saved_keys):
-            self.add_key(key_to_add, scale=saved_scales[idx])
-
-    def save_keys(self, filepath=SAVE_DATA_PATH):
+    def save(self, filepath=SAVE_DATA_PATH):
+        '''
+        Saves the user's XP/keys/etc progress
+        This does NOT save the text file
+        '''
         json_compatible_data = {
             'keys': [button.text_name for button in self.buttons],
             'scales': [button.scale for button in self.buttons],
@@ -477,16 +528,20 @@ class KeyboardSection(tk.Frame):
             return False
 
     def send_key(self, char):
+        '''Sends a key to ther UserInterface'''
         self.master.receive_key(char)
 
     def send_backspace(self):
+        '''Sends a backspace to the UserInterface'''
         self.master.backspace()
 
     def toggle_shift(self):
+        '''Toggles the shift value of all keys'''
         for button in self.buttons:
             button.toggle_shift()
 
     def recalc_key_sizes(self, key):
+        '''Rescales all keys, given the grow key'''
         for button in self.buttons:
             if button is not key:
                 button.decrease_scale()
@@ -494,6 +549,7 @@ class KeyboardSection(tk.Frame):
                 button.increase_scale()
 
     def set_darkmode(self, is_darkmode: bool):
+        '''Toggles the background of the key'''
         for key in self.buttons:
             key['bg'] = 'black' if is_darkmode else 'SystemButtonFace'
 
@@ -507,9 +563,9 @@ class KeyboardKey(tk.Button):
     '''
     KEY_SIZE = 32
 
-    @classmethod
-    def from_master_and_dict(self, master, key_dict):
-        return KeyboardKey(master, **key_dict)
+    # @classmethod
+    # def from_master_and_dict(self, master, key_dict):
+    #     return KeyboardKey(master, **key_dict)
 
     def __init__(self, master: KeyboardSection, name,
                  char=None, shift_name=None, shift_char=None, size=None,
@@ -597,6 +653,7 @@ class KeyboardKey(tk.Button):
 
 
 class LootBoxUnlockWindow(tk.Toplevel):
+    '''Represents the window conaining the lootbox frame'''
     def __init__(self, new_keys=[], rarities=[], *args, **kwargs):
         tk.Toplevel.__init__(self)
         self.iconbitmap(IMAGE_PATHS['capsule_small'])
@@ -615,6 +672,7 @@ class LootBoxUnlockWindow(tk.Toplevel):
 
 
 class LootBoxUnlockFrame(tk.Frame):
+    '''Frame that contains lootbox unlock information such as keys unlocked'''
     def __init__(self, master, *args, **kwargs):
         tk.Frame.__init__(self, master)
         self.master = master
@@ -649,6 +707,7 @@ class LootBoxUnlockFrame(tk.Frame):
         self.after(1000, self.open_lootbox)
 
     def open_lootbox(self):
+        '''Opens a lootbox and adds the contained keys'''
         play_sound('pop')
         new_keys = [
             '{} ({})'.format(key, LOOTBOX_RARITIES[self.master.rarities[idx]])
@@ -664,6 +723,7 @@ class LootBoxUnlockFrame(tk.Frame):
 
 
 class XPFrame(tk.Frame):
+    '''Displays XP information, such as current value and progress'''
     def __init__(self, master, xp=0, prev_xp_milestone=0,
                  next_xp_milestone=0, *args, **kwargs):
         tk.Frame.__init__(self, master)
@@ -686,6 +746,7 @@ class XPFrame(tk.Frame):
         self.lootbox_image_label.pack(side='left')
 
     def set_xp(self, xp, prev_xp_milestone, next_xp_milestone):
+        '''Adjusts the displayed XP vaue'''
         self.xp_label['text'] = 'XP:{}'.format(xp)
         self.prev_xp_label['text'] = prev_xp_milestone
         self.next_xp_label['text'] = next_xp_milestone
@@ -694,6 +755,7 @@ class XPFrame(tk.Frame):
 
 
 class TutorialWindow(tk.Toplevel):
+    '''Displays a window containing a tutorial message'''
     previous_tutorial_window = None
 
     def __init__(self, master, message=None, smirk=False, *args, **kwargs):
@@ -727,10 +789,8 @@ class TutorialWindow(tk.Toplevel):
 
 
 def exit_program():
-    '''
-    Save the keyboard before the user closes the window.
-    '''
-    save_successful = UI.keyboard_section.save_keys()
+    '''Save the keyboard before the user closes the window.'''
+    save_successful = UI.keyboard_section.save()
     if not save_successful:
         print('Exiting program, failed to save.')
     audio_player.terminate()
