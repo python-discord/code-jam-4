@@ -43,8 +43,20 @@ class MinesweeperApp(QtWidgets.QMainWindow):
             return
         self.minesweeper = Minesweeper(width, height, mines)
         self.minesweeper.setup_gui()
+        self.minesweeper.game_over.connect(self.minesweeper_end_button)
         self.stack_widget.addWidget(self.minesweeper)
         self.stack_widget.setCurrentWidget(self.minesweeper)
+
+    def minesweeper_end_button(self):
+        '''Enables the gameover button for minesweeper'''
+        self.minesweeper.game_over_modal.close_button.clicked.connect(
+            self.return_to_home)
+        self.minesweeper.game_over_modal.close_button.setDisabled(False)
+
+    def return_to_home(self):
+        self.stack_widget.setCurrentWidget(self.home_screen)
+        self.stack_widget.removeWidget(self.minesweeper)
+        self.minesweeper.destroy()
 
 
 # Home Screen Widget
@@ -278,7 +290,7 @@ class Minesweeper(QtWidgets.QWidget):
 
         if self.too_fast_modal is None:
             self.too_fast_modal = MinesweeperModal('You are clicking too fast!', self)
-            self.too_fast_modal.close_button.clicked.connect(self.modal_closed)
+            self.too_fast_modal.close_button.clicked.connect(lambda: self.modal_closed(self.too_fast_modal))
             self.too_fast_modal.move(self.rect().center() - self.too_fast_modal.rect().center())
 
         self.beep_sound.play()
@@ -292,24 +304,19 @@ class Minesweeper(QtWidgets.QWidget):
 
         if self.game_over_modal is None:
             self.game_over_modal = MinesweeperModal('GAME OVER', self)
-            self.game_over_modal.close_button.clicked.connect(self.end_game)
+            self.game_over_modal.close_button.clicked.connect(lambda: self.modal_closed(self.game_over_modal))
             self.game_over_modal.move(self.rect().center() - self.game_over_modal.rect().center())
 
         self.beep_sound.play()
         self.game_over_modal.setHidden(False)
         self.game_over_modal.raise_()
+        self.game_over_modal.close_button.setDisabled(True)
         self.game_frame.setDisabled(True)
 
-    def end_game(self):
-        '''This event is called when the game ends'''
-        pass
-
-    def modal_closed(self):
+    def modal_closed(self, modal):
         '''This action is called when a modal is closed'''
-        if self.game_over_modal is not None:
-            self.game_over_modal.setHidden(True)
-        if self.too_fast_modal is not None:
-            self.too_fast_modal.setHidden(True)
+        modal.setHidden(True)
+        modal.setHidden(True)
         self.game_frame.setDisabled(False)
 
     def refresh_gui(self):
