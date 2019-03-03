@@ -32,16 +32,50 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 
 Slithering Snacks's submission for the 4th code jam.
 
-`# TODO`
+Qt, via PySide2 ("Qt for Python"), is used as the GUI framework. The Qt Multimedia module is an easy, cross-platform solution to playing media. The UI windows are designed in Qt Creator and then converted to Python using `pyside2-uic`.
+
+SQLite is used to drive a database which persists the media playlist.
 
 ## Description
 
-`# TODO`
+A basic media player with the following features:
+
+    * Previous and next navigation of playlist
+    * Seeking
+    * Persistent and sortable playlist
+    * Parsing and displaying metadata tags of media
 
 ## Setup & Installation
 
-`# TODO`
+First, make sure [ffmpeg](https://ffmpeg.org/) is installed. Particularily, this program relies on `ffprobe`. It should either be on your `PATH` or in the current working directory when running the program.
+
+Open a terminal in the repository's root directory and execute the following command to install the project's dependencies:
+
+```bash
+pipenv --sync
+```
+
+To run the program, execute
+
+```bash
+pipenv run start
+```
 
 ## How do I use this thing?
 
-`# TODO`
+#### Adding media
+Click on `File` in the menu bar, then click on `Add files`. In the file dialogue which opens, browse for and select the media to add to the playlist.
+
+#### Removing media
+Right click on a row in the playlist, select the `Remove` action on the context menu, and confirm removal in the prompts which appear.
+
+#### Playing media
+Click on the `Play` button to start playing media. To pause, click on the same button again. Notice that when media is playing, the button changes from `Play` to `Pause`. The `Previous` and `Next` may be used to navigate the playlist.
+
+The time remaining on the current song can be seen below the playlist, to the left of the slider. It display the remaining time in hexadecimal.
+
+#### Seeking
+Click on the slider below the playlist to seek. In the dialogue that opens, use the dials to select the hour, minute, and second you wish to seek. Note that the values below the dials are _octal_ numbers.
+
+#### Playlist
+Media can be sorted on the playlist by clicking on the column headers. An indicator appears on the header by which the playlist is being sorted.
