@@ -1,3 +1,7 @@
+# Project-specific files
+project/*.ini
+project/**/autosave.data
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -102,3 +106,10 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# IDEA workspace
+.idea/
+
+# compiled sphinx HTML documentation
+docs/build
+.vscode/settings.json
