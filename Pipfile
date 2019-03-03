@@ -5,11 +5,15 @@ verify_ssl = true
 
 [dev-packages]
 flake8 = "*"
+autopep8 = "*"
 
 [packages]
+flake8 = "*"
+googletrans = "*"
 
 [requires]
 python_version = "3.7"
 
 [scripts]
 lint = "python -m flake8"
+start = "python -m project"
