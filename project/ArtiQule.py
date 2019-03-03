@@ -225,18 +225,18 @@ class PaintBoard(QMainWindow):
         new_canvas_action = QAction('New File', self)
         new_canvas_action.setShortcut('Ctrl+N')
 
-        open_file_action = QAction('Open File', self)
-        open_file_action.setShortcut('Ctrl+O')
+        # open_file_action = QAction('Open File', self)
+        # open_file_action.setShortcut('Ctrl+O')
 
-        save_file_action = QAction('Save File', self)
-        save_file_action.setShortcut('Ctrl+S')
+        # save_file_action = QAction('Save File', self)
+        # save_file_action.setShortcut('Ctrl+S')
 
         exit_action = QAction('Exit', self)
         exit_action.setShortcut('Alt+F4')
 
         fileMenu.addAction(new_canvas_action)
-        fileMenu.addAction(open_file_action)
-        fileMenu.addAction(save_file_action)
+        # fileMenu.addAction(open_file_action)
+        # fileMenu.addAction(save_file_action)
         fileMenu.addAction(exit_action)
 
         colorMenu = mainMenu.addMenu("Colors")
@@ -246,8 +246,8 @@ class PaintBoard(QMainWindow):
 
         colorMenu.triggered.connect(self.colorBoxRun)
         new_canvas_action.triggered.connect(self.newCanvas)
-        open_file_action.triggered.connect(self.openFile)
-        save_file_action.triggered.connect(self.saveFile)
+        # open_file_action.triggered.connect(self.openFile)
+        # save_file_action.triggered.connect(self.saveFile)
         exit_action.triggered.connect(self.exit)
 
         # TOOLBAR AND WITH TOOL ICONS
@@ -370,7 +370,6 @@ class PaintBoard(QMainWindow):
         self.colorBox.showColorBox()
 
     def fill_bucket(self):
-        print("here")
         self.setCursor(QCursor(
                 QPixmap("Design/icons/{}.png".format("A bucket filled")
                         )
@@ -501,31 +500,31 @@ class PaintBoard(QMainWindow):
         self.painter.drawLine(0, 0, 1000, 500)
         self.update()
 
-    def openFile(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        filePath, _ = QFileDialog.getOpenFileNames(
-            self,
-            "Open File",
-            "Load Image",
-            "PNG(*.png);; JPG(*.jpg *.jpeg)",
-            options=options)
+    # def openFile(self):
+    #     options = QFileDialog.Options()
+    #     options |= QFileDialog.DontUseNativeDialog
+    #     filePath, _ = QFileDialog.getOpenFileNames(
+    #         self,
+    #         "Open File",
+    #         "Load Image",
+    #         "PNG(*.png);; JPG(*.jpg *.jpeg)",
+    #         options=options)
 
-    def saveFile(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        filePath, _ = QFileDialog.getSaveFileName(
-            self,
-            "Save Image", "",
-            "PNG(*.png);;JPEG(*.jpg *.jpeg)")
+    # def saveFile(self):
+    #     options = QFileDialog.Options()
+    #     options |= QFileDialog.DontUseNativeDialog
+    #     filePath, _ = QFileDialog.getSaveFileName(
+    #         self,
+    #         "Save Image", "",
+    #         "PNG(*.png);;JPEG(*.jpg *.jpeg)")
 
-        if filePath:
-            print(filePath)
-            # with open(filePath, "w+") as file:
-            # self.canvasPainter.save()
-            # file.write(filePath)
-            # img = Image.open(filePath)
-            # img.save(filePath)
+    #     if filePath:
+    #         print(filePath)
+    #         # with open(filePath, "w+") as file:
+    #         # self.canvasPainter.save()
+    #         # file.write(filePath)
+    #         # img = Image.open(filePath)
+    #         # img.save(filePath)
 
     def exit(self):
         raise SystemExit
