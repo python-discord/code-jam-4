@@ -96,7 +96,6 @@ class Window(widget.PrimaryCanvas):
         self.move_out(last, direction)
 
         self.animater.start()
-        print(len(self.views))
 
     def get_distance(self, direction: Direction):
         if not isinstance(direction, Direction):

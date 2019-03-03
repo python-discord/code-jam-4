@@ -77,9 +77,9 @@ class Front(widget.PrimaryFrame):
         self.window.pack(fill='both', expand=True)
         self.commandbar.pack(side='bottom', fill='both', expand=True)
 
-        self.btn_dislike.pack(side='left')
-        self.btn_like.pack(side='right')
-        self.btn_bio.pack()
+        self.btn_dislike.pack(side='left', padx=10)
+        self.btn_like.pack(side='right', padx=10)
+        self.btn_bio.pack(pady=10)
 
         self.cache = ImageCache(self.cachesize)
         self.cache.start()
@@ -95,6 +95,8 @@ class Front(widget.PrimaryFrame):
         self.__next('right')
 
     def cmd_bio(self):
+        if self.window.active:
+            return
         if self.window.current != self.bio:
             self.window.change_view(self.bio, 'up')
         else:
