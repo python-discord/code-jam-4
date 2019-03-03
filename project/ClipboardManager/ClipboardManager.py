@@ -74,7 +74,6 @@ class ClipboardManager(QObject):
         current_text = QApplication.clipboard().text()
         current_image = QApplication.clipboard().pixmap()
 
-        # current_text = PT.apply(QApplication.clipboard().text()) # TODO: Chain plugins together
         self._logger.info("Current Text:" + str(QApplication.clipboard().text()))
         self._logger.info("Current Image Info:" + str(QApplication.clipboard().pixmap()))
 
@@ -91,9 +90,6 @@ class ClipboardManager(QObject):
 
         self._last_image = current_image
         self._last_text = current_text
-
-    # DONE: use Qt signals properly
-    # https://stackoverflow.com/questions/36434706/pyqt-proper-use-of-emit-and-pyqtsignal
 
     @pyqtSlot(int)
     def set_selected_object(self, idx):
@@ -131,7 +127,6 @@ class ClipboardManager(QObject):
 
         self.clipboard_stack.pop(idx)
         self.stack_changed_signal.emit(self.clipboard_stack)
-        # self.clipboard_changed_signal.emit(self.clipboard_stack)
 
     def save_state(self, location: str):
         """Persists state of the stack to a JSON file"""

@@ -32,7 +32,6 @@ class ConfigManager:
         self._config.add_section('plugin_settings')
 
         self._config.set('settings', 'persist_clipboard', 'true')
-        # self._config.set('settings', 'delete_after_paste', 'true')
         self._config.set('settings', 'auto_load_top', 'true')
 
         self._config.set('plugin_settings', 'chain_all_plugins', 'false')
@@ -48,14 +47,6 @@ class ConfigManager:
     @persist_clipboard.setter
     def persist_clipboard(self, value: bool):
         self._config['settings']["persist_clipboard"] = 'true' if value else 'false'
-
-    # @property
-    # def delete_after_paste(self):
-    #     return self._config.getboolean('settings', "delete_after_paste")
-    #
-    # @delete_after_paste.setter
-    # def delete_after_paste(self, value: bool):
-    #     self._config['settings']["delete_after_paste"] = 'true' if value else 'false'
 
     @property
     def auto_load_top(self):

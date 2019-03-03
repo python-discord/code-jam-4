@@ -1,11 +1,9 @@
-# from PyQt5.QtGui import QPixmap
 import random
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QTransform
 
 from project import Stack
-# from project.ClipboardManager.ClipboardObject import TextClipboardObject
 from project.ClipboardManager.ClipboardObject import ImageClipboardObject
 from project.Plugins import AbstractPlugin
 

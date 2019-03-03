@@ -15,7 +15,6 @@ from project.ClipboardManager.ClipboardObject import TextClipboardObject, ImageC
 from project.ConfigManager import ConfigManager
 from project.Plugins.Systray import SystemTrayIcon
 from project.Stack import Stack
-from project.TextEditor import Editor
 from project.Widgets import MainListWidget, TextListWidgetItem
 from project.Widgets.MainListWidget import ImageListWidgetItem
 from project.Widgets.PluginsScreen import PluginsScreen

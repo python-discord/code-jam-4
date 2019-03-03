@@ -20,7 +20,6 @@ class SynonymPlugin(AbstractPlugin):
                 new_words = new_words + ' ' + word
                 skip_word = False
             else:
-                # start_ = time.time()
                 skip_word = True
                 try:
                     w = thesaurus.Word(word)
@@ -35,7 +34,6 @@ class SynonymPlugin(AbstractPlugin):
                     new_words = new_words + ' ' + word
                 except TypeError:
                     new_words = new_words + ' ' + word
-                # end_ = time.time()
         end = time.time()
         self._logger.info('processing time: ' + str(end - start))
         return new_words

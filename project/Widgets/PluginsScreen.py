@@ -29,7 +29,6 @@ class PluginsScreen(QMainWindow):
     def _image_plugin_checkbox_clicked(self, checked, name):
         self._dirty = True
         self._save_btn.setDisabled(False)
-        # self._logger.info(name + ': ' + str(checked))
         _config_mgr = ConfigManager.get_instance()
         if checked:
             _config_mgr.enable_image_plugin(name)
@@ -104,5 +103,3 @@ class PluginsScreen(QMainWindow):
 
         self._central_widget.setLayout(self._central_widget_layout)
         self.setCentralWidget(self._central_widget)
-
-        # self.setFixedSize(self.size())

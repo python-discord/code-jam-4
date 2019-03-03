@@ -31,13 +31,11 @@ class TextListWidgetItem(QWidget):
         self._right_vbox_layout = QVBoxLayout()
 
         self._text_area = QLabel()
-        # self._text_area.setReadOnly(True)
         self._text_area.setText(obj.text)
 
         self._date_label = QLabel()
         self._date_label.setText(obj.date().strftime("%Y-%m-%d %H:%M:%S"))
 
-        # Date should be at the bottom.
         self._right_vbox_layout.addWidget(self._text_area)
         self._right_vbox_layout.addWidget(self._date_label)
 
