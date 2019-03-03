@@ -61,7 +61,6 @@ class MinesweeperApp(QtWidgets.QMainWindow):
         self.minesweeper.win_modal.close_button.clicked.connect(
             self.return_to_home)
 
-
     def return_to_home(self):
         self.stack_widget.setCurrentWidget(self.home_screen)
         self.stack_widget.removeWidget(self.minesweeper)
@@ -83,6 +82,8 @@ class MenuWidget(QtWidgets.QWidget):
         layout.setContentsMargins(96, 32, 96, 32)
         layout.setSpacing(32)
         layout.setAlignment(QtCore.Qt.AlignHCenter)
+        vertical_spacer = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Fixed,
+                                                QtWidgets.QSizePolicy.Expanding)
         form_layout = QtWidgets.QFormLayout()
 
         font = QtGui.QFont('Consolas')
@@ -123,11 +124,14 @@ class MenuWidget(QtWidgets.QWidget):
         self.start_button.setFont(font)
         self.start_button.setObjectName("menuButton")
 
+        layout.addSpacerItem(vertical_spacer)
         layout.addWidget(title_label)
-        layout.setAlignment(title_label, QtCore.Qt.AlignCenter)
         layout.addLayout(form_layout)
         layout.addWidget(self.start_button)
+        layout.addSpacerItem(vertical_spacer)
+
         layout.setAlignment(self.start_button, QtCore.Qt.AlignCenter)
+        layout.setAlignment(title_label, QtCore.Qt.AlignCenter)
         self.setLayout(layout)
 
 
