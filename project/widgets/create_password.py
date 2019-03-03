@@ -12,23 +12,44 @@ class CreatePassword(QDialog):
         self.ui = ui.CreatePassword()
         self.ui.setupUi(self)
 
-        self.ui.confirm_button.pressed.connect(self.check)
+        self.ui.buttons.accepted.connect(self.accept)
+        self.ui.buttons.rejected.connect(self.reject)
         self.new_password = ""
-
-    def display(self):
-        self.new_password = ""
-        self.exec()
 
     def closeEvent(self, event):
-        if self.new_password == "":
-            sys.exit()
+        sys.exit()
 
-    def check(self):
+    def open(self):
+        self.new_password = ""
+        super().open()
+
+    def exec_(self):
+        self.new_password = ""
+        super().exec_()
+
+    def done(self, result: QDialog.DialogCode):
+        if result == QDialog.Accepted:
+            errors = self._check()
+            if errors:
+                self.ui.error_message.setText(f"<span style='color:red'>{errors}</span>")
+                return
+
+        self.new_password = self.ui.password.text()
+        self.ui.error_message.clear()
+        self.ui.password.clear()
+        self.ui.confirm_password.clear()
+
+        super().done(result)
+
+    def _check(self) -> str:
+        """Check if the password is valid and return any error messages to be displayed."""
         password = self.ui.password.text()
         other = self.ui.confirm_password.text()
         error_message = ""
+
         if len(password) < 10 or len(password) > 12:
             error_message += "Length of password must be between 10 and 12.\n"
+
         has_number, has_character, has_special = False, False, False
         for c in password:
             if c in "1234567890":
@@ -45,8 +66,5 @@ class CreatePassword(QDialog):
             error_message += "Password must have at least one special character.\n"
         if password != other[::-1]:
             error_message += "Confirmation must be backwards of the password."
-        if error_message == "":
-            self.new_password = password
-            self.close()
-        else:
-            self.ui.error_message.setText(f"<span style='color:red'>{error_message}</span>")
+
+        return error_message

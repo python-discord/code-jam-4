@@ -3,7 +3,7 @@ import sys
 
 import qdarkstyle
 from PySide2.QtSql import QSqlDatabase, QSqlQuery
-from PySide2.QtWidgets import QApplication
+from PySide2.QtWidgets import QApplication, QDialog
 
 from project.widgets import CreatePassword, MainWindow, PasswordPrompt
 
@@ -48,7 +48,11 @@ def create_db():
 def create_password() -> str:
     """Prompt for a password to be created and return it."""
     dialogue = CreatePassword()
-    dialogue.display()
+    dialogue.exec_()
+
+    if dialogue.result() != QDialog.Accepted:
+        sys.exit(1)
+
     password = dialogue.new_password
 
     # upsert
@@ -79,7 +83,8 @@ def get_password() -> str:
 
 def login() -> str:
     """Prompt for the password and return it. Create one if one doesn't exist."""
-    password = get_password()
+    # password = get_password()
+    password = None
     if password:
         prompt = PasswordPrompt(password)
         prompt.display()
