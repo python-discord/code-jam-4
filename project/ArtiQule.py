@@ -1,9 +1,8 @@
 import sys
 from random import randint
-
-from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtCore import QPoint, Qt, QThread, pyqtSignal
 from PyQt5.QtGui import (QColor, QCursor, QIcon, QImage, QPainter,
-                         QPen, QPixmap, QBrush)
+                         QPen, QPixmap)
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog,
                              QMainWindow, QPushButton,)
 
@@ -19,6 +18,15 @@ def paintEvent(self, event):
         # do normal stuff ...
 """
 
+SoundEffects = {
+    'pen break': r'Sounds/pen break.mp3',
+    'pen write': r'Sounds/pen writing.wav',
+    'fill bucket': r'Sounds/fill bucket.mp3',
+    'empty bucket': r'Sounds/empty bucket.mp3',
+    'solid hitting': r'Sounds/solidified hitting.m4a',
+    'straggly brush': r'Sounds/straggly brushing.m4a'
+}
+
 
 class ColorBox(QMainWindow):
     """ This window holds all the color pallettes"""
@@ -28,8 +36,8 @@ class ColorBox(QMainWindow):
         super().__init__(parent)
         ColorBox.objs.append(self)
         self.toolsX = 5
-        self.toolsY = 0
-        self.tools_holder = 1
+        self.toolsY = 5
+        self.tools_holder = 0
         self.exists = True
         self.Setup()
         # TODO MINOR: can open as many windows as one desires
@@ -39,16 +47,15 @@ class ColorBox(QMainWindow):
         self.setWindowTitle('Colorbox')
         self.setFixedSize(150, 300)
 
-    # TODO EXTRA: make this into one vertical line of colors
     def addPallette(self, pallet):
         pallet.setGeometry(self.toolsX, self.toolsY, 40, 40)
         self.layout().addWidget(pallet)
         self.toolsX += 50
         self.tools_holder += 1
-        if self.tools_holder == 4:
+        if self.tools_holder == 3:
             self.toolsX = 5
             self.toolsY += 50
-            self.tools_holder = 1
+            self.tools_holder = 0
 
     def showColorBox(self):
         self.show()
@@ -114,7 +121,7 @@ class Tool:
         tool_btn.setShortcut(self.shortcut)
         tool_btn.setStatusTip(self.statusTip)
         tool_btn.triggered.connect(
-            lambda: self.PaintBoard.connectTool(self)
+            lambda: self.PaintBoard.connectTool(self, curisDipped=self.isDipped)
         )
         self.PaintBoard.toolbar.addAction(tool_btn)
 
@@ -131,7 +138,6 @@ class PalletteButton:
         # {tuple} so it can be applied below
         self.timesToUse = randint(10, 20)
         # TODO: pallette will become empty after being used X amount of times
-
 
     def mixColor(self, tool):
         """Mixes colors from tool holding the color
@@ -154,7 +160,7 @@ class PalletteButton:
                 ]
             )
 
-            if ( colorSum and tool.color.alpha() and self.alpha):
+            if  colorSum and tool.color.alpha() and self.alpha:
                 # self.alpha so that color pallette is not empty
                 self.r = (self.r + tool.color.red()) // 2
                 self.g = (self.g + tool.color.green()) // 2
@@ -163,17 +169,18 @@ class PalletteButton:
                 self.r = (self.r + tool.color.red()) // 4
                 self.g = (self.g + tool.color.green()) // 4
                 self.b = (self.b + tool.color.blue()) // 4
-            elif not sum((self.r, self.g, self.b, self.alpha)): pass
+            elif not sum((self.r, self.g, self.b, self.alpha)):
+                pass
 
             self.palletteColor = (self.r, self.g, self.b, self.alpha)
             tool.color = QColor(self.r, self.g, self.b, self.alpha)
 
-            if tool.toolName in ["Straggly PaintBrush",
-                                 "Solid Brush"]:
+            if tool.toolName == "Straggly PaintBrush" or "Solid Brush":
                 tool.opacityDuration = 1
                 tool.isDipped = True
-            elif "A bucket" in tool.toolName and self.alpha:
+            elif tool.toolName == "A bucket" and self.alpha:
                 """The pallette gets emptied """
+                print('bucket selected')
                 self.r = 0
                 self.g = 0
                 self.b = 0
@@ -205,7 +212,7 @@ class PaintBoard(QMainWindow):
         self.connectTool()
         self.painter = QPainter(self.canvas)
 
-        ## MENUBARS ##
+        # MENUBARS
         mainMenu = self.menuBar()
 
         fileMenu = mainMenu.addMenu('File')
@@ -238,7 +245,7 @@ class PaintBoard(QMainWindow):
         save_file_action.triggered.connect(self.saveFile)
         exit_action.triggered.connect(self.exit)
 
-        ## TOOLBAR AND WITH TOOL ICONS ##
+        # TOOLBAR AND WITH TOOL ICONS
 
         self.toolbar = self.addToolBar("Toolbar")
         self.toolbar.setStyleSheet('background-color: white')
@@ -279,25 +286,27 @@ class PaintBoard(QMainWindow):
                                     )
 
         self.sunbathing_eraser = Tool("Sunbathing Eraser", 10, Qt.white,
-                           [0, 0, 0, 0.0], self, "Design/icons/Sunbathing Eraser",
+                                      [0, 0, 0, 0.0], self, "Design/icons/Sunbathing Eraser",
                                       "Ctrl+F",
-                           "Erase Your Mistakes, Kid!",
-                           (99999, 99999))  # infinte duration
+                                      "Erase Your Mistakes, Kid!",
+                                      (99999, 99999))  # infinte duration
 
         self.show()
 
         self.drawing = False
         self.lastPoint = QPoint()
 
-    def connectTool(self, curTool=None):
+    def connectTool(self, curTool=None, curisDipped=False):
 
         self.currentTool = curTool
 
         try:
             self.currentTool.duration
+            self.currentTool.isDipped
         except AttributeError:
             pass
         else:
+            self.currentTool.isDipped = curisDipped
             if self.currentTool.toolName == "Pointy Pen":
                 self.currentTool.duration = randint(0,
                                             self.currentTool.constDuration)
@@ -309,7 +318,12 @@ class PaintBoard(QMainWindow):
                                                  else None
                                                  )
                     )))
-
+        if self.currentTool is not None:
+            if self.currentTool.toolName != "Pointy Pen" or "A bucket" or "Sunbathing Eraser"\
+                    and self.currentTool.isDipped:
+                self.dripper = DripperEffect(self.currentTool.color, self.currentTool.brushSize)
+                self.dripper.drip.connect(self.DripperHandler)
+                self.dripper.start()
 
     def colorBoxRun(self):
 
@@ -319,7 +333,10 @@ class PaintBoard(QMainWindow):
         geo.moveLeft(geo.right())  # moves window right
         self.colorBox.setGeometry(geo)
 
-        p1, p2, p3, p4, p5, p6,p7,p8,p9,p10,p11,p12 = (QPushButton() for _ in range(12))
+        p1, p2, p3, p4, p5,\
+        p6, p7, p8, p9, p10,\
+        p11, p12, p13, p14,\
+        p15, p16, p17, p18 = (QPushButton() for _ in range(18))
 
         c1 = PalletteButton(p1)
         c2 = PalletteButton(p2)
@@ -333,6 +350,12 @@ class PaintBoard(QMainWindow):
         c10 = PalletteButton(p10)
         c11 = PalletteButton(p11)
         c12 = PalletteButton(p12)
+        c13 = PalletteButton(p13)
+        c14 = PalletteButton(p14)
+        c15 = PalletteButton(p15)
+        c16 = PalletteButton(p16)
+        c17 = PalletteButton(p17)
+        c18 = PalletteButton(p18)
 
         p1.setStyleSheet("background-color: rgba{0}; border-radius:20px"
                          .format(c1.palletteColor))
@@ -382,10 +405,39 @@ class PaintBoard(QMainWindow):
                          .format(c12.palletteColor))
         p12.clicked.connect(lambda: c12.mixColor(self.currentTool))
         self.colorBox.addPallette(p12)
-
+        p13.setStyleSheet("background-color: rgba{0}; border-radius:20px"
+                          .format(c13.palletteColor))
+        p13.clicked.connect(lambda: c13.mixColor(self.currentTool))
+        self.colorBox.addPallette(p13)
+        p14.setStyleSheet("background-color: rgba{0}; border-radius:20px"
+                          .format(c14.palletteColor))
+        p14.clicked.connect(lambda: c14.mixColor(self.currentTool))
+        self.colorBox.addPallette(p14)
+        p15.setStyleSheet("background-color: rgba{0}; border-radius:20px"
+                          .format(c15.palletteColor))
+        p15.clicked.connect(lambda: c15.mixColor(self.currentTool))
+        self.colorBox.addPallette(p15)
+        p16.setStyleSheet("background-color: rgba{0}; border-radius:20px"
+                          .format(c16.palletteColor))
+        p16.clicked.connect(lambda: c16.mixColor(self.currentTool))
+        self.colorBox.addPallette(p16)
+        p17.setStyleSheet("background-color: rgba{0}; border-radius:20px"
+                          .format(c17.palletteColor))
+        p17.clicked.connect(lambda: c17.mixColor(self.currentTool))
+        self.colorBox.addPallette(p17)
+        p18.setStyleSheet("background-color: rgba{0}; border-radius:20px"
+                          .format(c18.palletteColor))
+        p18.clicked.connect(lambda: c18.mixColor(self.currentTool))
+        self.colorBox.addPallette(p18)
 
         # showing toolBox
         self.colorBox.showColorBox()
+
+    def DripperHandler(self, result):
+        Dripper = result
+        print('drip')
+        self.painter.setPen(Dripper)
+        self.painter.drawLine(self.lastPoint, self.lastPoint)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton and \
@@ -393,21 +445,17 @@ class PaintBoard(QMainWindow):
             self.drawing = True
             if self.currentTool.toolName == "A bucket filled" \
                     and self.currentTool.duration >= 0:
-                Pen = QPen(self.currentTool.color)
+                print(self.currentTool.toolName)
+                Pen = QPen()
+                Pen.setColor(self.currentTool.color)
                 Pen.setWidth(self.currentTool.brushSize)
                 self.painter.setPen(Pen)
                 self.painter.drawEllipse(event.pos(), 100, 150)
                 self.currentTool.duration -= 1
                 self.currentTool.toolName = "A bucket"
-                self.currentTool.color = QColor(0,0,0,0)
+                self.currentTool.color = QColor(0, 0, 0, 0)
                 self.connectTool(self.currentTool)
-            elif self.currentTool.toolName == "Solid Brush"\
-                    and self.currentTool.duration >= 0:
-                Pen = QPen(self.currentTool.color)
-                Pen.setWidth(self.currentTool.brushSize)
-                self.painter.setPen(Pen)  #TODO: doesn't work properly
-                self.painter.drawRect(event.pos(), 25, 10)
-                self.currentTool.duration -= 1
+                print('used bucket')
 
             self.lastPoint = event.pos()
             self.update()
@@ -426,20 +474,34 @@ class PaintBoard(QMainWindow):
                 else:
                     self.currentTool.duration -= 0.1
                     if "Brush" in self.currentTool.toolName:
-                        self.currentTool.opacityDuration-=0.0125
-                        #TODO EXTRA: find more fitting duration time
+                        self.currentTool.opacityDuration -= 0.0125
+                        # TODO EXTRA: find more fitting duration time
                         # perhaps divide in class object
 
+                # this here is to add more realism to the point when its breaking
+                if self.currentTool.duration <= 0.5 and self.currentTool.toolName == "Pointy Pen":
+                    broken_pen = QPen()
+                    broken_pen.setCapStyle(Qt.RoundCap)
+                    broken_pen.setJoinStyle(Qt.MiterJoin)
+                    broken_pen.setWidth(1)
+                    broken_pen.setColor(self.currentTool.color)
+                    broken_pen.setDashPattern([25, 50, 25, 50])
+                    broken_pen.setStyle(Qt.DashDotDotLine)
+                    self.painter.setPen(broken_pen)
+                    self.painter.drawLine(self.lastPoint + QPoint(randint(10, 15), randint(1, 5)),
+                                          self.lastPoint + QPoint(randint(5, 10), randint(1, 10)))
+
                 if self.currentTool.toolName == "Pointy Pen":
+                    # QSound(SoundEffects['pen write']).play()
                     Pen.setCapStyle(Qt.RoundCap)
                     Pen.setJoinStyle(Qt.MiterJoin)
-                elif "Brush" in self.currentTool.toolName:
-                    if self.currentTool.toolName == "Straggly Paintbrush":
-                        # TODO: this should more be like a brush
+                elif self.currentTool.toolName == 'Straggly Paintbrush' or 'Solid Brush':
+                    if self.currentTool.toolName == "Solid Brush":
+                        Pen.setCapStyle(Qt.RoundCap)
+                        Pen.setJoinStyle(Qt.BevelJoin)
+                    else:
                         Pen.setCapStyle(Qt.SquareCap)
                         Pen.setJoinStyle(Qt.MiterJoin)
-                    else:
-                        pass
                 Pen.setColor(self.currentTool.color)
                 Pen.setWidth(self.currentTool.brushSize)
 
@@ -449,11 +511,11 @@ class PaintBoard(QMainWindow):
                     if self.currentTool.toolName == "Pointy Pen":
                         self.setCursor(QCursor(
                             QPixmap("Design/icons/Pointy Pen Broken.png")))
+                        # QSound(SoundEffects['pen break']).play()
 
                 self.painter.drawLine(self.lastPoint, event.pos())
                 self.lastPoint = event.pos()
-                self.update()
-
+            self.update()
         else:
             return None
 
@@ -505,6 +567,28 @@ class PaintBoard(QMainWindow):
 
     def exit(self):
         raise SystemExit
+
+
+class DripperEffect(QThread):
+    drip = pyqtSignal(object)
+
+    def __init__(self, color, size):
+        QThread.__init__(self)
+        self.color = color
+        self.size = size
+
+    def run(self):
+        drip_chance = randint(0, 1)
+        if drip_chance == 1:
+            Drip = QPen()
+            Drip.setWidth(self.size)
+            Drip.setStyle(Qt.DotLine)
+            Drip.setColor(self.color)
+            Drip.setJoinStyle(Qt.RoundJoin)
+            Drip.setCapStyle(Qt.RoundCap)
+            self.drip.emit(Drip)
+        else:
+            pass
 
 
 if __name__ == '__main__':
