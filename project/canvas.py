@@ -209,7 +209,7 @@ class Canvas(tk.AsyncCanvas):
         """
 
         await self.create_line(x, y, x, y, fill=colour.as_hex)
-        self.pil_draw.point([(x, y)], fill=colour.as_rgb)
+        self.pil_draw.point([(x - 1, y - 1)], fill=colour.as_rgb)
 
     async def undo(self):
         """Undoes the most previous action by taking the most recent value from the undo_list"""
