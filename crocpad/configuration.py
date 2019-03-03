@@ -9,11 +9,12 @@ functions:
     save_config: write out config
 """
 
-import os
 import json
+import os
 import re
+from pathlib import Path
 
-_CONFIG_FILE = 'crocpad\\notepad.ini'
+_CONFIG_FILE = Path('crocpad') / Path('notepad.ini')
 app_config = {}  # import this to other modules for access to configuration
 
 

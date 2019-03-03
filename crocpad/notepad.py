@@ -4,6 +4,7 @@ Contains the application class MainWindow which should only be instantiated once
 """
 
 import random
+from pathlib import Path
 
 from PyQt5.QtCore import QEvent, Qt, QObject
 from PyQt5.QtGui import QFont, QFontDatabase, QIcon
@@ -35,9 +36,12 @@ class MainWindow(QMainWindow):
         fixedfont.setPointSize(24)
         self.text_window.setFont(QFont('Comic Sans MS', 30))
         self.text_window.installEventFilter(self)
-        self.sound = QSound("crocpad\\sounds\\click.wav")
-        self.enter_sound = QSound("crocpad\\sounds\\scream.wav")
-        self.backspace_sound = QSound("crocpad\\sounds\\wrong.wav")
+        click_sound = str(Path('crocpad') / Path('sounds') / Path('click.wav'))
+        self.sound = QSound(click_sound)
+        enter_sound = str(Path('crocpad') / Path('sounds') / Path('scream.wav'))
+        self.enter_sound = QSound(enter_sound)
+        backspace_sound = str(Path('crocpad') / Path('sounds') / Path('wrong.wav'))
+        self.backspace_sound = QSound(backspace_sound)
 
         # Main window layout. Most of the dialogs in Crocpad++ are converted to .py from
         # Qt Designer .ui files in the ui/ directory, but the main app window is built here.
@@ -56,7 +60,8 @@ class MainWindow(QMainWindow):
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
-        self.setWindowIcon(QIcon('crocpad\\crocpad.ico'))
+        window_icon = str(Path('crocpad') / Path('crocpad.ico'))
+        self.setWindowIcon(QIcon(window_icon))
         self.create_menus()
         self.app.setStyleSheet(crocpad.stylesheets.default)
         self.show()
@@ -131,7 +136,8 @@ class MainWindow(QMainWindow):
 
     def do_eula(self):
         """Display the End-User License Agreement and prompt the user to accept."""
-        with open('crocpad\\EULA.txt', 'r', encoding='utf8') as f:
+        eula_file = Path('crocpad') / Path('EULA.txt')
+        with open(eula_file, 'r', encoding='utf8') as f:
             eula = f.read()
         eula_dialog = EulaDialog(eula)
         eula_quiz_dialog = EulaQuizDialog()
@@ -146,7 +152,8 @@ class MainWindow(QMainWindow):
 
     def show_tip(self):
         """Randomly choose one tip of the day and display it."""
-        with open('crocpad\\tips.txt', 'r', encoding='utf8') as f:
+        tips_file = Path('crocpad') / Path('tips.txt')
+        with open(tips_file, 'r', encoding='utf8') as f:
             tips = f.readlines()
         tip = random.choice(tips)
         dlg = QMessageBox(self)
