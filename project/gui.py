@@ -44,9 +44,10 @@ class MinesweeperApp(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(self, 'Too many mines',
                                           'The amount of mines you entered is too big for the grid')
             return
-        self.minesweeper = Minesweeper(width, height, mines)
+        self.minesweeper = Minesweeper(width, height, mines, parent=self)
         self.minesweeper.setup_gui()
         self.minesweeper.game_over.connect(self.minesweeper_end_button)
+        self.minesweeper.game_won.connect(self.minesweeper_win_button)
         self.stack_widget.addWidget(self.minesweeper)
         self.stack_widget.setCurrentWidget(self.minesweeper)
 
@@ -55,6 +56,11 @@ class MinesweeperApp(QtWidgets.QMainWindow):
         self.minesweeper.game_over_modal.close_button.clicked.connect(
             self.return_to_home)
         self.minesweeper.game_over_modal.close_button.setDisabled(False)
+
+    def minesweeper_win_button(self):
+        self.minesweeper.win_modal.close_button.clicked.connect(
+            self.return_to_home)
+
 
     def return_to_home(self):
         self.stack_widget.setCurrentWidget(self.home_screen)
@@ -195,6 +201,7 @@ class Minesweeper(QtWidgets.QWidget):
     '''Minesweeper Game Widget'''
 
     game_over = QtCore.pyqtSignal()
+    game_won = QtCore.pyqtSignal()
 
     def __init__(self, width=16, height=16, mines=48, parent=None):
         super().__init__(parent)
@@ -205,6 +212,7 @@ class Minesweeper(QtWidgets.QWidget):
         self.explosion_sound = QtMultimedia.QSound(':/sound/explode.wav')
         self.beep_sound = QtMultimedia.QSound(':/sound/beep.wav')
         self.break_sound = QtMultimedia.QSound(':/sound/break.wav')
+        self.win_sound = QtMultimedia.QSound(':/sound/win.wav')
         self.scream_sounds = (QtMultimedia.QSound(':/sound/scream1.wav'),
                               QtMultimedia.QSound(':/sound/scream2.wav'),
                               QtMultimedia.QSound(':/sound/scream3.wav'))
@@ -425,6 +433,15 @@ class Minesweeper(QtWidgets.QWidget):
         else:
             self.break_sound.play()
             self.explode_all_mines(row, column)
+        if all(tile in (self.controller.DISCOVERED, self.controller.MINE)
+               for row in self.controller.grid for tile in row):
+            self.win_modal = MinesweeperModal('You won!', self)
+            self.win_modal.close_button.clicked.connect(self.game_won.emit)
+            self.win_modal.move(self.rect().center() - self.win_modal.rect().center())
+            self.win_sound.play()
+            self.win_modal.setHidden(False)
+            self.win_modal.raise_()
+            self.game_frame.setDisabled(True)
 
 
 class TimerThread(QtCore.QThread):
