@@ -138,7 +138,7 @@ class Weatherh8su:
         """
         Changes background according to the weather
         """
-        background_image = ImageTk.PhotoImage(
+        image = ImageTk.PhotoImage(
             Image.open(f"data/{status}.jpg"))
         self.main_canvas.itemconfig(self.canvas_image, image=image)
 

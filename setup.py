@@ -22,7 +22,8 @@ data_urls = {"world-cities.csv": "https://pkgstore.datahub.io/core/"
              "Drizzle.jpg": "https://i.imgur.com/YmlfWtD.jpg",
              "Rain.jpg": "https://i.imgur.com/MHb15y9.jpg",
              "Snow.jpg": "https://i.imgur.com/IMkakLz.jpg",
-             "Clouds.jpg": "https://i.imgur.com/sKdyV0g.jpg"}
+             "Clouds.jpg": "https://i.imgur.com/sKdyV0g.jpg",
+             "Clear.jpg": "https://i.imgur.com/Ec8Bo40.jpg"}
 
 for filename, url in data_urls.items():
     r.urlretrieve(url, data_directory + filename)
