@@ -63,3 +63,7 @@ A perverse editor that:
 
 * Start it and begin creating
 * Press Alt + F4 to save your file (no, really)
+* Click *all* the buttons
+  * I recommend you only make a very small image, or saving will take a long time
+    * *...because you have to click a button for every byte*
+    * 2x2 image = 75 bytes = 75 buttons
