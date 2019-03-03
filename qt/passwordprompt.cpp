@@ -1,8 +1,8 @@
 #include "passwordprompt.h"
 #include "ui_passwordprompt.h"
 
-PasswordPrompt::PasswordPrompt(QWidget *parent) :
-    QWidget(parent),
+PasswordPrompt::PasswordPrompt(QDialog *parent) :
+    QDialog(parent),
     ui(new Ui::PasswordPrompt)
 {
     ui->setupUi(this);

@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'qt/passwordprompt.ui',
 # licensing of 'qt/passwordprompt.ui' applies.
 #
-# Created: Sat Mar  2 14:23:18 2019
+# Created: Sun Mar  3 12:44:05 2019
 #      by: pyside2-uic  running on PySide2 5.12.1
 #
 # WARNING! All changes made in this file will be lost!

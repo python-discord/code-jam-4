@@ -1,9 +1,9 @@
-from PySide2.QtWidgets import QWidget
+from PySide2.QtWidgets import QDialog
 
 from project import ui
 
 
-class PasswordPrompt(QWidget):
+class PasswordPrompt(QDialog):
     def __init__(self, password, *args, **kwargs):
         super(PasswordPrompt, self).__init__(*args, **kwargs)
 

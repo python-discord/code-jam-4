@@ -1,18 +1,18 @@
 #ifndef PASSWORDPROMPT_H
 #define PASSWORDPROMPT_H
 
-#include <QWidget>
+#include <QDialog>
 
 namespace Ui {
 class PasswordPrompt;
 }
 
-class PasswordPrompt : public QWidget
+class PasswordPrompt : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit PasswordPrompt(QWidget *parent = nullptr);
+    explicit PasswordPrompt(QDialog *parent = nullptr);
     ~PasswordPrompt();
 
 private:
