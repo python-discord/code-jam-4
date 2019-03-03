@@ -51,7 +51,7 @@ class Application(tk.Tk):
         self.pages[AddEventPage] = AddEventPage(self)
         self.pages[CalendarPage] = CalendarPage(self)
 
-        self.change_page(LoginPage)
+        self.change_page(HomePage)
 
     def change_page(self, new_page):
         """
@@ -64,7 +64,8 @@ class Application(tk.Tk):
         """
         for page in self.grid_slaves():
             page.grid_remove()
-
+        if new_page is EventViewer:
+            self.parent.pages[CalendarPage].create_widgets()
         self.pages[new_page].grid(column=0, row=0)
 
 
@@ -94,19 +95,19 @@ class LoginPage(tk.Frame):
         )
         self.title.grid(row=0, column=0, sticky="ew", pady=(10, 0))
 
-        self.register = tk.Button(
+        self.registerButton = tk.Button(
             self, text="REGISTER", width=10,
             font=("Arial", 20, "italic"),
             command=self.register
         )
-        self.register.grid(row=5, column=0, pady=100)
+        self.registerButton.grid(row=5, column=0, pady=100)
 
-        self.login = tk.Button(
+        self.loginButton = tk.Button(
             self, text="LOGIN", width=10,
             font=("Arial", 20, "italic"),
             command=self.login
         )
-        self.login.grid(row=10, column=0)
+        self.loginButton.grid(row=10, column=0)
 
     def register(self):
         Register(self.parent.dbh)
@@ -142,20 +143,24 @@ class HomePage(tk.Frame):
             N/A
         """
         self.title = tk.Label(
-            self,
-            text="Hello World")
-        self.title.grid(row=0, column=0)
+            self, text="Main Menu",
+            font=("Helvetica", 24, "bold")
+        )
+        self.title.grid(row=0, column=3, pady=(10, 0))
 
-        self.button = tk.Button(self, text="Go to events",
-                                command=lambda:
-                                    self.parent.change_page(CalendarPage))
-        self.button.grid(row=1, column=0)
+        self.register = tk.Button(
+            self, text="VIEW EVENTS", width=12,
+            font=("Arial", 20, "italic"),
+            command=lambda: self.parent.change_page(EventViewer)
+        )
+        self.register.grid(row=5, column=3, pady=100)
 
-        self.addEventBtn = tk.Button(self,
-                                     text="[+] Add event",
-                                     command=lambda: self.parent.change_page(
-                                         AddEventPage))
-        self.addEventBtn.grid()
+        self.login = tk.Button(
+            self, text="MAKE EVENT", width=12,
+            font=("Arial", 20, "italic"),
+            command=lambda: self.parent.change_page(AddEventPage)
+        )
+        self.login.grid(row=10, column=3)
 
 
 class AddEventPage(tk.Frame):
