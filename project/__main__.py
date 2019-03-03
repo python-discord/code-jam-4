@@ -1,3 +1,12 @@
+'''
+(The features of this codejam project are not to be taken seriously)
+Code Jam 4 submission for High Houses of Adorable Laboratories: HTT
+HTT is used to run a text editor with a built-in onscreen keyboard.
+Go ahead, give it a try! Our tutorial will walk you through how to use it!
+'''
+import asyncio
+import os
+import threading
 import itertools
 import tkinter as tk
 import tkinter.font as tkFont
@@ -7,13 +16,9 @@ from tkinter import ttk
 import json
 import random
 from pathlib import Path
-from PIL import Image, ImageTk
-from functools import reduce
-import pyaudio
 import wave
-import asyncio
-import os
-import threading
+from PIL import Image, ImageTk
+import pyaudio
 
 
 SCRIPT_DIR = Path(__file__).parent
@@ -45,6 +50,11 @@ AUDIO_CHUNK_SIZE = 1024
 
 
 async def mainloop_coro(root):
+    '''
+    Coroutine that mimics tk.mainloop.
+    It should sleep after update such that async tasks can be completed.
+    Will run until window is closed.
+    '''
     try:
         while True:
             root.update()
@@ -60,6 +70,11 @@ valid_soundcodes = [filename.replace('.wav', '')
 
 
 def get_sound_data(soundcode):
+    '''
+    Returns a tuple of (stream, sound, sound_file) for a given soundcode.
+    Soundcode should be the name of a .wav file in AUDIO_PATH without .wav.
+    '''
+
     sound_file = open((AUDIO_PATH / '{}.wav'.format(soundcode)), 'rb')
     sound = wave.open(sound_file, 'rb')
     sound_format = audio_player.get_format_from_width(sound.getsampwidth())
@@ -112,7 +127,7 @@ def is_word(text):
     return text.lower() in real_words
 
 
-letter_scores = {'a': 1, 'e': 1, 'i': 1, 'u': 1, 'n': 1, 'r': 1, 'o': 1,
+LETTER_SCORES = {'a': 1, 'e': 1, 'i': 1, 'u': 1, 'n': 1, 'r': 1, 'o': 1,
                  's': 1, 'l': 1, 't': 1, 'd': 2, 'g': 2, 'm': 3, 'b': 3,
                  'c': 3, 'p': 3, 'y': 4, 'f': 4, 'v': 4, 'w': 4, 'h': 4,
                  'k': 5, 'j': 8, 'x': 8, 'q': 10, 'z': 10}
@@ -123,7 +138,7 @@ def calculate_xp(word):
     Returns the XP value of a word.
     This method can be overridden with a different XP algorithm.
     '''
-    return sum([letter_scores[letter] for letter in word])
+    return sum([LETTER_SCORES[letter] for letter in word])
 
 
 LOOTBOX_RARITIES = [
@@ -209,16 +224,10 @@ class UserInterface(tk.Frame):
         self.text_entry_section.pack(side='top', fill='x')
         self.keyboard_section.pack(side='top', ipadx=5, ipady=5)
 
-        self.icons = {}
-
-        image_data = Image.open(IMAGE_PATHS['new_icon'])
-        self.icons['new'] = ImageTk.PhotoImage(image_data)
-
-        image_data = Image.open(IMAGE_PATHS['save_icon'])
-        self.icons['save'] = ImageTk.PhotoImage(image_data)
-
-        image_data = Image.open(IMAGE_PATHS['open_icon'])
-        self.icons['open'] = ImageTk.PhotoImage(image_data)
+        self.icons = {file_option:
+                      ImageTk.PhotoImage(
+                          Image.open(IMAGE_PATHS[f'{file_option}_icon']))
+                      for file_option in ['new', 'save', 'open']}
 
         self.new_button = tk.Button(self.command_section,
                                     image=self.icons['new'],
@@ -258,7 +267,6 @@ class UserInterface(tk.Frame):
         self.menu = tk.Menu(self.master)
         self.master.config(menu=self.menu)
 
-        # File menu
         file_menu = tk.Menu(self.menu)
         self.menu.add_cascade(label='File', menu=file_menu)
 
@@ -299,13 +307,10 @@ class UserInterface(tk.Frame):
         Called when the user requests their file be saved
         User wishes to (or must) specify file save location
         '''
-        filepath = fd.asksaveasfilename(
-                                        initialdir=self.working_directory,
+        filepath = fd.asksaveasfilename(initialdir=self.working_directory,
                                         title='Save as...',
                                         filetypes=(('text files', '.txt'),
-                                                   ('all files', '*.*')
-                                                   )
-                                        )
+                                                   ('all files', '*.*')))
         if filepath:
             self.working_file = filepath
             self.write_file(filepath)
@@ -322,14 +327,10 @@ class UserInterface(tk.Frame):
 
     def load_file(self):
         '''Called when the user wishes to load a file'''
-        filepath = fd.askopenfilename(
-                                      initialdir=self.working_directory,
+        filepath = fd.askopenfilename(initialdir=self.working_directory,
                                       title='Open file',
                                       filetypes=(('text files', '.txt'),
-                                                 ('all files', '*.*')
-                                                 )
-                                      )
-        # User hit cancel
+                                                 ('all files', '*.*')))
         if filepath:
             filepath = Path(filepath)
             try:
@@ -381,7 +382,7 @@ class UserInterface(tk.Frame):
         unlocked_keys = []
         rarities = []
 
-        for i in range(LOOTBOX_PULLS_PER_BOX):
+        for _ in range(LOOTBOX_PULLS_PER_BOX):
             rand_int = random.randint(0, 100)
             lootbox_rank = -1 + len([threshold for threshold in LOOTBOX_RATES
                                      if rand_int >= threshold])
@@ -488,11 +489,9 @@ class KeyboardSection(tk.Frame):
         Adds a key to the keyboard.
         Generally only called on initialization or lootbox unlock.
         '''
-        row_index, col_index = divmod(
-                                      len(self.buttons)
+        row_index, col_index = divmod(len(self.buttons)
                                       + self.accumulated_blank_space,
-                                      self.keys_per_row
-                                      )
+                                      self.keys_per_row)
         key_dict = self.key_descriptions[key_name]
         key_size = key_dict['size']
         new_key = KeyboardKey(self, **key_dict)
@@ -563,15 +562,9 @@ class KeyboardKey(tk.Button):
     '''
     KEY_SIZE = 32
 
-    # @classmethod
-    # def from_master_and_dict(self, master, key_dict):
-    #     return KeyboardKey(master, **key_dict)
-
     def __init__(self, master: KeyboardSection, name,
                  char=None, shift_name=None, shift_char=None, size=None,
-                 rarity=None,
-                 *args, **kwargs
-                 ):
+                 rarity=None, *args, **kwargs):
         tk.Button.__init__(self, master, *args, **kwargs)
         self.master = master
 
@@ -613,34 +606,42 @@ class KeyboardKey(tk.Button):
         self.config(textvar=self.name, command=button_action, font=self.font)
 
     def get_font_size(self):
+        '''Returns the font size of the individual key'''
         return int(KeyboardKey.KEY_SIZE * self.scale)
 
     def increase_scale(self):
+        '''Increases the scale of the individual key'''
         self.scale = min(self.scale+self.scale_inc, self.scale_max)
-        self.update_scale()
+        self.font.configure(size=self.get_font_size())
 
     def decrease_scale(self):
+        '''Decreases the scale of the individual key'''
         self.scale = max(self.scale-self.scale_dec, self.scale_min)
-        self.update_scale()
-
-    def update_scale(self):
         self.font.configure(size=self.get_font_size())
 
     def set_scale(self, value: float):
+        '''Sets the scale of the individual key'''
         self.scale = value
-        self.update_scale()
+        self.font.configure(size=self.get_font_size())
 
     def toggle_shift(self):
+        '''
+        Toggles shift value for the invididual key.
+        (a -> A) or (A -> a)
+        '''
         self.shift_on = not self.shift_on
         self.name.set(self.text_name if not self.shift_on else self.shift_name)
 
     def send_key(self):
+        '''Sends the key's value to the master, after being tapped.'''
         self.master.send_key(self.shift_char if self.shift_on else self.char)
 
         if self.scale < self.scale_max:
             self.master.recalc_key_sizes(self)
 
     def send_shift(self):
+        '''
+        Sends a shift signal to master, after shift is tapped.'''
         self.master.toggle_shift()
 
         self.master.recalc_key_sizes(self)
@@ -679,23 +680,17 @@ class LootBoxUnlockFrame(tk.Frame):
 
         self.font = tkFont.Font(size=64)
 
-        image_data1 = Image.open(IMAGE_PATHS['capsule1'])
-        image_data2 = Image.open(IMAGE_PATHS['capsule2'])
+        lootbox_closed_image_data = Image.open(IMAGE_PATHS['capsule1'])
+        lootbox_open_image_data = Image.open(IMAGE_PATHS['capsule2'])
         self.img_capsule = [
-            ImageTk.PhotoImage(image_data1),
-            ImageTk.PhotoImage(image_data2)
-        ]
+            ImageTk.PhotoImage(lootbox_closed_image_data),
+            ImageTk.PhotoImage(lootbox_open_image_data)]
 
-        self.lootbox_text = tk.StringVar()
-        self.lootbox_text.set('Lootbox get!')
-
-        self.text_label = tk.Label(self, textvar=self.lootbox_text,
-                                   font=self.font
-                                   )
+        self.text_label = tk.Label(self, text='Lootbox get!',
+                                   font=self.font)
         self.text_label.pack()
 
         self.image_label = tk.Label(self, image=self.img_capsule[0])
-        self.image_label.image = self.img_capsule[0]
         self.image_label.pack()
 
         self.message_label = tk.Label(self, text='', height=10, width=20,
@@ -713,17 +708,12 @@ class LootBoxUnlockFrame(tk.Frame):
             '{} ({})'.format(key, LOOTBOX_RARITIES[self.master.rarities[idx]])
             for idx, key in enumerate(self.master.new_keys)
             ]
-
-        new_keys_str = reduce(
-            lambda x, y: '{}\n{}'.format(x, y), new_keys
-            )
         self.image_label.config(image=self.img_capsule[1])
-        self.image_label.image = self.img_capsule[1]
-        self.message_label['text'] = 'You got:\n {}'.format(new_keys_str)
+        self.message_label['text'] = 'You got:\n{}'.format('\n'.join(new_keys))
 
 
 class XPFrame(tk.Frame):
-    '''Displays XP information, such as current value and progress'''
+    '''Frame that isplays XP information, such as current value and progress'''
     def __init__(self, master, xp=0, prev_xp_milestone=0,
                  next_xp_milestone=0, *args, **kwargs):
         tk.Frame.__init__(self, master)
@@ -755,7 +745,8 @@ class XPFrame(tk.Frame):
 
 
 class TutorialWindow(tk.Toplevel):
-    '''Displays a window containing a tutorial message'''
+    '''Window containing a tutorial message'''
+
     previous_tutorial_window = None
 
     def __init__(self, master, message=None, smirk=False, *args, **kwargs):
@@ -804,5 +795,4 @@ if __name__ == '__main__':
     UI = UserInterface(ROOT)
     UI.pack()
     ROOT.protocol('WM_DELETE_WINDOW', exit_program)
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(mainloop_coro(ROOT))
+    asyncio.get_event_loop().run_until_complete(mainloop_coro(ROOT))
