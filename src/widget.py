@@ -7,7 +7,9 @@ parser.read(THEME)
 
 
 class SecondaryFrame(tk.Frame):
-    DEFAULT = {}
+    DEFAULT = {
+        'bg': 'gray'
+    }
 
     def __init__(self, *args, **kwds):
         super().__init__(*args, **{**self.DEFAULT, **kwds})
@@ -30,7 +32,8 @@ class SecondaryButton(tk.Button):
 class SecondaryLabel(tk.Label):
     DEFAULT = {
         'justify': 'left',
-        'width': 10
+        'width': 10,
+        'bg': 'gray'
     }
 
     def __init__(self, *args, **kwds):
@@ -62,7 +65,7 @@ class PrimaryFrame(tk.Frame):
 class PrimaryButton(tk.Button):
     DEFAULT = {
         'height': 3,
-        'width': 15
+        'width': 10
     }
 
     def __init__(self, *args, **kwds):
@@ -75,7 +78,7 @@ class PrimaryLabel(tk.Label):
     DEFAULT = {
         'font': ('Courier', 25),
         'bg': 'black',
-        'fg': 'gray'
+        'fg': 'blue'
     }
 
     def __init__(self, *args, **kwds):

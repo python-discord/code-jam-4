@@ -56,7 +56,7 @@ class Front(widget.PrimaryFrame):
         self.btn_dislike = widget.PrimaryButton(
             self.commandbar, text='Nope', bg='red', command=self.cmd_dislike
         )
-        self.btn_bio = widget.PrimaryButton(
+        self.btn_bio = widget.SecondaryButton(
             self.commandbar, text='Bio', command=self.cmd_bio
         )
         self.btn_like = widget.PrimaryButton(
@@ -64,11 +64,11 @@ class Front(widget.PrimaryFrame):
         )
         self.title.pack(fill='x', expand=True)
         self.window.pack(fill='both', expand=True)
-        self.commandbar.pack(side='bottom', fill='x', expand=True)
+        self.commandbar.pack(side='bottom', fill='both', expand=True)
 
         self.btn_dislike.pack(side='left')
-        self.btn_bio.pack(side='left')
-        self.btn_like.pack(side='left')
+        self.btn_like.pack(side='right')
+        self.btn_bio.pack()
 
         self.cache = ImageCache(self.cachesize)
         self.cache.start()
@@ -98,19 +98,32 @@ class Bio(widget.PrimaryFrame):
         self.config(height=height, width=width)
         self.pack_propagate(0)
 
-    def __make_item(self, name, value):
-        item = widget.SecondaryFrame(self)
-        name = widget.SecondaryLabel(item, text=name)
-        value = widget.SecondaryLabel(item, text=value)
-        name.pack(side='left')
-        value.pack(side='left')
+    def __build_info(self, info: dict):
+        item = widget.PrimaryFrame(self)
+        info = [
+            f"Age: {info['age']}",
+            info['gender'].capitalize(),
+            f'{"She" if info["gender"].startswith("f") else "He"} is {info["location"]}.'
+        ]
+        for val in info:
+            name = widget.PrimaryLabel(item, text=val, font=('sys', 15), fg='gray')
+            name.pack(fill='both')
         return item
 
+    def __build_hobbies(self, hobbies):
+        frame = widget.PrimaryFrame(self)
+        title = widget.PrimaryLabel(frame, text='Hobbies', font=('sys', 15), justify='left')
+        title.pack(fill='both')
+        for hobby in hobbies:
+            val = widget.SecondaryLabel(frame, text=hobby)
+            val.pack(fill='both')
+        return frame
+
     def load(self, data: dict):
-        # print(data)
-        for name, val in data.items():
-            item = self.__make_item(name, val)
-            item.pack(expand=True, fill='x')
+        info = self.__build_info(data['info'])
+        hobbies = self.__build_hobbies(data['hobbies'])
+        info.pack(expand=True, fill='both')
+        hobbies.pack(expand=True, fill='both')
 
 
 class Splash(widget.PrimaryFrame):

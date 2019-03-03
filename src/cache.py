@@ -31,7 +31,7 @@ class ImageCache:
     def __get(self, url, **kwargs):
         try:
             return requests.get(url, **kwargs)
-        except ConnectionError as e:
+        except requests.ConnectionError as e:
             return e
 
     def __parse_image(self, data: List[dict]) -> dict:
@@ -56,7 +56,7 @@ class ImageCache:
 
     def get_profile(self):
         response = {k: self.__get(v) for k, v in self.api.items() if self.api_cache.get(k) is None}
-        if ConnectionError not in response:  # TODO Record connection errors
+        if requests.ConnectionError not in response:  # TODO Record connection errors
             if 'info' in response:
                 self.api_cache['info'] = response['info'].json()
             if 'hobbies' in response:
