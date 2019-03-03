@@ -3,7 +3,7 @@ import tkinter as tk
 from contextlib import suppress
 
 from .front import Front
-from .splash import Splash
+# from .splash import Splash
 from . import SETTINGS, widget
 
 
