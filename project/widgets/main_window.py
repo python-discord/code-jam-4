@@ -3,7 +3,9 @@ import logging
 from PySide2.QtCore import QPoint, Qt
 from PySide2.QtGui import QMouseEvent
 from PySide2.QtSql import QSqlTableModel
-from PySide2.QtWidgets import QAction, QDialog, QFileDialog, QMainWindow, QMenu, QMessageBox
+from PySide2.QtWidgets import (
+    QAction, QDialog, QFileDialog, QHeaderView, QMainWindow, QMenu, QMessageBox
+)
 
 from project import media, ui
 from project.widgets.password_prompt import PasswordPrompt
@@ -65,6 +67,7 @@ class MainWindow(QMainWindow):
         """Configure the playlist table view."""
         self.ui.playlist_view.setModel(self.playlist_model)
         self.ui.playlist_view.customContextMenuRequested.connect(self.show_view_context_menu)
+        self.ui.playlist_view.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.playlist_view.hideColumn(0)  # id
         self.ui.playlist_view.hideColumn(6)  # crc32
         self.ui.playlist_view.hideColumn(7)  # path
