@@ -38,7 +38,8 @@ FORMS += \
     passwordprompt.ui \
     createpassword.ui \
     seekdialogue.ui \
-    captchadialogue.ui
+    captchadialogue.ui \
+    removedialogue.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

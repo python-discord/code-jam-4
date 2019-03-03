@@ -12,6 +12,7 @@ from project import media, ui
 from project.delegates import CurrentMediaDelegate
 from project.widgets.captcha_dialogue import CaptchaDialogue
 from project.widgets.password_prompt import PasswordPrompt
+from project.widgets.remove_dialogue import RemoveDialogue
 from project.widgets.seek_dialogue import SeekDialogue
 
 log = logging.getLogger(__name__)
@@ -32,6 +33,8 @@ class MainWindow(QMainWindow):
 
         self.seek_dialogue = SeekDialogue(self)
         self.seek_dialogue.finished.connect(self.seek_finished)
+
+        self.remove_dialogue = RemoveDialogue(self)
 
         self.playlist_model = self.create_model()
         self.configure_view()
@@ -137,7 +140,13 @@ class MainWindow(QMainWindow):
             QMessageBox.Yes | QMessageBox.No
         )
 
-        if result_3 == QMessageBox.Yes:
+        if result_3 != QMessageBox.Yes:
+            return
+
+        self.remove_dialogue.title = title
+        self.remove_dialogue.exec_()
+
+        if self.remove_dialogue.result() == QDialog.Accepted:
             self.player.remove_media(row)
 
     def update_time_remaining(self, position: int):
