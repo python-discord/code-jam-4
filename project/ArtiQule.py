@@ -336,8 +336,10 @@ class PaintBoard(QMainWindow):
                     "Sunbathing Eraser" or \
                     "A bucket filled" \
                     and self.currentTool.isDipped:
+                if hasattr(self, "dripper"):
+                    self.dripper.stop()
                 self.dripper = DripperEffect(
-                    self.currentTool.color,
+                    self,
                     self.currentTool.brushSize
                 )
                 self.dripper.drip.connect(self.dripperHandler)
@@ -525,9 +527,9 @@ class PaintBoard(QMainWindow):
 class DripperEffect(QThread):
     drip = pyqtSignal(object)
 
-    def __init__(self, color, size):
+    def __init__(self, parent, size):
         QThread.__init__(self)
-        self.color = color
+        self.parent = parent
         self.size = size * 2
         print('size: ' + str(self.size))
         self._stop = False
@@ -544,11 +546,11 @@ class DripperEffect(QThread):
                 Drip.setCosmetic(True)
                 Drip.setStyle(Qt.DotLine)
                 Drip.setWidth(self.size)
-                Drip.setColor(self.color)
+                Drip.setColor(self.parent.currentTool.color)
                 Drip.setJoinStyle(Qt.RoundJoin)
                 Drip.setCapStyle(Qt.RoundCap)
                 self.drip.emit(Drip)
-                print('drip')
+                print('drip\n')
             else:
                 pass
             time.sleep(0.5)
