@@ -2,7 +2,7 @@
 
 # Project Information
 
-###SMH Editor
+### SMH Editor
 
 Team Members:
 - LargeKnome (Leader)
