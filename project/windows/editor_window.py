@@ -1,12 +1,17 @@
-import tkinter as tk
-from tkinter import filedialog
 from typing import Tuple
 
-from project.windows.editor_window_events import NewWordEvent
+import tkinter as tk
+
+from tkinter import filedialog
+from tkinter import messagebox
+
 from project.functionality.constants import Constants
 from project.functionality.utility import pairwise
 
-# TODO: Fix docstring inconsistencies. Some have param docs, some don't etc.
+from project.windows.editor_window_events import NewWordEvent
+
+from project.windows.cloppy_window import CloppyButtonWindow
+from project.windows.cloppy_window_events import CloppyChoiceMadeEventData
 
 
 class EditorWindow(tk.Toplevel):
@@ -54,12 +59,16 @@ class EditorWindow(tk.Toplevel):
         self.text_box.bind('<Button-3>', self.on_right_click)
 
         # Setting up editing function key event binding.
-        self.text_box.bind('<Control-C>', self.menu_bar.edit_menu.on_copy)
-        self.text_box.bind('<Control-X>', self.menu_bar.edit_menu.on_cut)
-        self.text_box.bind('<Control-V>', self.menu_bar.edit_menu.on_paste)
+        self.text_box.bind('<Control-x>', self.on_control_x)
+        self.text_box.bind('<Control-c>', self.on_control_c)
+        self.text_box.bind('<Control-v>', self.on_control_v)
+
+        # Setting up backspace/delete key event binding.
+        self.text_box.bind('<BackSpace>', self.on_backspace)
+        self.text_box.bind('<Delete>', self.on_backspace)
 
         # Set window title.
-        self.wm_title('Editor')
+        self.wm_title(Constants.program_name)
 
     def get_text(self, start='1.0', end=tk.END) -> str:
         """
@@ -116,6 +125,9 @@ class EditorWindow(tk.Toplevel):
 
         If set_selected is True, then the set text will be selected. Otherwise
         it'll be normal.
+
+        :param value: The new value of the selected text.
+        :param set_selected: If true, the new text will also be selected.
         """
 
         try:
@@ -152,8 +164,6 @@ class EditorWindow(tk.Toplevel):
         """
         Selects the text between two indexes.
 
-        TODO: Test this method.
-
         :param start: The starting index of the selected text.
         :param end: The ending index of the selected text.
                     Pass None to set a single character.
@@ -166,6 +176,8 @@ class EditorWindow(tk.Toplevel):
         Returns the word containing the character located at index.
         If the character is a space or not part of a word (not alphabetic) an
         empty string is returned instead.
+
+        :param index: The index of a letter in the the text box.
 
         :return: The word containing the character located at index, or an
                  empty string if the character is a space or not part of a
@@ -203,21 +215,18 @@ class EditorWindow(tk.Toplevel):
 
         # Correct indexes with regards to leading and trailing apostrophes.
         start_offset = 0
+        end_offset = 0
+
         for character in word:
             if character == "'":
                 start_offset += 1
             else:
                 break
 
-        word = word[start_offset:]
-        start += start_offset
-
-        end_offset = 0
-
-        for character, next_character in pairwise(reversed(word.lower())):
+        for character, next_character in pairwise(reversed(word)):
             if character == "'":
                 if next_character:
-                    if next_character != 's':
+                    if next_character.lower() != 's':
                         end_offset -= 1
                 else:
                     end_offset -= 1
@@ -225,9 +234,12 @@ class EditorWindow(tk.Toplevel):
             else:
                 break
 
+        start += start_offset
+        word = word[start_offset:]
+
         if end_offset:
-            word = word[:end_offset]
             end += end_offset
+            word = word[:end_offset]
 
         start = f'{line}.{start}'
         end = f'{line}.{end}'
@@ -238,6 +250,10 @@ class EditorWindow(tk.Toplevel):
         """
         Returns the word closest to pixel position x, y in the editor window's
         text box, starting from 0, 0 at the top left.
+
+        :param x: Position on the text box along the x axis, from top to
+                  bottom.
+        :param y: Position on the text box along the y axis, from up to down.
 
         :return: The word closest to pixel position x, y in the editor window's
                  text box.
@@ -262,6 +278,23 @@ class EditorWindow(tk.Toplevel):
             self.text_box.index(tk.CURRENT)
         )
 
+    def delete_selected_text(self, backspace=True):
+        """
+        Deletes any selected text.
+        If nothing is selected, and backspace is set to True, then deletes the
+        character behind the cursor.
+
+        :param backspace: If True, when no text is selected, the character
+                          behind the cursor is deleted instead.
+        """
+        selected_start, selection_end = self.get_selection_indexes()
+        if selected_start and selection_end:
+            self.set_selected_text('', False)
+
+        elif backspace:
+            if self.text_box.index(tk.INSERT) != '1.0':
+                self.set_text('', f'{tk.INSERT}-1c', None)
+
     def on_key_press(self, event):
         """
         Called every time the user presses a key while focused on the editor
@@ -272,15 +305,11 @@ class EditorWindow(tk.Toplevel):
         :param event: tkinter event data
         """
 
-        # TODO: This needs improvement. Checking the current index isn't a
-        #       reliable way to handle this I think. Not sure if the key press
-        #       and index change are always properly synchronized.
-
         if (
             event.char and
             not event.char.isalpha() and
             event.char != "'" and
-            event.char != '\x08'
+            event.char != '\x08'  # backspace
         ):
             for flag in Constants.forbidden_flags:
                 if event.state & flag:
@@ -294,13 +323,99 @@ class EditorWindow(tk.Toplevel):
 
                     self.new_word(start, end, word)
 
+    def on_backspace(self, event):
+        """
+        Called when the backspace key is pressed in the editor's text box.
+
+        :param event: tkinter event data
+        :return: 'break' in order to interrupt the normal event handling of
+                 the backspace key.
+        """
+        dialog = CloppyButtonWindow(self)
+        dialog.set_message(
+            "It looks like you're trying to erase some text.\n"
+            "The text you're erasing could be very important.\n"
+            "So it behooves me to ask:\n"
+            "Are you sure you want to do that?"
+        )
+        dialog.add_choice('Yes')
+        dialog.add_choice('No')
+
+        def delete_text(choice_data: CloppyChoiceMadeEventData):
+            if choice_data.choice == 'Yes':
+                self.delete_selected_text()
+
+        dialog.choice_made.add_callback(delete_text)
+        dialog.show()
+
+        return 'break'
+
+    def on_control_x(self, event=None):
+        """
+        Called when Ctrl+X is pressed in the editor's text box.
+        Also called by the 'Cut' menu options.
+
+        :param event: tkinter event data. None by default in case the method
+                      is invoked artificially.
+        :return: 'break' in order to interrupt the normal event handling of
+                 the backspace key.
+        """
+        root: tk.Tk = self.master
+        root.clipboard_clear()
+        root.clipboard_append(
+            self.get_selected_text()
+        )
+        self.set_selected_text('')
+
+        return 'break'
+
+    def on_control_c(self, event=None):
+        """
+        Called when Ctrl+C is pressed in the editor's text box.
+        Also called by the 'Copy' menu options.
+
+        :param event: tkinter event data. None by default in case the method
+                      is invoked artificially.
+        :return: 'break' in order to interrupt the normal event handling of
+                 the backspace key.
+        """
+        root: tk.Tk = self.master
+        root.clipboard_clear()
+        root.clipboard_append(self.get_selected_text())
+
+        return 'break'
+
+    def on_control_v(self, event=None):
+        """
+        Called when Ctrl+V is pressed in the editor's text box.
+        Also called by the 'Paste' menu options.
+
+        :param event: tkinter event data. None by default in case the method
+                      is invoked artificially.
+        :return: 'break' in order to interrupt the normal event handling of
+                 ctrl+v.
+        """
+        root: tk.Tk = self.master
+        try:
+            self.set_selected_text(
+                root.clipboard_get(),
+                set_selected=False
+            )
+
+        except tk.TclError:
+            pass
+
+        return 'break'
+
     def on_right_click(self, event):
         """
         Called when the user right clicks over the editor window's text box.
         By default it creates and shows a context menu at the position of the
         mouse.
 
-        :param event: tkinter event data passed
+        :param event: tkinter event data
+        :return: 'break' in order to interrupt the normal event handling of
+                 right click.
         """
 
         # Create a new context menu.
@@ -311,18 +426,19 @@ class EditorWindow(tk.Toplevel):
         selected_text = self.get_selected_text()
         if selected_text:
             context_menu.add_command(
-                label='Cut', command=self.menu_bar.edit_menu.on_cut
+                label='Cut', command=self.on_control_x
             )
 
             context_menu.add_command(
-                label='Copy', command=self.menu_bar.edit_menu.on_copy
+                label='Copy', command=self.on_control_c
             )
 
         context_menu.add_command(
-            label='Paste', command=self.menu_bar.edit_menu.on_paste
+            label='Paste', command=self.on_control_v
         )
 
         context_menu.show()
+        return 'break'
 
 
 class EditorMenuBar(tk.Menu):
@@ -425,6 +541,9 @@ class EditorFileMenu(EditorMenu):
     #     pass
 
     def on_exit(self):
+        """
+        Called when the user selects the 'Exit' option in the File menu.
+        """
         self.master.editor_window.destroy()
 
 
@@ -448,38 +567,21 @@ class EditorEditMenu(EditorMenu):
         Called when the 'Cut' action is selected from the Edit menu.
         """
 
-        root: tk.Tk = self.master.editor_window.master
-        root.clipboard_clear()
-        root.clipboard_append(
-            self.master.editor_window.get_selected_text()
-        )
-        self.master.editor_window.set_selected_text('')
+        self.master.editor_window.on_control_x()
 
     def on_copy(self):
         """
         Called when the 'Copy' action is selected from the Edit menu.
         """
 
-        root: tk.Tk = self.master.editor_window.master
-        root.clipboard_clear()
-        root.clipboard_append(
-            self.master.editor_window.get_selected_text()
-        )
+        self.master.editor_window.on_control_c()
 
     def on_paste(self):
         """
         Called when the 'Paste' action is selected from the Edit menu.
         """
 
-        root: tk.Tk = self.master.editor_window.master
-        try:
-            self.master.editor_window.set_selected_text(
-                root.clipboard_get(),
-                set_selected=False
-            )
-
-        except tk.TclError:
-            pass
+        self.master.editor_window.on_control_v()
 
 
 class EditorHelpMenu(EditorMenu):
@@ -500,8 +602,11 @@ class EditorHelpMenu(EditorMenu):
         Called when the 'About' action is selected from the Help menu.
         """
 
-        # TODO: Implement About dialog.
-        pass
+        messagebox.showinfo(
+            'About',
+            f'{Constants.program_name}\n'
+            f'By LargeKnome, Hanyuone, and Meta\n'
+        )
 
 
 class EditorContextMenu(tk.Menu):
