@@ -5,7 +5,7 @@ from . import widget
 from .animate import Direction
 from .view import Window, View
 from .cache import ImageCache
-
+from .loading import Loading
 
 def process_image(image: bytes, width: int, height: int):
     im = Image.open(io.BytesIO(image))
