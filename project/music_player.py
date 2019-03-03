@@ -43,7 +43,7 @@ def create_db():
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName("Music Player")
-    app.setStyleSheet(qdarkstyle.load_stylesheet())
+    app.setStyleSheet(qdarkstyle.load_stylesheet_pyside2())
 
     create_db()
 

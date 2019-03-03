@@ -1,5 +1,7 @@
+from project.widgets.captcha_dialogue import CaptchaDialogue
 from project.widgets.create_password import CreatePassword
 from project.widgets.main_window import MainWindow
 from project.widgets.password_prompt import PasswordPrompt
+from project.widgets.seek_dialogue import SeekDialogue
 
-__all__ = ("CreatePassword", "MainWindow", "PasswordPrompt")
+__all__ = ("CaptchaDialogue", "CreatePassword", "MainWindow", "PasswordPrompt", "SeekDialogue")

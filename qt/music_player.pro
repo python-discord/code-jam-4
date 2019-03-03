@@ -40,6 +40,7 @@ FORMS += \
     passwordprompt.ui \
     createpassword.ui \
     seekdialogue.ui \
+    captchadialogue.ui \
     dialog.ui
 
 # Default rules for deployment.

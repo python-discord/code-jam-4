@@ -9,6 +9,7 @@ from PySide2.QtWidgets import (
 
 from project import media, ui
 from project.delegates import CurrentMediaDelegate
+from project.widgets.captcha_dialogue import CaptchaDialogue
 from project.widgets.password_prompt import PasswordPrompt
 from project.widgets.seek_dialogue import SeekDialogue
 
@@ -23,6 +24,9 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
 
         self.password_prompt = PasswordPrompt(password)
+
+        self.captcha_dialogue = CaptchaDialogue(self)
+        self.captcha_dialogue.finished.connect(self.add_files)
 
         self.seek_dialogue = SeekDialogue(self)
         self.seek_dialogue.finished.connect(self.seek_finished)
@@ -51,7 +55,7 @@ class MainWindow(QMainWindow):
         self.ui.play_button.pressed.connect(self.play_pressed)
         self.ui.previous_button.pressed.connect(self.player.playlist().previous)
         self.ui.next_button.pressed.connect(self.player.playlist().next)
-        self.ui.add_files_action.triggered.connect(self.add_files)
+        self.ui.add_files_action.triggered.connect(self.captcha_dialogue.open)
 
     @staticmethod
     def create_model() -> QSqlTableModel:
@@ -182,7 +186,8 @@ class MainWindow(QMainWindow):
         # TODO: Clear delegate for previous row
         self.ui.playlist_view.setItemDelegateForRow(current_row, self.current_delegate)
 
-    def add_files(self, checked: bool = False):
+    def add_files(self, result: QDialog.DialogCode):
         """Show a file dialogue and add selected files to the playlist."""
-        paths, _ = QFileDialog.getOpenFileNames(self, "Add files", "", "")
-        self.player.add_media(paths)
+        if result == QDialog.DialogCode.Accepted:
+            paths, _ = QFileDialog.getOpenFileNames(self, "Add files", "", "")
+            self.player.add_media(paths)
