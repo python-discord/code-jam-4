@@ -42,8 +42,8 @@ Flamboyant Flamingos jam project.
       * Location: UK
       * Computer Science student in secondary education
     * Martmists
-      * Location: *somewhere in Europe idk*
-      * *mists you write your bio too*
+      * Location: NL
+      * High School student, entering University later this year
 * This paint tool is your worst enemy.
 
 ## Description
