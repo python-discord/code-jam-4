@@ -23,10 +23,10 @@ class App(tk.Tk):
         self.minsize(400, 500)
         self.maxsize(400, 500)
 
-        self.splash = Splash(self)
-        self.splash.pack(expand=True, fill='both')
-        # self.front = Front(self)
-        # self.front.pack(fill='both', expand=True)
+        # self.splash = Splash(self)
+        # self.splash.pack(expand=True, fill='both')
+        self.front = Front(self)
+        self.front.pack(fill='both', expand=True)
 
     def cleanup(self):
         with suppress(Exception):

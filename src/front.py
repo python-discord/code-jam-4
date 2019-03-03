@@ -24,7 +24,7 @@ class Front(widget.PrimaryFrame):
     _last = None
 
     def __next(self, direction: Direction = None):
-        if self.window.active:
+        if self.window.active:  # Spam protection
             return
         if self.cache.ready():
             data: dict = self.cache.next()
@@ -43,13 +43,13 @@ class Front(widget.PrimaryFrame):
                 width=self.window.winfo_width(),
                 height=self.window.winfo_height()
             )
-            self.window.change_view(View(self.loadscreen, 'widget'), direction)
-            self.loadscreen.waitfor(self.cache.ready, self.__next, ('up',))
+            self.window.change_view(View(self.window, window=self.loadscreen), direction)
+            self.loadscreen.waitfor(self.cache.ready, cmd=self.__next, args=('up',))
 
     def __load(self, name, image, data):
         self.title.config(text=name)
-        self.image = View(image, 'image')
-        self.bio = View(Bio(self.window), 'widget')
+        self.image = View(self.window, image=image)
+        self.bio = View(self.window, window=Bio(self.window))
 
         self._last = self.image
         self.bio.data.load(data)

@@ -85,19 +85,18 @@ class Window(widget.PrimaryCanvas):
 
 
 class DrawType(Enum):
-    IMAGE = 'create_image'
-    WIDGET = 'create_window'
-    TEXT = 'create_text'
+    image = 'create_image'
+    window = 'create_window'
+    text = 'create_text'
 
 
 class View:
 
-    def __init__(self, window: Window, **kwds):
-        self.window = window
+    def __init__(self, master: Window, **kwds):
+        self.master = master
         self.kwds = kwds
         self.drawtype = self.data = None
         for k, v in self.kwds.items():
-            k = k.upper()
             if hasattr(DrawType, k):
                 self.drawtype = DrawType[k]
                 self.data = v
@@ -105,5 +104,5 @@ class View:
             raise NotImplementedError
 
     def draw(self, *args, **kwds):
-        fn = getattr(self.window, self.drawtype.value)
+        fn = getattr(self.master, self.drawtype.value)
         return fn(*args, **{**self.kwds, **kwds})
