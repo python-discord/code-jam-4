@@ -10,7 +10,7 @@ from .animate import Coord, Animater, Direction
 
 
 class Window(widget.PrimaryCanvas):
-    animation_speed = 4
+    animation_speed = 10
     current = None
     views = {}
 
@@ -18,7 +18,7 @@ class Window(widget.PrimaryCanvas):
         self.animater = Animater(self)
 
     def __coord(self, id):
-        return Coord(*self.coords(id)[:2])
+        return Coord(*self.coords(id))
 
     def __set(self, view: View, coord: Coord):
         wid = view.draw(coord, anchor='nw')

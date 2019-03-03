@@ -3,10 +3,11 @@ from __future__ import annotations
 import tkinter as tk
 import operator
 import time
-from typing import NamedTuple, Callable, TypeVar, Generator, Tuple
+import math
+from typing import NamedTuple, Callable, TypeVar, Generator
 from enum import Enum
 from dataclasses import dataclass
-from functools import partialmethod, partial
+from functools import partialmethod
 
 
 class Coord(NamedTuple):
@@ -60,9 +61,9 @@ class Coord(NamedTuple):
         """
         return (self + other) / 2
 
-    def distance(self, other: Coord) -> int:
+    def distance(self, other: Coord) -> float:
         """
-        The Manhattan distance between `self` and `other`.
+        The distance between `self` and `other`.
 
         param:
             other: Coord -- THe point to consider.
@@ -70,8 +71,8 @@ class Coord(NamedTuple):
         return:
             int -- A numeric representation of the distance between two points.
         """
-        dist = map(abs, other - self)
-        return sum(dist)
+        diff = other - self
+        return math.hypot(*diff)
 
     __add__ = partialmethod(__apply, operator.add)
     __sub__ = partialmethod(__apply, operator.sub)
@@ -126,32 +127,26 @@ class Animater:
     ```
     """
     _motions = set()
-    fps = 60
 
     def __init__(self, canvas: tk.Canvas):
         self.canvas = canvas
 
     def start(self):
         while self._motions:
-            complete = self.run(self._motions.copy())
-            self._motions -= complete
-            time.sleep(1/self.fps)
+            print(self._motions)
+            self.run()
 
-    def run(self, frame):
-        done = set()
-        for motion in frame:
-            if not self.running:
-                break
+    def run(self):
+        for motion in self._motions.copy():
             try:
-                next(motion)()
+                move = next(motion)
+                move()
                 self.canvas.update()
             except StopIteration:
-                done.add(motion)
-        self.canvas.update()
-        return done
+                self._motions.remove(motion)
 
     def add(self, motion: Motion):
-        self._motions.add(iter(motion))
+        self._motions.add(motion.start())
 
     def add_motion(self, id: int, end: Coord, **kwargs):
         motion = Motion(self.canvas, id, end, **kwargs)
@@ -180,28 +175,43 @@ class Motion:
         """
         The entry point for generating move commands.
         """
-        def frame(increment: Coord, count: int = 1):
-            for _ in range(count):
-                move(*increment)
-                self.canvas.master.update_idletasks()
+        self.time = time.time()
+        self.start = self.current
+        self.distance = self.start.distance(self.end)
+        self.speed = self.speed ** 3
+        while self.current != self.end:
+            yield self.move
 
-        start = self.current
-        steps = round(start.distance(self.end) / self.speed)
-        frames = round(steps / self.speed)
-        increment = (self.end - start) / steps
-
-        for _ in range(frames):
-            yield partial(frame, increment, round(steps / frames))
-        buffer = self.end - self.current
-        yield partial(frame, buffer)
+    def move(self):
+        self.canvas.move(self.id, *self.increment)
+        self.canvas.update_idletasks()
 
     @property
-    def move(self):
-        return partial(self.canvas.move, self.id)
+    def time(self):
+        return time.time() - self._time
+
+    @time.setter
+    def time(self, val):
+        self._time = val
+
+    @property
+    def increment(self):
+        mult = (self.time * self.speed) / self.distance
+        point = (self.end - self.start) * mult + self.start
+
+        if point.distance(self.end) > self.journey:
+            return self.end - self.current
+        else:
+            return point - self.current
+
 
     @property
     def current(self):
-        return Coord(*self.canvas.coords(self.id)[:2])
+        return Coord(*self.canvas.coords(self.id))
+
+    @property
+    def journey(self):
+        return self.current.distance(self.end)
 
     def __iter__(self):
         return self.start()
@@ -214,7 +224,3 @@ class Motion:
 
     def __eq__(self):
         return isinstance(self, type(other)) and self.__key() == other.__key()
-
-
-class BounceBall(Motion):
-
