@@ -1,6 +1,6 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-#from project.services.location import get_similar_location
+from project.services.location import get_similar_location
 from project.services.weather import ForecastFetcher
 import random
 
@@ -24,6 +24,8 @@ class Weatherh8su:
         self.tomorrows_frame = None
         self.tomorrows_label = None
         self.tomorrows_content = None
+        self.background_image = None
+        self.canvas_image = None
 
         self.create_widgets()
 
@@ -42,6 +44,7 @@ class Weatherh8su:
         self.search_bar = tk.Entry(self.top_frame, width=70)
         self.search_bar.bind("<Return>", lambda e: self.search_function())
         self.search_bar.grid(row=0, column=1)
+        self.search_bar.focus_set()
         self.f = tk.Frame(self.top_frame, width=26, height=30)
         self.f.grid(column=2, row=1)
         self.gear = Image.open("data/gear.png")
@@ -100,7 +103,7 @@ class Weatherh8su:
         search_string = self.search_bar.get()
 
         # 50% of getting the wrong intended location:
-        if random.choice([0, 1]) == 1:
+        if random.choice([True, False]):
             location = get_similar_location(search_string)
         else:
             location = search_string
@@ -138,9 +141,9 @@ class Weatherh8su:
         """
         Changes background according to the weather
         """
-        image = ImageTk.PhotoImage(
+        self.background_image = ImageTk.PhotoImage(
             Image.open(f"data/{status}.jpg"))
-        self.main_canvas.itemconfig(self.canvas_image, image=image)
+        self.main_canvas.itemconfig(self.canvas_image, image=self.background_image)
 
     def show_location_name(self, location_name: str):
         """
