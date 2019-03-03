@@ -148,16 +148,12 @@ class BounceBall(Motion):
         x1, y1, x2, y2 = self.canvas.bbox(self.id)
         bounce = Coord(0, 0)
         if x1 <= self.bound_x1:
-            # print('x1', x1, self.bound_x1)
             bounce += Direction.RIGHT
         if y1 <= self.bound_y1:
-            # print('y1', y1, self.bound_y1)
             bounce += Direction.DOWN
         if x2 >= self.bound_x2:
-            # print('x2', x2, self.bound_x2)
             bounce += Direction.LEFT
         if y2 >= self.bound_y2:
-            # print('y2', y2, self.bound_y2)
             bounce += Direction.UP
         return bounce
 
