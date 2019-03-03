@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b3fadb6e-a4f7-45b3-8f6e-9b28d34a2c00" name="Default Changelist" comment="made the opacity drop while using brushes; started to transform brushes into QBrushes and found some pretty cool art things (I'll have this commit so I can access this interesting thing)">
-      <change afterPath="$PROJECT_DIR$/project/Design/icons/Sunbathing Eraser.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/ArtiQule.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/ArtiQule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/Design/icons/Straggly Paintbrush.png" beforeDir="false" afterPath="$PROJECT_DIR$/project/Design/icons/Straggly PaintBrush.png" afterDir="false" />
-    </list>
     <list id="40218802-4901-446d-8996-5c61197f1f95" name="Revert: NEW: - changed changePaintAreaVars into connectTool and deleted all except the self instance argument; - managed to make the tools change color, at least in value" comment="" />
+    <list default="true" id="b3fadb6e-a4f7-45b3-8f6e-9b28d34a2c00" name="Default Changelist" comment="reverted a bit; added more pallettes because it'll increase variation">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,8 +17,8 @@
       <file leaf-file-name="ArtiQule.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/project/ArtiQule.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="429" column="65" selection-start-line="429" selection-start-column="65" selection-end-line="429" selection-end-column="65" />
+            <state relative-caret-position="305">
+              <caret line="430" column="32" selection-start-line="430" selection-start-column="32" selection-end-line="430" selection-end-column="32" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
                 <element signature="e#10959#13068#0" />
@@ -279,7 +276,14 @@
       <option name="project" value="LOCAL" />
       <updated>1551617142434</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="reverted a bit; added more pallettes because it'll increase variation">
+      <created>1551628582945</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1551628582945</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TodoView">
@@ -361,7 +365,8 @@
     <MESSAGE value="color pallette now updates upon changing color!!!" />
     <MESSAGE value="fixed serious bug regarding color mixing" />
     <MESSAGE value="made the opacity drop while using brushes; started to transform brushes into QBrushes and found some pretty cool art things (I'll have this commit so I can access this interesting thing)" />
-    <option name="LAST_COMMIT_MESSAGE" value="made the opacity drop while using brushes; started to transform brushes into QBrushes and found some pretty cool art things (I'll have this commit so I can access this interesting thing)" />
+    <MESSAGE value="reverted a bit; added more pallettes because it'll increase variation" />
+    <option name="LAST_COMMIT_MESSAGE" value="reverted a bit; added more pallettes because it'll increase variation" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -605,8 +610,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/project/ArtiQule.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="429" column="65" selection-start-line="429" selection-start-column="65" selection-end-line="429" selection-end-column="65" />
+        <state relative-caret-position="305">
+          <caret line="430" column="32" selection-start-line="430" selection-start-column="32" selection-end-line="430" selection-end-column="32" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
             <element signature="e#10959#13068#0" />
