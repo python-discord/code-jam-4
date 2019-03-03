@@ -4,8 +4,8 @@ from random import randint
 from PyQt5.QtCore import QPoint, Qt, QThread, pyqtSignal, QRect
 from PyQt5.QtGui import (QColor, QCursor, QIcon, QImage, QPainter,
                          QPen, QPixmap)
-from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog,
-                             QMainWindow, QPushButton, QWidget, QGridLayout)
+from PyQt5.QtWidgets import (QAction, QApplication, QGridLayout,
+                             QMainWindow, QPushButton, QWidget)
 
 
 class ColorBox(QMainWindow):
@@ -20,10 +20,8 @@ class ColorBox(QMainWindow):
         self.tools_holder = 0
         self.exists = True
         self.Setup()
-        # TODO MINOR: can open as many windows as one desires
 
     def Setup(self):
-        # self.setGeometry(990, 150, 150, 300)
         self.setWindowTitle('Colorbox')
         self.setFixedSize(150, 300)
         self.mainLayout = QGridLayout()
@@ -56,7 +54,7 @@ class ColorBox(QMainWindow):
 
     @classmethod
     def setWindowCursor(cls, currentTool):
-        """Connects Canvas window with colorBox window"""
+        """sets cursor in all instances to the same img"""
 
         for obj in cls.objs:
             if currentTool is not None:
@@ -133,7 +131,6 @@ class PalletteButton:
         self.palletteColor = self.r, self.g, self.b, self.alpha
         # {tuple} so it can be applied below
         self.timesToUse = randint(10, 20)
-        # TODO: pallette will become empty after being used X amount of times
 
     def mixColor(self, tool):
 
@@ -199,6 +196,8 @@ class PalletteButton:
 
 
 class PaintBoard(QMainWindow):
+    """Main Class. Diplay the main window."""
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -225,18 +224,11 @@ class PaintBoard(QMainWindow):
         new_canvas_action = QAction('New File', self)
         new_canvas_action.setShortcut('Ctrl+N')
 
-        # open_file_action = QAction('Open File', self)
-        # open_file_action.setShortcut('Ctrl+O')
-
-        # save_file_action = QAction('Save File', self)
-        # save_file_action.setShortcut('Ctrl+S')
-
         exit_action = QAction('Exit', self)
         exit_action.setShortcut('Alt+F4')
 
         fileMenu.addAction(new_canvas_action)
-        # fileMenu.addAction(open_file_action)
-        # fileMenu.addAction(save_file_action)
+
         fileMenu.addAction(exit_action)
 
         colorMenu = mainMenu.addMenu("Colors")
@@ -246,8 +238,6 @@ class PaintBoard(QMainWindow):
 
         colorMenu.triggered.connect(self.colorBoxRun)
         new_canvas_action.triggered.connect(self.newCanvas)
-        # open_file_action.triggered.connect(self.openFile)
-        # save_file_action.triggered.connect(self.saveFile)
         exit_action.triggered.connect(self.exit)
 
         # TOOLBAR AND WITH TOOL ICONS
@@ -492,39 +482,13 @@ class PaintBoard(QMainWindow):
                                  )
 
     def newCanvas(self):
-        # TODO: Add New Canvas
+
         Pen = QPen()
         Pen.setWidth(5000)
         Pen.setColor(Qt.white)
         self.painter.setPen(Pen)
         self.painter.drawLine(0, 0, 1000, 500)
         self.update()
-
-    # def openFile(self):
-    #     options = QFileDialog.Options()
-    #     options |= QFileDialog.DontUseNativeDialog
-    #     filePath, _ = QFileDialog.getOpenFileNames(
-    #         self,
-    #         "Open File",
-    #         "Load Image",
-    #         "PNG(*.png);; JPG(*.jpg *.jpeg)",
-    #         options=options)
-
-    # def saveFile(self):
-    #     options = QFileDialog.Options()
-    #     options |= QFileDialog.DontUseNativeDialog
-    #     filePath, _ = QFileDialog.getSaveFileName(
-    #         self,
-    #         "Save Image", "",
-    #         "PNG(*.png);;JPEG(*.jpg *.jpeg)")
-
-    #     if filePath:
-    #         print(filePath)
-    #         # with open(filePath, "w+") as file:
-    #         # self.canvasPainter.save()
-    #         # file.write(filePath)
-    #         # img = Image.open(filePath)
-    #         # img.save(filePath)
 
     def exit(self):
         raise SystemExit

@@ -41,9 +41,17 @@ ArtiQule is our take on a Paint app that mixes a paint application with the them
 Necessary modules:
   Python 3.X
   PyQt5
-  sys module
-  random module
+
+Run:
+  cd project 
+  python3 ArtiQule.py
+
+  
 
 ## How do I use this thing?
 
 Simply start the app up and let your creativity flow!
+Select your tool of choice and start drawing!
+If you want to use any colors, just go to "Colors"
+Dont worry you can open as many pallets as you want, but watch out, you can only use each color for so long!
+Be carefull when using your tools, they might break!!! 0_0
