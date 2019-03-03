@@ -11,6 +11,7 @@ flake8-tidy-imports = "*"
 
 [packages]
 pyside2 = "*"
+qdarkstyle = "*"
 
 [requires]
 python_version = "3.7"

@@ -171,12 +171,6 @@ class MainWindow(QMainWindow):
     def style_current_row(self, *args):
         """Set a custom delegate for the row corresponding to the current media."""
         current_row = self.player.playlist().currentIndex()
-        log.debug(
-            f"current_row {current_row}; "
-            f"current_media {self.player.playlist()._current_media}; "
-            f"mediaCount {self.player.playlist().mediaCount()}; "
-            f"model count {self.playlist_model.rowCount()}"
-        )
 
         # Clear custom delegate from any other rows
         for row in range(self.playlist_model.rowCount()):

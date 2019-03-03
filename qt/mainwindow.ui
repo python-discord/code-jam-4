@@ -25,7 +25,7 @@
      <number>0</number>
     </property>
     <property name="bottomMargin">
-     <number>0</number>
+     <number>20</number>
     </property>
     <item row="2" column="2">
      <spacer name="horizontalSpacer_3">
@@ -125,6 +125,12 @@
       <property name="contextMenuPolicy">
        <enum>Qt::CustomContextMenu</enum>
       </property>
+      <property name="styleSheet">
+       <string notr="true">:focus {
+    border: none;
+    outline: none;
+}</string>
+      </property>
       <property name="frameShape">
        <enum>QFrame::Box</enum>
       </property>
@@ -146,6 +152,9 @@
       <property name="wordWrap">
        <bool>false</bool>
       </property>
+      <attribute name="horizontalHeaderHighlightSections">
+       <bool>false</bool>
+      </attribute>
       <attribute name="horizontalHeaderStretchLastSection">
        <bool>false</bool>
       </attribute>
@@ -249,7 +258,6 @@
    </widget>
    <addaction name="menu_file"/>
   </widget>
-  <widget class="QStatusBar" name="status_bar"/>
   <action name="add_files_action">
    <property name="text">
     <string>Add files</string>

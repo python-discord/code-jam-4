@@ -1,6 +1,7 @@
 import sqlite3
 import sys
 
+import qdarkstyle
 from PySide2.QtSql import QSqlDatabase
 from PySide2.QtWidgets import QApplication
 
@@ -41,6 +42,7 @@ def create_db():
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName("Music Player")
+    app.setStyleSheet(qdarkstyle.load_stylesheet())
 
     create_db()
 

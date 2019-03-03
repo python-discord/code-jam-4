@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'qt/mainwindow.ui',
 # licensing of 'qt/mainwindow.ui' applies.
 #
-# Created: Sun Mar  3 06:27:30 2019
+# Created: Sun Mar  3 11:38:48 2019
 #      by: pyside2-uic  running on PySide2 5.12.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ class Ui_MainWindow(object):
         self.central_widget = QtWidgets.QWidget(MainWindow)
         self.central_widget.setObjectName("central_widget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.central_widget)
-        self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_2.setContentsMargins(0, 0, 0, 20)
         self.gridLayout_2.setObjectName("gridLayout_2")
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_2.addItem(spacerItem, 2, 2, 1, 1)
@@ -36,6 +36,10 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addItem(spacerItem4, 3, 1, 1, 1)
         self.playlist_view = QtWidgets.QTableView(self.central_widget)
         self.playlist_view.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.playlist_view.setStyleSheet(":focus {\n"
+"    border: none;\n"
+"    outline: none;\n"
+"}")
         self.playlist_view.setFrameShape(QtWidgets.QFrame.Box)
         self.playlist_view.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.playlist_view.setAlternatingRowColors(True)
@@ -44,6 +48,7 @@ class Ui_MainWindow(object):
         self.playlist_view.setSortingEnabled(True)
         self.playlist_view.setWordWrap(False)
         self.playlist_view.setObjectName("playlist_view")
+        self.playlist_view.horizontalHeader().setHighlightSections(False)
         self.playlist_view.horizontalHeader().setStretchLastSection(False)
         self.gridLayout_2.addWidget(self.playlist_view, 0, 0, 1, 5)
         self.seek_slider = QtWidgets.QSlider(self.central_widget)
@@ -89,9 +94,6 @@ class Ui_MainWindow(object):
         self.menu_file = QtWidgets.QMenu(self.menu_bar)
         self.menu_file.setObjectName("menu_file")
         MainWindow.setMenuBar(self.menu_bar)
-        self.status_bar = QtWidgets.QStatusBar(MainWindow)
-        self.status_bar.setObjectName("status_bar")
-        MainWindow.setStatusBar(self.status_bar)
         self.add_files_action = QtWidgets.QAction(MainWindow)
         self.add_files_action.setObjectName("add_files_action")
         self.menu_file.addAction(self.add_files_action)
