@@ -1,7 +1,78 @@
 import json
 
 from .view import Window, View
+from .animate import Direction, BounceBall
 from . import widget, DOCS
+
+
+class Splash(widget.PrimaryFrame):
+
+    with (DOCS / 'questions.json').open() as fp:
+        questions = json.load(fp)
+
+    def init(self):
+        self.intro = Intro(self, bg='gray')
+
+        self.btn_confirm = widget.PrimaryButton(
+            self.intro.window, command=self.switch, text='Okay'
+        )
+        self.update()
+
+    def build(self):
+        self.update()
+        self.intro.pack(fill='both', expand=True)
+        self.intro.build()
+        self.bounce(
+            View(self.intro.window, window=self.btn_confirm)
+        )
+
+    def bounce(self, view):
+        self.update()
+        start = view.master.center + (Direction.LEFT * 175) + (Direction.DOWN * 100)
+        wid = view.master.set_view(view, start)
+        motion = BounceBall(view.master, wid, view.master.origin, speed=6)
+        motion.kick(Direction.UP)
+        self.after(0, view.master.run, motion)
+
+    def switch(self):
+        self.master.master.switch()
+
+    def cleanup(self):
+        self.intro.cleanup()
+
+
+class Intro(widget.PrimaryFrame):
+    intro = (DOCS / 'intro.txt').read_text()
+
+    def init(self):
+        self.window = Window(self)
+        self.window.pack(expand=True, fill='both')
+        self.update()
+
+        width = self.winfo_reqwidth()
+        self.title = View(
+            self.window,
+            text=self.master.master.master.title(),  # yikes
+            font=('Courier', 17),
+            width=width, justify='center'
+        )
+        self.intro = View(
+            self.window,
+            text=self.intro,
+            width=width,
+            font=('sys', 12), justify='center'
+        )
+
+    def build(self):
+        self.update()
+        adjust = (Direction.LEFT * 175) + (Direction.DOWN * 100)
+
+        self.window.set_view(self.title)
+        self.window.set_view(self.intro, self.window.center + adjust)
+        self.update()
+
+    def cleanup(self):
+        self.window.animater.clear()
 
 
 class Question(widget.PrimaryFrame):
@@ -23,34 +94,4 @@ class Question(widget.PrimaryFrame):
             val.pack(side='left')
 
         self.title.pack(fill='both', expand=True)
-        self.choices.pack(fill='both', expand=True)
-
-
-class Splash(widget.PrimaryFrame):
-
-    intro = (DOCS / 'intro.txt').read_text()
-    with (DOCS / 'questions.json').open() as fp:
-        questions = json.load(fp)
-
-    def init(self):
-        self.title = widget.PrimaryLabel(
-            self, text=self.master.master.title(),
-            font=('Courier', 14), wraplength=300
-        )
-
-        self.window = Window(self, bg='gray')
-        self.intro = View(
-            self.window,
-            text=self.intro,
-            width=self.window.winfo_reqwidth(),
-            font=('sys', 10), justify='center'
-        )
-        self.window.set_view(self.intro)
-
-        self.btn_confirm = widget.PrimaryButton(self, command=self.begin, text='Okay')
-
-        self.title.pack(fill='x', pady=20)
-        self.btn_confirm.pack(side='bottom', expand=True)
-
-    def begin(self):
-        pass
+self.choices.pack(fill='both', expand=True)
