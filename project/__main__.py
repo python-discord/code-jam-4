@@ -2,6 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from project.services.location import get_similar_location
 from project.services.weather import ForecastFetcher
+import random
 
 
 class Weatherh8su:
@@ -94,9 +95,19 @@ class Weatherh8su:
         Called with someone presses the
         `enter`-button.
         """
-
+        # Get the search string
         search_string = self.search_bar.get()
-        location = get_similar_location(search_string)
+
+        # 50% of getting the wrong intended location:
+        if random.choice([0, 1]) == 1:
+            location = get_similar_location(search_string)
+        else:
+            location = search_string
+
+        # Show where we actually searched to the end user
+        self.show_location_name(location)
+
+        # Fetch the weather for the next 7 days:
         weather = ForecastFetcher("OWM_API_KEY")
         weather = weather.fetch_forecast_7_days(location, "random")
 
@@ -105,6 +116,7 @@ class Weatherh8su:
         tomorrow = weather[0]
         todays_weather = today['weather_status']
 
+        # Change content for the content boxes
         self.todays_content.config(
             text=f"Day temperature: {today['day temperature']}\n"
             f" Evening temperature: {today['evening temperature']}\n"
@@ -119,7 +131,7 @@ class Weatherh8su:
         )
 
         # Also change the background:
-        todays_weather(todays_weather)
+        self.change_background(todays_weather)
 
     def change_background(self, which_image: str):
         """
@@ -128,6 +140,13 @@ class Weatherh8su:
         # if which_image.lower() is "clear", snow, and so on..
         # change background image to x
         # else: take random image
+
+    def show_location_name(self, location_name: str):
+        """
+        Show the end user where the weather is from
+        :param location_name: For instance Oslo, Norway
+        """
+        # Add code to show this to the end user here
 
 
 root = tk.Tk()
