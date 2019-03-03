@@ -253,13 +253,10 @@ class AddEventPage(tk.Frame):
                     letter.lower() in self.nameEntry.get("1.0", tk.END)
                     for letter in string.ascii_lowercase)):
             self.parent.dbh.addEvent(
-                translate(
-                    self.nameEntry.get("1.0", tk.END)),
-                translate(
-                    self.locationEntry.get("1.0", tk.END)),
+                self.nameEntry.get("1.0", tk.END),
+                self.locationEntry.get("1.0", tk.END),
                 ".".join(dateList),
-                translate(
-                    self.descriptionEntry.get("1.0", tk.END)))
+                self.descriptionEntry.get("1.0", tk.END))
 
         else:
             messagebox.showinfo(
@@ -312,11 +309,12 @@ class CalendarPage(tk.Frame):
             self.parent.change_page(HomePage))
 
         self.back.grid(sticky="W")
+        self.grid_columnconfigure(0, weight=1)
         # Fetch all events
+
         events = self.parent.dbh.fetchEvents()
         # Event format:
         # (ID, name, location, Date, description)--
-        self.grid_columnconfigure(0, weight=1)
 
         self.event_viewer = EventViewer(self)
         self.event_viewer.grid(row=10, column=0)
