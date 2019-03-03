@@ -281,7 +281,7 @@ class EditorWindow(tk.Toplevel):
     def delete_selected_text(self, backspace=True):
         """
         Deletes any selected text.
-        If nothing is selected, and backspace is set to True, then delete's the
+        If nothing is selected, and backspace is set to True, then deletes the
         character behind the cursor.
 
         :param backspace: If True, when no text is selected, the character
