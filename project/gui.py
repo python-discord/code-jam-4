@@ -49,6 +49,10 @@ class MinesweeperApp(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(self, 'Too little mines',
                                           'You need to have atleast 1 mine')
             return
+        elif width < 5 or height < 5:
+            QtWidgets.QMessageBox.warning(self, 'Grid too small',
+                                          'Smallest grid is 5x5')
+            return
         self.minesweeper = Minesweeper(width, height, mines, parent=self)
         self.minesweeper.setup_gui()
         self.minesweeper.game_over.connect(self.minesweeper_end_button)
