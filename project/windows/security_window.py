@@ -35,6 +35,9 @@ Confirm:"""
         if new_password == self.password_confirm.get():
             self.new_password = new_password
 
+            #output is self.new_password
+            #password input is to be added, but will replace "squid"
+
 
 security_root = tk.Tk()
 security_root.geometry('280x85')
