@@ -198,12 +198,14 @@ def misspell(word, errors=1):
             else:
                 possible = consonants.replace_middle[grapheme.phoneme]
 
-            possible = {k: v for k, v in possible.items() if k != grapheme.letters}
-
-            if len(possible.keys()) == 0:
-                final_word += grapheme.letters
-            else:
+            possible = {
+                k: v for k, v in possible.items() if k != grapheme.letters
+            }
+            try:
                 final_word += random_consonant(possible)
+
+            except TypeError:
+                break
 
             current_consonant += 1
 
