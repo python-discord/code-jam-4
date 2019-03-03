@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import messagebox
 from ..backend.DBHandler import DBHandler
 from .eventViewer import EventViewer
-import string, random
+import string
 from ..backend.utils.translator import translate
 
 
