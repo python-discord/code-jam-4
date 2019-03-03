@@ -27,7 +27,7 @@ QLCDNumber{
     color: red;
 }
 
-QFrame#game{
+QFrame#game, QMainWindow{
     background: #232323;
 }
 
@@ -38,4 +38,24 @@ QPushButton#tile{
 
 QPushButton#tile:hover{
     background: #484168;
+}
+
+QLabel#title{
+    color: #8777c4;
+}
+
+QPushButton#menuButton{
+    background: #8777c4;
+    color: #fff;
+    border: none;
+    padding: 0.3em 1em;
+    border-radius: 3px;
+}
+
+QPushButton#menuButton:hover{
+    background: #7a6daf;
+}
+
+QMessageBox QLabel{
+    color: black;
 }

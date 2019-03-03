@@ -11,9 +11,11 @@ class MinesweeperApp(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Minesweeper')
+        self.setWindowIcon(QtGui.QIcon(':/images/mine.png'))
         self.setup_ui()
 
     def setup_ui(self):
+        '''Setup UI for main application'''
         self.stack_widget = QtWidgets.QStackedWidget()
 
         # Main Menu Widget
@@ -21,14 +23,27 @@ class MinesweeperApp(QtWidgets.QMainWindow):
         self.home_screen.start_button.clicked.connect(self.start_game)
         self.stack_widget.addWidget(self.home_screen)
 
-        # Minesweeper Widget
-        self.minesweeper = Minesweeper()
-        self.stack_widget.addWidget(self.minesweeper)
-
         self.setCentralWidget(self.stack_widget)
+        self.load_css()
+
+    def load_css(self):
+        '''Loads a CSS file and loads it into the Minesweeper widget'''
+        css_file = os.path.join(os.path.dirname(__file__), 'theme.css')
+        with open(css_file) as file:
+            self.setStyleSheet(file.read())
 
     def start_game(self):
+        # Minesweeper Widget
+        width = int(self.home_screen.set_width_input.text())
+        height = int(self.home_screen.set_height_input.text())
+        mines = int(self.home_screen.set_mines_input.text())
+        if width * height <= mines:
+            QtWidgets.QMessageBox.warning(self, 'Too many mines',
+                                          'The amount of mines you entered is too big for the grid')
+            return
+        self.minesweeper = Minesweeper(width, height, mines)
         self.minesweeper.setup_gui()
+        self.stack_widget.addWidget(self.minesweeper)
         self.stack_widget.setCurrentWidget(self.minesweeper)
 
 
@@ -44,6 +59,8 @@ class MenuWidget(QtWidgets.QWidget):
 
     def setup_gui(self):
         layout = QtWidgets.QVBoxLayout()
+        layout.setContentsMargins(96, 32, 96, 32)
+        layout.setSpacing(32)
         layout.setAlignment(QtCore.Qt.AlignHCenter)
         form_layout = QtWidgets.QFormLayout()
 
@@ -51,6 +68,7 @@ class MenuWidget(QtWidgets.QWidget):
         font.setPointSize(14)
         title_label = QtWidgets.QLabel('Minesweeper Game')
         title_label.setFont(font)
+        title_label.setObjectName("title")
         font.setPointSize(10)
         width_label = QtWidgets.QLabel('Grid Width: ')
         width_label.setFont(font)
@@ -61,24 +79,28 @@ class MenuWidget(QtWidgets.QWidget):
 
         self.onlyInt = QtGui.QIntValidator()
 
-        self.set_width_input = QtWidgets.QLineEdit('24')
+        self.set_width_input = QtWidgets.QLineEdit('16')
         self.set_width_input.setMaxLength(2)
         self.set_width_input.setFixedWidth(30)
         self.set_width_input.setValidator(self.onlyInt)
-        self.set_height_input = QtWidgets.QLineEdit('24')
+        self.set_height_input = QtWidgets.QLineEdit('16')
         self.set_height_input.setMaxLength(2)
         self.set_height_input.setFixedWidth(30)
         self.set_height_input.setValidator(self.onlyInt)
-        self.set_mines_input = QtWidgets.QLineEdit('99')
-        self.set_mines_input.setMaxLength(2)
+        self.set_mines_input = QtWidgets.QLineEdit('64')
+        self.set_mines_input.setMaxLength(3)
         self.set_mines_input.setFixedWidth(30)
         self.set_mines_input.setValidator(self.onlyInt)
-        self.start_button = QtWidgets.QPushButton('Start')
 
         form_layout.addRow(width_label, self.set_width_input)
         form_layout.addRow(height_label, self.set_height_input)
         form_layout.addRow(mines_label, self.set_mines_input)
         form_layout.setFormAlignment(QtCore.Qt.AlignCenter)
+        form_layout.setSpacing(5)
+
+        self.start_button = QtWidgets.QPushButton('Start')
+        self.start_button.setFont(font)
+        self.start_button.setObjectName("menuButton")
 
         layout.addWidget(title_label)
         layout.setAlignment(title_label, QtCore.Qt.AlignCenter)
@@ -236,7 +258,7 @@ class Minesweeper(QtWidgets.QWidget):
         for row in range(1, self.grid_height+1):
             row_array = [None]
             for column in range(1, self.grid_width+1):
-                button = Tile(random.randint(1, 1))
+                button = Tile(random.randint(1, 1)) #TODO MAKE SURE THIS IS CHANGED TO A HIGH NUMBER
                 button.clicked.connect(partial(self.button_clicked, row, column))
                 button.right_clicked.connect(partial(self.place_flag, row, column))
                 button.health_decreased.connect(partial(self.button_health_update, row, column))
@@ -249,7 +271,6 @@ class Minesweeper(QtWidgets.QWidget):
         self.window_layout.addWidget(self.game_frame)
         self.window_layout.addWidget(self.score_frame)
         self.setLayout(self.window_layout)
-        self.load_css()
 
     def show_click_modal(self):
         '''Shows a floating modal widget in the center of the screen which tells you
@@ -271,7 +292,7 @@ class Minesweeper(QtWidgets.QWidget):
 
         if self.game_over_modal is None:
             self.game_over_modal = MinesweeperModal('GAME OVER', self)
-            self.game_over_modal.close_button.clicked.connect(self.modal_closed)
+            self.game_over_modal.close_button.clicked.connect(self.end_game)
             self.game_over_modal.move(self.rect().center() - self.game_over_modal.rect().center())
 
         self.beep_sound.play()
@@ -279,17 +300,15 @@ class Minesweeper(QtWidgets.QWidget):
         self.game_over_modal.raise_()
         self.game_frame.setDisabled(True)
 
+    def end_game(self):
+        '''This event is called when the game ends'''
+        pass
+
     def modal_closed(self):
         '''This action is called when a modal is closed'''
         self.game_over_modal.setHidden(True)
         self.too_fast_modal.setHidden(True)
         self.game_frame.setDisabled(False)
-
-    def load_css(self):
-        '''Loads a CSS file and loads it into the Minesweeper widget'''
-        css_file = os.path.join(os.path.dirname(__file__), 'theme.css')
-        with open(css_file) as file:
-            self.setStyleSheet(file.read())
 
     def refresh_gui(self):
         '''Refresh the GUI to match the same grid on the minesweeper controller'''
@@ -413,7 +432,6 @@ class DelayMineExplosionThread(QtCore.QThread):
     def run(self):
         '''Shuffles and emits the signals for exploding'''
         random.shuffle(self.positions)
-        print(self.positions)
         self.positions.remove(self.first)
         self.positions.insert(0, self.first)
         bomb_number = len(self.positions)
