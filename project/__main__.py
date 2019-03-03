@@ -3,7 +3,8 @@ from tkinter import messagebox as mb
 
 
 def protocal():
-    return protical()
+    mb.askyesno(None, "Are you sure you want to quit?")
+    return protocal()
 
 if __name__ == "__main__":
     app = Application()

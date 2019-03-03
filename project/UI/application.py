@@ -3,7 +3,8 @@ import tkinter as tk
 from tkinter import messagebox
 from ..backend.DBHandler import DBHandler
 from .eventViewer import EventViewer
-import string
+import string, random
+from ..backend.utils.translator import translate
 
 
 class Application(tk.Tk):
@@ -120,8 +121,7 @@ class AddEventPage(tk.Frame):
             "9": 30,
             "10": 31,
             "11": 30,
-            "12": 31
-        }
+            "12": 31}
 
     def create_widgets(self):
         """
@@ -168,20 +168,23 @@ class AddEventPage(tk.Frame):
                                      width=14,
                                      from_=1,
                                      to=31,
-                                     bg="#000000")
+                                     bg="#000000",
+                                     fg="#464646",)
 
         self.timeEntryM = tk.Spinbox(self.dateSpinBoxs,
                                      width=15,
                                      from_=1,
                                      to=12,
-                                     bg="#000000")
+                                     bg="#000000",
+                                     fg="#464646",)
 
-        self.timeEntryY = tk.Spinbox(
-            self.dateSpinBoxs,
-            width=14,
-            from_=2019,
-            to=3000,
-            bg="#000000")
+        self.timeEntryY = tk.Spinbox(self.dateSpinBoxs,
+                                     width=14,
+                                     from_=2019,
+                                     to=3000,
+                                     bg="#000000",
+                                     fg="#464646")
+
         self.timeEntryD.grid(row=3, column=1)
         self.timeEntryM.grid(row=3, column=2)
         self.timeEntryY.grid(row=3, column=3)
@@ -194,7 +197,8 @@ class AddEventPage(tk.Frame):
         self.description.grid(row=4, sticky="N")
         self.descriptionEntry = tk.Text(
             self, height=20,
-            width=49, bg="#000000")
+            width=49, bg="#000000",
+            fg="#464646")
         self.descriptionEntry.grid(row=4, column=1)
 
         # Submit Button
@@ -249,10 +253,13 @@ class AddEventPage(tk.Frame):
                     letter.lower() in self.nameEntry.get("1.0", tk.END)
                     for letter in string.ascii_lowercase)):
             self.parent.dbh.addEvent(
-                self.nameEntry.get("1.0", tk.END),
-                self.locationEntry.get("1.0", tk.END),
+                translate(
+                    self.nameEntry.get("1.0", tk.END)),
+                translate(
+                    self.locationEntry.get("1.0", tk.END)),
                 ".".join(dateList),
-                self.descriptionEntry.get("1.0", tk.END))
+                translate(
+                    self.descriptionEntry.get("1.0", tk.END)))
         else:
             messagebox.showinfo(
                 "Missing arguments",
@@ -301,6 +308,7 @@ class CalendarPage(tk.Frame):
         self.back = tk.Button(
             self,
             text="Back",
+            bg="#000000",
             command=lambda:
             self.parent.change_page(HomePage))
 
