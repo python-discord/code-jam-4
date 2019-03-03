@@ -44,7 +44,7 @@ Keep track of your contact information using the Durable Drills Contact Managerâ
 
 Using the Contact Manager is simple:
   - To load in your current contacts, press 'Load Contacts' in the 'View Contacts' tab
-  - to save your current list of contacts, press 'Save Contacts'
+  - To save your current list of contacts, press 'Save Contacts'
   - To view the information of a specific contact, select that contact and press 'Show Info', then spin the Wheelâ„¢ to determine what info you can see
   - To delete a specific contact, select that contact then press 'Delete'
   
