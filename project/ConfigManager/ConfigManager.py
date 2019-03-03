@@ -1,4 +1,5 @@
 import configparser
+import json
 
 from project.utils import CONSTANTS
 
@@ -10,7 +11,7 @@ class ConfigManager:
 
     @staticmethod
     def get_instance():
-        """Static access method."""
+        """Singleton access method."""
         if ConfigManager.__instance is None:
             ConfigManager()
         return ConfigManager.__instance
@@ -35,6 +36,8 @@ class ConfigManager:
         self._config.set('settings', 'auto_load_top', 'true')
 
         self._config.set('plugin_settings', 'chain_all_plugins', 'false')
+        self._config.set('plugin_settings', 'disabled_text_plugins', json.dumps([]))
+        self._config.set('plugin_settings', 'disabled_image_plugins', json.dumps([]))
 
         self.save()
 
@@ -69,6 +72,42 @@ class ConfigManager:
     @chain_all_plugins.setter
     def chain_all_plugins(self, value: bool):
         self._config['plugin_settings']['chain_all_plugins'] = 'true' if value else 'false'
+
+    @property
+    def disabled_text_plugins(self):
+        return json.loads(self._config.get('plugin_settings', 'disabled_text_plugins'))
+
+    @disabled_text_plugins.setter
+    def disabled_text_plugins(self, plugin_names: [str]):
+        self._config['plugin_settings']['disabled_text_plugins'] = json.dumps(plugin_names)
+
+    def disable_text_plugin(self, text_plugin_name: str):
+        if text_plugin_name not in self.disabled_text_plugins:
+            self.disabled_text_plugins = self.disabled_text_plugins + [text_plugin_name]
+
+    def enable_text_plugin(self, text_plugin_name):
+        _temp = self.disabled_text_plugins
+        if text_plugin_name in _temp:
+            _temp.remove(text_plugin_name)
+            self.disabled_text_plugins = _temp
+
+    @property
+    def disabled_image_plugins(self):
+        return json.loads(self._config.get('plugin_settings', 'disabled_image_plugins'))
+
+    @disabled_image_plugins.setter
+    def disabled_image_plugins(self, plugin_names: [str]):
+        self._config['plugin_settings']['disabled_image_plugins'] = json.dumps(plugin_names)
+
+    def disable_image_plugin(self, image_plugin_name: str):
+        if image_plugin_name not in self.disabled_text_plugins:
+            self.disabled_image_plugins = self.disabled_image_plugins + [image_plugin_name]
+
+    def enable_image_plugin(self, image_plugin_name):
+        _temp = self.disabled_image_plugins
+        if image_plugin_name in _temp:
+            _temp.remove(image_plugin_name)
+            self.disabled_image_plugins = _temp
 
     def save(self):
         with open(CONSTANTS['CONFIG_FILE_LOCATION'], 'w') as file:

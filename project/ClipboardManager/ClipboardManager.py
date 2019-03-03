@@ -20,7 +20,7 @@ class ClipboardManager(QObject):
         super().__init__()
         self._logger = logging.getLogger(self.__class__.__qualname__)
 
-        self._plugin_manager = PluginManager()
+        self._plugin_manager = PluginManager.get_instance()
         self._clipboard_state_callback = None
         self._last_text = None
         self._last_image = None

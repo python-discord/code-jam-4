@@ -14,6 +14,7 @@ from project.Plugins.Systray import SystemTrayIcon
 from project.Stack import Stack
 from project.Widgets import MainListWidget, TextListWidgetItem
 from project.Widgets.MainListWidget import ImageListWidgetItem
+from project.Widgets.PluginsScreen import PluginsScreen
 from project.Widgets.SettingsScreen import SettingsScreen
 from project.TextEditor import Editor
 
@@ -103,6 +104,8 @@ class MainWindow(QMainWindow):
 
         self._settings_screen = SettingsScreen(self)
 
+        self._plugins_screen = PluginsScreen(self)
+
         self._init_ui()
 
     @pyqtSlot(int)
@@ -126,7 +129,7 @@ class MainWindow(QMainWindow):
         self._settings_screen.show()
 
     def _show_plugins_window(self):
-        pass
+        self._plugins_screen.show()
 
     @pyqtSlot(Stack)
     def _render_clipboard_stack(self, clipboard_stack: Stack):

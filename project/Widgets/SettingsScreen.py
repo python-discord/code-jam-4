@@ -31,7 +31,8 @@ class SettingsScreen(QMainWindow):
 
     def __init__(self, parent=None):
         super(SettingsScreen, self).__init__(parent)
-        self.setWindowTitle("Settings")
+
+        self.setWindowTitle('Settings')
         _config_mgr = ConfigManager.get_instance()
 
         self._dirty = False  # Changed settings but not saved
@@ -74,3 +75,5 @@ class SettingsScreen(QMainWindow):
 
         self._central_widget.setLayout(self._central_widget_layout)
         self.setCentralWidget(self._central_widget)
+
+        # self.setFixedSize(self.size())
