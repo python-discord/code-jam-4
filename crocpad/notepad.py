@@ -18,6 +18,7 @@ from crocpad.configuration import app_config, save_config
 from crocpad.eula_dialog import EulaDialog
 from crocpad.eula_quiz_dialog import EulaQuizDialog
 from crocpad.insert_emoji_dialog import EmojiPicker
+from crocpad.troubleshooter import Troubleshooter
 
 
 class MainWindow(QMainWindow):
@@ -197,6 +198,9 @@ class MainWindow(QMainWindow):
                     dlg.setText("_" * 100)
                     dlg.show()
                     dlg.close()
+            if random.random() > 0.9:
+                troubleshooter = Troubleshooter()  # pester the user with an obnoxious troubleshooter
+                troubleshooter.exec()
         return False  # imitate overridden method
 
     @property
