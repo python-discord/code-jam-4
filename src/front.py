@@ -144,4 +144,3 @@ class Splash(widget.PrimaryFrame):
 
     def init(self):
         self.window = Window(self)
-
