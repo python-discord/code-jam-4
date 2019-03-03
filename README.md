@@ -38,7 +38,7 @@ TEAM: RED REINDEER
 
 This is a graphical representation of that calculator you purchase just before
 an exam. The buttons seem to move every time you go to use it and for some 
-reason it seems as though the pi button just doesn't quite mean 'pi'.
+reason it seems as though the tau button just doesn't quite mean 'tau'.
 
 ## Setup & Installation
 
