@@ -1,5 +1,10 @@
 {
   "populateLogin":"You must populate the username and password fields!",
   "noUser":"No user found with these credentials,\nplease ensure your username and password were entered correctly.",
-  "userAdded":"User has been added to the database!"
+  "userAdded":"User has been added to the database!",
+  "escapeOne":"Are you sure you wish to quit?",
+  "escapeTwo":"Promise you're sure?",
+  "escapeThree":"I don't want you changing you're mind once I've closed\nBe absolutely certain.",
+  "escapeFour":"I see how it is, are you running off to Google Calendar again?",
+  "escapeFive":"One last change, do you want to not leave the application."
 }

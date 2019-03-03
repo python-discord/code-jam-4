@@ -1,9 +1,10 @@
 """Green Greenhouses Calendar Application."""
 import tkinter as tk
 from tkinter import messagebox
+import string
+import json
 from ..backend.DBHandler import DBHandler
 from .eventViewer import EventViewer
-import string
 from .userHandling import Register, Login
 
 
@@ -13,6 +14,7 @@ class Application(tk.Tk):
     def __init__(self):
         """Initialise Application class."""
         super().__init__()
+        self.grid_columnconfigure(0, weight=1000)
 
         self.resizable(False, False)
         self.geometry("500x500")
@@ -25,7 +27,26 @@ class Application(tk.Tk):
 
         self.tk_setPalette(background="#F0F0F0", foreground="#000000")
         self.dark_mode = False
-        self.bind("q", self.switch)
+        self.bind("d", self.switch)
+        self.protocol("WM_DELETE_WINDOW", self.close_window)
+
+    def close_window(self):
+        with open("./project/backend/utils/jsonMessage.json") as jsonMessages:
+            jsonMessages = json.load(jsonMessages)
+            ttl = "EventManager"
+            if (messagebox.askyesno(
+                    ttl, jsonMessages["escapeOne"])):
+                if (messagebox.askyesno(
+                        ttl, jsonMessages["escapeTwo"])):
+                    if (messagebox.askyesno(
+                            ttl, jsonMessages["escapeThree"])):
+                        if (messagebox.askyesno(
+                                ttl, jsonMessages["escapeFour"])):
+                            if (messagebox.askyesno(
+                                    ttl, jsonMessages["escapeFive"])):
+                                pass
+                            else:
+                                self.quit()
 
     def switch(self, event):
         """Switch the application between light and dark mode."""
@@ -51,7 +72,7 @@ class Application(tk.Tk):
         self.pages[AddEventPage] = AddEventPage(self)
         self.pages[CalendarPage] = CalendarPage(self)
 
-        self.change_page(HomePage)
+        self.change_page(LoginPage)
 
     def change_page(self, new_page):
         """
@@ -64,8 +85,8 @@ class Application(tk.Tk):
         """
         for page in self.grid_slaves():
             page.grid_remove()
-        if new_page is EventViewer:
-            self.parent.pages[CalendarPage].create_widgets()
+        if new_page == CalendarPage:
+            self.pages[CalendarPage].get_events()
         self.pages[new_page].grid(column=0, row=0)
 
 
@@ -146,21 +167,21 @@ class HomePage(tk.Frame):
             self, text="Main Menu",
             font=("Helvetica", 24, "bold")
         )
-        self.title.grid(row=0, column=3, pady=(10, 0))
+        self.title.grid(row=0, column=0, pady=(10, 0), sticky="ew")
 
-        self.register = tk.Button(
+        self.view_events = tk.Button(
             self, text="VIEW EVENTS", width=12,
             font=("Arial", 20, "italic"),
-            command=lambda: self.parent.change_page(EventViewer)
+            command=lambda: self.parent.change_page(CalendarPage)
         )
-        self.register.grid(row=5, column=3, pady=100)
+        self.view_events.grid(row=5, column=0, pady=100)
 
-        self.login = tk.Button(
-            self, text="MAKE EVENT", width=12,
+        self.add_event = tk.Button(
+            self, text="ADD EVENT", width=12,
             font=("Arial", 20, "italic"),
             command=lambda: self.parent.change_page(AddEventPage)
         )
-        self.login.grid(row=10, column=3)
+        self.add_event.grid(row=10, column=0)
 
 
 class AddEventPage(tk.Frame):
@@ -320,6 +341,7 @@ class AddEventPage(tk.Frame):
                     if letter.lower() in string.ascii_lowercase)):
             self.parent.dbh.addEvent(
                 self.nameEntry.get("1.0", tk.END),
+                self.parent.dbh.logged_in_user,
                 self.locationEntry.get("1.0", tk.END),
                 ".".join(dateList),
                 self.descriptionEntry.get("1.0", tk.END))
@@ -336,14 +358,6 @@ class AddEventPage(tk.Frame):
 
 class CalendarPage(tk.Frame):
     """Example page for Application."""
-
-    eventLabels = {
-        0: "ID",
-        1: "Name",
-        2: "Location",
-        3: "Date",
-        4: "Description"
-    }
 
     def __init__(self, parent):
         """
@@ -374,11 +388,13 @@ class CalendarPage(tk.Frame):
             command=lambda:
             self.parent.change_page(HomePage))
 
-        self.back.grid(sticky="W")
+        self.back.grid(row=0, column=0, sticky="W")
         self.grid_columnconfigure(0, weight=1)
+
+    def get_events(self):
         # Fetch all events
 
-        events = self.parent.dbh.fetchEvents()
+        events = self.parent.dbh.fetchEvents(self.parent.dbh.logged_in_user)
         # Event format:
         # (ID, name, location, Date, description)--
 

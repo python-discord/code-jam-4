@@ -20,6 +20,7 @@ class DBHandler:
         self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS events(
                 ID INTEGER PRIMARY KEY,
+                userID INTEGER,
                 name TEXT,
                 location TEXT,
                 date TEXT,
@@ -35,7 +36,7 @@ class DBHandler:
 
         self.logged_in_user = None
 
-    def fetchEvents(self):
+    def fetchEvents(self, userID):
         """Fetch event from the database.
 
         Arguments:
@@ -43,12 +44,12 @@ class DBHandler:
         Returns:
             None
         """
-        self.cursor.execute("""SELECT * FROM events""")
+        self.cursor.execute("""SELECT * FROM events WHERE userID = ?""", (userID,))
         # Fetch rows
         rows = self.cursor.fetchall()
         return rows
 
-    def addEvent(self, name, location, date, description):
+    def addEvent(self, name, userID, location, date, description):
         """Create a new event and add it to the database.
 
         Arguments:
@@ -59,12 +60,13 @@ class DBHandler:
         Returns:
             None
         """
-        self.cursor.execute('''INSERT INTO events(name,location,
+        self.cursor.execute('''INSERT INTO events(name,userid,location,
                                                  date,description)
-                                                 VALUES(?,?,?,?)''', (name,
-                                                                      location,
-                                                                      date,
-                                                                      description))
+                                                 VALUES(?,?,?,?,?)''', (name,
+                                                                        userID,
+                                                                        location,
+                                                                        date,
+                                                                        description))
         self.conn.commit()
 
     def removeEvent(self, id):
