@@ -31,6 +31,6 @@ class Loading(PrimaryCanvas):
                 break
             if self.last:
                 self.delete(self.last)
-            self.last = self.create_image(0, 0, image=im, anchor='nw')
+            self.last = self.create_image(-42, 0, image=im, anchor='nw')
             self.update()
             sleep(self.limit)
