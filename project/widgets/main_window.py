@@ -8,6 +8,7 @@ from PySide2.QtWidgets import (
 )
 
 from project import media, ui
+from project.delegates import CurrentMediaDelegate
 from project.widgets.password_prompt import PasswordPrompt
 from project.widgets.seek_dialogue import SeekDialogue
 
@@ -28,6 +29,7 @@ class MainWindow(QMainWindow):
 
         self.playlist_model = self.create_model()
         self.configure_view()
+        self.current_delegate = CurrentMediaDelegate()
 
         self.player = media.Player(self.playlist_model)
         self.player.durationChanged.connect(self.ui.seek_slider.setMaximum)
@@ -35,6 +37,13 @@ class MainWindow(QMainWindow):
         self.player.positionChanged.connect(self.ui.seek_slider.setValue)
         self.player.positionChanged.connect(self.update_time_remaining)
         self.player.stateChanged.connect(self.toggle_button_text)
+
+        # Style the current row
+        header = self.ui.playlist_view.horizontalHeader()
+        header.sortIndicatorChanged.connect(self.style_current_row)
+        self.player.currentMediaChanged.connect(self.style_current_row)
+        self.player.media_added.connect(self.style_current_row)
+        self.player.media_removed.connect(self.style_current_row)
 
         self.ui.seek_slider.mousePressEvent = self.seek_slider_pressed  # Override the event
 
@@ -158,6 +167,26 @@ class MainWindow(QMainWindow):
             self.ui.play_button.setText("Play")
         else:
             self.ui.play_button.setText("Pause")
+
+    def style_current_row(self, *args):
+        """Set a custom delegate for the row corresponding to the current media."""
+        current_row = self.player.playlist().currentIndex()
+        log.debug(
+            f"current_row {current_row}; "
+            f"current_media {self.player.playlist()._current_media}; "
+            f"mediaCount {self.player.playlist().mediaCount()}; "
+            f"model count {self.playlist_model.rowCount()}"
+        )
+
+        # Clear custom delegate from any other rows
+        for row in range(self.playlist_model.rowCount()):
+            self.ui.playlist_view.setItemDelegateForRow(row, None)
+
+        if current_row == -1:
+            return
+
+        # TODO: Clear delegate for previous row
+        self.ui.playlist_view.setItemDelegateForRow(current_row, self.current_delegate)
 
     def add_files(self, checked: bool = False):
         """Show a file dialogue and add selected files to the playlist."""

@@ -5,7 +5,7 @@ import subprocess
 from pathlib import Path
 from typing import Any, Dict, Iterable
 
-from PySide2.QtCore import QUrl
+from PySide2.QtCore import QUrl, Signal
 from PySide2.QtMultimedia import QMediaContent, QMediaPlayer
 from PySide2.QtSql import QSqlRecord, QSqlTableModel
 
@@ -85,6 +85,9 @@ def _parse_media(path: str) -> Dict[str, Any]:
 
 
 class Player(QMediaPlayer):
+    media_added = Signal()
+    media_removed = Signal()
+
     def __init__(self, model: QSqlTableModel, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -167,6 +170,8 @@ class Player(QMediaPlayer):
             media = QMediaContent(QUrl.fromLocalFile(path))
             self.playlist().addMedia(media, media_id)
 
+        self.media_added.emit()
+
     def remove_media(self, row: int) -> bool:
         # TODO: Let's just hope the commits and rollbacks always succeed for now...
         self._model.database().transaction()
@@ -181,6 +186,7 @@ class Player(QMediaPlayer):
 
         if self._model.submitAll():
             self._model.database().commit()
+            self.media_removed.emit()
             return True
         else:
             log.error(f"Failed to remove media at row {row}: could not submit changes.")
