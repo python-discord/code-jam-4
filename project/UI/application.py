@@ -243,21 +243,15 @@ class AddEventPage(tk.Frame):
 
         if (
                 any(
-                    letter for letter in self.descriptionEntry.get(
-                        "1.0",
-                        tk.END)
-                    if letter.lower() in string.ascii_lowercase) and
+                    letter.lower() in self.descriptionEntry.get("1.0", tk.END)
+                    for letter in string.ascii_lowercase) and
                 any(
-                    letter for letter in self.locationEntry.get(
-                        "1.0",
-                        tk.END)
-                    if letter.lower() in string.ascii_lowercase) and
+                    letter.lower() in self.locationEntry.get("1.0", tk.END)
+                    for letter in string.ascii_lowercase) and
                 self.IsDaysCorrect(dateList) and
                 any(
-                    letter for letter in self.nameEntry.get(
-                        "1.0",
-                        tk.END)
-                    if letter.lower() in string.ascii_lowercase)):
+                    letter.lower() in self.nameEntry.get("1.0", tk.END)
+                    for letter in string.ascii_lowercase)):
             self.parent.dbh.addEvent(
                 self.nameEntry.get("1.0", tk.END),
                 self.locationEntry.get("1.0", tk.END),
