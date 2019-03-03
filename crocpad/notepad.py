@@ -30,6 +30,7 @@ class MainWindow(QMainWindow):
 
         # Set up the QTextEdit editor configuration
         self.text_window = QPlainTextEdit()  # the actual editor pane
+        self.text_window.setTabStopWidth(800)  # Set the tabstop to a nice pretty 800 pixels
         fixedfont = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         fixedfont.setPointSize(24)
         self.text_window.setFont(QFont('Comic Sans MS', 30))
@@ -101,6 +102,11 @@ class MainWindow(QMainWindow):
         font_menu = QAction("Chang&e Font", self)
         font_menu.triggered.connect(self.change_font)
         tools_menu.addAction(font_menu)
+        wrap_action = QAction("Toggl&e Line Wrap", self)
+        wrap_action.setCheckable(True)
+        wrap_action.setChecked(True)
+        wrap_action.triggered.connect(self.edit_toggle_wrap)
+        tools_menu.addAction(wrap_action)
 
         # Edit menu
         action_insert_symbol = QAction("Ins&ert symbol", self)
