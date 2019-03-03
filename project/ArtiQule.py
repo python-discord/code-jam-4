@@ -67,7 +67,6 @@ class ColorBox(QMainWindow):
                     )
 
 
-
 class Tool:
     def __init__(self, toolName, brushSize, color,
                  paintPattern, PaintBoard, iconPath, shortcut, statusTip,
@@ -136,12 +135,15 @@ class PalletteButton:
         # TODO: pallette will become empty after being used X amount of times
 
     def mixColor(self, tool):
+        
         """Mixes colors from tool holding the color
            NO COLOR IN TOOL: Pick up color pallette color
                IS TOOL BUCKET: empties palette
            COLOR IN TOOL: Mix pallette and tool color;
                IS BUCKET: mixes
         """
+        if tool is not None:
+            print(tool.toolName)
         if tool is None or tool.toolName in \
                 ("Pointy Pen", "Pointy Pen Broken", "Sunbathing Eraser"):
             return None
@@ -352,12 +354,13 @@ class PaintBoard(QMainWindow):
         }
 
         style_sheet_str = "background-color: rgba{0}; border-radius:20px"
-
+        print(PalletteButtons)
         for button_index in range(number_of_buttons):
             c = list(PalletteButtons.keys())[button_index]
             p = PalletteButtons[list(PalletteButtons.keys())[button_index]]
             p.setStyleSheet(style_sheet_str.format(c.palletteColor))
-            p.clicked.connect(lambda: c.mixColor(self.currentTool))
+            # set the default value of c to c because otherwise it will always look up the newest value
+            p.clicked.connect(lambda state, c=c: c.mixColor(self.currentTool))
             self.colorBox.addPallette(p)
 
         # showing toolBox
