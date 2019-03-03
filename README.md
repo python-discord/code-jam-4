@@ -30,16 +30,27 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 
 # Project Information
 
-High Houses for the win!!!
+High Tech Keyboard (HTT), a High Houses company (of the Adorable corperation)
 
 ## Description
 
-`# TODO`
+"Hello there! This is the High Tech Text Editor. Did you know that the first keyboard was invented in 1868? That was a long time ago!
+
+Here at Adorable Laboratories, we don't live in 1868 anymore, so we believe in giving our users more modern features than they could ever need. And when you think of modern, accessible, and afforadable, what first comes to mind?  Why lootboxes, of course!
+
+Therefore, we are proud to introduce the first high-tech, personalized onscreen keyboard text editor with a built-in progression system! Go ahead, check it out!
 
 ## Setup & Installation
 
-`# TODO`
+Do to difficulties installing PyAudio with pip, there are some additional steps you may need to take if you encounter an error.
+If you are using Windows x32, you can run `pipenv install --dev` and then `pipenv run start`.
+If you are using a different OS, or if you are unable to run the pipenv install, you must manually install the dependencies found in the Pipfile and run project/__main__.py instead.
+PyAudio installation instructions for your OS can be found at the [PyAudio Homepage](https://people.csail.mit.edu/hubert/pyaudio/).
 
 ## How do I use this thing?
 
-`# TODO`
+Our tutorial will guide you! Here's a brief rundown:
+* Type words to get XP!
+* Use XP to unlock lootboxes!
+* Open lootboxes to get more keyboard keys!
+* Use new keyboard keys to type new words!
