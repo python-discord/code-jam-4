@@ -18,16 +18,14 @@ class ForecastFetcher:
     ff.fetch_forecast_7_days('Berlin', unit='Celsius')
 
     """
-    def __init__(self, api_key_path: str):
+    def __init__(self):
         """Returns a ForecastFetcher object which fetched the weather for the
            next seven days.
 
-        :param: api_key_path: The path to a file with an API key for the
-            openweathermap.org service.
 
         """
 
-        api_key = load_owm_api_key(api_key_path)
+        api_key = load_owm_api_key()
         self.owm = pyowm.OWM(api_key)
 
         try:
@@ -91,11 +89,10 @@ def format_forecast(weather: Weather, unit: str) -> Dict[str, str]:
     return output_dict
 
 
-def load_owm_api_key(path: str) -> str:
-    """Loads the Open-Weather-Map API key from the provided file.
+def load_owm_api_key() -> str:
+    """Loads the Open-Weather-Map API key.
 
-    :param path: The path to the OWM_API_KEY, defaults to just OWM_API_KEY.
     :return The api key as a string
     """
-    with open(path, 'r') as infile:
+    with open("OWM_API_KEY") as infile:
         return infile.read().strip()
