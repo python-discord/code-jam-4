@@ -8,12 +8,14 @@ from crocpad.ui.emoji_picker import Ui_EmojiPicker
 class EmojiPicker(QDialog, Ui_EmojiPicker):
     """Wrapper for the generated Python code of Ui_EmojiPicker.
 
+    Calls the inherited setupUi method to set up the layout that was done in Qt Designer.
     Custom behaviour: show currently dialed symbol, and insert into document.
     """
     def __init__(self, cursor: QCursor):
-        self.cursor = cursor
         super(EmojiPicker, self).__init__()
-        self.setupUi(self)
+        self.setupUi(self)  # inherited method from the Designer file
+
+        self.cursor = cursor
         self.symbol = ''
         self.value = 0
         self.emoji_dial.sliderMoved.connect(self.dial_moved)

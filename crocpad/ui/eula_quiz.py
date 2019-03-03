@@ -203,62 +203,6 @@ class Ui_EulaQuizDialog(object):
         self.retranslateUi(EulaQuizDialog)
         QtCore.QMetaObject.connectSlotsByName(EulaQuizDialog)
 
-        # Crocpad++ modifications below
-        self.submitButton.clicked.connect(self.submitClicked)
-        self.question_1 = QtWidgets.QButtonGroup()
-        self.question_2 = QtWidgets.QButtonGroup()
-        self.question_3 = QtWidgets.QButtonGroup()
-        self.question_4 = QtWidgets.QButtonGroup()
-        self.question_5 = QtWidgets.QButtonGroup()
-        self.question_6 = QtWidgets.QButtonGroup()
-        self.question_1.addButton(self.radioButton_16)
-        self.question_1.addButton(self.quiz1_Correct)
-        self.question_1.addButton(self.radioButton_18)
-        self.question_1.addButton(self.radioButton_19)
-        self.question_1.addButton(self.radioButton_20)
-        self.question_2.addButton(self.radioButton_11)
-        self.question_2.addButton(self.radioButton_12)
-        self.question_2.addButton(self.radioButton_13)
-        self.question_2.addButton(self.radioButton_14)
-        self.question_2.addButton(self.quiz2_Correct)
-        self.question_3.addButton(self.radioButton)
-        self.question_3.addButton(self.radioButton_2)
-        self.question_3.addButton(self.radioButton_3)
-        self.question_3.addButton(self.radioButton_4)
-        self.question_3.addButton(self.quiz3_Correct)
-        self.question_4.addButton(self.radioButton_21)
-        self.question_4.addButton(self.radioButton_22)
-        self.question_4.addButton(self.radioButton_23)
-        self.question_4.addButton(self.radioButton_24)
-        self.question_4.addButton(self.quiz4_Correct)
-        self.question_5.addButton(self.radioButton_26)
-        self.question_5.addButton(self.radioButton_27)
-        self.question_5.addButton(self.quiz5_Correct)
-        self.question_5.addButton(self.radioButton_29)
-        self.question_5.addButton(self.radioButton_30)
-        self.question_6.addButton(self.radioButton_31)
-        self.question_6.addButton(self.radioButton_32)
-        self.question_6.addButton(self.radioButton_33)
-        self.question_6.addButton(self.radioButton_34)
-        self.question_6.addButton(self.quiz6_Correct)
-
-    def submitClicked(self):
-        if self.quiz_correct():
-            dlg = QtWidgets.QMessageBox(self)
-            dlg.setText("Correct. Thank you for using Crocpad++.")
-            dlg.setIcon(QtWidgets.QMessageBox.Critical)
-            dlg.show()
-        self.close()
-
-    def quiz_correct(self):
-        return (self.quiz1_Correct.isChecked() and
-                self.quiz2_Correct.isChecked() and
-                self.quiz3_Correct.isChecked() and
-                self.quiz4_Correct.isChecked() and
-                self.quiz5_Correct.isChecked() and
-                self.quiz6_Correct.isChecked()
-                )
-
     def retranslateUi(self, EulaQuizDialog):
         _translate = QtCore.QCoreApplication.translate
         EulaQuizDialog.setWindowTitle(_translate("EulaQuizDialog", "Quiz"))
