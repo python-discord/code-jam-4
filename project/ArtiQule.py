@@ -123,7 +123,8 @@ class Tool:
 class PalletteButton:
     """Class for color pallete; allows for mixing colors"""
 
-    def __init__(self, parentBtn):
+    def __init__(self, parentBtn, parent):
+        self.parent = parent
         self.parentBtn = parentBtn
         self.r = randint(0, 255)
         self.g = randint(0, 255)
@@ -142,8 +143,7 @@ class PalletteButton:
            COLOR IN TOOL: Mix pallette and tool color;
                IS BUCKET: mixes
         """
-        if tool is not None:
-            print(tool.toolName)
+        
         if tool is None or tool.toolName in \
                 ("Pointy Pen", "Pointy Pen Broken", "Sunbathing Eraser"):
             return None
@@ -173,11 +173,12 @@ class PalletteButton:
             self.palletteColor = (self.r, self.g, self.b, self.alpha)
             tool.color = QColor(self.r, self.g, self.b, self.alpha)
 
-            if tool.toolName == "Straggly PaintBrush" or "Solid Brush":
+            if tool.toolName == "Straggly PaintBrush" or tool.toolName == "Solid Brush":
                 tool.opacityDuration = 1
                 tool.isDipped = True
-            elif tool.toolName == "A bucket" and self.alpha:
+            elif tool.toolName == "A bucket" and self.alpha == 255:
                 """The pallette gets emptied """
+                print("here")
                 self.r = 0
                 self.g = 0
                 self.b = 0
@@ -186,6 +187,7 @@ class PalletteButton:
                                       self.b, self.alpha)
                 tool.toolName = "A bucket filled"
                 tool.PaintBoard.connectTool(tool)
+                self.parent.fill_bucket()
             tool.duration = randint(0, tool.constDuration)
 
         self.parentBtn.setStyleSheet(
@@ -266,7 +268,7 @@ class PaintBoard(QMainWindow):
                          [1, 1, 1, 1], self,
                          'Design/icons/A bucket.png',
                          "CTRL+B", "A bucket",
-                         (1, 1)
+                         (999, 999)
                          )
 
         self.straggly_paintbrush = Tool("Straggly PaintBrush",
@@ -324,12 +326,12 @@ class PaintBoard(QMainWindow):
                     )
                 )
         if self.currentTool is not None:
-            if self.currentTool.toolName != \
-                    "Pointy Pen" or \
-                    "A bucket" or \
-                    "Sunbathing Eraser" or \
-                    "A bucket filled" \
-                    and self.currentTool.isDipped:
+            if self.currentTool.toolName not in [
+                    "Pointy Pen",
+                    "A bucket",
+                    "Sunbathing Eraser",
+                    "A bucket filled"] \
+                        and self.currentTool.isDipped:
                 if hasattr(self, "dripper"):
                     self.dripper.stop()
                 self.dripper = DripperEffect(
@@ -348,13 +350,12 @@ class PaintBoard(QMainWindow):
         self.colorBox.setGeometry(geo)
 
         number_of_buttons = 18
-        PalletteButtons = {PalletteButton(button): button for button in[
+        PalletteButtons = {PalletteButton(button, self): button for button in[
                 QPushButton() for _ in range(number_of_buttons)
             ]
         }
 
         style_sheet_str = "background-color: rgba{0}; border-radius:20px"
-        print(PalletteButtons)
         for button_index in range(number_of_buttons):
             c = list(PalletteButtons.keys())[button_index]
             p = PalletteButtons[list(PalletteButtons.keys())[button_index]]
@@ -365,6 +366,14 @@ class PaintBoard(QMainWindow):
 
         # showing toolBox
         self.colorBox.showColorBox()
+
+    def fill_bucket(self):
+        print("here")
+        self.setCursor(QCursor(
+                QPixmap("Design/icons/{}.png".format("A bucket filled")
+                        )
+                    )
+                )
 
     def dripperHandler(self, result):
         Dripper = result
@@ -406,7 +415,8 @@ class PaintBoard(QMainWindow):
                 if self.currentTool.duration <= 0.0:
                     Pen.setDashPattern([0, 0, 0, 0])
                     self.drawing = False
-                    self.dripper.stop()
+                    if hasattr(self, "dripper"):
+                        self.dripper.stop()
                 else:
                     self.currentTool.duration -= 0.1
                     if "Brush" in self.currentTool.toolName:
