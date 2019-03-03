@@ -374,7 +374,7 @@ class PaintBoard(QMainWindow):
         self.painter.setPen(Dripper)
         point = QPoint(self.cursor().pos().x(), self.cursor().pos().y())
         point = self.mapFromGlobal(point)
-        self.painter.drawLine(point, point)
+        self.painter.drawPoint(point)
         self.update()
 
     def mousePressEvent(self, event):
@@ -541,8 +541,9 @@ class DripperEffect(QThread):
             # 1/3 chance it drips
             if drip_chance < 2:
                 Drip = QPen()
-                Drip.setWidth(self.size)
+                Drip.setCosmetic(True)
                 Drip.setStyle(Qt.DotLine)
+                Drip.setWidth(self.size)
                 Drip.setColor(self.color)
                 Drip.setJoinStyle(Qt.RoundJoin)
                 Drip.setCapStyle(Qt.RoundCap)
