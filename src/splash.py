@@ -1,8 +1,7 @@
-import tkinter as tk
 import json
 
 from .view import Window, View
-from . import widget, DOCS, IMAGES
+from . import widget, DOCS
 
 
 class Question(widget.PrimaryFrame):
@@ -52,7 +51,6 @@ class Splash(widget.PrimaryFrame):
 
         self.title.pack(fill='x', pady=20)
         self.btn_confirm.pack(side='bottom', expand=True)
-
 
     def begin(self):
         pass
