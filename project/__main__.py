@@ -6,6 +6,7 @@ def protocal():
     mb.askyesno(None, "Are you sure you want to quit?")
     return protocal()
 
+
 if __name__ == "__main__":
     app = Application()
     app.bind("<Button-1>", lambda event: mb.showinfo(
