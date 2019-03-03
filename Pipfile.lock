@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7c12ec604e7bc0feb6b4db66b578d28030fa5acc269531954727474297b8be0f"
+            "sha256": "cbd10b429e2a03c94dbb5b5d654e77f9a9a99d579163bfd500e30cbbdb4ab9b0"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,19 +16,19 @@
         ]
     },
     "default": {
+        "jamspell": {
+            "hashes": [
+                "sha256:6dcaf1ae631af6c0904f9ba016bf2404e930237eb73e4d471ee92a77327af8f1"
+            ],
+            "index": "pypi",
+            "version": "==0.0.11"
+        },
         "nltk": {
             "hashes": [
                 "sha256:286f6797204ffdb52525a1d21ec0a221ec68b8e3fa4f2d25f412ac8e63c70e8d"
             ],
             "index": "pypi",
             "version": "==3.4"
-        },
-        "playsound": {
-            "hashes": [
-                "sha256:1e83750a5325cbccee03d6e751ba3e78c037ac95b95a3ba1f38d0c5aca9e1a34"
-            ],
-            "index": "pypi",
-            "version": "==1.2.2"
         },
         "singledispatch": {
             "hashes": [

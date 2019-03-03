@@ -1,7 +1,5 @@
-import base64
 import nltk
 import re
-import zlib
 
 
 def corpus_downloaded(name: str) -> bool:
@@ -15,6 +13,13 @@ def corpus_downloaded(name: str) -> bool:
         return True
     except LookupError:
         return False
+
+
+def arpabet():
+    if not corpus_downloaded("cmudict"):
+        nltk.download("cmudict")
+
+    return nltk.corpus.cmudict.dict()
 
 
 def frequency_list():
@@ -31,16 +36,6 @@ def frequency_list():
     # Sort those words by how common they are
     unfiltered = nltk.FreqDist(i.lower() for i in words).most_common()
     # Remove punctuation
-    freq_list = [i for i in unfiltered if re.match(r"[A-Za-z]", i[0])]
+    freq_list = {i[0]: i[1] for i in unfiltered if re.match(r"[A-Za-z]", i[0])}
 
-    # Write the contents in
-    with open("./data/frequency_list.txt", "wb") as file:
-        freq_list = map(lambda tup: f"{tup[0]}:{tup[1]}", freq_list)
-        contents = ";".join(freq_list)
-        compressed = base64.b64encode(zlib.compress(contents.encode("utf-8"), 9))
-
-        file.write(compressed)
-        file.close()
-
-
-frequency_list()
+    return freq_list

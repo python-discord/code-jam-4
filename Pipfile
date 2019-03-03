@@ -8,13 +8,10 @@ flake8 = "*"
 
 [packages]
 nltk = "*"
-playsound = "*"
+jamspell = "*"
 
 [requires]
 python_version = "3.7"
 
 [scripts]
 lint = "python -m flake8"
-start = "python -m project"
-editor_window_test = "python -m project.testing.test_editor_window"
-cloppy_window_test = "python -m project.testing.test_cloppy_window"
