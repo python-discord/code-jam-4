@@ -7,6 +7,9 @@ import random
 import os
 
 
+MAXIMUM_CLICKS_PER_SECOND = 2
+
+
 class MinesweeperApp(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
@@ -270,7 +273,7 @@ class Minesweeper(QtWidgets.QWidget):
         for row in range(1, self.grid_height+1):
             row_array = [None]
             for column in range(1, self.grid_width+1):
-                button = Tile(random.randint(1, 1)) #TODO MAKE SURE THIS IS CHANGED TO A HIGH NUMBER
+                button = Tile(random.randint(50, 100)) #TODO MAKE SURE THIS IS CHANGED TO A HIGH NUMBER
                 button.clicked.connect(partial(self.button_clicked, row, column))
                 button.right_clicked.connect(partial(self.place_flag, row, column))
                 button.health_decreased.connect(partial(self.button_health_update, row, column))
@@ -390,14 +393,16 @@ class Minesweeper(QtWidgets.QWidget):
 
     def button_health_update(self, row, column):
         '''Updates the button whenever the health has changed'''
+        button = self.button_grid[row][column]
 
         # Stops you from clicking too fast
         click_time = time.time()
-        if click_time - self.last_click <= 0.3:
+        if click_time - self.last_click <= 1/MAXIMUM_CLICKS_PER_SECOND:
             self.show_click_modal()
+            button.health = button.max_health
+
         self.last_click = time.time()
 
-        button = self.button_grid[row][column]
         if not button.icon().isNull():
             self.place_flag(row, column)
         current_index = 9 - (button.health_percent() // 10)
