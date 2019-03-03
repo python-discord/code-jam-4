@@ -32,10 +32,6 @@ class CloppyWindow(tk.Toplevel):
         self.resizable(False, False)
 
         # Configure grid properties so the elements inside stretch out.
-        tk.Grid.rowconfigure(self, index=0, weight=1)
-        tk.Grid.rowconfigure(self, index=1, weight=1)
-        tk.Grid.rowconfigure(self, index=2, weight=1)
-        tk.Grid.rowconfigure(self, index=3, weight=1)
         tk.Grid.columnconfigure(self, index=0, weight=1)
 
         # The message to be displayed to the user.
@@ -78,6 +74,10 @@ class CloppyWindow(tk.Toplevel):
         self.input_frame.grid(row=3, column=0, sticky=tk.NSEW)
         tk.Grid.columnconfigure(self.input_frame, index=0, weight=1)
 
+        # Setting up the optional time limit value.
+        self.time_remaining = None
+        self.time_remaining_label: tk.Label = None
+
     def set_message(self, message: str):
         """
         Set the message to be displayed to the user in this dialog.
@@ -86,6 +86,42 @@ class CloppyWindow(tk.Toplevel):
         """
         self.message = message
         self.message_label.config(text=message)
+
+    def update_time_remaining(self):
+        """
+        Called to update the text inside the time limit label.
+        """
+        self.time_remaining_label.config(
+            text=f'Time remaining: {self.time_remaining} seconds.'
+        )
+
+    def countdown_cycle(self):
+        """
+        Called for each cycle of the time limit countdown.
+        """
+        if self.time_remaining > 0:
+            self.time_remaining -= 1
+            self.update_time_remaining()
+            self.after(1000, self.countdown_cycle)
+        else:
+            self.time_out()
+
+    def set_time_limit(self, time_limit):
+        """
+        Adds a time limit to this dialog.
+        :param time_limit: Time limit in seconds.
+        """
+        if not self.time_remaining:
+            self.time_remaining = time_limit
+            self.time_remaining_label = tk.Label(self)
+            self.time_remaining_label.grid(row=4, column=0, sticky=tk.NSEW)
+            self.update_time_remaining()
+
+    def time_out(self):
+        """
+        Called when the user doesn't make a choice and the time limit runs out.
+        """
+        self.destroy()
 
     def make_choice(self, choice):
         """
@@ -132,6 +168,9 @@ class CloppyWindow(tk.Toplevel):
         self.deiconify()
 
         playsound(Constants.cloppy_sound_path, block=False)
+
+        if self.time_remaining:
+            self.after(1000, self.countdown_cycle)
 
 
 class CloppyButtonWindow(CloppyWindow):
@@ -270,3 +309,25 @@ class CloppyTextInputWindow(CloppyWindow):
 
         # Direct focus to the input box.
         self.input_box.focus_set()
+
+
+def cloppy_yesno(master, message, callback) -> CloppyButtonWindow:
+    """
+    Convenience function for constructing a basic yes/no Cloppy dialog.
+
+    :param master: The master widget of the dialog.
+    :param message: Message to display in the dialog.
+    :param callback: The callback for when a choice is made in this dialog.
+    """
+
+    dialog = CloppyButtonWindow(master)
+    dialog.set_message(
+        f'{message}\n'
+        "So it behooves me to ask:\n"
+        "Are you sure you want to do that?"
+    )
+    dialog.add_choice('Yes')
+    dialog.add_choice('No')
+    dialog.choice_made.add_callback(callback)
+
+    return dialog
