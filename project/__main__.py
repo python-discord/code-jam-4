@@ -27,7 +27,7 @@ class Weatherh8su:
         self.create_widgets()
 
     def create_widgets(self):
-        self.background_image = None #@Hotfix needs to get us background images!
+        self.background_image = None
         self.main_canvas = tk.Canvas(self.master)
         self.main_canvas.create_image(0, 0, image=self.background_image)
         self.main_canvas.pack()
@@ -55,7 +55,10 @@ class Weatherh8su:
                                      font=(None, 30), height=2, anchor="s")
         self.todays_label.pack()
         self.todays_content = tk.Label(
-            self.todays_frame, text="content\nhere", font=(None, 15))
+            self.todays_frame,
+            text="content\nhere",
+            font=(None, 15),
+            anchor="e")
         self.todays_content.pack(side=tk.LEFT)
         self.tomorrows_frame = tk.Frame(self.main_canvas)
         self.tomorrows_frame.pack(anchor="w", pady=30)
@@ -64,7 +67,10 @@ class Weatherh8su:
             font=(None, 30), height=2, anchor="s")
         self.tomorrows_label.pack()
         self.tomorrows_content = tk.Label(
-            self.tomorrows_frame, text="content\nhere", font=(None, 15))
+            self.tomorrows_frame,
+            text="content\nhere",
+            font=(None, 15),
+            anchor="e")
         self.tomorrows_content.pack(side=tk.LEFT)
 
     def annoy(self):
@@ -84,7 +90,44 @@ class Weatherh8su:
         return False
 
     def search_function(self):
-        "jon's function"
+        """
+        Called with someone presses the
+        `enter`-button.
+        """
+
+        search_string = self.search_bar.get()
+        location = get_similar_location(search_string)
+        weather = ForecastFetcher("OWM_API_KEY")
+        weather = weather.fetch_forecast_7_days(location, "random")
+
+        # We put todays weather tomorrow, and tomorrows weather today
+        today = weather[1]
+        tomorrow = weather[0]
+        todays_weather = today['weather_status']
+
+        self.todays_content.config(
+            text=f"Day temperature: {today['day temperature']}\n"
+            f" Evening temperature: {today['evening temperature']}\n"
+            f" High: {today['highest temperature']}, "
+            f"Low: {today['lowest temperature']}"
+        )
+        self.tomorrows_content.config(
+            text=f"Day temperature: {tomorrow['day temperature']}\n"
+            f" Evening temperature: {tomorrow['evening temperature']}\n"
+            f" High: {tomorrow['highest temperature']}, "
+            f"Low: {tomorrow['lowest temperature']}"
+        )
+
+        # Also change the background:
+        todays_weather(todays_weather)
+
+    def change_background(self, which_image: str):
+        """
+        Changes background according to the weather
+        """
+        # if which_image.lower() is "clear", snow, and so on..
+        # change background image to x
+        # else: take random image
 
 
 root = tk.Tk()
