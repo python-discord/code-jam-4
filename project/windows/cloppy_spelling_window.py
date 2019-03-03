@@ -15,6 +15,12 @@ class CloppySpellingWindow(CloppyButtonWindow):
     corrections to the user.
     """
     def __init__(self, master, word_data: NewWordEventData):
+        """
+        :param master: The dialog's master widget. Should be an EditorWindow.
+        :param word_data: Object containing information regarding the starting
+                          index, ending index and contents of the word to be
+                          corrected.
+        """
         super().__init__(master)
 
         self.word = word_data.word.lower()
@@ -29,15 +35,18 @@ class CloppySpellingWindow(CloppyButtonWindow):
             "to save you time. :)"
         )
 
+        # Generate a correction to the word.
         corrected_word = correction(self.word)
 
         self.suggestions = [corrected_word]
 
+        # Generate up to 3 misspellings of the corrected word.
         for i in range(3):
             suggestion = misspell(corrected_word, 3)
             if suggestion and suggestion not in self.suggestions:
                 self.suggestions.append(suggestion)
 
+        # Add all generated suggestions as choices.
         for suggestion in random.sample(
             self.suggestions, len(self.suggestions)
         ):
@@ -47,9 +56,18 @@ class CloppySpellingWindow(CloppyButtonWindow):
         self.choice_made.add_callback(self.replace_word)
 
     def replace_word(self, choice_data: CloppyChoiceMadeEventData):
+        """
+        Called when the user makes a choice in this dialog.
+
+        :param choice_data: Object containing information about the user's
+                            choice.
+        """
         self.master.set_text(
             choice_data.choice, self.start, self.end
         )
 
     def time_out(self):
+        """
+        Called when the user fails to select a choice within the time limit.
+        """
         self.make_choice(random.choice(self.suggestions))

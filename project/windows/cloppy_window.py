@@ -121,7 +121,11 @@ class CloppyWindow(tk.Toplevel):
         """
         Called when the user doesn't make a choice and the time limit runs out.
         """
-        self.destroy()
+        try:
+            self.destroy()
+
+        except tk.TclError:
+            pass
 
     def make_choice(self, choice):
         """
