@@ -50,7 +50,7 @@ class ImageCache:
             'info': {
                 'gender': data['gender'],
                 'age': randint(1, 42),
-                'location': f'{randint(1, 9999)} miles away'
+                'location': f'{randint(1, 99)} miles away'
             }
         }
 
