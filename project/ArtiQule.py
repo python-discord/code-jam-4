@@ -59,12 +59,13 @@ class ColorBox(QMainWindow):
         """Connects Canvas window with colorBox window"""
 
         for obj in cls.objs:
-            obj.setCursor(QCursor(QPixmap("Design/icons/{}.png".format(
-                currentTool.toolName
-                if currentTool else None)
-            )
-            )
-            )
+            if currentTool is not None:
+                obj.setCursor(QCursor(
+                    QPixmap("Design/icons/{}.png".format(currentTool.toolName)
+                            )
+                        )
+                    )
+
 
 
 class Tool:
@@ -210,6 +211,7 @@ class PaintBoard(QMainWindow):
 
         self.mousePos = QPoint(0, 0)
 
+        self.currentTool = None
         # MENUBARS
         mainMenu = self.menuBar()
 
@@ -313,12 +315,12 @@ class PaintBoard(QMainWindow):
                 )
         ColorBox.setWindowCursor(self.currentTool)
 
-        self.setCursor(QCursor(
-            QPixmap("Design/icons/{}.png".format(self.currentTool.toolName
-                                                 if self.currentTool
-                                                 else None
-                                                 )
-                    )))
+        if self.currentTool is not None:
+            self.setCursor(QCursor(
+                QPixmap("Design/icons/{}.png".format(self.currentTool.toolName)
+                        )
+                    )
+                )
         if self.currentTool is not None:
             if self.currentTool.toolName != \
                     "Pointy Pen" or \
