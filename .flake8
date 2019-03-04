@@ -1,5 +1,7 @@
+[flake8]
 max-line-length=100
-application_import_names=projectt
-ignore=P102,B311,W503,E226,S311,W504,F821
-exclude=__pycache__, venv, .venv, tests
+application_import_names=project
+ignore=W503,B305
+exclude=__pycache__, venv, .venv, tests, project/ui
 import-order-style=pycharm
+inline-quotes = "
