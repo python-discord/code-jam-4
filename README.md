@@ -2,14 +2,14 @@
 
 The theme for this code jam will be **This app hates you!**. You will be creating an application using a GUI library of your choice in Python. The application must serve a real purpose, but must also fit the theme.
 
-You can use any GUI library that you wish to use, but you have to make _a desktop app_. For example, you may use frameworks like PySide, PyQt, tkinter, or wxPython. You can even use stuff like Kivy or PyGame, although we do not recommend that you do. You may not, however, use webframeworks like Django or Flask, and you may not use anything that turns HTML and CSS into a desktop app that runs as a browser. 
+You can use any GUI library that you wish to use, but you have to make _a desktop app_. For example, you may use frameworks like PySide, PyQt, tkinter, or wxPython. You can even use stuff like Kivy or PyGame, although we do not recommend that you do. You may not, however, use webframeworks like Django or Flask, and you may not use anything that turns HTML and CSS into a desktop app that runs as a browser.
 
 Here are a couple of examples of what we mean by an application that "serves a real purpose but also fits the theme":
 * A calculator app that calculates the right answers, but represents the answer in a way that's completely impractical.
 * An image resizer where you have to specify which part of the image to resize, specify how much force to apply to the resize operation in newtons, and then manually resize the image by turning a crank.
 * An alarm clock app that plays a very loud sound effect every 5 minutes reminding you that your alarm will ring in 6 hours. The closer it gets to the 6 hour mark, the lower the volume of the sound effect. When the time is up, the sound effect is virtually inaudible.
 
-Remember that teamwork is not optional for our code jams - You must find a way to work together. For this jam, we've assigned a leader for each team based on their responses to the application form. Remember to listen to your leader, and communicate with the rest of your team! 
+Remember that teamwork is not optional for our code jams - You must find a way to work together. For this jam, we've assigned a leader for each team based on their responses to the application form. Remember to listen to your leader, and communicate with the rest of your team!
 
 **Remember to provide instructions on how to set up and run your app at the bottom of this README**.
 
@@ -22,7 +22,7 @@ Remember that teamwork is not optional for our code jams - You must find a way t
 
 # Setting Up
 
-You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a look 
+You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a look
 [at the documentation](https://pipenv.readthedocs.io/en/latest/) if you've never used it before. In short:
 
 * Setting up for development: `pipenv install --dev`
@@ -30,16 +30,21 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 
 # Project Information
 
-`# TODO`
+We didn't get to finish, but the basic gist of it was a personality quiz that focused on widget animations to make it difficult to use.
+
+`master` should be the repo judged on, however we were able to get a page working (somewhat) after the deadline, in the `animations` branch. That would be the best example of our vision.
 
 ## Description
 
-`# TODO`
+We have some neat features: concurrent caching, a nice loading screen (that works 85% of the time), and a pretty thorough animation lib.
 
 ## Setup & Installation
-
-`# TODO`
-
+**Additional Dependencies**: tcl/tk (tkinter)
+```sh
+pipenv lock
+```
 ## How do I use this thing?
 
-`# TODO`
+```sh
+pipenv run start
+```
