@@ -41,7 +41,7 @@ We have some neat features: concurrent caching, a nice loading screen (that work
 ## Setup & Installation
 **Additional Dependencies**: tcl/tk (tkinter)
 ```sh
-pipenv lock
+pipenv install
 ```
 ## How do I use this thing?
 
