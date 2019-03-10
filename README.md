@@ -30,16 +30,39 @@ You should be using [Pipenv](https://pipenv.readthedocs.io/en/latest/). Take a l
 
 # Project Information
 
-`# TODO`
+Flamboyant Flamingos jam project.
+
+* Team:
+  * Members:
+    * Starwort
+      * Location: UK
+      * Computer Science student in secondary education
+      * Leader
+    * Suhail
+      * Location: UK
+      * Computer Science student in secondary education
+    * Martmists
+      * Location: NL
+      * High School student, entering University later this year
+* This paint tool is your worst enemy.
 
 ## Description
 
-`# TODO`
+A perverse editor that:
+
+* Has the entire UI in katakana
+* Makes you click a button once per byte during saving
+* Has unintuitive shortcuts
 
 ## Setup & Installation
 
-`# TODO`
+* `pipenv sync`
+* `pipenv run start`
 
 ## How do I use this thing?
 
-`# TODO`
+* Start it and begin creating
+* If you're a judge, please use JUDGEINFO.md for information on how this
+* **Only use the JUDGEINFO.md once visited the app once blindly**
+
+Note - due to some errors and bugs in the tkinter module itself, some platforms may be unsupported or may error in some instances. Some may be solved by commenting line 68 of `__main__.py`.
