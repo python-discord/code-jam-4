@@ -208,7 +208,7 @@ class Canvas(tk.AsyncCanvas):
             The fill colour of the pixel
         """
 
-        await self.create_line(x, y, x, y, fill=colour.as_hex)
+        await self.create_line(x, y, x+1, y, fill=colour.as_hex)
         self.pil_draw.point([(x - 1, y - 1)], fill=colour.as_rgb)
 
     async def undo(self):
