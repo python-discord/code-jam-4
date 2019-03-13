@@ -88,7 +88,7 @@ class Ui_Wizard(object):
 
     def retranslateUi(self, Wizard):
         Wizard.setWindowTitle(QtWidgets.QApplication.translate("Wizard", "crocpad++ troubleshooter", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("Wizard", "hello welcome to the crocpad++ troubleshooter let me fix ur problems", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("Wizard", "hello welcome to the crocpad++ troubleshooter\nlet me fix ur problems", None, -1))
     
     def help(self):
         QtWidgets.QMessageBox.question(self, 'Help', "This is a troubleshooter.")
