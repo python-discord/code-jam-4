@@ -1,7 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from pathlib import Path
-from threading import Thread
-import time
 
 class LoadingPage(object):
     def setupUi(self, WizardPage):
@@ -54,8 +52,7 @@ class Ui_Wizard(object):
         self.stretch = Wizard.Stretch
         self.cancel_button = Wizard.CancelButton
         self.next_button = Wizard.NextButton
-        self.finish_button = Wizard.FinishButton
-        buttons = [self.help_button, self.stretch, self.cancel_button, self.next_button, self.finish_button]
+        buttons = [self.help_button, self.stretch, self.cancel_button, self.next_button]
         
         self.setButtonLayout(buttons)
 
