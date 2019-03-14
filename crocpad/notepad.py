@@ -198,7 +198,7 @@ class MainWindow(QMainWindow):
                     dlg.setText("_" * 100)
                     dlg.show()
                     dlg.close()
-            if random.random() > 0.9:
+            if random.random() > 0.95:
                 troubleshooter = Troubleshooter()  # pester the user with a troubleshooter
                 troubleshooter.exec()
         return False  # imitate overridden method
