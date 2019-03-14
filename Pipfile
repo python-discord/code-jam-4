@@ -8,7 +8,6 @@ flake8 = "*"
 
 [packages]
 pyqt5 = "*"
-pygame = "*"
 
 [requires]
 python_version = "3.7"
